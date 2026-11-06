@@ -91,7 +91,8 @@
 
 ## Cifras de calidad
 
-- 168 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
-- 159 pruebas en navegador (156 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
+- 177 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
+- 162 pruebas en navegador (159 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
 - Lint con las reglas D-14 (lectura/escritura) y contra `dangerouslySetInnerHTML` (una única excepción revisada).
-- `pnpm audit` sin vulnerabilidades altas.
+- `pnpm audit` sin vulnerabilidades altas; gitleaks sin hallazgos en el historial.
+- CI de GitHub en verde en cada push a `main` (lint, tipos, tests, build y gitleaks).

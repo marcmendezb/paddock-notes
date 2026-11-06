@@ -32,6 +32,20 @@ jobs:
       - run: pnpm test
       - run: pnpm --filter @paddock/web build:worker
 
+  # Secretos filtrados en el historial (seguridad.md §11). Sin licencia: el repositorio es de una cuenta personal.
+  secrets:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   preview:
     needs: check
     # Los PR de forks no reciben secretos (seguridad.md §13).

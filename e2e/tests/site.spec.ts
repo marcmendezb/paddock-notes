@@ -286,3 +286,14 @@ test("el recálculo con el sistema actual va rotulado como recálculo (HIS-06)",
   await page.getByRole("link", { name: /sistema actual/ }).click();
   await expect(page.getByText("Recálculo, no es la clasificación oficial").first()).toBeVisible();
 });
+
+test("la web sirve /api por Service Binding y conserva la protección CSRF (D-26)", async ({ request, baseURL }) => {
+  const health = await request.get("/api/v1/health");
+  expect(health.status()).toBe(200);
+  // Un origen ajeno no puede escribir aunque intente colar la cabecera interna.
+  const forged = await request.post("/api/v1/newsletter", {
+    headers: { origin: "https://evil.example", "x-paddock-origin": baseURL!, "content-type": "application/json" },
+    data: { email: "x@example.com", lang: "es" },
+  });
+  expect(forged.status()).toBe(403);
+});

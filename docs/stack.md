@@ -410,6 +410,8 @@ Los ID reales se generan al crear los recursos.
 
 ## 17. Puesta en marcha (orden recomendado)
 
+Paso a paso, con comandos y cada valor que hay que sustituir: [puesta-en-marcha.md](puesta-en-marcha.md).
+
 1. Crear la cuenta de Cloudflare con 2FA (llave o passkey) y activar Workers Paid cuando se vaya a desplegar.
 2. Comprar el dominio (D-20) en Cloudflare Registrar; activar DNSSEC.
 3. Instalar dependencias (`pnpm install`) y autenticarse en Wrangler (`wrangler login`).

@@ -86,5 +86,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|fonts/|brand/|og-fonts/|icon.svg|favicon.ico|robots.txt|sitemap.xml|\\.well-known/).*)"],
+  // `api/`: proxy a la API (D-26), sin redirección de idioma ni CSP de página.
+  matcher: ["/((?!_next/static|_next/image|api/|fonts/|brand/|og-fonts/|icon.svg|favicon.ico|robots.txt|sitemap.xml|\\.well-known/).*)"],
 };

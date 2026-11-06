@@ -42,4 +42,7 @@ Desarrollo local completo: ver `README.md`.
 - En local, cambiar código o `wrangler.jsonc` de la ingesta recarga el Worker y pierde las instancias de Workflow en curso: hay que reiniciar `backfill:instance` / `analysis:instance` en `ingest_state`.
 - `wrangler dev` reescribe el host y el Origin al dominio de `routes`: la web local se arranca con `--local-upstream localhost:8789` (ya en `scripts/local-stack.sh`), o la protección CSRF rechaza los formularios.
 - Por Service Binding no se puede reenviar la cabecera Origin (es "prohibida" en fetch): la web manda `x-paddock-origin`, que la API solo acepta en peticiones internas (sin CF-Connecting-IP).
+- Los enlaces de los emails van a `/api/*` en el host de la web, que los reenvía a la API (D-26). En local, `AUTH_BASE_URL=http://localhost:8789` en `workers/api/.dev.vars`.
+- OpenF1 responde 401 a todo, también al histórico, mientras hay una sesión de F1 en directo (D-25): no es un fallo nuestro.
+- Nunca pongas líneas de coautoría ni de atribución a Claude en los commits ni en los PR.
 - Las pruebas en navegador también corren en modo oscuro: comprueba el contraste de cualquier color nuevo en los dos modos.

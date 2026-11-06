@@ -296,6 +296,14 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 
 **Consecuencia:** el análisis de una carrera puede retrasarse unas horas si el fin de semana siguiente empieza enseguida, pero no se pierde. Seguimos sin clave de pago (D-08).
 
+## D-26 · La web también sirve `/api/*`
+
+**Contexto:** los enlaces de los emails (enlace mágico y baja en un clic) apuntan a `{SITE_URL}/api/v1/...`. En producción la ruta `paddocknotes.dev/api/*` del dominio lleva al Worker de la API y la cookie de sesión queda en el host de la web. En la preview, la web y la API son hosts distintos de `workers.dev`: esos enlaces daban 404 y la cookie habría quedado en el host equivocado. En local funcionaba solo porque las cookies no distinguen puertos.
+
+**Decisión:** la web tiene una ruta `/api/[...path]` que reenvía a la API por Service Binding. Descarta todas las cabeceras `x-paddock-*` y `cf-*` que lleguen del navegador, reenvía solo las cookies `__Host-pn.*` y fija ella misma el origen real (`x-paddock-origin`, para la comprobación CSRF) y la IP del visitante (`x-paddock-client-ip` para el límite de escritura y `x-paddock-proxy-ip` para el de lectura, que la API solo acepta en peticiones internas). `AUTH_BASE_URL` es siempre el origen de la web, también en local (`http://localhost:8789`).
+
+**Consecuencia:** el mismo flujo funciona en local, en la preview y en producción. En producción el proxy no se usa, porque la ruta del dominio llega antes.
+
 ---
 
 ## Fuentes (consultadas el 5 de noviembre de 2026)

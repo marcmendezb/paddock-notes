@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "minimumReleaseAge": "14 days",
+  "internalChecksFilter": "strict",
+  "schedule": ["before 6am on monday"],
+  "timezone": "Europe/Madrid",
+  "packageRules": [
+    {
+      "description": "OpenNext fija el rango de Next.js que admite: se actualizan juntos (stack.md §18).",
+      "matchPackageNames": ["next", "@opennextjs/cloudflare"],
+      "groupName": "next + opennext"
+    },
+    {
+      "description": "Wrangler, workers-types y el plugin de tests de Workers van de la mano.",
+      "matchPackageNames": ["wrangler", "@cloudflare/workers-types", "@cloudflare/vitest-plugin"],
+      "groupName": "cloudflare tooling"
+    }
+  ]
+}

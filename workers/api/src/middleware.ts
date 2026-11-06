@@ -135,7 +135,9 @@ export const noQueryParams: MiddlewareHandler<AppEnv> = async (c, next) => {
  * `CF-Connecting-IP` (Cloudflare la fija siempre en las peticiones de internet), y no se limitan.
  */
 export const rateLimit: MiddlewareHandler<AppEnv> = async (c, next) => {
-  const ip = c.req.header("cf-connecting-ip");
+  // Desde internet manda CF-Connecting-IP. Lo que llega por el proxy /api de la web (D-26) trae la IP del
+  // visitante en x-paddock-proxy-ip, que solo vale en peticiones internas.
+  const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-proxy-ip");
   if (ip) {
     const { success } = await c.env.RATE_LIMIT_READ.limit({ key: ip });
     if (!success) return errorResponse(c, "rate_limited", "Demasiadas peticiones. Espera un minuto.", 60);

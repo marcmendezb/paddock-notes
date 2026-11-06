@@ -142,6 +142,16 @@ describe("seguridad", () => {
     }
     expect(statuses).toContain(429);
   });
+
+  it("también limita lo que llega por el proxy /api de la web, con la IP del visitante (D-26)", async () => {
+    const statuses: number[] = [];
+    for (let i = 0; i < 65; i++) {
+      statuses.push((await api("/seasons/2026/races/1", { headers: { "x-paddock-proxy-ip": "203.0.113.9" } })).status);
+    }
+    expect(statuses).toContain(429);
+    // Las llamadas internas de la web (render en servidor) no llevan esa cabecera y no se limitan.
+    expect((await api("/seasons/2026/races/1")).status).toBe(200);
+  });
 });
 
 describe("servicio", () => {

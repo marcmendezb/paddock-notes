@@ -229,7 +229,7 @@ Biblioteca (D-17): Better Auth con `drizzleAdapter` sobre `drizzle-orm/d1`, inst
 | Variables públicas | Ningún secreto con prefijo `NEXT_PUBLIC_` (se incrusta en el JavaScript del navegador) |
 | Tokens de Cloudflare | Un token por uso (despliegue de producción, despliegue de preview), con permisos mínimos y limitado a la cuenta y a los recursos necesarios |
 | Rotación | Cada 90 días y de inmediato ante cualquier sospecha |
-| Detección | gitleaks en pre-commit y en CI; escaneo de secretos con protección de push en GitHub |
+| Detección | gitleaks en CI (job `secrets` de `ci.yml`, historial completo); escaneo de secretos con protección de push en GitHub |
 | Local | `.dev.vars` y `.env` en `.gitignore`; solo valores de desarrollo |
 
 ## 12. Cadena de suministro
@@ -252,7 +252,7 @@ Biblioteca (D-17): Better Auth con `drizzleAdapter` sobre `drizzle-orm/d1`, inst
 | GitHub Actions | Fijadas por SHA completo, no por etiqueta; `permissions: contents: read` por defecto y ampliado solo donde haga falta |
 | Entorno `production` | Secretos solo disponibles en ese entorno y con aprobación manual del autor |
 | PR de terceros | Los workflows de PR externos no reciben secretos (`pull_request`, nunca `pull_request_target` con código ajeno) |
-| Análisis estático | CodeQL para TypeScript |
+| Análisis estático | CodeQL para TypeScript (`codeql.yml`); solo corre con el repositorio público, porque en uno privado exige GitHub Advanced Security |
 | Tokens de Cloudflare en CI | Tres, uno por uso: despliegue de producción, despliegue de preview y copia semanal (solo D1 de producción y el bucket `paddock-backups`) |
 | Alertas | Dependabot alerts y secret scanning activados |
 | Registro | Registro de auditoría de Cloudflare revisado mensualmente |
