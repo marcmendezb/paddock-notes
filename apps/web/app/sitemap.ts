@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { LANGS } from "@paddock/shared";
+import { LANGS, NOTES } from "@paddock/shared";
 import { EXPLAINERS } from "@/content";
 import { api } from "@/lib/api";
 import { GLOSSARY } from "@/lib/glossary";
@@ -28,6 +28,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...PAGE_SLUGS.map((s) => `/${s}`),
     ...RECORD_TYPES.map((t) => `/records/${t}`),
     ...EXPLAINERS.map((e) => `/learn/${e.slug}`),
+    "/notes",
+    ...NOTES.map((n) => `/notes/${n.slug}`),
     ...GLOSSARY.map((g) => `/learn/glossary/${g.slug}`),
   ];
 

@@ -38,20 +38,14 @@ export function pace(
                   ? ("neutralised" as const)
                   : null,
         }));
-      const stintSummaries = own
-        .sort((a, b) => a.stint_number - b.stint_number)
-        .map((s) => {
-          const clean = rows.filter((r) => r.stint === s.stint_number && r.excluded === null);
-          const fit = linearFit(clean.map((r) => [r.lap, r.time]));
-          return {
-            stint: s.stint_number,
-            fromLap: s.lap_start!,
-            toLap: s.lap_end ?? s.lap_start!,
-            mean: clean.length ? round3(clean.reduce((sum, r) => sum + r.time, 0) / clean.length) : null,
-            slope: fit ? round3(fit.slope) : null,
-          };
-        });
-      return { ...d, laps: rows, stints: stintSummaries };
+      const marked = markSlowLaps(rows);
+      const stintSummaries = stintStats(
+        marked,
+        own
+          .sort((a, b) => a.stint_number - b.stint_number)
+          .map((s) => ({ stint: s.stint_number, fromLap: s.lap_start!, toLap: s.lap_end ?? s.lap_start! })),
+      );
+      return { ...d, laps: marked, stints: stintSummaries };
     }),
   };
 }
@@ -74,3 +68,50 @@ export function linearFit(points: [number, number][]): { slope: number; intercep
 }
 
 const round3 = (v: number) => Math.round(v * 1000) / 1000;
+
+type PaceLap = PaceData["drivers"][number]["laps"][number];
+type PaceStint = PaceData["drivers"][number]["stints"][number];
+
+/** Margen sobre la mediana del piloto a partir del cual una vuelta es anómala y no cuenta para el ritmo. */
+const SLOW_FACTOR = 1.07;
+
+/** Marca como `slow` las vueltas limpias mucho más lentas que la mediana del piloto. */
+export function markSlowLaps(laps: PaceLap[]): PaceLap[] {
+  const clean = laps.filter((l) => l.excluded === null).map((l) => l.time).sort((a, b) => a - b);
+  if (clean.length === 0) return laps;
+  const median = clean[Math.floor(clean.length / 2)]!;
+  return laps.map((l) => (l.excluded === null && l.time > median * SLOW_FACTOR ? { ...l, excluded: "slow" as const } : l));
+}
+
+/** Media, pendiente y recta de tendencia de cada stint con sus vueltas limpias. */
+export function stintStats(laps: PaceLap[], stints: { stint: number; fromLap: number; toLap: number }[]): PaceStint[] {
+  return stints.map((s) => {
+    const clean = laps.filter((r) => r.stint === s.stint && r.excluded === null);
+    const fit = linearFit(clean.map((r) => [r.lap, r.time]));
+    const first = clean[0];
+    const last = clean.at(-1);
+    return {
+      ...s,
+      mean: clean.length ? round3(clean.reduce((sum, r) => sum + r.time, 0) / clean.length) : null,
+      slope: fit ? round3(fit.slope) : null,
+      trend:
+        fit && first && last && last.lap > first.lap
+          ? [first.lap, round3(fit.intercept + fit.slope * first.lap), last.lap, round3(fit.intercept + fit.slope * last.lap)]
+          : null,
+    };
+  });
+}
+
+/**
+ * Recalcula las vueltas anómalas y las estadísticas de un análisis ya guardado: los de la v1 no excluían
+ * las vueltas lentas. Sirve para pintar bien lo que hay en R2 mientras se vuelve a analizar.
+ */
+export function repairPace(data: PaceData): PaceData {
+  return {
+    ...data,
+    drivers: data.drivers.map((d) => {
+      const laps = markSlowLaps(d.laps);
+      return { ...d, laps, stints: stintStats(laps, d.stints) };
+    }),
+  };
+}

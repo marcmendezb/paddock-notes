@@ -137,6 +137,17 @@ const es = {
     upcoming: "Por disputar",
     source: "Contornos: Natural Earth",
   },
+  notes: {
+    nav: "Notas",
+    title: "Notas de carrera",
+    lede: "Lo que explica cada Gran Premio, con los datos y los gráficos de la carrera. Se publican en las 48 horas siguientes.",
+    empty: "Todavía no hay notas publicadas.",
+    readNote: "Leer la nota de la carrera",
+    published: (date: string) => `Publicada el ${date}.`,
+    sources: "Fuentes: Jolpica F1 (resultados y clasificaciones) y OpenF1 (estrategias y tiempos por vuelta), con licencia CC BY-NC-SA 4.0.",
+    tools: "Explora la carrera tú mismo",
+    race: "Resultado completo",
+  },
   recalc: {
     link: (season: number) => `¿Y si ${season} se hubiera puntuado con el sistema actual?`,
     title: (season: number) => `${season} con el sistema de puntos actual`,
@@ -255,7 +266,7 @@ const es = {
     },
     howToRead: "Cómo leer este gráfico",
     read: {
-      strategy: "Cada fila es un piloto, en el orden en que terminó. Cada tramo es un stint: el periodo entre dos paradas. La trama y la letra indican el neumático. Las franjas marcan coche de seguridad, VSC o bandera roja.",
+      strategy: "Cada fila es un piloto, en el orden en que cruzó la meta. Cada tramo es un stint: el periodo entre dos paradas. La trama y la letra indican el neumático. Las franjas marcan coche de seguridad, VSC o bandera roja.",
       pace: "Cada punto es una vuelta. Las líneas muestran la tendencia de cada stint: si suben, el neumático pierde rendimiento. Por defecto se ocultan las vueltas de boxes, la salida y las neutralizadas.",
       telemetry: "Las curvas muestran velocidad, acelerador y freno a lo largo de la vuelta más rápida de cada piloto. El delta acumula la diferencia: si sube, el segundo piloto pierde tiempo. Pasa el cursor o usa las flechas para recorrer la vuelta.",
       sectors: "Cada celda es la diferencia con el mejor tiempo de ese sector. El signo acompaña siempre al color: más (+) es más lento.",
@@ -298,6 +309,10 @@ const es = {
     slope: "Degradación",
     perLap: "s/vuelta",
     tableAlt: "Tabla con los mismos datos",
+    onTrack: "En pista",
+    official: "Oficial",
+    officialDiffers: (names: string) =>
+      `${names}: la posición al cruzar la meta (OpenF1) no coincide con la clasificación oficial (Jolpica), que incluye las sanciones posteriores a la carrera.`,
   },
   learn: {
     nav: "Aprende",
@@ -615,6 +630,17 @@ const en: Dictionary = {
     upcoming: "Still to race",
     source: "Outlines: Natural Earth",
   },
+  notes: {
+    nav: "Notes",
+    title: "Race notes",
+    lede: "What explains each Grand Prix, with the race's own data and charts. Published within 48 hours.",
+    empty: "No notes published yet.",
+    readNote: "Read the race note",
+    published: (date) => `Published on ${date}.`,
+    sources: "Sources: Jolpica F1 (results and standings) and OpenF1 (strategies and lap times), licensed CC BY-NC-SA 4.0.",
+    tools: "Explore the race yourself",
+    race: "Full result",
+  },
   recalc: {
     link: (season) => `What if ${season} had been scored with today's points system?`,
     title: (season) => `${season} with today's points system`,
@@ -731,7 +757,7 @@ const en: Dictionary = {
     },
     howToRead: "How to read this chart",
     read: {
-      strategy: "Each row is a driver, in finishing order. Each bar is a stint: the period between two stops. The pattern and letter show the tyre. Shaded bands mark safety car, VSC or red flag.",
+      strategy: "Each row is a driver, in the order they crossed the line. Each bar is a stint: the period between two stops. The pattern and letter show the tyre. Shaded bands mark safety car, VSC or red flag.",
       pace: "Each dot is a lap. Lines show each stint's trend: if they rise, the tyre is losing performance. Pit, first and neutralised laps are hidden by default.",
       telemetry: "The curves show speed, throttle and brake along each driver's fastest lap. The delta accumulates the gap: when it rises, the second driver is losing time. Hover or use the arrow keys to move along the lap.",
       sectors: "Each cell is the gap to the best time in that sector. The sign always goes with the colour: plus (+) is slower.",
@@ -774,6 +800,10 @@ const en: Dictionary = {
     slope: "Degradation",
     perLap: "s/lap",
     tableAlt: "Table with the same data",
+    onTrack: "On track",
+    official: "Official",
+    officialDiffers: (names) =>
+      `${names}: the position crossing the line (OpenF1) doesn't match the official classification (Jolpica), which includes post-race penalties.`,
   },
   learn: {
     nav: "Learn",

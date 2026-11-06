@@ -572,12 +572,13 @@ export function createHistoryReader(db: Db) {
   }
 
   /** Carreras disputadas desde `fromSeason` que aún no tienen análisis, de la más reciente a la más antigua. */
-  async function racesWithoutAnalysis(fromSeason: number, beforeIso: string, limit = 5) {
+  /** Carreras sin análisis o con uno de una versión anterior a `version` (se vuelven a analizar). */
+  async function racesWithoutAnalysis(fromSeason: number, beforeIso: string, limit = 5, version = 0) {
     return all<{ season: number; round: number; starts_at: string | null; date: string }>(sql`
       select races.season, races.round, races.starts_at, races.date from races
       where races.season >= ${fromSeason}
         and coalesce(races.starts_at, races.date || 'T23:59:59.000Z') < ${beforeIso}
-        and not exists (select 1 from analysis_artifacts a where a.season = races.season and a.round = races.round)
+        and not exists (select 1 from analysis_artifacts a where a.season = races.season and a.round = races.round and a.version >= ${version})
         and exists (select 1 from results r where r.season = races.season and r.round = races.round and r.kind = 'race')
       order by races.season desc, races.round desc limit ${limit}`);
   }

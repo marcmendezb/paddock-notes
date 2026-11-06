@@ -4,6 +4,7 @@ import {
   circuitTimeZone,
   countryName,
   gpName,
+  noteFor,
   suggestedExplainer,
   type DriverStandingRow,
   type Lang,
@@ -100,6 +101,11 @@ export default async function HomePage({ params }: Params) {
               ) : null;
             })()}
             <ul className="link-list">
+              {noteFor(last.data.season, last.data.round) ? (
+                <li>
+                  <Link href={`/${lang}/notes/${noteFor(last.data.season, last.data.round)!.slug}`}>{t.notes.readNote}</Link>
+                </li>
+              ) : null}
               <li>
                 <Link href={`/${lang}/races/${last.data.season}/${last.data.round}`}>{t.home.seeRace}</Link>
               </li>

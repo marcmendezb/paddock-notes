@@ -153,3 +153,26 @@ describe("clima (NUC-27)", async () => {
     expect(weatherSummary([])).toBeNull();
   });
 });
+
+describe("ritmo: vueltas anómalas (v2)", async () => {
+  const { repairPace } = await import("../src");
+  it("la vuelta de relanzamiento tras una bandera roja no deforma la media ni la tendencia", () => {
+    const laps = [
+      { lap: 46, time: 2433.4, stint: 3, excluded: "pit" as const },
+      { lap: 47, time: 150.0, stint: 3, excluded: null },
+      ...Array.from({ length: 12 }, (_, i) => ({ lap: 48 + i, time: 80 - i * 0.02, stint: 3, excluded: null })),
+    ];
+    const data = {
+      laps: 71,
+      neutralised: [],
+      drivers: [{ number: 3, code: "VER", name: "Max Verstappen", team: "Red Bull", finish: 1, laps, stints: [{ stint: 3, fromLap: 46, toLap: 59, mean: 83.07, slope: -0.649 }] }],
+    };
+    const fixed = repairPace(data as Parameters<typeof repairPace>[0]).drivers[0]!;
+    expect(fixed.laps.find((l) => l.lap === 47)!.excluded).toBe("slow");
+    const st = fixed.stints[0]!;
+    expect(st.mean).toBeCloseTo(79.89, 2);
+    expect(st.slope).toBeCloseTo(-0.02, 3);
+    expect(st.trend![0]).toBe(48);
+    expect(st.trend![2]).toBe(59);
+  });
+});

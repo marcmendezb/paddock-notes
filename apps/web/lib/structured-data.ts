@@ -41,7 +41,14 @@ export function sportsEventLd(
 }
 
 export function articleLd(
-  { slug, headline, description, dateModified }: { slug: string; headline: string; description: string; dateModified: string },
+  {
+    slug,
+    headline,
+    description,
+    dateModified,
+    datePublished,
+    section = "learn",
+  }: { slug: string; headline: string; description: string; dateModified: string; datePublished?: string; section?: "learn" | "notes" },
   { lang, site }: { lang: Lang; site: string },
 ) {
   return {
@@ -49,8 +56,9 @@ export function articleLd(
     headline,
     description,
     inLanguage: lang,
-    url: `${site}/${lang}/learn/${slug}`,
+    url: `${site}/${lang}/${section}/${slug}`,
     image: [`${site}/${lang}/opengraph-image`],
+    ...(datePublished ? { datePublished } : {}),
     dateModified,
     author: org(site, lang),
     publisher: org(site, lang),

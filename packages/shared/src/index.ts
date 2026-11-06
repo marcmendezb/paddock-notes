@@ -10,3 +10,4 @@ export * from "./quiz";
 export * from "./community";
 export * from "./explainers";
 export * from "./emails";
+export * from "./notes";

@@ -7,6 +7,7 @@ import {
   analysisNoticeEmail,
   isLang,
   newsletterEmail,
+  noteFor,
   raceNoticeEmail,
   unsubscribeHeaders,
   type DriverRef,
@@ -72,6 +73,10 @@ export async function composeDigest(env: Env, season: number, round: number, now
     biggestGain: gainer ? { name: fullName(gainer.driver), gained: gainer.positionsGained!, finish: gainer.position! } : null,
     leader: first ? { name: fullName(first.driver), points: first.points, gap: first.points - (second?.points ?? 0) } : null,
     hasAnalysis: analysis !== null,
+    note: (() => {
+      const n = noteFor(season, round);
+      return n ? { slug: n.slug, title: n.title } : null;
+    })(),
     history: past?.winner ? { season: past.season, gp: past.name, winner: fullName(past.winner) } : null,
     next: next
       ? {

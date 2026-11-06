@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { circuitTimeZone, countryName, gpName } from "@paddock/shared";
+import { circuitTimeZone, countryName, gpName, noteFor } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { CircuitLink } from "@/components/links";
@@ -114,6 +114,14 @@ export default async function RacePage({ params }: Params) {
       ) : (
         <p className="notice">{t.race.notYet(formatDate(lang, race.date))}</p>
       )}
+
+      {noteFor(season, round) ? (
+        <p className="lede">
+          <Link href={`/${lang}/notes/${noteFor(season, round)!.slug}`}>{t.notes.readNote}</Link>
+          {": "}
+          {noteFor(season, round)!.title[lang]}
+        </p>
+      ) : null}
 
       {analysis ? (
         <section aria-labelledby="analysis" className="stack-s">

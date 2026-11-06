@@ -87,6 +87,8 @@ export interface RaceDigest {
   biggestGain: { name: string; gained: number; finish: number } | null;
   leader: { name: string; points: number; gap: number } | null;
   hasAnalysis: boolean;
+  /** Nota post-carrera publicada (CON-04), si la hay. */
+  note: { slug: string; title: Record<Lang, string> } | null;
   history: { season: number; gp: string; winner: string } | null;
   next: { season: number; round: number; gp: string; circuitId: string; isSprintWeekend: boolean; raceStart: string | null } | null;
 }
@@ -138,6 +140,9 @@ export function newsletterEmail(lang: Lang, d: RaceDigest, siteUrl: string, unsu
   }
   const sections: string[] = [];
   sections.push(`${es ? "LA CARRERA EN 5 LÍNEAS" : "THE RACE IN 5 LINES"}\n${summary.slice(0, 5).join("\n")}\n${raceUrl}`);
+  if (d.note) {
+    sections.push(`${es ? "LA NOTA DE LA CARRERA" : "THE RACE NOTE"}\n${d.note.title[lang]}\n${siteUrl}/${lang}/notes/${d.note.slug}`);
+  }
   if (d.hasAnalysis) {
     sections.push(
       es

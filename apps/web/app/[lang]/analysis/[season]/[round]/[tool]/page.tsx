@@ -6,7 +6,7 @@ import { gpName, type Lang } from "@paddock/shared";
 import { PaceChart, PaceTable } from "@/components/analysis/pace-chart";
 import { ReplayView } from "@/components/analysis/replay-view";
 import { SectorsTable } from "@/components/analysis/sectors-table";
-import { StrategyChart, StrategyTable } from "@/components/analysis/strategy-chart";
+import { officialDifferences, StrategyChart, StrategyTable } from "@/components/analysis/strategy-chart";
 import { TelemetryView } from "@/components/analysis/telemetry-view";
 import { ToolFrame } from "@/components/analysis/tool-frame";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -104,14 +104,19 @@ async function Tool({
   const frame = { lang, question: t.tools[tool].q, howTo: t.read[tool] };
 
   if (tool === "strategy") {
-    const data = await api.strategy(season, round);
+    const [data, race] = await Promise.all([api.strategy(season, round), api.race(season, round)]);
     if (!data) notFound();
+    const official = race
+      ? new Map(race.data.results.filter((r) => r.driver.code).map((r) => [r.driver.code!, r.positionText]))
+      : undefined;
+    const differs = official ? officialDifferences(data.data, official) : [];
     return (
       <ToolFrame {...frame} note={strategyNote(lang, data.data)} updatedAt={data.updatedAt}>
         <StrategyChart lang={lang} data={data.data} />
+        {differs.length ? <p className="muted">{t.officialDiffers(differs.join(", "))}</p> : null}
         <details>
           <summary>{t.tableAlt}</summary>
-          <StrategyTable lang={lang} data={data.data} />
+          <StrategyTable lang={lang} data={data.data} official={official} />
         </details>
       </ToolFrame>
     );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { NOTES } from "@paddock/shared";
 import { EXPLAINERS, GUIDE_SLUG } from "@/content";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
@@ -33,6 +34,24 @@ export default async function LearnPage({ params }: Props) {
           <Link href={`/${lang}/learn/${guide.slug}`}>{guide.title[lang]}</Link>
         </p>
       </section>
+      {NOTES.length ? (
+        <section aria-labelledby="notes" className="stack-s">
+          <h2 id="notes">{dict(lang).notes.title}</h2>
+          <ul className="link-list">
+            {[...NOTES]
+              .sort((a, b) => b.date.localeCompare(a.date))
+              .slice(0, 3)
+              .map((n) => (
+                <li key={n.slug}>
+                  <Link href={`/${lang}/notes/${n.slug}`}>{n.title[lang]}</Link>
+                </li>
+              ))}
+          </ul>
+          <p>
+            <Link href={`/${lang}/notes`}>{dict(lang).notes.title}</Link>
+          </p>
+        </section>
+      ) : null}
       <section aria-labelledby="explainers" className="stack">
         <h2 id="explainers">{t.explainers}</h2>
         <ul className="cards">

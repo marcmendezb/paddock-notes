@@ -398,6 +398,11 @@ Fuera de temporada: newsletter quincenal, explicadores y piezas de histórico.
 
 ## 13. Flujo editorial y control de calidad
 
+**Dónde se escribe cada pieza:**
+
+- **Nota post-carrera:** `apps/web/content/notes/es/{slug}.mdx` y `en/{slug}.mdx`, más su entrada (título, entradilla, fecha, carrera y explicador) en `packages/shared/src/notes.ts` y el import en `apps/web/content/notes.ts`. Los gráficos se insertan con `<StrategyFigure season={…} round={…} caption="…" />` y `<PaceFigure season={…} round={…} drivers={[…]} caption="…" />`: salen con los datos reales, su tabla equivalente y el enlace a la herramienta.
+- **Notas de curvas:** `apps/web/content/circuits.ts`, situadas por su posición en la vuelta (`at`) y comprobadas contra la telemetría.
+
 1. **Borrador** en MDX en una rama del repositorio.
 2. **Comprobación de datos:** cada cifra contrastada con la base de datos o la fuente; reglamento verificado si aplica.
 3. **Revisión de estilo:** primera frase responde, frases cortas, términos explicados.

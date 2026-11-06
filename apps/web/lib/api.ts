@@ -1,5 +1,5 @@
 import "server-only";
-import type { AnalysisIndex, PaceData, ReplayData, SectorsData, StrategyData, TelemetryData } from "@paddock/analysis";
+import { repairPace, type AnalysisIndex, type PaceData, type ReplayData, type SectorsData, type StrategyData, type TelemetryData } from "@paddock/analysis";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type {
   ApiEnvelope,
@@ -148,7 +148,11 @@ export const api = {
     get<{ season: number; round: number; name: string; date: string; tools: string[] }[]>("/analysis"),
   analysisIndex: (season: number, round: number) => get<AnalysisIndex>(`/analysis/${season}/${round}`),
   strategy: (season: number, round: number) => get<StrategyData>(`/analysis/${season}/${round}/strategy`),
-  pace: (season: number, round: number) => get<PaceData>(`/analysis/${season}/${round}/pace`),
+  // Los análisis v1 no excluían las vueltas anómalas: se reparan al leer (repairPace).
+  pace: async (season: number, round: number) => {
+    const res = await get<PaceData>(`/analysis/${season}/${round}/pace`);
+    return res && { ...res, data: repairPace(res.data) };
+  },
   sectors: (season: number, round: number) => get<SectorsData>(`/analysis/${season}/${round}/sectors`),
   replay: (season: number, round: number) => get<ReplayData>(`/analysis/${season}/${round}/replay`),
   telemetry: (season: number, round: number, driver: number) =>

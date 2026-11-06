@@ -34,10 +34,17 @@ export function PaceChart({
   const x = scaleLinear().domain([1, data.laps]).range([M.left, W - M.right]);
   const y = scaleLinear().domain([lo - 0.3, hi + 0.3]).nice(5).range([H - M.bottom, M.top]);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, "0")}`;
+  const clipId = `pace-clip-${series.map((s) => s.number).join("-")}`;
 
   return (
     <figure className="chart">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.tools.pace.name} className="chart-svg">
+        {/* Nada se dibuja fuera del área del gráfico, aunque un dato venga mal. */}
+        <defs>
+          <clipPath id={clipId}>
+            <rect x={M.left} y={M.top} width={W - M.left - M.right} height={H - M.top - M.bottom} />
+          </clipPath>
+        </defs>
         {data.neutralised.map((p, i) => (
           <rect key={i} className={`neutralised-band neutralised-${p.kind}`} x={x(p.fromLap)} width={Math.max(2, x(p.toLap) - x(p.fromLap))} y={M.top} height={H - M.top - M.bottom} />
         ))}
@@ -62,14 +69,15 @@ export function PaceChart({
                 <Marker key={l.lap} index={i} cx={x(l.lap)} cy={y(l.time)} />
               ))}
             {s.stints.map((st) =>
-              st.mean !== null && st.slope !== null ? (
+              st.trend ? (
                 <line
                   key={st.stint}
                   className="series-line"
-                  x1={x(st.fromLap)}
-                  x2={x(st.toLap)}
-                  y1={y(st.mean - (st.slope * (st.toLap - st.fromLap)) / 2)}
-                  y2={y(st.mean + (st.slope * (st.toLap - st.fromLap)) / 2)}
+                  clipPath={`url(#${clipId})`}
+                  x1={x(st.trend[0])}
+                  y1={y(st.trend[1])}
+                  x2={x(st.trend[2])}
+                  y2={y(st.trend[3])}
                 />
               ) : null,
             )}

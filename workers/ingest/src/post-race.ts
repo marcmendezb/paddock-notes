@@ -170,7 +170,7 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
   const reader = createF1Reader(env.DB);
   // Con una sesión en directo, OpenF1 no responde sin clave: ni se empieza (D-25).
   if (await liveSession(reader, now)) return "aplazada: sesión en directo";
-  const candidates = await reader.racesWithoutAnalysis(OPENF1_FROM, new Date(now - AFTER_RACE_MS).toISOString(), 20);
+  const candidates = await reader.racesWithoutAnalysis(OPENF1_FROM, new Date(now - AFTER_RACE_MS).toISOString(), 20, ANALYSIS_VERSION);
   for (const c of candidates) {
     if (await writer.getState(`analysis:failed:${c.season}:${c.round}`)) continue;
     const id = `postrace-${c.season}-${c.round}-${now}`;

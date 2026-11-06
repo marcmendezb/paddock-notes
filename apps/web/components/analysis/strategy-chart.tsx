@@ -108,14 +108,19 @@ export function StrategyChart({ lang, data }: { lang: Lang; data: StrategyData }
   );
 }
 
-export function StrategyTable({ lang, data }: { lang: Lang; data: StrategyData }) {
+/**
+ * `official`: clasificación oficial por código de piloto (Jolpica). La posición de OpenF1 es la de pista al
+ * cruzar la meta; las sanciones posteriores solo están en la oficial.
+ */
+export function StrategyTable({ lang, data, official }: { lang: Lang; data: StrategyData; official?: Map<string, string> }) {
   const t = dict(lang).analysis;
   return (
     <div className="table-wrap" tabIndex={0} role="region" aria-label={t.tableAlt}>
       <table>
         <thead>
           <tr>
-            <th scope="col" className="num">Pos.</th>
+            <th scope="col" className="num">{t.onTrack}</th>
+            {official ? <th scope="col" className="num">{t.official}</th> : null}
             <th scope="col">{t.drivers}</th>
             <th scope="col">{t.stint}</th>
           </tr>
@@ -124,6 +129,7 @@ export function StrategyTable({ lang, data }: { lang: Lang; data: StrategyData }
           {data.drivers.map((d) => (
             <tr key={d.number}>
               <td className="num">{d.finish ?? "—"}</td>
+              {official ? <td className="num">{official.get(d.code) ?? "—"}</td> : null}
               <th scope="row">{d.name}</th>
               <td>
                 {d.stints
@@ -136,4 +142,11 @@ export function StrategyTable({ lang, data }: { lang: Lang; data: StrategyData }
       </table>
     </div>
   );
+}
+
+/** Pilotos cuya posición en pista no coincide con la oficial (sanciones posteriores), para avisarlo en texto. */
+export function officialDifferences(data: StrategyData, official: Map<string, string>): string[] {
+  return data.drivers
+    .filter((d) => d.finish !== null && official.has(d.code) && /^\d+$/.test(official.get(d.code)!) && Number(official.get(d.code)) !== d.finish)
+    .map((d) => d.code);
 }

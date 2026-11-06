@@ -28,6 +28,7 @@ const digest: RaceDigest = {
   biggestGain: { name: "Liam Lawson", gained: 15, finish: 7 },
   leader: { name: "Andrea Kimi Antonelli", points: 380, gap: 119 },
   hasAnalysis: true,
+  note: { slug: "2026-mexico", title: { es: "Una parada en la vuelta 43 cambió México", en: "A lap-43 stop changed Mexico" } },
   history: null,
   next: { season: 2026, round: 20, gp: "São Paulo Grand Prix", circuitId: "interlagos", isSprintWeekend: false, raceStart: "2026-11-08T17:00:00Z" },
 };
@@ -45,6 +46,10 @@ describe("newsletter (CON-06, contenido.md §5.5)", () => {
     expect(block.slice(1, -1)).toHaveLength(5);
     expect(block.join("\n")).toContain("En el Mundial manda Andrea Kimi Antonelli");
     expect(block.join("\n")).not.toContain("Vuelta rápida");
+  });
+
+  it("enlaza la nota de la carrera si está publicada (CON-04)", () => {
+    expect(email.text).toContain("LA NOTA DE LA CARRERA\nUna parada en la vuelta 43 cambió México\nhttps://paddocknotes.dev/es/notes/2026-mexico");
   });
 
   it("próxima cita en la hora de la lista y pie con baja y aviso de no afiliación", () => {
