@@ -388,3 +388,7 @@ input[type="search"], input[type="text"] { font: inherit; min-height: 44px; padd
 .map-label-next { fill: var(--text); font-size: 10px; font-weight: 600; pointer-events: none; }
 .map-pin:focus-visible { outline: none; }
 .map-pin:focus-visible circle, .map-pin:hover circle { stroke: var(--accent-2); stroke-width: 3; }
+
+/* Frenadas sobre el trazado (NUC-44) */
+.corner-mark circle { fill: var(--text); stroke: var(--bg); stroke-width: 4; }
+.corner-mark text { fill: var(--bg); font-size: 22px; font-weight: 700; }

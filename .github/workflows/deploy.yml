@@ -1,4 +1,5 @@
 # Fusión en main: migraciones, despliegue de los tres Workers y comprobación de salud (stack.md §12).
+# No hace nada hasta que la variable del repositorio CLOUDFLARE_READY vale "true" (cuenta y secretos listos).
 name: deploy
 
 on:
@@ -14,6 +15,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: vars.CLOUDFLARE_READY == 'true'
     runs-on: ubuntu-latest
     # Secretos solo en el entorno production, con aprobación manual del autor (seguridad.md §13).
     environment: production

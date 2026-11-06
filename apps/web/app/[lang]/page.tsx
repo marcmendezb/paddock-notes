@@ -66,10 +66,11 @@ export default async function HomePage({ params }: Params) {
         <div className="container">
           {next === "error" ? (
             <p className="notice">{t.error.data}</p>
-          ) : next ? (
+          ) : next && !(last && last !== "error" && next.data.season > last.data.season) ? (
             <NextGrandPrix lang={lang} next={next} />
           ) : (
-            <SeasonOver lang={lang} drivers={drivers} />
+            // Sin carreras por disputar en la temporada: campeón y arranque de la siguiente (NUC-07).
+            <SeasonOver lang={lang} drivers={drivers} nextSeason={next ? next.data : null} />
           )}
         </div>
       </section>
@@ -204,19 +205,30 @@ function SuggestedExplainer({ lang, race }: { lang: Lang; race: RaceDetail }) {
 function SeasonOver({
   lang,
   drivers,
+  nextSeason,
 }: {
   lang: Lang;
   drivers: Fetched<Standings<DriverStandingRow>> | null | "error";
+  /** Primer GP de la temporada siguiente, si su calendario ya está publicado. */
+  nextSeason: RaceDetail | null;
 }) {
   const t = dict(lang);
-  const leader = drivers && drivers !== "error" ? drivers.data.rows[0] : undefined;
+  const standings = drivers && drivers !== "error" ? drivers.data : null;
+  const leader = standings?.rows[0];
+  const following = (standings?.season ?? new Date().getUTCFullYear()) + 1;
   return (
     <div className="stack">
       <h1 id="next-gp" className="gp-name">
-        {leader && drivers && drivers !== "error"
-          ? t.home.seasonOver(fullName(leader.driver), drivers.data.season)
-          : t.home.noData}
+        {leader && standings ? t.home.seasonOver(fullName(leader.driver), standings.season) : t.home.noData}
       </h1>
+      {nextSeason ? (
+        <p className="lede">
+          {t.home.nextSeason(nextSeason.season, gpName(lang, nextSeason.name), formatDate(lang, nextSeason.date))}{" "}
+          <Link href={`/${lang}/races/${nextSeason.season}`}>{t.calendar.title(nextSeason.season)}</Link>
+        </p>
+      ) : (
+        <p className="lede">{t.home.nextSeasonUnknown(following)}</p>
+      )}
     </div>
   );
 }

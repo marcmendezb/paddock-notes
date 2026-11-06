@@ -127,7 +127,13 @@ export const api = {
   constructorProfile: (id: string) => get<ConstructorProfile>(`/constructors/${encodeURIComponent(id)}`),
   circuit: (id: string) => get<CircuitProfile>(`/circuits/${encodeURIComponent(id)}`),
   circuitLayout: (id: string) =>
-    get<{ points: [number, number][]; length: number; season: number; round: number }>(
+    get<{
+      points: [number, number][];
+      length: number;
+      season: number;
+      round: number;
+      corners: { n: number; at: number; speed: number; gear: number; point: [number, number] }[];
+    }>(
       `/circuits/${encodeURIComponent(id)}/layout`,
     ),
   compare: (a: string, b: string) =>

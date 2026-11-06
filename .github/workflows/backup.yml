@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   backup:
+    # Sin cuenta de Cloudflare configurada no hay nada que copiar.
+    if: vars.CLOUDFLARE_READY == 'true'
     runs-on: ubuntu-latest
     environment: backup
     steps:

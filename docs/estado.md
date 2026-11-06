@@ -7,9 +7,9 @@
 
 | Fase | Hecho | Parcial | Pendiente |
 |---|---|---|---|
-| 1 · MVP | 45 | 4 | 0 |
+| 1 · MVP | 46 | 3 | 0 |
 | 2 · Histórico | 27 | 0 | 0 |
-| 3 · Zona técnica | 15 | 1 | 0 |
+| 3 · Zona técnica | 16 | 0 | 0 |
 | 4 · Comunidad | 13 | 0 | 0 |
 | 5 · Contenido y SEO | 7 | 1 | 2 |
 
@@ -18,7 +18,7 @@
 | ID | Estado | Nota |
 |---|---|---|
 | NUC-01 a NUC-06 | Hecho | Próximo GP, cuenta atrás, horarios en dos zonas, sesión en curso, última carrera, clasificación resumida |
-| NUC-07 | Parcial | Muestra el campeón; falta la fecha de la temporada siguiente (Jolpica no la publica hasta que sale el calendario) |
+| NUC-07 | Hecho | Campeón y arranque de la temporada siguiente (primer GP y fecha); desde octubre la ingesta carga el calendario siguiente en cuanto Jolpica lo publica, y mientras no está se dice |
 | NUC-11 a NUC-16 | Hecho | Calendario, estados, ganador, sprint, selector desde 1950, .ics |
 | NUC-20 a NUC-23 | Hecho | Página de GP con resultado, posiciones ganadas y vuelta rápida |
 | NUC-30 a NUC-32 | Hecho | Clasificaciones con podios y diferencia con el líder |
@@ -55,7 +55,7 @@
 | TEC-11 | Hecho | Imágenes de 1200×630 con `next/og` para la home, cada GP y cada herramienta, con fuente y fecha |
 | TEC-12, TEC-13 | Hecho | km/h o mph recordado; 14 kB por piloto de telemetría |
 | NUC-28, NUC-08 | Hecho | Enlaces al análisis desde la página de GP y la home |
-| NUC-44 | Parcial | El trazado existe; faltan las curvas anotadas |
+| NUC-44 | Hecho | Frenadas detectadas en la telemetría de la vuelta rápida (velocidad mínima, marcha, la más lenta), numeradas sobre el trazado, y notas editoriales en `content/circuits.ts` casadas por posición en la vuelta. Notas escritas: México; el resto de circuitos, a medida que se comprueben (CON-05) |
 
 ## Fase 4 · Comunidad
 
@@ -91,7 +91,7 @@
 
 ## Cifras de calidad
 
-- 162 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
-- 156 pruebas en navegador (153 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
+- 168 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
+- 159 pruebas en navegador (156 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
 - Lint con las reglas D-14 (lectura/escritura) y contra `dangerouslySetInnerHTML` (una única excepción revisada).
 - `pnpm audit` sin vulnerabilidades altas.

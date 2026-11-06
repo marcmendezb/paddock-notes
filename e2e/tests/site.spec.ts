@@ -20,6 +20,7 @@ const PAGES = [
   "/es/drivers/russell",
   "/en/constructors/mercedes",
   "/es/circuits/albert_park",
+  "/es/circuits/rodriguez",
   "/es/compare?a=russell&b=antonelli",
   "/es/search?q=ham",
   // Fase 5: Aprende

@@ -1,9 +1,12 @@
-# Cada pull request: lint, tipos, tests, build y despliegue al entorno de preview (stack.md §12, D-18).
+# Cada pull request y cada push a main: lint, tipos, tests y build. En los PR, además, despliegue al entorno
+# de preview (stack.md §12, D-18), solo si la variable del repositorio CLOUDFLARE_READY vale "true".
 # Acciones fijadas por SHA completo; permisos mínimos (seguridad.md §13).
 name: ci
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -32,7 +35,8 @@ jobs:
   preview:
     needs: check
     # Los PR de forks no reciben secretos (seguridad.md §13).
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    # Sin cuenta de Cloudflare configurada (CLOUDFLARE_READY), no se intenta desplegar.
+    if: github.event.pull_request.head.repo.full_name == github.repository && vars.CLOUDFLARE_READY == 'true'
     runs-on: ubuntu-latest
     environment: preview
     steps:

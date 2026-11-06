@@ -87,7 +87,11 @@ export async function runTask(env: Env, task: TaskName, now = Date.now()) {
 
   await writer.startRun(id, task, new Date(now));
   try {
-    if (task === "schedule") await refreshSchedule(t, season);
+    if (task === "schedule") {
+      await refreshSchedule(t, season);
+      // Desde octubre, también el calendario siguiente, en cuanto Jolpica lo publique (NUC-07).
+      if (new Date(now).getUTCMonth() >= 9) t.rows += (await ingestSchedule(t, season + 1)).length;
+    }
     else if (task === "recent") await ingestRecent(t, season);
     else await weeklyCorrections(t, season);
     await writer.finishRun(id, { status: "ok", requests: ctx.counter.requests, rowsWritten: t.rows });

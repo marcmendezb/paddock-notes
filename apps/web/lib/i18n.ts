@@ -38,6 +38,8 @@ const es = {
     constructorsTop: "Constructores: los tres primeros",
     fullStandings: "Ver la clasificación completa",
     seasonOver: (champion: string, year: number) => `${champion} es campeón del mundo de ${year}.`,
+    nextSeason: (year: number, gp: string, date: string) => `La temporada ${year} arranca con el ${gp}, el ${date}.`,
+    nextSeasonUnknown: (year: number) => `El calendario de ${year} todavía no se ha publicado.`,
     noData: "Todavía no hay datos de la temporada.",
   },
   sessions: {
@@ -188,6 +190,12 @@ const es = {
     layout: (name: string) => `Trazado de ${name}`,
     layoutCaption: (season: number, km: string) => `Trazado generado con la vuelta más rápida de ${season} (OpenF1). ${km} km por vuelta.`,
     cols: { season: "Año", gp: "Gran Premio", winner: "Ganador", team: "Equipo" },
+    braking: "Frenadas de la vuelta",
+    brakingHelp:
+      "Detectadas en la telemetría de la vuelta más rápida: cada punto donde el coche frena fuerte. No es la numeración oficial de curvas: las que se toman a fondo no aparecen y una chicane cuenta una vez.",
+    brakingCols: { n: "N.º", speed: "Velocidad mínima", gear: "Marcha", note: "Nota" },
+    turn: (n: string) => (n.includes("–") ? `Curvas ${n}` : `Curva ${n}`),
+    slowest: "La más lenta de la vuelta",
   },
   compare: {
     title: "Cara a cara",
@@ -514,6 +522,8 @@ const en: Dictionary = {
     constructorsTop: "Constructors: top three",
     fullStandings: "See full standings",
     seasonOver: (champion, year) => `${champion} is the ${year} world champion.`,
+    nextSeason: (year, gp, date) => `The ${year} season starts with the ${gp} on ${date}.`,
+    nextSeasonUnknown: (year) => `The ${year} calendar hasn't been published yet.`,
     noData: "No data for this season yet.",
   },
   sessions: {
@@ -657,6 +667,12 @@ const en: Dictionary = {
     layout: (name) => `Layout of ${name}`,
     layoutCaption: (season, km) => `Layout generated from the fastest lap of ${season} (OpenF1). ${km} km per lap.`,
     cols: { season: "Year", gp: "Grand Prix", winner: "Winner", team: "Team" },
+    braking: "Braking zones",
+    brakingHelp:
+      "Detected in the telemetry of the fastest lap: every point where the car brakes hard. This isn't the official corner numbering: flat-out corners don't show up and a chicane counts once.",
+    brakingCols: { n: "No.", speed: "Minimum speed", gear: "Gear", note: "Note" },
+    turn: (n) => (n.includes("–") ? `Turns ${n}` : `Turn ${n}`),
+    slowest: "Slowest of the lap",
   },
   compare: {
     title: "Head to head",

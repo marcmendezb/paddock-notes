@@ -106,6 +106,41 @@ describe("trazado del circuito (NUC-43)", async () => {
     expect(Math.max(...layout.points.flat())).toBeLessThanOrEqual(1000);
     expect(layout.length).toBeGreaterThan(4100);
   });
+
+  it("detecta las frenadas fuertes de la vuelta, en orden y sobre el trazado (NUC-44)", () => {
+    const fastest = laps.filter((l) => l.lap_duration && !l.is_pit_out_lap).sort((a, b) => a.lap_duration! - b.lap_duration!)[0]!;
+    const info = infos.find((d) => d.number === fastest.driver_number)!;
+    const t = telemetry(info, fastest.lap_number, fastest.date_start!, fastest.lap_duration!, s.list(s.carDataSchema).parse(carJson), s.list(s.locationSchema).parse(locJson))!;
+    const { corners } = circuitLayout(t);
+    expect(corners.length).toBeGreaterThanOrEqual(5);
+    expect(corners.length).toBeLessThanOrEqual(16);
+    expect(corners.map((c) => c.n)).toEqual(corners.map((_, i) => i + 1));
+    for (let i = 1; i < corners.length; i++) expect(corners[i]!.at).toBeGreaterThan(corners[i - 1]!.at);
+    for (const c of corners) {
+      expect(c.speed).toBeGreaterThan(40);
+      expect(c.speed).toBeLessThan(300);
+      expect(Math.max(...c.point)).toBeLessThanOrEqual(1000);
+    }
+  });
+});
+
+describe("frenadas sobre datos sintéticos", async () => {
+  const { brakingZones } = await import("../src");
+  const make = (speed: number[]) =>
+    ({ step: 10, distance: speed.map((_, i) => i * 10), speed, gear: speed.map((v) => (v < 120 ? 3 : 7)) }) as Parameters<typeof brakingZones>[0];
+  const flat = (v: number, n: number) => Array.from({ length: n }, () => v);
+  const dip = (to: number) => [...Array.from({ length: 10 }, (_, i) => 300 - ((300 - to) * (i + 1)) / 10), ...Array.from({ length: 10 }, (_, i) => to + ((300 - to) * (i + 1)) / 10)];
+
+  it("una frenada por curva lenta; una chicane cuenta una vez; un cambio de ritmo pequeño no cuenta", () => {
+    // Chicane: dos mínimos a 40 m (110 y 100 km/h) con un repunte a 150 entre medias.
+    const chicane = [280, 250, 220, 190, 160, 130, 110, 130, 150, 130, 100, 130, 170, 210, 250, 280];
+    const speed = [...flat(300, 60), ...dip(90), ...flat(300, 60), ...chicane, ...flat(300, 60), ...flat(290, 5), ...flat(300, 60)];
+    const zones = brakingZones(make(speed));
+    expect(zones).toHaveLength(2);
+    expect(zones[0]).toMatchObject({ n: 1, gear: 3 });
+    expect(zones[0]!.speed).toBeLessThan(100);
+    expect(zones[1]!.speed).toBe(100);
+  });
 });
 
 describe("clima (NUC-27)", async () => {

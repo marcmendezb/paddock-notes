@@ -277,9 +277,11 @@ Resumen; el detalle está en [seguridad.md](seguridad.md).
 
 | Archivo | Cuándo | Qué hace |
 |---|---|---|
-| `ci.yml` | Cada pull request | Lint, tipos, tests unitarios y de Workers, build; despliegue al entorno de preview; Playwright + axe + Lighthouse CI contra la preview (con *service token* de Access) |
+| `ci.yml` | Cada pull request y cada push a `main` | Lint, tipos, tests unitarios y de Workers, build; en los PR, despliegue al entorno de preview y Playwright + axe + Lighthouse CI contra la preview (con *service token* de Access) |
 | `deploy.yml` | Fusión en `main` | Migraciones de D1 en producción, despliegue de `paddock-api`, `paddock-ingest` y `paddock-web`, comprobación de `/api/v1/health`; si falla, reversión a la versión anterior |
 | `backup.yml` | Miércoles, 03:00 UTC | `wrangler d1 export --remote` y subida a `paddock-backups` (D-15) |
+
+Todo lo que toca Cloudflare (preview, `deploy.yml` y `backup.yml`) espera a la variable de repositorio `CLOUDFLARE_READY = true`, que se activa cuando la cuenta, los recursos y los secretos están creados. Hasta entonces, cada push solo pasa las comprobaciones.
 
 ## 13. Tests
 

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { countryName, gpName } from "@paddock/shared";
+import { countryName, gpName, type Lang } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CircuitMap } from "@/components/charts/circuit-map";
+import { notesFor } from "@/content/circuits";
 import { DriverLink, TeamLink } from "@/components/links";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
@@ -60,7 +61,16 @@ export default async function CircuitPage({ params }: Params) {
           points={layout.data.points}
           label={t.circuit.layout(circuit.name)}
           caption={t.circuit.layoutCaption(layout.data.season, km)}
+          corners={layout.data.corners}
         />
+      ) : null}
+
+      {layout && layout.data.corners.length ? (
+        <section aria-labelledby="braking" className="stack">
+          <h2 id="braking">{t.circuit.braking}</h2>
+          <p className="muted">{t.circuit.brakingHelp}</p>
+          <BrakingTable lang={lang} circuitId={circuit.id} corners={layout.data.corners} />
+        </section>
       ) : null}
 
       <section aria-labelledby="winners" className="stack">
@@ -91,5 +101,42 @@ export default async function CircuitPage({ params }: Params) {
         </div>
       </section>
     </article>
+  );
+}
+
+/** Frenadas de la vuelta rápida con su velocidad mínima y, si la hay, la nota editorial (NUC-44). */
+function BrakingTable({ lang, circuitId, corners }: { lang: Lang; circuitId: string; corners: { n: number; at: number; speed: number; gear: number }[] }) {
+  const t = dict(lang).circuit;
+  const notes = notesFor(circuitId, corners);
+  const slowest = Math.min(...corners.map((c) => c.speed));
+  return (
+    <div className="table-wrap" tabIndex={0} role="region" aria-label={t.braking}>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" className="num">{t.brakingCols.n}</th>
+            <th scope="col" className="num">{t.brakingCols.speed}</th>
+            <th scope="col" className="num">{t.brakingCols.gear}</th>
+            <th scope="col">{t.brakingCols.note}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {corners.map((c) => {
+            const note = notes.get(c.n);
+            return (
+              <tr key={c.n}>
+                <th scope="row" className="num">{c.n}</th>
+                <td className="num">
+                  {c.speed} km/h
+                  {c.speed === slowest ? <span className="tag">{t.slowest}</span> : null}
+                </td>
+                <td className="num">{c.gear || "—"}</td>
+                <td>{note ? `${t.turn(note.turn)}. ${note.note[lang]}` : <span className="muted">—</span>}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

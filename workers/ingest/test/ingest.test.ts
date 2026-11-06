@@ -108,6 +108,14 @@ describe("tarea diaria de calendario", () => {
     expect(run).toEqual({ task: "schedule", status: "ok", requests: 6 });
   });
 
+  it("desde octubre carga también el calendario de la temporada siguiente (NUC-07)", async () => {
+    const calls = mockJolpica();
+    await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
+    expect(calls.some((c) => c.includes("/2027/races"))).toBe(false);
+    await runTask(env, "schedule", Date.parse("2026-10-15T04:00:00Z"));
+    expect(calls.some((c) => c.includes("/2027/races"))).toBe(true);
+  });
+
   it("es idempotente: repetir la tarea no duplica filas", async () => {
     mockJolpica();
     const now = Date.parse("2026-03-10T12:00:00Z");
