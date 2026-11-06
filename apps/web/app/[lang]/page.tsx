@@ -19,6 +19,7 @@ import { api, type Fetched } from "@/lib/api";
 import { formatDate, formatDateTime, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { CIRCUIT_GUIDES } from "@/content/circuit-guides";
 import { parseLang } from "@/lib/params";
 import { favoriteSet } from "@/lib/session";
 
@@ -190,6 +191,11 @@ function NextGrandPrix({ lang, next }: { lang: Lang; next: Fetched<RaceDetail> }
           <h2 className="h-small">{t.home.schedule}</h2>
           <SessionList lang={lang} sessions={race.sessions} circuitTimeZone={tz} />
         </div>
+      ) : null}
+      {CIRCUIT_GUIDES[race.circuit.id] ? (
+        <p>
+          <Link href={`/${lang}/circuits/${race.circuit.id}#guide`}>{t.home.preview(race.circuit.name)}</Link>
+        </p>
       ) : null}
       <SuggestedExplainer lang={lang} race={race} />
     </div>

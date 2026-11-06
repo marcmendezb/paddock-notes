@@ -42,6 +42,33 @@ export const CIRCUIT_NOTES: Record<string, CornerNote[]> = {
       },
     },
   ],
+  // Circuito de las Américas (Austin). Comprobado con la telemetría de 2026 (vuelta de 5,39 km medida).
+  americas: [
+    {
+      at: 0.115,
+      turn: "1",
+      note: {
+        es: "Una horquilla a la izquierda en lo alto de una subida muy empinada. Se frena cuesta arriba y la curva es tan ancha que admite varias trazadas: en la salida caben coches en paralelo.",
+        en: "A left-hand hairpin at the top of a very steep climb. Drivers brake uphill and the corner is so wide it allows several lines: at the start, cars fit side by side.",
+      },
+    },
+    {
+      at: 0.466,
+      turn: "11",
+      note: {
+        es: "Horquilla lenta antes de la recta más larga del circuito. Salir bien de aquí decide quién llega con rebufo a la curva 12.",
+        en: "A slow hairpin before the longest straight on the track. A good exit here decides who arrives at turn 12 with the slipstream.",
+      },
+    },
+    {
+      at: 0.686,
+      turn: "12",
+      note: {
+        es: "La frenada al final de la recta opuesta. Junto a la curva 1, el mejor punto para adelantar.",
+        en: "The braking zone at the end of the back straight. Along with turn 1, the best place to overtake.",
+      },
+    },
+  ],
 };
 
 /** La nota de cada frenada, si la hay: la más cercana dentro de la tolerancia, y cada nota una sola vez. */

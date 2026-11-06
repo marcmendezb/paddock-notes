@@ -21,6 +21,12 @@ const PAGES = [
   "/en/constructors/mercedes",
   "/es/circuits/albert_park",
   "/es/circuits/rodriguez",
+  "/es/circuits/interlagos",
+  "/en/circuits/interlagos",
+  "/es/circuits/vegas",
+  "/es/circuits/americas",
+  "/es/circuits/losail",
+  "/en/circuits/yas_marina",
   "/es/compare?a=russell&b=antonelli",
   "/es/search?q=ham",
   // Fase 5: Aprende

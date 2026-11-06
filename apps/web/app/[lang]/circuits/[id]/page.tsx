@@ -5,8 +5,11 @@ import { countryName, gpName, type Lang } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CircuitMap } from "@/components/charts/circuit-map";
 import { notesFor } from "@/content/circuits";
+import { CIRCUIT_GUIDES } from "@/content/circuit-guides";
+import { StatGrid } from "@/components/stat-grid";
 import { DriverLink, TeamLink } from "@/components/links";
 import { api } from "@/lib/api";
+import { formatDate, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
 
@@ -40,9 +43,16 @@ export default async function CircuitPage({ params }: Params) {
   const { lang, profile } = await load(params);
   const t = dict(lang);
   const { circuit, races } = profile;
+  // Una respuesta cacheada de antes de añadir `facts` no los trae: la página sale igual, sin esas cifras.
+  const facts = profile.facts ?? { laps: null, fastestRaceLap: null };
   const place = `${circuit.locality}, ${countryName(lang, circuit.country)}`;
   const first = races.at(-1);
+  // Solo cuentan los Grandes Premios ya disputados, no el del próximo fin de semana.
+  const today = new Date().toISOString().slice(0, 10);
+  const held = races.filter((r) => r.date < today);
   const layout = await api.circuitLayout(circuit.id);
+  const guide = CIRCUIT_GUIDES[circuit.id];
+  const GuideBody = guide?.body[lang];
   const km = layout ? new Intl.NumberFormat(lang === "es" ? "es-ES" : "en-GB", { maximumFractionDigits: 2 }).format(layout.data.length / 1000) : "";
 
   return (
@@ -52,9 +62,37 @@ export default async function CircuitPage({ params }: Params) {
         <header className="stack-s">
           <p className="eyebrow">{place}</p>
           <h1>{circuit.name}</h1>
-          {first ? <p className="lede">{t.circuit.lede(circuit.name, place, races.length, first.season)}</p> : null}
+          {first && held.length ? <p className="lede">{t.circuit.lede(circuit.name, place, held.length, first.season)}</p> : null}
         </header>
+        <StatGrid
+          items={[
+            ...(first ? [{ label: t.circuit.facts.first, value: first.season }] : []),
+            ...(facts.laps
+              ? [{ label: t.circuit.facts.laps, value: facts.laps.laps, detail: String(facts.laps.season) }]
+              : []),
+            ...(facts.fastestRaceLap
+              ? [
+                  {
+                    label: t.circuit.facts.fastest,
+                    value: facts.fastestRaceLap.time,
+                    detail: `${fullName(facts.fastestRaceLap.driver)}, ${facts.fastestRaceLap.season}`,
+                  },
+                ]
+              : []),
+          ]}
+        />
+        {facts.fastestRaceLap ? <p className="source">{t.circuit.facts.fastestNote}</p> : null}
       </div>
+
+      {guide && GuideBody ? (
+        <section aria-label={t.circuit.guide} className="stack" id="guide">
+          <p className="eyebrow">{t.circuit.guide}</p>
+          <div className="article">
+            <GuideBody />
+          </div>
+          <p className="source">{t.circuit.guideUpdated(formatDate(lang, guide.updated))}</p>
+        </section>
+      ) : null}
 
       {layout ? (
         <CircuitMap

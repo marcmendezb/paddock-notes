@@ -223,6 +223,15 @@ describe("fase 2: histórico", () => {
     expect(circuit.races[0]!.winner?.id).toBe("russell");
   });
 
+  it("la ficha de circuito trae vueltas y vuelta rápida de carrera calculadas (CON-05)", async () => {
+    const circuit = await data<{ facts: { laps: { season: number; laps: number } | null; fastestRaceLap: { time: string; season: number } | null } }>(
+      "/circuits/albert_park",
+    );
+    expect(circuit.facts.laps).toMatchObject({ season: 2026 });
+    expect(circuit.facts.laps!.laps).toBeGreaterThan(50);
+    expect(circuit.facts.fastestRaceLap?.time).toMatch(/^\d:\d{2}\.\d{3}$/);
+  });
+
   it("compara dos pilotos", async () => {
     const cmp = await data<{ headToHead: { races: unknown[]; aAhead: number; bAhead: number } }>("/compare/drivers/russell/antonelli");
     expect(cmp.headToHead.races).toHaveLength(1);
@@ -284,5 +293,17 @@ describe("fase 3: zona técnica", () => {
     expect((await api("/analysis/2026/1/pace")).status).toBe(404);
     expect((await api("/analysis/2026/1/nada")).status).toBe(400);
     expect((await api("/analysis/2026/2")).status).toBe(404);
+  });
+
+  it("un análisis rehecho (otra versión) se sirve al momento, sin esperar a que caduque la caché", async () => {
+    const writer = createF1Writer(env.DB);
+    const base = { season: 2026, round: 1, sessionKey: 9999, tools: ["strategy"], telemetryDrivers: [] };
+    await env.ANALYSIS.put("analysis/2026/1/v1/strategy.json", JSON.stringify({ laps: 58, drivers: [] }));
+    await writer.saveAnalysis({ ...base, version: 1, createdAt: "2026-03-08T10:00:00.000Z" });
+    expect((await (await api("/analysis/2026/1/strategy")).json<{ data: { laps: number } }>()).data.laps).toBe(58);
+
+    await env.ANALYSIS.put("analysis/2026/1/v2/strategy.json", JSON.stringify({ laps: 57, drivers: [] }));
+    await writer.saveAnalysis({ ...base, version: 2, createdAt: "2026-11-06T18:00:00.000Z" });
+    expect((await (await api("/analysis/2026/1/strategy")).json<{ data: { laps: number } }>()).data.laps).toBe(57);
   });
 });

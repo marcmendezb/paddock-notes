@@ -184,10 +184,22 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
 
 /** Margen tras el final previsto de una sesión: retrasos y banderas rojas. */
 const LIVE_MARGIN_MS = 45 * 60_000;
+/**
+ * OpenF1 cierra el acceso desde 30 minutos antes de cada sesión; un análisis tarda unos minutos, así que
+ * no se empieza si la siguiente sesión arranca en menos de una hora.
+ */
+const BEFORE_SESSION_MS = 60 * 60_000;
 
-/** ¿Hay una sesión de F1 en directo (o recién terminada) según el calendario cargado? */
+/** ¿Hay una sesión de F1 en directo, recién terminada o a punto de empezar, según el calendario cargado? */
 export async function liveSession(reader: ReturnType<typeof createF1Reader>, now: number): Promise<boolean> {
   const season = new Date(now).getUTCFullYear();
   const schedule = await reader.getSchedule(season, now);
-  return schedule.some((r) => r.sessions.some((s) => isSessionLive(s, now) || isSessionLive(s, now - LIVE_MARGIN_MS)));
+  return schedule.some((r) =>
+    r.sessions.some(
+      (s) =>
+        isSessionLive(s, now) ||
+        isSessionLive(s, now - LIVE_MARGIN_MS) ||
+        (s.startsAt !== null && Date.parse(s.startsAt) > now && Date.parse(s.startsAt) - now < BEFORE_SESSION_MS),
+    ),
+  );
 }

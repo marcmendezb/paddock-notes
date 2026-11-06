@@ -401,6 +401,7 @@ Fuera de temporada: newsletter quincenal, explicadores y piezas de histórico.
 **Dónde se escribe cada pieza:**
 
 - **Nota post-carrera:** `apps/web/content/notes/es/{slug}.mdx` y `en/{slug}.mdx`, más su entrada (título, entradilla, fecha, carrera y explicador) en `packages/shared/src/notes.ts` y el import en `apps/web/content/notes.ts`. Los gráficos se insertan con `<StrategyFigure season={…} round={…} caption="…" />` y `<PaceFigure season={…} round={…} drivers={[…]} caption="…" />`: salen con los datos reales, su tabla equivalente y el enlace a la herramienta.
+- **Ficha de circuito:** `apps/web/content/circuit-guides/es/{id}.mdx` y `en/{id}.mdx`, registrada en `apps/web/content/circuit-guides.ts`. Sin cifras en el texto: la página pinta primera edición, vueltas y vuelta rápida con los datos.
 - **Notas de curvas:** `apps/web/content/circuits.ts`, situadas por su posición en la vuelta (`at`) y comprobadas contra la telemetría.
 
 1. **Borrador** en MDX en una rama del repositorio.

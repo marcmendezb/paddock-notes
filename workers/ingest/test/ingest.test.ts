@@ -329,6 +329,8 @@ describe("análisis tras la carrera (D-08)", () => {
     const { created, testEnv } = fakePostRace();
     // Libres 1 de China: 13 de marzo a las 03:30 UTC.
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T04:00:00Z"))).toBe("aplazada: sesión en directo");
+    // Y tampoco en la hora previa: OpenF1 se cierra 30 minutos antes de cada sesión.
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T03:00:00Z"))).toBe("aplazada: sesión en directo");
     expect(created).toHaveLength(0);
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T12:00:00Z"))).toMatch(/^creada:/);
   });

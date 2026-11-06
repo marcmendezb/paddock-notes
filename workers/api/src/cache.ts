@@ -18,15 +18,21 @@ export interface CacheOptions {
   kvFallback?: boolean;
   /** Fuente de los datos (D-12). Por defecto, Jolpica F1. */
   source?: string;
+  /**
+   * Parte extra de la clave: cuando cambia, la copia anterior deja de servirse. Los análisis la usan con su
+   * versión y fecha, para que un análisis rehecho se vea al momento y no al caducar la caché.
+   */
+  variant?: string;
 }
 
 const KV_PREFIX = "last-good:";
 const KV_TTL_SECONDS = 7 * 24 * 3600;
 
 /** Clave de caché normalizada: solo la ruta, sin consulta (las rutas de lectura no admiten parámetros). */
-function cacheKey(c: Context<AppEnv>): Request {
+function cacheKey(c: Context<AppEnv>, variant?: string): Request {
   const url = new URL(c.req.url);
-  return new Request(`https://cache.paddocknotes.internal${url.pathname}`, { method: "GET" });
+  const suffix = variant ? `?v=${encodeURIComponent(variant)}` : "";
+  return new Request(`https://cache.paddocknotes.internal${url.pathname}${suffix}`, { method: "GET" });
 }
 
 function respond<T>(c: Context<AppEnv>, envelope: ApiEnvelope<T>, ttl: number, stale: boolean): Response {
@@ -47,7 +53,7 @@ export async function cached<T>(
   options: CacheOptions,
   load: () => Promise<Payload<T> | null>,
 ): Promise<Response> {
-  const key = cacheKey(c);
+  const key = cacheKey(c, options.variant);
   const cache = caches.default;
   const hit = await cache.match(key);
   if (hit) return hit;

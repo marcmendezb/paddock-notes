@@ -28,6 +28,7 @@ const es = {
     startsOn: (date: string) => `La carrera empieza el ${date}.`,
     schedule: "Horarios en tu zona horaria",
     toUnderstand: "Para entender este GP:",
+    preview: (circuit: string) => `La previa: cómo es ${circuit}`,
     live: "En curso",
     addToCalendar: "Añadir al calendario (.ics)",
     circuitTime: "hora del circuito",
@@ -201,6 +202,14 @@ const es = {
     layout: (name: string) => `Trazado de ${name}`,
     layoutCaption: (season: number, km: string) => `Trazado generado con la vuelta más rápida de ${season} (OpenF1). ${km} km por vuelta.`,
     cols: { season: "Año", gp: "Gran Premio", winner: "Ganador", team: "Equipo" },
+    facts: {
+      first: "Primera edición",
+      laps: "Vueltas",
+      fastest: "Vuelta rápida en carrera",
+      fastestNote: "La vuelta rápida más rápida en carrera de los datos disponibles (desde 2004). Si el trazado cambió, no es comparable entre épocas.",
+    },
+    guide: "La previa",
+    guideUpdated: (date: string) => `Revisado el ${date}.`,
     braking: "Frenadas de la vuelta",
     brakingHelp:
       "Detectadas en la telemetría de la vuelta más rápida: cada punto donde el coche frena fuerte. No es la numeración oficial de curvas: las que se toman a fondo no aparecen y una chicane cuenta una vez.",
@@ -315,6 +324,7 @@ const es = {
       `${names}: la posición al cruzar la meta (OpenF1) no coincide con la clasificación oficial (Jolpica), que incluye las sanciones posteriores a la carrera.`,
   },
   learn: {
+    circuitGuides: "Fichas de circuito",
     nav: "Aprende",
     title: "Aprende",
     lede: "Explicaciones cortas para entender lo que pasa en una carrera, con ejemplos reales y enlaces a nuestros gráficos.",
@@ -527,6 +537,7 @@ const en: Dictionary = {
     startsOn: (date) => `The race starts on ${date}.`,
     schedule: "Times in your time zone",
     toUnderstand: "To understand this race:",
+    preview: (circuit) => `The preview: what ${circuit} is like`,
     live: "Live now",
     addToCalendar: "Add to calendar (.ics)",
     circuitTime: "circuit time",
@@ -693,6 +704,14 @@ const en: Dictionary = {
     layout: (name) => `Layout of ${name}`,
     layoutCaption: (season, km) => `Layout generated from the fastest lap of ${season} (OpenF1). ${km} km per lap.`,
     cols: { season: "Year", gp: "Grand Prix", winner: "Winner", team: "Team" },
+    facts: {
+      first: "First race",
+      laps: "Laps",
+      fastest: "Fastest race lap",
+      fastestNote: "The fastest race lap in the available data (since 2004). If the layout changed, it isn't comparable across eras.",
+    },
+    guide: "The preview",
+    guideUpdated: (date) => `Reviewed on ${date}.`,
     braking: "Braking zones",
     brakingHelp:
       "Detected in the telemetry of the fastest lap: every point where the car brakes hard. This isn't the official corner numbering: flat-out corners don't show up and a chicane counts once.",
@@ -806,6 +825,7 @@ const en: Dictionary = {
       `${names}: the position crossing the line (OpenF1) doesn't match the official classification (Jolpica), which includes post-race penalties.`,
   },
   learn: {
+    circuitGuides: "Circuit guides",
     nav: "Learn",
     title: "Learn",
     lede: "Short explanations of what happens in a race, with real examples and links to our charts.",

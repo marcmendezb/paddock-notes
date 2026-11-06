@@ -211,6 +211,13 @@ export interface ConstructorProfile {
 export interface CircuitProfile {
   circuit: CircuitSummary & { lat: number; lng: number };
   races: { season: number; round: number; name: string; date: string; winner: DriverRef | null; constructor: ConstructorRef | null }[];
+  /** Datos de la ficha (CON-05), calculados con los resultados guardados. */
+  facts: {
+    /** Vueltas de la última carrera disputada. */
+    laps: { season: number; laps: number } | null;
+    /** Vuelta rápida en carrera más rápida de los datos (Jolpica la tiene desde 2004). */
+    fastestRaceLap: { time: string; season: number; driver: DriverRef } | null;
+  };
 }
 
 export interface DriverComparison {

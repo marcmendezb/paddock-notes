@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NOTES } from "@paddock/shared";
+import { CIRCUIT_GUIDES, CIRCUIT_NAMES } from "@/content/circuit-guides";
 import { EXPLAINERS, GUIDE_SLUG } from "@/content";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
@@ -52,6 +53,16 @@ export default async function LearnPage({ params }: Props) {
           </p>
         </section>
       ) : null}
+      <section aria-labelledby="circuit-guides" className="stack-s">
+        <h2 id="circuit-guides">{dict(lang).learn.circuitGuides}</h2>
+        <ul className="link-list">
+          {Object.keys(CIRCUIT_GUIDES).map((id) => (
+            <li key={id}>
+              <Link href={`/${lang}/circuits/${id}#guide`}>{CIRCUIT_NAMES[id] ?? id}</Link>
+            </li>
+          ))}
+        </ul>
+      </section>
       <section aria-labelledby="explainers" className="stack">
         <h2 id="explainers">{t.explainers}</h2>
         <ul className="cards">

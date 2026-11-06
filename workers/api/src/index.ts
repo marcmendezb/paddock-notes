@@ -3,7 +3,7 @@ import type { Context } from "hono";
 import { createCommunity } from "@paddock/db/community";
 import { createF1Reader, type F1Reader } from "@paddock/db/f1-read";
 import { resourceKey } from "@paddock/db/schema";
-import { analysisKey, circuitLayout, type TelemetryData } from "@paddock/analysis";
+import { analysisKey, circuitLayout, CORNERS_VERSION, type TelemetryData } from "@paddock/analysis";
 import { DATA_LICENSE, FIRST_SEASON, SOURCE_JOLPICA, SOURCE_OPENF1, isResultOverdue, type RaceSummary } from "@paddock/shared";
 import { cached } from "./cache";
 import { mountCommunity } from "./community-routes";
@@ -402,12 +402,18 @@ app.use("/analysis", noQueryParams, rateLimit);
 app.use("/analysis/*", noQueryParams, rateLimit);
 
 /** JSON de análisis guardado en R2 por el Workflow POST_RACE (D-08). */
+/**
+ * Fichero de un análisis en R2, cacheado con la versión y la fecha del análisis en la clave: si la ingesta
+ * lo rehace (otra versión de los cálculos), la respuesta nueva se sirve al momento.
+ */
 async function analysisFile(c: Context<AppEnv>, season: number, round: number, file: string) {
   const index = await reader(c).getAnalysis(season, round);
-  if (!index) return null;
-  const object = await c.env.ANALYSIS.get(analysisKey(season, round, file, index.version));
-  if (!object) return null;
-  return { data: await object.json<unknown>(), updatedAt: index.createdAt };
+  if (!index) throw new HttpError("not_found", "No hay análisis de esta carrera todavía.");
+  return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant: `${index.version}-${index.createdAt}` }, async () => {
+    const object = await c.env.ANALYSIS.get(analysisKey(season, round, file, index.version));
+    if (!object) return null;
+    return { data: await object.json<unknown>(), updatedAt: index.createdAt };
+  });
 }
 
 get({ method: "get", path: "/analysis", responses: ok("Últimas carreras analizadas") }, async (c) =>
@@ -449,7 +455,7 @@ get(
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
-    return cached(c, { ttl: DAY, source: SOURCE_OPENF1 }, () => analysisFile(c, season, Number(params.round), params.tool!));
+    return analysisFile(c, season, Number(params.round), params.tool!);
   },
 );
 
@@ -468,9 +474,7 @@ get(
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
-    return cached(c, { ttl: DAY, source: SOURCE_OPENF1 }, () =>
-      analysisFile(c, season, Number(params.round), `telemetry/${Number(params.driver)}`),
-    );
+    return analysisFile(c, season, Number(params.round), `telemetry/${Number(params.driver)}`);
   },
 );
 
@@ -483,9 +487,12 @@ get(
     request: { params: z.object({ id: idParam("id") }) },
     responses: ok("Trazado del circuito, de la última carrera analizada allí (D-09)"),
   },
-  async (c, params) =>
-    cached(c, { ttl: DAY, source: SOURCE_OPENF1 }, async () => {
-      const latest = await reader(c).latestAnalysisAtCircuit(params.id!);
+  async (c, params) => {
+    // La clave lleva el análisis del que sale y la versión de la detección de frenadas: si cambia cualquiera
+    // de los dos, el trazado nuevo se sirve al momento.
+    const latest = await reader(c).latestAnalysisAtCircuit(params.id!);
+    const variant = latest ? `${latest.season}-${latest.round}-${latest.version}-${latest.createdAt}-c${CORNERS_VERSION}` : "none";
+    return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant }, async () => {
       const driver = latest?.telemetryDrivers[0];
       if (!latest || driver === undefined) return null;
       const object = await c.env.ANALYSIS.get(
@@ -494,7 +501,8 @@ get(
       if (!object) return null;
       const layout = circuitLayout(await object.json<TelemetryData>());
       return { data: { ...layout, season: latest.season, round: latest.round }, updatedAt: null };
-    }),
+    });
+  },
 );
 
 // ---- Fase 4: quiz semanal -------------------------------------------------------------------

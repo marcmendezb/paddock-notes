@@ -371,7 +371,21 @@ export function createHistoryReader(db: Db) {
       left join constructors c on c.id = r.constructor_id
       where races.circuit_id = ${id}
       order by races.season desc`);
+    const [laps] = await all<{ season: number; laps: number }>(sql`
+      select r.season, r.laps from results r join races on races.season = r.season and races.round = r.round
+      where races.circuit_id = ${id} and r.kind = 'race' and r.position = 1
+      order by r.season desc, r.round desc limit 1`);
+    const fastest = await all<DriverRow & { season: number; time: string }>(sql`
+      select r.season, r.fastest_lap_time as time, d.id, d.code, d.given_name, d.family_name
+      from results r join races on races.season = r.season and races.round = r.round join drivers d on d.id = r.driver_id
+      where races.circuit_id = ${id} and r.kind = 'race' and r.fastest_lap_rank = 1 and r.fastest_lap_time is not null`);
+    const seconds = (t: string) => t.split(":").reduce((acc, part) => acc * 60 + Number(part), 0);
+    const best = fastest.filter((f) => /^\d+:\d{2}\.\d{3}$/.test(f.time)).sort((a, b) => seconds(a.time) - seconds(b.time))[0];
     return {
+      facts: {
+        laps: laps ?? null,
+        fastestRaceLap: best ? { time: best.time, season: best.season, driver: driverRef(best) } : null,
+      },
       circuit: c,
       races: races.map((r) => ({
         season: r.season,
@@ -553,12 +567,12 @@ export function createHistoryReader(db: Db) {
 
   /** Último análisis de una carrera en ese circuito: de su telemetría sale el trazado (D-09). */
   async function latestAnalysisAtCircuit(circuitId: string) {
-    const [row] = await all<{ season: number; round: number; version: number; telemetry_drivers: string }>(sql`
-      select a.season, a.round, a.version, a.telemetry_drivers from analysis_artifacts a
+    const [row] = await all<{ season: number; round: number; version: number; telemetry_drivers: string; created_at: string }>(sql`
+      select a.season, a.round, a.version, a.telemetry_drivers, a.created_at from analysis_artifacts a
       join races on races.season = a.season and races.round = a.round
       where races.circuit_id = ${circuitId}
       order by a.season desc, a.round desc limit 1`);
-    return row ? { ...row, telemetryDrivers: JSON.parse(row.telemetry_drivers) as number[] } : null;
+    return row ? { ...row, createdAt: row.created_at, telemetryDrivers: JSON.parse(row.telemetry_drivers) as number[] } : null;
   }
 
   /** Últimas carreras analizadas, de la más reciente a la más antigua (TEC-01). */

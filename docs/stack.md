@@ -230,7 +230,7 @@ Sin coste de salida de datos. El plan gratuito de R2 incluye 10 GB de almacenami
 
 ### 8.3 KV y Cache API
 
-Cache API para todas las respuestas públicas de la API, con claves normalizadas. KV solo para los datos más leídos, como copia de último recurso si D1 falla. Nunca como fuente de verdad.
+Cache API para todas las respuestas públicas de la API, con claves normalizadas. Las de los análisis llevan además la versión y la fecha del análisis en la clave: cuando la ingesta rehace uno (por ejemplo, al subir `ANALYSIS_VERSION`), la respuesta nueva se sirve al momento. KV solo para los datos más leídos, como copia de último recurso si D1 falla. Nunca como fuente de verdad.
 
 ## 9. Comunidad y email (fases 4 y 5)
 

@@ -88,6 +88,9 @@ export function delta(a: TelemetryData, b: TelemetryData): { distance: number[];
  * Trazado de un circuito (NUC-43, D-09) a partir de las coordenadas de una vuelta: se normaliza a una
  * caja de 0 a 1000 y se reduce a un punto cada `every` metros. El SVG se dibuja en la web.
  */
+/** Versión de la detección de frenadas: forma parte de la clave de caché del trazado. Súbela al cambiarla. */
+export const CORNERS_VERSION = 2;
+
 export interface BrakingZone {
   /** Orden en la vuelta, desde la línea de meta. */
   n: number;
@@ -130,11 +133,18 @@ export function brakingZones(t: TelemetryData, { minDrop = 20, window = 600, mer
   // El suavizado desplaza el mínimo (en una chicane cae en el repunte entre los dos vértices): cada zona se
   // ajusta a la muestra real más lenta de su entorno.
   const around = Math.max(1, Math.round(merge / t.step));
-  const refined = found.map((i) => {
+  const refined: number[] = [];
+  for (const i of found) {
     let best = i;
     for (let j = Math.max(0, i - around); j <= Math.min(n - 1, i + around); j++) if (t.speed[j]! < t.speed[best]!) best = j;
-    return best;
-  });
+    // Al ajustar, dos zonas cercanas pueden caer casi en el mismo sitio: cuentan como una, la más lenta.
+    const prev = refined.at(-1);
+    if (prev !== undefined && t.distance[best]! - t.distance[prev]! < merge) {
+      if (t.speed[best]! < t.speed[prev]!) refined[refined.length - 1] = best;
+      continue;
+    }
+    if (prev === undefined || best > prev) refined.push(best);
+  }
   const length = t.distance.at(-1) || 1;
   return refined.map((i, k) => ({
     n: k + 1,

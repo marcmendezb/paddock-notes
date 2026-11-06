@@ -115,7 +115,9 @@ describe("trazado del circuito (NUC-43)", async () => {
     expect(corners.length).toBeGreaterThanOrEqual(5);
     expect(corners.length).toBeLessThanOrEqual(16);
     expect(corners.map((c) => c.n)).toEqual(corners.map((_, i) => i + 1));
-    for (let i = 1; i < corners.length; i++) expect(corners[i]!.at).toBeGreaterThan(corners[i - 1]!.at);
+    // Ordenadas y separadas al menos por la distancia de fusión (120 m): nunca dos zonas en el mismo sitio.
+    const length = t.distance.at(-1)!;
+    for (let i = 1; i < corners.length; i++) expect((corners[i]!.at - corners[i - 1]!.at) * length).toBeGreaterThanOrEqual(110);
     for (const c of corners) {
       expect(c.speed).toBeGreaterThan(40);
       expect(c.speed).toBeLessThan(300);

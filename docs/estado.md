@@ -11,7 +11,7 @@
 | 2 · Histórico | 27 | 0 | 0 |
 | 3 · Zona técnica | 16 | 0 | 0 |
 | 4 · Comunidad | 13 | 0 | 0 |
-| 5 · Contenido y SEO | 7 | 2 | 1 |
+| 5 · Contenido y SEO | 7 | 3 | 0 |
 
 ## Fase 1 · MVP
 
@@ -55,7 +55,7 @@
 | TEC-11 | Hecho | Imágenes de 1200×630 con `next/og` para la home, cada GP y cada herramienta, con fuente y fecha |
 | TEC-12, TEC-13 | Hecho | km/h o mph recordado; 14 kB por piloto de telemetría |
 | NUC-28, NUC-08 | Hecho | Enlaces al análisis desde la página de GP y la home |
-| NUC-44 | Hecho | Frenadas detectadas en la telemetría de la vuelta rápida (velocidad mínima, marcha, la más lenta), numeradas sobre el trazado, y notas editoriales en `content/circuits.ts` casadas por posición en la vuelta. Notas escritas: México; el resto de circuitos, a medida que se comprueben (CON-05) |
+| NUC-44 | Hecho | Frenadas detectadas en la telemetría de la vuelta rápida (velocidad mínima, marcha, la más lenta), numeradas sobre el trazado, y notas editoriales en `content/circuits.ts` casadas por posición en la vuelta. Notas escritas: México y Austin; el resto de circuitos, a medida que se comprueben (CON-05) |
 
 ## Fase 4 · Comunidad
 
@@ -83,7 +83,7 @@
 | CON-02 | Hecho | Glosario de 60 términos con buscador |
 | CON-03 | Hecho | Guía «Cómo entender una carrera en 10 minutos» |
 | CON-04 | Parcial | Sistema listo: notas en MDX (ES y EN) con los gráficos reales de la carrera (`<StrategyFigure>`, `<PaceFigure>`), índice en `/notes`, enlace desde la home, la ficha del GP, «Aprende», el sitemap y la newsletter, y Article en JSON-LD. Publicada: México 2026. Falta la cadencia editorial de cada GP |
-| CON-05 | Pendiente | Fichas de circuito editoriales: el trazado con frenadas y notas ya existe (NUC-44); falta el texto de cada circuito |
+| CON-05 | Parcial | Sistema listo: ficha editorial en MDX (ES y EN) en `content/circuit-guides/`, cifras calculadas con los datos (primera edición, vueltas, vuelta rápida en carrera), enlace «La previa» desde la home antes del GP e índice en «Aprende». Publicadas las de los cuatro GP que quedan en 2026: Interlagos, Las Vegas, Losail y Yas Marina. Falta el resto de circuitos, uno antes de cada GP |
 | CON-06 | Hecho | Newsletter de los martes tras cada carrera, compuesta con los datos (carrera en 5 líneas, gráfico, dato histórico, explicador, próxima cita), listas ES y EN, Workflow `MAILING` en lotes de 40. Falta la dirección postal del pie (`MAIL_POSTAL_ADDRESS`) y la edición quincenal fuera de temporada |
 | NUC-10 | Hecho | Alta en una línea en la home y en `/newsletter`, con Turnstile cargado al tocar el formulario y doble confirmación con botón |
 | CON-07 | Hecho | Títulos, descripciones, canónicas y hreflang |
@@ -92,8 +92,8 @@
 
 ## Cifras de calidad
 
-- 180 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
-- 171 pruebas en navegador (168 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
+- 182 tests unitarios y de Workers (shared, db, analysis, web, ingest, api).
+- 189 pruebas en navegador (186 pasan y 3 se omiten por proyecto) (escritorio, móvil y modo oscuro), con axe en todas las páginas y comprobación de enlaces internos.
 - Lint con las reglas D-14 (lectura/escritura) y contra `dangerouslySetInnerHTML` (una única excepción revisada).
 - `pnpm audit` sin vulnerabilidades altas; gitleaks sin hallazgos en el historial.
 - CI de GitHub en verde en cada push a `main` (lint, tipos, tests, build y gitleaks).

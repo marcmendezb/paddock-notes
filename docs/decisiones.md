@@ -290,7 +290,7 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 
 **Decisión:**
 
-- `advanceAnalysis` no empieza ningún análisis si, según el calendario cargado, hay una sesión en curso o terminó hace menos de 45 minutos (margen para retrasos y banderas rojas).
+- `advanceAnalysis` no empieza ningún análisis si, según el calendario cargado, hay una sesión en curso, terminó hace menos de 45 minutos (margen para retrasos y banderas rojas) o empieza en menos de una hora (OpenF1 se cierra 30 minutos antes).
 - `fetchJson` convierte ese 401 concreto de OpenF1 en `LiveSessionError` (un aplazamiento, no un error) y pausa el limitador de OpenF1 15 minutos.
 - Los pasos de `POST_RACE` se reintentan 30 veces cada 5 minutos: dos horas y media, más que una sesión con interrupciones.
 
