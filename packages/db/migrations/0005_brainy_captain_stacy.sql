@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `inactive_warned_at` integer;

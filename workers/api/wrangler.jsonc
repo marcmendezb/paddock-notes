@@ -1,0 +1,64 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "paddock-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "limits": { "cpu_ms": 50 },
+  "routes": [{ "pattern": "paddocknotes.dev/api/*", "zone_name": "paddocknotes.dev" }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "paddock-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+  "kv_namespaces": [{ "binding": "CACHE", "id": "00000000000000000000000000000000" }],
+  "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis", "jurisdiction": "eu" }],
+  "ratelimits": [
+    { "name": "RATE_LIMIT_READ", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
+    { "name": "RATE_LIMIT_WRITE", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }
+  ],
+  // Email Service (D-16). En wrangler dev se simula: el mensaje se escribe en el log.
+  "send_email": [{ "name": "EMAIL" }],
+  // AUTH_SECRET, TURNSTILE_SECRET y las credenciales OAuth van con `wrangler secret put` (seguridad.md §11).
+  "vars": {
+    "SITE_URL": "https://paddocknotes.dev",
+    "AUTH_BASE_URL": "https://paddocknotes.dev",
+    "TRUSTED_ORIGINS": "https://paddocknotes.dev",
+    "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>"
+  },
+  "env": {
+    "preview": {
+      "name": "paddock-api-preview",
+      "workers_dev": true,
+      "preview_urls": false,
+      "routes": [],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "paddock-db-preview",
+          "database_id": "00000000-0000-0000-0000-000000000001",
+          "migrations_dir": "../../packages/db/migrations"
+        }
+      ],
+      "kv_namespaces": [{ "binding": "CACHE", "id": "00000000000000000000000000000001" }],
+      "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis-preview", "jurisdiction": "eu" }],
+      "ratelimits": [
+        { "name": "RATE_LIMIT_READ", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
+        { "name": "RATE_LIMIT_WRITE", "namespace_id": "1004", "simple": { "limit": 10, "period": 60 } }
+      ],
+      "send_email": [{ "name": "EMAIL" }],
+      "vars": {
+        "SITE_URL": "https://paddock-web-preview.workers.dev",
+        "AUTH_BASE_URL": "https://paddock-web-preview.workers.dev",
+        "TRUSTED_ORIGINS": "https://paddock-web-preview.workers.dev",
+        "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>"
+      }
+    }
+  }
+}

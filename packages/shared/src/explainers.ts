@@ -1,0 +1,95 @@
+import type { Lang } from "./constants";
+
+/**
+ * Explicadores y guía (CON-01, CON-03). Índice explícito, sin importaciones dinámicas: cada pieza
+ * tiene su versión en ES y en EN, escritas por separado (contenido.md §1.5).
+ * `regulated`: depende del reglamento; se revisa al inicio de cada temporada (contenido.md §6).
+ */
+export interface Explainer {
+  slug: string;
+  title: Record<Lang, string>;
+  /** Meta descripción: la primera frase del texto, que responde a la pregunta del título (contenido.md §5.2). */
+  description: Record<Lang, string>;
+  regulated: boolean;
+}
+
+export const GUIDE_SLUG = "guide";
+
+export const EXPLAINERS: Explainer[] = [
+  { slug: "guide", title: { es: "Cómo entender una carrera en 10 minutos", en: "How to understand a race in 10 minutes" }, description: { es: "Una carrera de Fórmula 1 se entiende con cinco ideas: el fin de semana, los puntos, los neumáticos, las paradas y las neutralizaciones. Esta guía las explica en diez minutos.", en: "A Formula 1 race makes sense with five ideas: the weekend, points, tyres, pit stops and neutralisations. This guide explains them in ten minutes." }, regulated: false },
+  { slug: "undercut-overcut", title: { es: "¿Qué es el undercut y el overcut?", en: "What are the undercut and overcut?" }, description: { es: "El undercut es parar antes que el rival para ganar tiempo con neumático nuevo; el overcut es quedarse fuera más vueltas para ganarlo con pista libre.", en: "The undercut means pitting before a rival to gain time on fresh tyres; the overcut means staying out longer to gain it in clean air." }, regulated: false },
+  { slug: "tyre-degradation", title: { es: "Por qué se degradan los neumáticos", en: "Why tyres degrade" }, description: { es: "Los neumáticos se degradan porque el desgaste y la temperatura reducen su agarre vuelta a vuelta; en los tiempos se ve como una pendiente que sube.", en: "Tyres degrade because wear and temperature reduce their grip lap after lap; in lap times it shows as a rising slope." }, regulated: false },
+  { slug: "tyre-compounds", title: { es: "Los compuestos de neumático", en: "F1 tyre compounds" }, description: { es: "En seco hay tres compuestos por Gran Premio (blando, medio y duro) y dos de lluvia (intermedio y lluvia extrema); cuanto más blando, más agarre y menos duración.", en: "There are three dry compounds per Grand Prix (soft, medium and hard) and two wet ones (intermediate and full wet); softer means more grip and less life." }, regulated: true },
+  { slug: "qualifying", title: { es: "Cómo funciona la clasificación", en: "How qualifying works" }, description: { es: "La clasificación tiene tres fases (Q1, Q2 y Q3): en las dos primeras se eliminan los más lentos y en la última los diez restantes se juegan la pole.", en: "Qualifying has three phases (Q1, Q2 and Q3): the slowest drivers drop out in the first two, and the last ten fight for pole in Q3." }, regulated: false },
+  { slug: "sprint", title: { es: "El formato sprint", en: "The sprint format" }, description: { es: "El formato sprint añade una carrera corta el sábado, con su propia clasificación, y reparte puntos a los ocho primeros.", en: "The sprint format adds a short Saturday race, with its own qualifying, that awards points to the top eight." }, regulated: true },
+  { slug: "safety-car", title: { es: "Safety car y VSC", en: "Safety car and VSC" }, description: { es: "El coche de seguridad agrupa a todos los pilotos detrás de él tras un incidente; el VSC neutraliza la carrera sin coche, obligando a todos a ir más despacio.", en: "The safety car bunches the whole field behind it after an incident; the VSC neutralises the race without a car, forcing everyone to slow down." }, regulated: false },
+  { slug: "dirty-air", title: { es: "El aire sucio", en: "Dirty air" }, description: { es: "El aire sucio es el aire turbulento que deja un coche detrás; quita carga aerodinámica al que le sigue y hace más difícil adelantar en curva.", en: "Dirty air is the turbulent air a car leaves behind; it robs the following car of downforce and makes passing in corners harder." }, regulated: false },
+  { slug: "telemetry", title: { es: "Cómo leer un gráfico de telemetría", en: "How to read telemetry" }, description: { es: "Un gráfico de telemetría muestra cómo va el coche a lo largo de la vuelta: velocidad, acelerador y freno; comparando dos pilotos se ve dónde gana tiempo cada uno.", en: "A telemetry chart shows how the car behaves along the lap (speed, throttle and brake); comparing two drivers shows where each one gains time." }, regulated: false },
+  { slug: "points", title: { es: "Cómo se reparten los puntos", en: "How points work" }, description: { es: "Desde 2010 los diez primeros puntúan 25, 18, 15, 12, 10, 8, 6, 4, 2 y 1; el sistema ha cambiado varias veces desde 1950.", en: "Since 2010 the top ten score 25, 18, 15, 12, 10, 8, 6, 4, 2 and 1 points; the system has changed several times since 1950." }, regulated: true },
+  { slug: "penalties", title: { es: "Sanciones en F1", en: "F1 penalties" }, description: { es: "Las sanciones van de unos segundos añadidos al tiempo de carrera a la pérdida de posiciones en la parrilla; las deciden los comisarios de la FIA.", en: "Penalties range from a few seconds added to the race time to places lost on the grid; the FIA stewards decide them." }, regulated: true },
+  { slug: "delta", title: { es: "Qué es el delta", en: "What is the delta" }, description: { es: "El delta es la diferencia de tiempo acumulada entre dos vueltas a lo largo del circuito: muestra en qué tramo se gana o se pierde.", en: "The delta is the accumulated time difference between two laps along the track: it shows where time is gained or lost." }, regulated: false },
+  { slug: "overtake-mode", title: { es: "Del DRS al modo adelantamiento", en: "From DRS to overtake mode" }, description: { es: "Desde 2026 el DRS ya no existe: el coche que está a menos de un segundo del de delante recibe energía eléctrica extra para adelantar, en cualquier punto del circuito.", en: "Since 2026 DRS no longer exists: a car within one second of the car ahead gets extra electrical energy to overtake, anywhere on the track." }, regulated: true },
+];
+
+/** Por qué un explicador encaja con un circuito (NUC-09): el tipo de carrera que suele salir. */
+type Trait = "sprint" | "street" | "qualifying" | "tyres" | "strategy" | "straights";
+
+const TRAITS: Record<string, Exclude<Trait, "sprint">> = {
+  // Callejeros o semipermanentes: muros cerca, más coches de seguridad.
+  baku: "street",
+  marina_bay: "street",
+  jeddah: "street",
+  vegas: "street",
+  albert_park: "street",
+  madring: "street",
+  miami: "street",
+  // Adelantar es difícil: la clasificación decide buena parte de la carrera.
+  monaco: "qualifying",
+  hungaroring: "qualifying",
+  zandvoort: "qualifying",
+  catalunya: "qualifying",
+  imola: "qualifying",
+  // Asfalto abrasivo o curvas rápidas largas: la degradación manda.
+  bahrain: "tyres",
+  silverstone: "tyres",
+  suzuka: "tyres",
+  losail: "tyres",
+  sepang: "tyres",
+  shanghai: "tyres",
+  americas: "tyres",
+  interlagos: "tyres",
+  // Paradas en el filo: undercut y overcut.
+  red_bull_ring: "strategy",
+  rodriguez: "strategy",
+  yas_marina: "strategy",
+  villeneuve: "strategy",
+  // Rectas largas y poca carga: los adelantamientos dependen de la energía extra.
+  monza: "straights",
+  spa: "straights",
+};
+
+const BY_TRAIT: Record<Trait, string> = {
+  sprint: "sprint",
+  street: "safety-car",
+  qualifying: "qualifying",
+  tyres: "tyre-degradation",
+  strategy: "undercut-overcut",
+  straights: "overtake-mode",
+};
+
+const REASONS: Record<Trait | "default", Record<Lang, string>> = {
+  sprint: { es: "Este fin de semana hay sprint.", en: "This is a sprint weekend." },
+  street: { es: "Con muros tan cerca, el coche de seguridad suele aparecer.", en: "With walls this close, the safety car often comes out." },
+  qualifying: { es: "Aquí cuesta adelantar: la clasificación pesa mucho.", en: "Passing is hard here: qualifying matters a lot." },
+  tyres: { es: "Es un circuito duro con los neumáticos.", en: "This track is hard on tyres." },
+  strategy: { es: "Las paradas suelen decidir las posiciones.", en: "Pit stops often decide positions." },
+  straights: { es: "Rectas largas: adelantar depende de la energía extra.", en: "Long straights: passing depends on extra energy." },
+  default: { es: "Para llegar con lo básico claro.", en: "To get the basics straight first." },
+};
+
+/** Explicador sugerido para el próximo GP (NUC-09), con una frase que dice por qué. */
+export function suggestedExplainer(circuitId: string, isSprintWeekend: boolean, lang: Lang): { explainer: Explainer; reason: string } {
+  const trait: Trait | undefined = isSprintWeekend ? "sprint" : TRAITS[circuitId];
+  const slug = trait ? BY_TRAIT[trait] : GUIDE_SLUG;
+  return { explainer: EXPLAINERS.find((e) => e.slug === slug)!, reason: REASONS[trait ?? "default"][lang] };
+}

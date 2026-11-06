@@ -1,0 +1,34 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "paddock-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "routes": [{ "pattern": "paddocknotes.dev/*", "zone_name": "paddocknotes.dev" }],
+  // La web consulta la API sin salir a internet (D-05).
+  "services": [{ "binding": "API", "service": "paddock-api" }],
+  "vars": {
+    "SITE_URL": "https://paddocknotes.dev",
+    // seguridad.md §4.1: primera versión en modo informe; pasar a "false" antes del lanzamiento público.
+    "CSP_REPORT_ONLY": "true",
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
+  },
+  "env": {
+    "preview": {
+      "name": "paddock-web-preview",
+      "workers_dev": true,
+      "preview_urls": false,
+      "routes": [],
+      "services": [{ "binding": "API", "service": "paddock-api-preview" }],
+      "vars": {
+        "SITE_URL": "https://paddock-web-preview.workers.dev",
+        "CSP_REPORT_ONLY": "false",
+        "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
+      }
+    }
+  }
+}

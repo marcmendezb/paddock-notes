@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paddock Notes · Brandboard</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;display=swap">
+<style>
+html,body{margin:0;background:#0A0A0A;color:#F5F5F5}
+body{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C6F432;text-decoration-thickness:1px;text-underline-offset:.22em}
+a:hover{color:#F5F5F5}
+:focus-visible{outline:3px solid #C6F432;outline-offset:3px;border-radius:2px}
+::selection{background:#C6F432;color:#0A0A0A}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0A0A;color:#F5F5F5">
+
+<header style="position:sticky;top:0;z-index:5;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);border-bottom:1px solid #2A2A2A">
+  <div style="max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,48px);display:flex;align-items:center;gap:32px;min-height:60px">
+    <a href="#top" aria-label="Paddock Notes, inicio del brandboard" style="display:flex;align-items:center;gap:10px;color:#F5F5F5;text-decoration:none;flex:none">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+      <span style="font-stretch:87.5%;font-weight:700;font-size:18px;letter-spacing:-0.01em">Brandboard</span>
+    </a>
+    <nav aria-label="Secciones" style="flex:1;min-width:0;overflow-x:auto">
+      <ul style="list-style:none;margin:0;padding:0;display:flex;gap:4px 22px;white-space:nowrap;font-size:14px;font-weight:500">
+        <li><a href="#logo" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Logo</a></li>
+        <li><a href="#color" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Color</a></li>
+        <li><a href="#tipografia" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Tipografía</a></li>
+        <li><a href="#datos" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Datos</a></li>
+        <li><a href="#voz" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Voz</a></li>
+        <li><a href="#aplicaciones" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Aplicaciones</a></li>
+        <li><a href="#tokens" style="display:flex;align-items:center;min-height:44px;color:#A3A3A3;text-decoration:none" style-hover="color:#F5F5F5">Tokens</a></li>
+      </ul>
+    </nav>
+    <a href="#descargas" style="flex:none;display:flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;background:#C6F432;color:#0A0A0A;font-size:14px;font-weight:600;text-decoration:none" style-hover="background:#F5F5F5;color:#0A0A0A">Descargas</a>
+  </div>
+</header>
+
+<main id="top" style="max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 96px">
+
+  <section aria-labelledby="hero-title" style="padding:clamp(64px,10vw,140px) 0 clamp(48px,7vw,96px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:48px;align-items:end">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-self:center;text-align:center">
+      <h1 id="hero-title" style="margin:0"><img src="assets/logo/paddock-notes-vertical-sobre-negro.svg" alt="paddock notes" style="display:block;width:clamp(240px,34vw,460px);height:auto"></h1>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;max-width:46ch">
+      <p style="margin:0;font-size:clamp(1.25rem,1rem + .8vw,1.625rem);line-height:1.35;text-wrap:pretty">F1 explicada con datos. Visualizaciones propias y explicadores claros para entender por qué pasó lo que pasó.</p>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:#A3A3A3">Brandboard v3 · noviembre de 2026 · Proyecto no oficial, sin afiliación con Formula 1 ni con ningún equipo.</p>
+    </div>
+  </section>
+
+  <section id="logo" aria-labelledby="logo-title" style="padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="logo-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Logo</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">El símbolo es una ligadura de «pn» trazada con un solo grosor e inclinada 12°, como el wordmark en Archivo cursiva: el arco de la p continúa en el de la n. El cuadrado lima es el punto final de la nota, la conclusión que se saca de los datos. El logo vive sobre negro; sobre blanco va entero en negro.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:12px">
+      <figure style="margin:0;grid-column:1/-1;background:#161616;border:1px solid #2A2A2A;border-radius:6px;min-height:clamp(240px,32vw,380px);display:flex;align-items:center;justify-content:center;position:relative;padding:40px 24px">
+        <img src="assets/logo/paddock-notes-horizontal-sobre-negro.svg" alt="Logo principal horizontal sobre negro" style="display:block;width:min(100%,720px);height:auto">
+        <figcaption style="position:absolute;left:20px;bottom:16px;font-size:13px;color:#A3A3A3">Principal horizontal: símbolo y texto centrados en su eje óptico</figcaption>
+      </figure>
+
+      <figure style="margin:0;background:#161616;border:1px solid #2A2A2A;border-radius:6px;min-height:260px;display:flex;align-items:center;justify-content:center;position:relative;padding:32px 24px">
+        <svg viewBox="0 0 48 48" role="img" aria-label="Construcción del símbolo sobre retícula de 48 unidades" style="width:min(100%,220px);height:auto;overflow:visible">
+          <path d="M0 0V48M6 0V48M12 0V48M18 0V48M24 0V48M30 0V48M36 0V48M42 0V48M48 0V48M0 0H48M0 6H48M0 12H48M0 18H48M0 24H48M0 30H48M0 36H48M0 42H48M0 48H48" stroke="#2A2A2A" stroke-width=".25"></path>
+          <path d="M0 10H48M0 33H48" stroke="#A3A3A3" stroke-width=".25" stroke-dasharray="1 1"></path>
+          <g transform="translate(7.2 0) skewX(-12)"><circle cx="13" cy="17" r="7" fill="none" stroke="#A3A3A3" stroke-width=".25"></circle><circle cx="27" cy="17" r="7" fill="none" stroke="#A3A3A3" stroke-width=".25"></circle><path d="M39 46H45M39 44.8V47.2M45 44.8V47.2" stroke="#C6F432" stroke-width=".4"></path></g>
+          <path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-opacity=".9" stroke-width="6"></path>
+          <rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect>
+        </svg>
+        <figcaption style="position:absolute;left:20px;bottom:16px;right:20px;font-size:13px;line-height:1.4;color:#A3A3A3">Retícula de 48. Trazo de 6, arcos de radio 7, inclinación de 12°. El punto mide lo mismo que el trazo.</figcaption>
+      </figure>
+
+      <figure style="margin:0;background:#FFFFFF;border-radius:6px;min-height:260px;display:flex;align-items:center;justify-content:center;position:relative;padding:32px 24px">
+        <img src="assets/logo/paddock-notes-horizontal-negro.svg" alt="Logo horizontal en negro sobre blanco" style="display:block;width:min(100%,400px);height:auto">
+        <figcaption style="position:absolute;left:20px;bottom:16px;right:20px;font-size:13px;color:#5A5A5A">Sobre blanco: una tinta, sin lima. Solo para documentos e impresión.</figcaption>
+      </figure>
+
+      <figure style="margin:0;background:#161616;border:1px solid #2A2A2A;border-radius:6px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px 20px 16px">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:28px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="32" height="32" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+            <span style="font-style:italic;text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;position:relative;top:-0.06em;font-stretch:87.5%;font-weight:700;font-size:16px;line-height:.95">Paddock<br>Notes</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <svg width="24" height="24" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+            <span style="font-style:italic;text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;position:relative;top:-0.06em;font-stretch:87.5%;font-weight:700;font-size:18px;white-space:nowrap">Paddock Notes</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:14px">
+            <svg width="24" height="24" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+            <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+          </div>
+        </div>
+        <figcaption style="font-size:13px;line-height:1.4;color:#A3A3A3">Compacta para cabecera móvil, logo a 24 px de alto y símbolo a 24 y 16 px. Por debajo de 24 px, solo el símbolo.</figcaption>
+      </figure>
+
+      <figure style="margin:0;background:#161616;border:1px solid #2A2A2A;border-radius:6px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px 20px 16px">
+        <div style="align-self:center;position:relative;padding:22px;border:1px dashed #5A5A5A">
+          <div style="display:flex;align-items:center;gap:10px">
+            <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+            <span style="font-style:italic;text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;position:relative;top:-0.06em;font-stretch:87.5%;font-weight:700;font-size:28px;white-space:nowrap">Paddock Notes</span>
+          </div>
+          <span aria-hidden="true" style="position:absolute;left:0;top:-14px;width:22px;height:9px;border-left:1px solid #C6F432;border-right:1px solid #C6F432;display:flex;align-items:center"><span style="flex:1;height:1px;background:#C6F432"></span></span>
+          <span aria-hidden="true" style="position:absolute;left:28px;top:-19px;font-size:12px;font-weight:600;color:#C6F432">x</span>
+        </div>
+        <figcaption style="font-size:13px;line-height:1.4;color:#A3A3A3">Área de respeto: x, la altura de la x del símbolo, a cada lado.</figcaption>
+      </figure>
+    </div>
+
+    <h3 style="margin:40px 0 14px;font-stretch:87.5%;font-weight:700;font-size:22px">Usos incorrectos</h3>
+    <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px">
+      <li style="background:#FFFFFF;border-radius:6px;padding:28px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:20px">
+        <svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#0A0A0A" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+        <p style="margin:0;align-self:stretch;font-size:13px;color:#5A5A5A">No: lima sobre blanco</p>
+      </li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:20px">
+        <svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#C6F432" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#F5F5F5"></rect></g></svg>
+        <p style="margin:0;align-self:stretch;font-size:13px;color:#A3A3A3">No: invertir los colores</p>
+      </li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:20px">
+        <svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true" style="transform:scaleX(1.45)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></svg>
+        <p style="margin:0;align-self:stretch;font-size:13px;color:#A3A3A3">No: estirar ni comprimir</p>
+      </li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:20px">
+        <svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><circle cx="42" cy="30" r="3.6" fill="#C6F432"></circle></g></svg>
+        <p style="margin:0;align-self:stretch;font-size:13px;color:#A3A3A3">No: redondear el punto</p>
+      </li>
+    </ul>
+
+    <h3 style="margin:40px 0 14px;font-stretch:87.5%;font-weight:700;font-size:22px">Favicon y avatar</h3>
+    <div style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 24px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:28px 36px">
+      <img src="favicon.svg" width="128" height="128" alt="Favicon cuadrado, 128 px">
+      <img src="favicon.svg" width="48" height="48" alt="Favicon, 48 px">
+      <img src="favicon.svg" width="32" height="32" alt="Favicon, 32 px">
+      <img src="favicon.svg" width="16" height="16" alt="Favicon, 16 px">
+      <span aria-hidden="true" style="width:1px;align-self:stretch;background:#2A2A2A"></span>
+      <img src="assets/avatar-circular.svg" width="128" height="128" alt="Avatar circular para redes" style="box-shadow:0 0 0 1px #2A2A2A;border-radius:50%">
+      <img src="assets/avatar-circular.svg" width="48" height="48" alt="Avatar circular, 48 px" style="box-shadow:0 0 0 1px #2A2A2A;border-radius:50%">
+    </div>
+  </section>
+
+  <section id="color" aria-labelledby="color-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="color-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Color</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Negro y lima, con lila como acento puntual. Lima y lila solo aparecen sobre negro y marca lo que hay que mirar: cifras clave, notas, cotas y el estado activo. Nunca como fondo amplio ni en degradado. Pulsa una muestra para copiar su hex; el contraste se calcula con WCAG 2.1.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px">
+      <sc-for list="{{ swatches }}" as="c" hint-placeholder-count="6">
+        <button type="button" onClick="{{ c.copy }}" aria-label="Copiar {{ c.name }} {{ c.hex }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;min-height:220px;border-radius:6px;border:1px solid #2A2A2A;overflow:hidden;background:#161616" style-hover="border-color:#5A5A5A" style-focus="outline:3px solid #C6F432;outline-offset:3px">
+          <span style="flex:1;min-height:130px;background:{{ c.hex }};color:{{ c.on }};display:flex;align-items:flex-end;justify-content:space-between;padding:14px 16px;font-size:13px;font-weight:600"><span>{{ c.sample }}</span><span>{{ c.state }}</span></span>
+          <span style="display:flex;flex-direction:column;gap:2px;padding:14px 16px 16px">
+            <span style="display:flex;justify-content:space-between;gap:12px;font-size:16px;font-weight:600"><span>{{ c.name }}</span><span style="font-variant-numeric:tabular-nums">{{ c.hex }}</span></span>
+            <span style="font-size:13px;line-height:1.4;color:#A3A3A3">{{ c.role }}</span>
+            <span style="font-size:13px;line-height:1.4;color:#A3A3A3;font-variant-numeric:tabular-nums">{{ c.check }}</span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+    <p style="margin:20px 0 0;font-size:14px;line-height:1.5;color:#A3A3A3;max-width:70ch">Proporción de uso: negro 80 %, blanco roto y grises 16 %, lima 3 %, lila 1 %. La lila es el segundo protagonista: el rival en una comparación, una segunda nota o un detalle editorial. Nunca junto a la lima en el mismo elemento ni en el logo. En modo claro el fondo es #FFFFFF, el texto #0A0A0A, el secundario #5A5A5A ({{ lightMuted }}) y el acento pasa a negro.</p>
+  </section>
+
+  <section id="tipografia" aria-labelledby="type-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="type-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Tipografía</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Archivo, de Google Fonts (SIL Open Font License), variable en peso y ancho. Una sola familia en dos anchos: semicondensada al 87,5 % para titulares, cifras y logo; normal al 100 % para texto, interfaz y tablas.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:12px">
+      <div style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;min-height:360px">
+        <p aria-hidden="true" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(7rem,5rem + 8vw,12rem);line-height:.8;letter-spacing:-0.04em">Aa<span style="color:#C6F432">.</span></p>
+        <div>
+          <p style="margin:0;font-size:16px;font-weight:600">Archivo SemiCondensed · 700 · en el logo: cursiva, minúscula y −5 % de espaciado</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#A3A3A3">Titulares, cifras grandes y logo · interlineado 0,95–1,12 · espaciado de −1 % a −3 %</p>
+        </div>
+      </div>
+      <div style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:28px 24px;display:flex;flex-direction:column;gap:22px">
+        <p style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.4rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em;text-wrap:balance">Por qué la parada en la vuelta 28 decidió la carrera</p>
+        <p style="margin:0;font-size:17px;line-height:1.6;max-width:62ch;color:#F5F5F5;text-wrap:pretty">Norris paró dos vueltas después que Russell. Con el neumático nuevo, Russell rodó 0,9 s más rápido en cada una de esas vueltas y salió de boxes por delante.</p>
+        <div style="display:inline-grid;grid-template-columns:auto auto;gap:4px 32px;justify-content:start;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums">
+          <span>Russell</span><span style="text-align:right">1:10.540</span>
+          <span>Norris</span><span style="text-align:right">1:10.604</span>
+          <span style="color:#A3A3A3">Antonelli</span><span style="text-align:right;color:#A3A3A3">1:11.118</span>
+        </div>
+        <p style="margin:auto 0 0;font-size:13px;color:#A3A3A3">Archivo 100 % · texto 400 a 17/27 px, máximo 68 caracteres por línea · cifras tabulares en tablas y tiempos</p>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:8px 24px;overflow-x:auto">
+      <table style="width:100%;min-width:560px;border-collapse:collapse;font-size:14px;line-height:1.35;font-variant-numeric:tabular-nums">
+        <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Escala tipográfica</caption>
+        <tbody>
+          <sc-for list="{{ scale }}" as="s" hint-placeholder-count="8">
+            <tr style="border-bottom:1px solid #2A2A2A">
+              <th scope="row" style="text-align:left;font-weight:500;color:#A3A3A3;padding:14px 16px 14px 0;width:9em;white-space:nowrap">{{ s.token }}</th>
+              <td style="padding:14px 16px 14px 0;color:#A3A3A3;width:6em;white-space:nowrap">{{ s.px }}</td>
+              <td style="padding:10px 0;font-stretch:{{ s.width }};font-weight:{{ s.weight }};font-size:{{ s.size }};line-height:1.1;letter-spacing:{{ s.track }};white-space:nowrap">{{ s.use }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="datos" aria-labelledby="data-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="data-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Datos</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Seis series que no dependen solo del tono: cada una lleva marcador y trazo propios, con luminosidades escalonadas. Ninguna combinación reproduce la librea de un equipo. La nota, en lima, es la firma de la marca dentro de cada gráfico.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:12px">
+      <div style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px 24px">
+        <p style="margin:0 0 10px;font-size:13px;color:#A3A3A3">Categórica</p>
+        <sc-for list="{{ series }}" as="s" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:14px;padding:6px 0">
+            <svg width="104" height="24" viewBox="0 0 104 24" aria-hidden="true" style="flex:none"><path d="M2 12H102" stroke="{{ s.hex }}" stroke-width="2" stroke-dasharray="{{ s.dash }}"></path><path d="{{ s.marker }}" transform="translate(40 0)" fill="{{ s.fill }}" stroke="{{ s.hex }}" stroke-width="2"></path></svg>
+            <span style="font-size:15px;font-weight:600;flex:1">{{ s.name }}</span>
+            <span style="font-size:13px;color:#A3A3A3;font-variant-numeric:tabular-nums">{{ s.hex }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px 24px;display:flex;flex-direction:column;gap:22px">
+        <div>
+          <p style="margin:0 0 10px;font-size:13px;color:#A3A3A3">Secuencial: velocidad sobre el mapa, uso del acelerador, degradación</p>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);height:44px;border-radius:4px;overflow:hidden">
+            <sc-for list="{{ seq }}" as="st" hint-placeholder-count="7"><span style="background:{{ st }}"></span></sc-for>
+          </div>
+        </div>
+        <div>
+          <p style="margin:0 0 10px;font-size:13px;color:#A3A3A3">Divergente: comparación de vuelta, con el signo siempre junto al color</p>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);height:44px;border-radius:4px;overflow:hidden">
+            <sc-for list="{{ div }}" as="st" hint-placeholder-count="7"><span style="background:{{ st }}"></span></sc-for>
+          </div>
+          <p style="margin:6px 0 0;display:flex;justify-content:space-between;font-size:13px;color:#A3A3A3"><span>+ pierde tiempo</span><span>− gana tiempo</span></p>
+        </div>
+        <ul style="margin:auto 0 0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.45;color:#A3A3A3">
+          <li>Rejilla horizontal de 1 px en #2A2A2A, entre tres y cinco líneas; solo se marca la línea de cero.</li>
+          <li>Series a 2 px, protagonista a 3 px; etiquetas directas al final de cada serie.</li>
+          <li>Notas en Archivo 600 lima, ancladas con un punto; dos por gráfico como máximo.</li>
+        </ul>
+      </div>
+      <figure style="margin:0;grid-column:1/-1;background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:24px">
+        <p style="margin:0 0 4px;font-stretch:87.5%;font-weight:700;font-size:22px">Dónde se decidió la pole</p>
+        <p style="margin:0 0 16px;font-size:14px;color:#A3A3A3">Diferencia acumulada en la vuelta de Q3, Russell respecto a Norris · datos de ejemplo</p>
+        <div style="display:flex;gap:8px">
+          <div aria-hidden="true" style="position:relative;width:48px;flex:none;height:240px;font-size:13px;color:#A3A3A3;font-variant-numeric:tabular-nums;text-align:right">
+            <span style="position:absolute;right:0;top:27.3%;transform:translateY(-50%)">+0,1 s</span>
+            <span style="position:absolute;right:0;top:45.5%;transform:translateY(-50%)">0</span>
+            <span style="position:absolute;right:0;top:63.6%;transform:translateY(-50%)">−0,1 s</span>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="position:relative;height:240px">
+              <svg viewBox="0 0 600 220" preserveAspectRatio="none" width="100%" height="240" role="img" aria-label="Russell pierde hasta 0,13 s en el primer kilómetro, recupera 0,21 s entre las curvas 4 y 6 y termina 0,064 s por delante." style="display:block;overflow:visible">
+                <defs>
+                  <clipPath id="bb-a"><rect x="0" y="0" width="600" height="100"></rect></clipPath>
+                  <clipPath id="bb-b"><rect x="0" y="100" width="600" height="120"></rect></clipPath>
+                </defs>
+                <path d="M0 60H600M0 140H600" stroke="#2A2A2A" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.area }}" clip-path="url(#bb-a)" fill="#3A2C55"></path>
+                <path d="{{ chart.area }}" clip-path="url(#bb-b)" fill="#3B4A14"></path>
+                <path d="M0 100H600" stroke="#A3A3A3" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.line }}" stroke="#F5F5F5" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.cota }}" stroke="#C6F432" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"></path>
+              </svg>
+              <p style="position:absolute;left:25.6%;top:79%;max-width:70%;margin:0;font-weight:600;font-size:15px;line-height:1.25;color:#C6F432">Recupera 0,21 s entre las curvas 4 y 6</p>
+              <span aria-hidden="true" style="position:absolute;left:100%;top:57.1%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#C6F432;box-shadow:0 0 0 3px #161616"></span>
+              <p style="position:absolute;right:0;top:calc(57.1% + 12px);margin:0;font-weight:600;font-size:15px;color:#C6F432;white-space:nowrap">Pole por 0,064 s</p>
+            </div>
+            <div aria-hidden="true" style="position:relative;height:22px;margin-top:6px;font-size:13px;color:#A3A3A3;font-variant-numeric:tabular-nums">
+              <span style="position:absolute;left:0">0</span>
+              <span style="position:absolute;left:46.5%;transform:translateX(-50%)">2</span>
+              <span style="position:absolute;right:0">4,3 km</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="voz" aria-labelledby="voice-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="voice-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Voz</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Escribimos como alguien que ha mirado los datos con calma y te los cuenta en una frase. Voz activa, cifras en lugar de adjetivos y sin tono de venta.</p>
+    </div>
+    <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px">
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px"><p style="margin:0 0 6px;font-size:16px;font-weight:600">El porqué antes que el qué</p><p style="margin:0;font-size:14px;line-height:1.45;color:#A3A3A3">El resultado ya se sabe. Abrimos con la causa.</p></li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px"><p style="margin:0 0 6px;font-size:16px;font-weight:600">El dato en lugar del adjetivo</p><p style="margin:0;font-size:14px;line-height:1.45;color:#A3A3A3">«0,4 s más rápido por vuelta», no «un ritmo brutal».</p></li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px"><p style="margin:0 0 6px;font-size:16px;font-weight:600">Una idea por frase</p><p style="margin:0;font-size:14px;line-height:1.45;color:#A3A3A3">Sujeto claro y voz activa: «Mercedes adelantó la parada».</p></li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px"><p style="margin:0 0 6px;font-size:16px;font-weight:600">La jerga se explica una vez</p><p style="margin:0;font-size:14px;line-height:1.45;color:#A3A3A3">«Undercut» llega con su definición la primera vez.</p></li>
+      <li style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:20px"><p style="margin:0 0 6px;font-size:16px;font-weight:600">Decimos lo que no sabemos</p><p style="margin:0;font-size:14px;line-height:1.45;color:#A3A3A3">Si un valor es una estimación, lo indicamos junto al gráfico.</p></li>
+    </ul>
+    <div style="margin-top:12px;background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:8px 24px;overflow-x:auto">
+      <table style="width:100%;min-width:620px;border-collapse:collapse;font-size:15px;line-height:1.45">
+        <thead><tr style="border-bottom:1px solid #2A2A2A;font-size:13px;color:#A3A3A3"><th scope="col" style="text-align:left;font-weight:500;padding:12px 16px 12px 0;width:7em">Pieza</th><th scope="col" style="text-align:left;font-weight:500;padding:12px 16px 12px 0">Español</th><th scope="col" style="text-align:left;font-weight:500;padding:12px 0">English</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #2A2A2A"><th scope="row" style="text-align:left;font-weight:500;color:#A3A3A3;padding:14px 16px 14px 0;vertical-align:top">Titular</th><td lang="es" style="padding:14px 16px 14px 0;vertical-align:top">Por qué la parada en la vuelta 28 decidió la carrera</td><td lang="en" style="padding:14px 0;vertical-align:top">Why the lap-28 stop decided the race</td></tr>
+          <tr style="border-bottom:1px solid #2A2A2A"><th scope="row" style="text-align:left;font-weight:500;color:#A3A3A3;padding:14px 16px 14px 0;vertical-align:top">Error</th><td lang="es" style="padding:14px 16px 14px 0;vertical-align:top">No hemos podido cargar los tiempos de esta sesión. Vuelve a intentarlo en unos minutos.</td><td lang="en" style="padding:14px 0;vertical-align:top">We couldn’t load the timing for this session. Try again in a few minutes.</td></tr>
+          <tr style="border-bottom:1px solid #2A2A2A"><th scope="row" style="text-align:left;font-weight:500;color:#A3A3A3;padding:14px 16px 14px 0;vertical-align:top">Botón</th><td lang="es" style="padding:14px 16px 14px 0;vertical-align:top">Comparar vueltas</td><td lang="en" style="padding:14px 0;vertical-align:top">Compare laps</td></tr>
+          <tr><th scope="row" style="text-align:left;font-weight:500;color:#A3A3A3;padding:14px 16px 14px 0;vertical-align:top">Newsletter</th><td lang="es" style="padding:14px 16px 14px 0;vertical-align:top">Esta semana: cómo el desgaste del neumático trasero cambió la estrategia en Interlagos.</td><td lang="en" style="padding:14px 0;vertical-align:top">This week: how rear tyre wear changed the strategy at Interlagos.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="aplicaciones" aria-labelledby="apps-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="apps-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Aplicaciones</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">La home, con la cuenta atrás medida como una cota, y la imagen para compartir del análisis post-carrera.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:12px">
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+        <div ref="{{ homeRef }}" style="position:relative;width:100%;aspect-ratio:1280/800;border-radius:6px;overflow:hidden;border:1px solid #2A2A2A;background:#0A0A0A">
+          <iframe src="Home.dc.html?theme=dark" title="Home de Paddock Notes" tabindex="-1" width="1280" height="800" style="position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform-origin:0 0;transform:scale({{ homeScale }});pointer-events:none"></iframe>
+        </div>
+        <figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#A3A3A3"><span>Home · escritorio, modo oscuro</span><a href="Home Preview.dc.html">Ver todas las vistas</a></figcaption>
+      </figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+        <div ref="{{ ogRef }}" style="position:relative;width:100%;aspect-ratio:1200/630;border-radius:6px;overflow:hidden;border:1px solid #2A2A2A;background:#0A0A0A">
+          <iframe src="OG Post-carrera.dc.html" title="Imagen para compartir del análisis post-carrera" tabindex="-1" width="1200" height="630" style="position:absolute;left:0;top:0;width:1200px;height:630px;border:0;transform-origin:0 0;transform:scale({{ ogScale }});pointer-events:none"></iframe>
+        </div>
+        <figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#A3A3A3"><span>Imagen OG · 1200 × 630</span><a href="OG Post-carrera.dc.html">Abrir a tamaño real</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="tokens" aria-labelledby="tokens-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="tokens-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Tokens</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Variables CSS que sustituyen a las de globals.css, con la variante oscura bajo prefers-color-scheme y colores de datos, fuente de titulares y escala.</p>
+    </div>
+    <div style="position:relative">
+      <button type="button" onClick="{{ copyTokens }}" style="position:absolute;top:12px;right:12px;min-height:40px;padding:0 16px;border:1px solid #2A2A2A;border-radius:999px;background:#0A0A0A;color:#F5F5F5;font:600 14px Archivo,sans-serif;cursor:pointer" style-hover="border-color:#C6F432">{{ tokensLabel }}</button>
+      <pre style="margin:0;background:#161616;border:1px solid #2A2A2A;border-radius:6px;padding:24px;overflow:auto;max-height:480px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6;color:#F5F5F5">{{ tokensText }}</pre>
+    </div>
+  </section>
+
+  <section id="descargas" aria-labelledby="dl-title" style="margin-top:96px;padding-top:56px;border-top:1px solid #2A2A2A;scroll-margin-top:72px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px 48px;margin-bottom:32px">
+      <h2 id="dl-title" style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2rem,1.5rem + 2vw,3rem);line-height:1;letter-spacing:-0.02em">Descargas</h2>
+      <p style="margin:0;max-width:60ch;font-size:17px;line-height:1.55;color:#A3A3A3;text-wrap:pretty">Todas las versiones del logo con el texto convertido a trazados: no necesitan la fuente instalada. SVG para web y edición; PNG transparente de 2000 px para presentaciones y redes.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:12px">
+      <sc-for list="{{ logoSets }}" as="L" hint-placeholder-count="5">
+        <article style="background:#161616;border:1px solid #2A2A2A;border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:2fr 1fr;min-height:200px">
+            <div style="background:#0A0A0A;display:flex;align-items:center;justify-content:center;padding:28px"><img src="{{ L.preview }}" alt="{{ L.title }} sobre negro" style="display:block;max-width:100%;max-height:{{ L.maxH }};height:auto"></div>
+            <div style="background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:18px"><img src="{{ L.previewLight }}" alt="{{ L.title }} en negro" style="display:block;max-width:100%;max-height:{{ L.maxHs }};height:auto"></div>
+          </div>
+          <div style="padding:16px 18px 8px">
+            <h3 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:20px">{{ L.title }}</h3>
+            <p style="margin:4px 0 0;font-size:13px;line-height:1.4;color:#A3A3A3">{{ L.use }}</p>
+          </div>
+          <ul style="list-style:none;margin:0;padding:4px 18px 14px">
+            <sc-for list="{{ L.ways }}" as="w" hint-placeholder-count="3">
+              <li style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #2A2A2A">
+                <span style="flex:none;width:14px;height:14px;border-radius:3px;background:{{ w.chip }};box-shadow:inset 0 0 0 1px #5A5A5A"></span>
+                <span style="flex:1;font-size:14px">{{ w.label }}</span>
+                <a href="{{ w.svg }}" download="{{ w.svgName }}" aria-label="Descargar {{ L.title }}, {{ w.label }}, SVG" style="display:flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #2A2A2A;border-radius:999px;color:#F5F5F5;font-size:13px;font-weight:600;text-decoration:none" style-hover="border-color:#C6F432;color:#C6F432">SVG</a>
+                <a href="{{ w.png }}" download="{{ w.pngName }}" aria-label="Descargar {{ L.title }}, {{ w.label }}, PNG" style="display:flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #2A2A2A;border-radius:999px;color:#F5F5F5;font-size:13px;font-weight:600;text-decoration:none" style-hover="border-color:#C6F432;color:#C6F432">PNG</a>
+              </li>
+            </sc-for>
+          </ul>
+        </article>
+      </sc-for>
+    </div>
+    <h3 style="margin:40px 0 14px;font-stretch:87.5%;font-weight:700;font-size:22px">Iconos y código</h3>
+    <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px">
+      <sc-for list="{{ downloads }}" as="d" hint-placeholder-count="4">
+        <li><a href="{{ d.href }}" download="{{ d.file }}" style="display:flex;align-items:center;gap:16px;padding:16px 18px;min-height:72px;box-sizing:border-box;background:#161616;border:1px solid #2A2A2A;border-radius:6px;color:#F5F5F5;text-decoration:none" style-hover="border-color:#C6F432">
+          <img src="{{ d.preview }}" width="40" height="40" alt="" style="flex:none;background:{{ d.bg }};border-radius:4px;padding:4px;box-sizing:border-box">
+          <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:600">{{ d.name }}</span><span style="font-size:13px;color:#A3A3A3">{{ d.file }}</span></span>
+        </a></li>
+      </sc-for>
+    </ul>
+  </section>
+</main>
+
+<footer style="border-top:1px solid #2A2A2A">
+  <div style="max-width:1280px;margin:0 auto;padding:28px clamp(16px,4vw,48px) 40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 40px;font-size:14px;line-height:1.5;color:#A3A3A3">
+    <p style="margin:0">Proyecto no oficial, sin afiliación con Formula 1 ni con ningún equipo.</p>
+    <p style="margin:0">Datos: Jolpica F1.</p>
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const lum = hex => {
+  const v = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+};
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const fmt = r => r.toFixed(1).replace('.', ',') + ':1';
+const aa = r => r >= 7 ? 'AAA' : r >= 4.5 ? 'AA' : 'solo decorativo';
+
+const SW = [
+  { name: 'Negro', hex: '#0A0A0A', role: 'Fondo · --bg', vs: '#F5F5F5', vsName: 'blanco roto' },
+  { name: 'Negro alto', hex: '#161616', role: 'Superficie · --surface', vs: '#F5F5F5', vsName: 'blanco roto' },
+  { name: 'Trazo', hex: '#2A2A2A', role: 'Bordes y rejilla · --line', vs: '#0A0A0A', vsName: 'negro', deco: true },
+  { name: 'Gris', hex: '#A3A3A3', role: 'Texto secundario · --muted', vs: '#0A0A0A', vsName: 'negro' },
+  { name: 'Blanco roto', hex: '#F5F5F5', role: 'Texto · --text', vs: '#0A0A0A', vsName: 'negro' },
+  { name: 'Lima', hex: '#C6F432', role: 'Acento · --accent', vs: '#0A0A0A', vsName: 'negro' },
+  { name: 'Lila', hex: '#B98CFF', role: 'Acento secundario · --accent-2', vs: '#0A0A0A', vsName: 'negro' }
+];
+
+const MARK = {
+  circle: 'M12 7a5 5 0 1 1 0 10a5 5 0 1 1 0-10Z', square: 'M7.5 7.5h9v9h-9Z', tri: 'M12 6.5l5.5 10h-11Z',
+  diamond: 'M12 5.5l6 6.5-6 6.5-6-6.5Z', cross: 'M7.5 7.5l9 9M16.5 7.5l-9 9', ring: 'M12 7a5 5 0 1 1 0 10a5 5 0 1 1 0-10Z'
+};
+const SERIES = [
+  ['Lima', '#C6F432', 'circle', ''], ['Cielo', '#62B6F0', 'square', '10 5'], ['Ámbar', '#F5A623', 'tri', '2 4'],
+  ['Lila', '#B98CFF', 'diamond', '10 4 2 4'], ['Niebla', '#E8E8E8', 'cross', '5 4'], ['Gris', '#8A8A8A', 'ring', '']
+].map(([name, hex, m, dash]) => ({ name, hex, dash, marker: MARK[m], fill: m === 'cross' ? 'none' : m === 'ring' ? '#161616' : hex }));
+
+const SCALE = [
+  { token: '--step-count', px: '44–112', width: '87.5%', weight: 600, size: '56px', track: '-0.02em', use: '05 d 14 h' },
+  { token: '--step-5', px: '40–80', width: '87.5%', weight: 700, size: '48px', track: '-0.025em', use: 'Gran Premio de São Paulo' },
+  { token: '--step-4', px: '36–56', width: '87.5%', weight: 700, size: '38px', track: '-0.02em', use: 'Título de artículo' },
+  { token: '--step-3', px: '28–36', width: '87.5%', weight: 700, size: '30px', track: '-0.015em', use: 'Sección' },
+  { token: '--step-2', px: '26', width: '87.5%', weight: 700, size: '26px', track: '-0.01em', use: 'Pilotos: los cinco primeros' },
+  { token: '--step-1', px: '21', width: '100%', weight: 400, size: '21px', track: '0', use: 'Entradilla del análisis' },
+  { token: '--step-0', px: '17', width: '100%', weight: 400, size: '17px', track: '0', use: 'Texto de lectura, interlineado 1,6' },
+  { token: '--step--1', px: '15', width: '100%', weight: 500, size: '15px', track: '0', use: 'Interfaz, tablas y notas' },
+  { token: '--step--2', px: '13', width: '100%', weight: 400, size: '13px', track: '0', use: 'Ejes y pies de gráfico' }
+];
+
+const DELTA = [[0,0],[0.35,0.025],[0.8,0.11],[1.1,0.13],[1.5,0.03],[1.9,-0.08],[2.4,-0.055],[2.9,-0.1],[3.4,-0.035],[3.8,-0.05],[4.3,-0.064]];
+function smooth(pts) {
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+const X = km => km / 4.3 * 600, Y = d => 100 - d * 400;
+const LINE = smooth(DELTA.map(([k, d]) => [X(k), Y(d)]));
+const CHART = { line: LINE, area: LINE + ' L600,100 L0,100 Z', cota: `M${X(1.1).toFixed(1)} 202H${X(1.9).toFixed(1)}M${X(1.1).toFixed(1)} 194V210M${X(1.9).toFixed(1)} 194V210` };
+
+const DOWNLOADS = [
+  { name: 'Favicon', file: 'favicon.svg', href: 'favicon.svg', preview: 'favicon.svg', bg: '#0A0A0A' },
+  { name: 'Avatar circular', file: 'avatar-circular.svg', href: 'assets/avatar-circular.svg', preview: 'assets/avatar-circular.svg', bg: '#0A0A0A' },
+  { name: 'Avatar cuadrado', file: 'avatar-cuadrado.svg', href: 'assets/avatar-cuadrado.svg', preview: 'assets/avatar-cuadrado.svg', bg: '#0A0A0A' },
+  { name: 'Tokens CSS', file: 'globals.css', href: 'tokens/globals.css', preview: 'favicon.svg', bg: '#0A0A0A' }
+];
+const WAYS = [
+  { key: 'sobre-negro', label: 'Sobre negro (principal)', chip: '#C6F432' },
+  { key: 'negro', label: 'Una tinta negra, sobre blanco', chip: '#0A0A0A' },
+  { key: 'blanco', label: 'Una tinta blanca, sobre foto o color', chip: '#F5F5F5' }
+];
+const LOGO_SETS = [
+  { key: 'horizontal', title: 'Horizontal', use: 'Versión principal. Cabeceras, firmas y pies.', maxH: '64px', maxHs: '36px' },
+  { key: 'vertical', title: 'Vertical', use: 'Portadas, carteles y espacios cuadrados.', maxH: '140px', maxHs: '84px' },
+  { key: 'compacta', title: 'Compacta', use: 'Cabecera móvil y espacios estrechos.', maxH: '96px', maxHs: '56px' },
+  { key: 'wordmark', title: 'Wordmark', use: 'Cuando el símbolo ya aparece cerca.', maxH: '52px', maxHs: '28px' },
+  { key: 'simbolo', title: 'Símbolo', use: 'Favicon, avatar y tamaños por debajo de 24 px.', maxH: '120px', maxHs: '72px' }
+].map(L => ({
+  ...L,
+  preview: `assets/logo/paddock-notes-${L.key}-sobre-negro.svg`,
+  previewLight: `assets/logo/paddock-notes-${L.key}-negro.svg`,
+  ways: WAYS.map(w => {
+    const n = `paddock-notes-${L.key}-${w.key}`;
+    return { ...w, svg: `assets/logo/${n}.svg`, png: `assets/logo/${n}.png`, svgName: n + '.svg', pngName: n + '.png' };
+  })
+}));
+
+class Component extends DCLogic {
+  state = { copied: null, tokens: '', homeScale: 0.5, ogScale: 0.5 };
+  homeRef = React.createRef();
+  ogRef = React.createRef();
+  componentDidMount() {
+    fetch('tokens/globals.css').then(r => r.text()).then(t => this.setState({ tokens: t })).catch(() => {});
+    this.ro = new ResizeObserver(() => {
+      const h = this.homeRef.current, o = this.ogRef.current;
+      this.setState({ homeScale: h ? h.clientWidth / 1280 : 0.5, ogScale: o ? o.clientWidth / 1200 : 0.5 });
+    });
+    [this.homeRef.current, this.ogRef.current].forEach(el => el && this.ro.observe(el));
+  }
+  componentWillUnmount() { this.ro && this.ro.disconnect(); clearTimeout(this.t); }
+  copy(key, text) {
+    const done = () => { this.setState({ copied: key }); clearTimeout(this.t); this.t = setTimeout(() => this.setState({ copied: null }), 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+  }
+  renderVals() {
+    const { copied } = this.state;
+    return {
+      swatches: SW.map(c => {
+        const r = ratio(c.hex, c.vs);
+        return {
+          ...c,
+          on: lum(c.hex) > 0.3 ? '#0A0A0A' : '#F5F5F5',
+          sample: c.deco ? 'Aa' : 'Aa',
+          state: copied === c.hex ? 'Copiado' : 'Copiar',
+          check: `${fmt(r)} con ${c.vsName} · ${c.deco ? 'decorativo, nunca texto' : aa(r)}`,
+          copy: () => this.copy(c.hex, c.hex)
+        };
+      }),
+      lightMuted: fmt(ratio('#5A5A5A', '#FFFFFF')) + ' AA',
+      series: SERIES, scale: SCALE, chart: CHART, downloads: DOWNLOADS, logoSets: LOGO_SETS,
+      seq: ['#1E2410', '#2F3A14', '#485A17', '#66801B', '#8DB320', '#B0DA2A', '#D9FF6B'],
+      div: ['#B98CFF', '#7E5CC0', '#3A2C55', '#232323', '#3B4A14', '#8DB320', '#C6F432'],
+      homeRef: this.homeRef, ogRef: this.ogRef,
+      homeScale: this.state.homeScale.toFixed(4), ogScale: this.state.ogScale.toFixed(4),
+      tokensText: this.state.tokens || 'Cargando tokens/globals.css…',
+      tokensLabel: copied === 'tokens' ? 'Copiado' : 'Copiar CSS',
+      copyTokens: () => this.copy('tokens', this.state.tokens)
+    };
+  }
+}
+</script>
+</body>
+</html>

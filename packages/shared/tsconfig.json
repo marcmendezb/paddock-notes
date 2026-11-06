@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // TextEncoder e Intl.DisplayNames existen en Workers, en Node y en el navegador.
+  "compilerOptions": { "lib": ["ES2023", "DOM"] },
+  "include": ["src", "test"]
+}

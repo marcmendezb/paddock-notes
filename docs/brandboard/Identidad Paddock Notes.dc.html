@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paddock Notes · Sistema de identidad</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="tokens/globals.css">
+</helmet>
+<div style="background:var(--bg);color:var(--text);min-height:100vh">
+
+<header data-surface="ink" style="background:var(--bg);color:var(--text)">
+  <div style="max-width:1120px;margin:0 auto;padding:clamp(48px,8vw,112px) clamp(16px,4vw,40px) clamp(40px,6vw,72px)">
+    <div style="display:flex;align-items:center;gap:clamp(12px,2vw,20px)">
+      <svg viewBox="0 0 32 32" aria-hidden="true" style="flex:none;width:clamp(48px,8vw,88px);height:auto"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></svg>
+      <h1 style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(2.5rem,1.2rem + 6vw,5.5rem);line-height:0.95">Paddock Notes</h1>
+    </div>
+    <p style="margin:28px 0 0;max-width:56ch;font-size:var(--step-1);line-height:1.45;color:var(--muted);text-wrap:pretty">Sistema de identidad, versión 2: negro y lima, con Archivo de Google Fonts. La lima solo aparece sobre negro. El elemento propio es la cota del dibujo técnico, que mide una distancia y la anota.</p>
+    <p style="margin:24px 0 0;display:flex;flex-wrap:wrap;gap:8px 28px;font-size:var(--step--1)"><a href="Home Preview.dc.html">Ver la home en escritorio y móvil</a><a href="Home.dc.html">Abrir la home a pantalla completa</a><a href="tokens/globals.css">Abrir globals.css</a></p>
+  </div>
+</header>
+
+<main style="max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 96px">
+
+  <section aria-labelledby="s-plan" style="padding-top:clamp(48px,7vw,88px)">
+    <h2 id="s-plan" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Plan: tres direcciones</h2>
+    <p style="margin:0 0 32px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Cada dirección parte de una forma distinta de leer «notes»: medir, registrar o comparar.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px">
+      <article style="border:2px solid var(--text);border-radius:var(--radius);padding:24px">
+        <h3 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:var(--step-2);line-height:var(--lh-heading)">La cota</h3>
+        <p style="margin:8px 0 0"><span style="display:inline-block;font-size:var(--step--2);font-weight:600;background:var(--accent-fill);color:var(--accent-contrast);border-radius:var(--radius-sm);padding:2px 8px">Elegida</span></p>
+        <p style="margin:14px 0 0;font-size:var(--step--1);text-wrap:pretty">El lenguaje del dibujo técnico: una línea de medida entre dos marcas y el valor escrito encima. Sensación precisa y calmada, de alguien que mide antes de opinar. Encaja porque entender una carrera es medir huecos: segundos, vueltas, metros.</p>
+        <p style="margin:12px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Se puede confundir con la estética «blueprint»: fondo azul de plano con líneas blancas.</p>
+      </article>
+      <article style="border:1px solid var(--line);border-radius:var(--radius);padding:24px">
+        <h3 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:var(--step-2);line-height:var(--lh-heading)">Hoja de tiempos</h3>
+        <p style="margin:14px 0 0;font-size:var(--step--1);text-wrap:pretty">Las hojas impresas que circulan por el paddock: columnas densas, cifras, sellos de hora. Sensación de archivo y de dato en bruto.</p>
+        <p style="margin:12px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Se puede confundir con la torre de tiempos de la retransmisión y con la maquetación de periódico con filetes y monoespaciada.</p>
+      </article>
+      <article style="border:1px solid var(--line);border-radius:var(--radius);padding:24px">
+        <h3 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:var(--step-2);line-height:var(--lh-heading)">Calco</h3>
+        <p style="margin:14px 0 0;font-size:var(--step--1);text-wrap:pretty">Dos vueltas superpuestas como hojas de papel de calco; la marca son dos formas que se solapan y la intersección es el dato. Sensación ligera, comparativa.</p>
+        <p style="margin:12px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Se puede confundir con el duotono tipo risografía de estudio creativo y con los degradados decorativos.</p>
+      </article>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:32px 48px;margin-top:40px">
+      <div>
+        <h3 style="margin:0 0 10px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Por qué la cota</h3>
+        <p style="margin:0;max-width:var(--measure);text-wrap:pretty">Es la única dirección en la que el elemento propio también trabaja: la misma cota sirve para la cuenta atrás (el hueco hasta la salida), para anotar un tramo en un gráfico o un undercut en una estrategia. «Notes» deja de ser solo un nombre y pasa a ser un gesto: el valor escrito sobre la medida. No tiene nada de cabecera de prensa: ni filetes de periódico, ni serif, ni secciones con antetítulo.</p>
+      </div>
+      <div>
+        <h3 style="margin:0 0 10px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Cambios tras la revisión</h3>
+        <ul style="margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;max-width:var(--measure)">
+          <li>Paleta negro y lima, a petición tuya. Está en la lista de tics («casi negro con verde ácido»), así que la lima solo hace de tinta de medida: cifras de la cuenta atrás, cotas, notas y estado activo. Nunca como fondo amplio, degradado ni brillo.</li>
+          <li>Fondos solo blanco o negro neutros, sin tinte cálido. La lima solo aparece sobre negro; sobre blanco todo es negro, incluidos acento, notas y logo.</li>
+          <li>Una sola familia de Google Fonts, Archivo, en dos anchos, en lugar de la pareja anterior, que resultaba demasiado decorativa.</li>
+          <li>Símbolo nuevo: una p construida como marcador de gráfico, más legible a 16 px que la cota abstracta de la primera versión.</li>
+          <li>Fuera las etiquetas en mayúsculas espaciadas y la monoespaciada; enlaces subrayados sin flechas; la única numeración es la de la tabla de pilotos.</li>
+          <li>Accesorio quitado antes de entregar: la silueta del circuito junto al nombre del GP, que competía con la cota.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-logo" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-logo" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Logo</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">El símbolo es una p minúscula dibujada como un marcador de gráfico: el asta es el eje, el anillo es el marcador y el punto lima es el dato anotado. Retícula de 32 unidades y trazo de 4,5. El wordmark es Archivo semicondensada (87,5 %), peso 700, espaciado −1 %.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px">
+      <figure style="margin:0;grid-column:1/-1">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)">
+          <div style="background:#0A0A0A;color:#F5F5F5;min-height:240px;display:flex;align-items:center;justify-content:center;gap:14px;padding:24px">
+            <svg width="52" height="52" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:clamp(28px,4vw,40px);white-space:nowrap">Paddock Notes</span>
+          </div>
+          <div style="background:#FFFFFF;color:#0A0A0A;min-height:240px;display:flex;align-items:center;justify-content:center;gap:14px;padding:24px">
+            <svg width="52" height="52" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#0A0A0A" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#0A0A0A"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:clamp(28px,4vw,40px);white-space:nowrap">Paddock Notes</span>
+          </div>
+        </div>
+        <figcaption style="margin-top:8px;font-size:var(--step--2);color:var(--muted)">Principal sobre negro, que es su fondo habitual. Sobre blanco va entero en negro: la lima solo aparece sobre negro.</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <div style="display:grid;grid-template-columns:1fr 1fr;height:180px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)">
+          <div style="background:#0A0A0A;color:#F5F5F5;display:flex;align-items:center;justify-content:center;gap:7px">
+            <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:15px;line-height:0.95">Paddock<br>Notes</span>
+          </div>
+          <div style="background:#FFFFFF;color:#0A0A0A;display:flex;align-items:center;justify-content:center;gap:7px">
+            <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#0A0A0A" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#0A0A0A"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:15px;line-height:0.95">Paddock<br>Notes</span>
+          </div>
+        </div>
+        <figcaption style="margin-top:8px;font-size:var(--step--2);color:var(--muted)">Compacta, para cabeceras estrechas: wordmark en dos líneas, alto total 30 px</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <div style="display:grid;grid-template-columns:1fr 1fr;height:180px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)">
+          <div style="background:#FFFFFF;color:#0A0A0A;display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:19px">Paddock Notes</span>
+          </div>
+          <div style="background:#0A0A0A;color:#F5F5F5;display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:19px">Paddock Notes</span>
+          </div>
+        </div>
+        <figcaption style="margin-top:8px;font-size:var(--step--2);color:var(--muted)">Monocroma, una sola tinta, para grabado e impresión: el punto se mantiene separado del anillo</figcaption>
+      </figure>
+      <figure style="margin:0;grid-column:1/-1">
+        <div style="border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;flex-wrap:wrap;align-items:center;gap:24px 48px">
+          <div style="display:flex;align-items:center;gap:6px;height:24px">
+            <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+            <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:18px;line-height:24px">Paddock Notes</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:16px">
+            <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+            <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+          </div>
+          <p style="margin:0;font-size:var(--step--1);color:var(--muted);max-width:46ch;text-wrap:pretty">Prueba a 24 px de alto: el wordmark se lee entero. A 16 px el símbolo usa un trazo de 5 para que el punto no se funda con el anillo.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-fav" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-fav" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Favicon y avatar</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted)">Siempre sobre negro. Cuadrado con radio 7/32 para favicon e icono de app; círculo para redes.</p>
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:28px 36px">
+      <svg width="128" height="128" viewBox="0 0 32 32" role="img" aria-label="Favicon cuadrado"><rect width="32" height="32" rx="7" fill="#0A0A0A"></rect><g transform="translate(16 16) scale(.74) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+      <svg width="48" height="48" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0A0A0A"></rect><g transform="translate(16 16) scale(.74) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0A0A0A"></rect><g transform="translate(16 16) scale(.74) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0A0A0A"></rect><g transform="translate(16 16) scale(.8) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+      <span aria-hidden="true" style="width:1px;align-self:stretch;background:var(--line)"></span>
+      <svg width="128" height="128" viewBox="0 0 32 32" role="img" aria-label="Avatar circular"><circle cx="16" cy="16" r="16" fill="#0A0A0A"></circle><g transform="translate(16 16) scale(.66) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+      <svg width="48" height="48" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#0A0A0A"></circle><g transform="translate(16 16) scale(.66) translate(-16 -16)"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></g></svg>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-color" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-color" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Paleta</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Ocho tokens por modo. El contraste se calcula aquí mismo con la fórmula WCAG 2.1, contra el fondo de cada modo. Mínimo exigido: 4,5:1 para texto; el trazo es decorativo y nunca lleva texto.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:20px">
+      <sc-for list="{{ palettes }}" as="p" hint-placeholder-count="2">
+        <div style="background:{{ p.bg }};color:{{ p.fg }};border:1px solid {{ p.border }};border-radius:var(--radius);padding:20px 20px 8px">
+          <h3 style="margin:0 0 12px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">{{ p.title }}</h3>
+          <sc-for list="{{ p.items }}" as="c" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid {{ p.border }}">
+              <span style="width:40px;height:40px;border-radius:var(--radius-sm);background:{{ c.hex }};box-shadow:inset 0 0 0 1px {{ p.border }}"></span>
+              <span style="min-width:0;line-height:1.3"><span style="display:block;font-weight:600;font-size:var(--step--1)">{{ c.name }}</span><span style="display:block;font-size:var(--step--2);color:{{ p.muted }}">{{ c.role }} · {{ c.token }}</span></span>
+              <span style="text-align:right;font-size:var(--step--2);line-height:1.35;font-variant-numeric:tabular-nums"><span style="display:block;font-weight:600">{{ c.hex }}</span><span style="display:block;color:{{ p.muted }}">{{ c.check }}</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-data" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-data" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Colores para datos</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Seis series que no dependen solo del tono: cada una tiene marcador y patrón de trazo propios, y luminosidades escalonadas. Ninguna combinación reproduce la librea de un equipo; gris y pizarra quedan para referencias y series secundarias. El tercer panel es la misma leyenda sin color.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px">
+      <sc-for list="{{ seriesPanels }}" as="sp" hint-placeholder-count="3">
+        <div style="background:{{ sp.bg }};color:{{ sp.fg }};border:1px solid {{ sp.border }};border-radius:var(--radius);padding:16px 20px;filter:{{ sp.filter }}">
+          <p style="margin:0 0 8px;font-size:var(--step--2);color:{{ sp.muted }}">{{ sp.title }}</p>
+          <sc-for list="{{ sp.items }}" as="s" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;padding:5px 0">
+              <svg width="96" height="24" viewBox="0 0 96 24" aria-hidden="true" style="flex:none"><path d="M2 12H94" stroke="{{ s.color }}" stroke-width="2" stroke-dasharray="{{ s.dash }}"></path><path d="{{ s.marker }}" transform="translate(36 0)" fill="{{ s.fill }}" stroke="{{ s.color }}" stroke-width="2"></path></svg>
+              <span style="font-size:var(--step--1);font-weight:600;min-width:5em">{{ s.name }}</span>
+              <span style="font-size:var(--step--2);color:{{ sp.muted }};font-variant-numeric:tabular-nums">{{ s.hex }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:24px 40px;margin-top:32px">
+      <div>
+        <h3 style="margin:0 0 4px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Secuencial</h3>
+        <p style="margin:0 0 12px;font-size:var(--step--1);color:var(--muted)">Para intensidad: velocidad sobre el mapa del circuito, uso del acelerador, degradación.</p>
+        <sc-for list="{{ ramps.seq }}" as="r" hint-placeholder-count="2">
+          <div style="margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);height:36px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line)">
+              <sc-for list="{{ r.steps }}" as="st" hint-placeholder-count="7"><span style="background:{{ st }}"></span></sc-for>
+            </div>
+            <p style="margin:4px 0 0;font-size:var(--step--2);color:var(--muted)">{{ r.label }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <div>
+        <h3 style="margin:0 0 4px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Divergente</h3>
+        <p style="margin:0 0 12px;font-size:var(--step--1);color:var(--muted)">Sobre negro, lila contra lima; sobre blanco, lila contra negro. Ambos pares se distinguen con daltonismo rojo-verde, y el signo + o − acompaña siempre al color.</p>
+        <sc-for list="{{ ramps.div }}" as="r" hint-placeholder-count="2">
+          <div style="margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);height:36px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line)">
+              <sc-for list="{{ r.steps }}" as="st" hint-placeholder-count="7"><span style="background:{{ st }}"></span></sc-for>
+            </div>
+            <p style="margin:4px 0 0;display:flex;justify-content:space-between;gap:12px;font-size:var(--step--2);color:var(--muted)"><span>+ pierde tiempo</span><span>{{ r.label }}</span><span>− gana tiempo</span></p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-type" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-type" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Tipografía</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Archivo, de Google Fonts (licencia SIL Open Font License), variable en peso y en ancho. Una sola familia con dos anchos: semicondensada (87,5 %) para titulares, cifras grandes y wordmark; normal (100 %) para texto, interfaz, tablas y notas.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:32px 48px;align-items:start">
+      <div>
+        <p style="margin:0;font-stretch:87.5%;font-weight:700;font-size:clamp(3rem,2rem + 4vw,5.5rem);line-height:0.95;letter-spacing:-0.03em">Interlagos 1:10.540</p>
+        <p style="margin:10px 0 28px;font-size:var(--step--2);color:var(--muted)">Titulares · Archivo 87,5 % · 700 · interlineado 0,98–1,12 · espaciado de −1 % a −3 % según tamaño</p>
+        <p style="margin:0;max-width:var(--measure);text-wrap:pretty">Norris paró dos vueltas después que Russell. Con el neumático nuevo, Russell rodó 0,9 s más rápido en cada una de esas vueltas y salió de boxes por delante. El resto de la carrera consistió en gestionar ese hueco.</p>
+        <p style="margin:10px 0 0;font-size:var(--step--2);color:var(--muted)">Texto · Archivo 100 % · 400 · 17/27 px · máximo 68 caracteres por línea</p>
+        <div style="margin-top:28px;display:inline-grid;grid-template-columns:auto auto;gap:4px 32px;font-size:var(--step-1);font-variant-numeric:tabular-nums;font-weight:500">
+          <span>Russell</span><span style="text-align:right">1:10.540</span>
+          <span>Norris</span><span style="text-align:right">1:10.604</span>
+          <span>Antonelli</span><span style="text-align:right">1:11.118</span>
+        </div>
+        <p style="margin:10px 0 0;font-size:var(--step--2);color:var(--muted)">Cifras tabulares (font-variant-numeric: tabular-nums) en tablas, tiempos y cuenta atrás</p>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:var(--step--1);line-height:var(--lh-ui);font-variant-numeric:tabular-nums">
+          <caption style="text-align:left;font-stretch:87.5%;font-weight:700;font-size:var(--step-1);padding-bottom:10px">Escala</caption>
+          <thead><tr style="color:var(--muted);font-size:var(--step--2);border-bottom:1px solid var(--line)"><th scope="col" style="text-align:left;font-weight:500;padding:0 12px 8px 0">Token</th><th scope="col" style="text-align:right;font-weight:500;padding:0 12px 8px 0">px</th><th scope="col" style="text-align:left;font-weight:500;padding:0 12px 8px 0">Peso · ancho</th><th scope="col" style="text-align:left;font-weight:500;padding:0 0 8px 0">Uso</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-count</th><td style="text-align:right;padding:9px 12px 9px 0">44–112</td><td style="padding:9px 12px 9px 0">600 · 87,5</td><td style="padding:9px 0">Cuenta atrás</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-5</th><td style="text-align:right;padding:9px 12px 9px 0">40–80</td><td style="padding:9px 12px 9px 0">700 · 87,5</td><td style="padding:9px 0">Nombre del GP</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-4</th><td style="text-align:right;padding:9px 12px 9px 0">36–56</td><td style="padding:9px 12px 9px 0">700 · 87,5</td><td style="padding:9px 0">Título de artículo</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-3</th><td style="text-align:right;padding:9px 12px 9px 0">28–36</td><td style="padding:9px 12px 9px 0">700 · 87,5</td><td style="padding:9px 0">h2</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-2</th><td style="text-align:right;padding:9px 12px 9px 0">26</td><td style="padding:9px 12px 9px 0">700 · 87,5</td><td style="padding:9px 0">h3, secciones de la home</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-1</th><td style="text-align:right;padding:9px 12px 9px 0">21</td><td style="padding:9px 12px 9px 0">400 · 100</td><td style="padding:9px 0">Entradilla</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step-0</th><td style="text-align:right;padding:9px 12px 9px 0">17</td><td style="padding:9px 12px 9px 0">400 · 100</td><td style="padding:9px 0">Texto, interlineado 1,6</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step--1</th><td style="text-align:right;padding:9px 12px 9px 0">15</td><td style="padding:9px 12px 9px 0">400–600 · 100</td><td style="padding:9px 0">Interfaz, tablas, notas</td></tr>
+            <tr><th scope="row" style="text-align:left;font-weight:600;padding:9px 12px 9px 0">--step--2</th><td style="text-align:right;padding:9px 12px 9px 0">13</td><td style="padding:9px 12px 9px 0">400–500 · 100</td><td style="padding:9px 0">Ejes, pies de gráfico</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-voice" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-voice" style="margin:0 0 28px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Tono de voz</h2>
+    <ul style="margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px 40px">
+      <li><h3 style="margin:0 0 4px;font-size:var(--step-0);font-weight:600">El porqué antes que el qué</h3><p style="margin:0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">El resultado ya se sabe. Abrimos con la causa: «Norris perdió la carrera en la segunda parada».</p></li>
+      <li><h3 style="margin:0 0 4px;font-size:var(--step-0);font-weight:600">El dato en lugar del adjetivo</h3><p style="margin:0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">«0,4 s más rápido por vuelta» en vez de «un ritmo brutal». Sin cifra no hay superlativo.</p></li>
+      <li><h3 style="margin:0 0 4px;font-size:var(--step-0);font-weight:600">Una idea por frase</h3><p style="margin:0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Voz activa y sujeto claro: «Mercedes adelantó la parada», no «la parada fue adelantada».</p></li>
+      <li><h3 style="margin:0 0 4px;font-size:var(--step-0);font-weight:600">La jerga se explica una vez</h3><p style="margin:0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">La primera vez que sale «undercut» va con su definición: parar antes que el rival para ganar tiempo con neumático nuevo.</p></li>
+      <li><h3 style="margin:0 0 4px;font-size:var(--step-0);font-weight:600">Decimos lo que no sabemos</h3><p style="margin:0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Si un valor es una estimación, lo indicamos junto al gráfico y explicamos de dónde sale.</p></li>
+    </ul>
+    <div style="overflow-x:auto;margin-top:40px">
+      <table style="width:100%;min-width:600px;border-collapse:collapse;font-size:var(--step--1);line-height:1.45">
+        <thead><tr style="color:var(--muted);font-size:var(--step--2);border-bottom:1px solid var(--line)"><th scope="col" style="text-align:left;font-weight:500;padding:0 16px 8px 0;width:7em">Pieza</th><th scope="col" lang="es" style="text-align:left;font-weight:500;padding:0 16px 8px 0">Español</th><th scope="col" lang="en" style="text-align:left;font-weight:500;padding:0 0 8px 0">English</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:12px 16px 12px 0;vertical-align:top">Titular</th><td lang="es" style="padding:12px 16px 12px 0;vertical-align:top">Por qué la parada en la vuelta 28 decidió la carrera</td><td lang="en" style="padding:12px 0;vertical-align:top">Why the lap-28 stop decided the race</td></tr>
+          <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:12px 16px 12px 0;vertical-align:top">Error</th><td lang="es" style="padding:12px 16px 12px 0;vertical-align:top">No hemos podido cargar los tiempos de esta sesión. Vuelve a intentarlo en unos minutos.</td><td lang="en" style="padding:12px 0;vertical-align:top">We couldn’t load the timing for this session. Try again in a few minutes.</td></tr>
+          <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:12px 16px 12px 0;vertical-align:top">Botón</th><td lang="es" style="padding:12px 16px 12px 0;vertical-align:top">Comparar vueltas</td><td lang="en" style="padding:12px 0;vertical-align:top">Compare laps</td></tr>
+          <tr style="border-bottom:1px solid var(--line)"><th scope="row" style="text-align:left;font-weight:600;padding:12px 16px 12px 0;vertical-align:top">Newsletter</th><td lang="es" style="padding:12px 16px 12px 0;vertical-align:top">Esta semana: cómo el desgaste del neumático trasero cambió la estrategia en Interlagos.</td><td lang="en" style="padding:12px 0;vertical-align:top">This week: how rear tyre wear changed the strategy at Interlagos.</td></tr>
+          <tr><th scope="row" style="text-align:left;font-weight:600;padding:12px 16px 12px 0;vertical-align:top;color:var(--muted)">Evitamos</th><td lang="es" style="padding:12px 16px 12px 0;vertical-align:top;color:var(--muted)"><s>¡No te lo pierdas! Un fin de semana épico en Brasil</s></td><td lang="en" style="padding:12px 0;vertical-align:top;color:var(--muted)"><s>Don’t miss it! An epic weekend in Brazil</s></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-viz" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-viz" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Estilo de visualización</h2>
+    <p style="margin:0 0 28px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Los gráficos se leen como un plano anotado: poca tinta en la estructura y la tinta lima reservada para lo que queremos que se mire.</p>
+    <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px 40px">
+      <div><dt style="font-weight:600">Ejes</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Solo se dibuja la línea de cero o de base. Las unidades van una vez, en el último valor del eje («4,3 km»), no en cada marca.</dd></div>
+      <div><dt style="font-weight:600">Rejilla</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Horizontal, 1 px en el color de trazo, entre tres y cinco líneas. Sin rejilla vertical, salvo límites de sector en discontinua.</dd></div>
+      <div><dt style="font-weight:600">Etiquetas</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Directas al final de cada serie en lugar de leyenda cuando caben. Archivo 13 px, cifras tabulares, color secundario.</dd></div>
+      <div><dt style="font-weight:600">Grosor de línea</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Series a 2 px; la serie protagonista a 3 px; referencias a 1 px. Marcadores de 8 px cada N puntos, nunca en todos.</dd></div>
+      <div><dt style="font-weight:600">Notas</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">La nota es la firma de la marca: texto Archivo 600 en color de acento, anclado con un punto de 9 px y halo del color de fondo. Un tramo se marca con la cota (línea de 2 px con remates). Máximo dos notas por gráfico, de doce palabras como mucho, en presente.</dd></div>
+      <div><dt style="font-weight:600">Estados vacíos</dt><dd style="margin:4px 0 0;font-size:var(--step--1);color:var(--muted);text-wrap:pretty">Se mantiene el marco del gráfico en discontinua y una nota de una frase explica por qué no hay datos y cuándo los habrá. Sin ilustraciones.</dd></div>
+    </dl>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px;margin-top:36px">
+      <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius);padding:20px">
+        <p style="margin:0 0 10px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Russell respecto a Norris, vuelta de Q3</p>
+        <div aria-hidden="true" style="display:flex;flex-wrap:wrap;gap:4px 18px;margin-bottom:12px;font-size:var(--step--2);color:var(--muted)">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:2px;background:var(--div-loss-1);border:1px solid var(--div-loss-2)"></span>+ Russell más lento</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:2px;background:var(--div-gain-1);border:1px solid var(--div-gain-2)"></span>− Russell más rápido</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div aria-hidden="true" style="position:relative;width:44px;flex:none;height:220px;font-size:var(--step--2);color:var(--muted);font-variant-numeric:tabular-nums;text-align:right">
+            <span style="position:absolute;right:0;top:27.3%;transform:translateY(-50%)">+0,1 s</span>
+            <span style="position:absolute;right:0;top:45.5%;transform:translateY(-50%)">0</span>
+            <span style="position:absolute;right:0;top:63.6%;transform:translateY(-50%)">−0,1 s</span>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="position:relative;height:220px">
+              <svg viewBox="0 0 600 220" preserveAspectRatio="none" width="100%" height="220" role="img" aria-label="Ejemplo de gráfico de diferencia acumulada con dos notas" style="display:block;overflow:visible">
+                <defs>
+                  <clipPath id="id-above"><rect x="0" y="0" width="600" height="100"></rect></clipPath>
+                  <clipPath id="id-below"><rect x="0" y="100" width="600" height="120"></rect></clipPath>
+                </defs>
+                <path d="M0 60H600M0 140H600" stroke="#DADADA" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.area }}" clip-path="url(#id-above)" style="fill:var(--div-loss-1)"></path>
+                <path d="{{ chart.area }}" clip-path="url(#id-below)" style="fill:var(--div-gain-1)"></path>
+                <path d="M0 100H600" style="stroke:var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.line }}" style="stroke:var(--text)" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ chart.cota }}" style="stroke:var(--accent)" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"></path>
+              </svg>
+              <p style="position:absolute;left:25.6%;top:78%;max-width:72%;margin:0;font-weight:600;font-size:var(--step--1);line-height:1.25;color:var(--accent)">Recupera 0,21 s entre las curvas 4 y 6</p>
+              <span aria-hidden="true" style="position:absolute;left:100%;top:57.1%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg)"></span>
+              <p style="position:absolute;right:0;top:calc(57.1% + 10px);margin:0;font-weight:600;font-size:var(--step--1);line-height:1.25;color:var(--accent);white-space:nowrap">Pole por 0,064 s</p>
+            </div>
+            <div aria-hidden="true" style="position:relative;height:22px;margin-top:6px;font-size:var(--step--2);color:var(--muted);font-variant-numeric:tabular-nums">
+              <span style="position:absolute;left:0">0</span>
+              <span style="position:absolute;left:46.5%;transform:translateX(-50%)">2</span>
+              <span style="position:absolute;right:0">4,3 km</span>
+            </div>
+          </div>
+        </div>
+        <figcaption style="margin-top:10px;font-size:var(--step--2);color:var(--muted)">Datos de ejemplo. La cota marca el tramo; el punto, el valor final.</figcaption>
+      </figure>
+      <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column">
+        <p style="margin:0 0 10px;font-stretch:87.5%;font-weight:700;font-size:var(--step-1)">Ritmo de carrera, GP de Las Vegas</p>
+        <div style="position:relative;flex:1;min-height:220px;border-left:1px dashed var(--line);border-bottom:1px dashed var(--muted);margin:8px 0 0 44px;display:flex;align-items:center;justify-content:center;padding:24px">
+          <p style="margin:0;max-width:30ch;text-align:center;font-weight:600;font-size:var(--step--1);line-height:1.35;color:var(--accent);text-wrap:balance">La carrera aún no se ha disputado. El gráfico aparecerá unas horas después de la bandera final.</p>
+        </div>
+        <figcaption style="margin-top:10px;font-size:var(--step--2);color:var(--muted)">Estado vacío: el marco se conserva y la nota explica cuándo habrá datos. <a href="#s-viz">Ver la carrera anterior</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-og" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-og" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Imagen para compartir</h2>
+    <p style="margin:0 0 24px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Plantilla de 1200 × 630 para el análisis post-carrera: titular a la izquierda, un único gráfico con sus dos notas a la derecha. Campos variables: titular, entradilla, ronda, gráfico y notas. <a href="OG Post-carrera.dc.html">Abrir a tamaño real</a></p>
+    <div ref="{{ ogRef }}" style="position:relative;width:100%;max-width:1120px;aspect-ratio:1200/630;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:#0A0A0A">
+      <iframe src="OG Post-carrera.dc.html" title="Plantilla OG post-carrera" width="1200" height="630" style="position:absolute;left:0;top:0;width:1200px;height:630px;border:0;transform-origin:0 0;transform:scale({{ ogScale }})"></iframe>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-tokens" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-tokens" style="margin:0 0 8px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Tokens para globals.css</h2>
+    <p style="margin:0 0 24px;max-width:var(--measure);color:var(--muted);text-wrap:pretty">Sustituyen directamente a --bg, --surface, --text, --muted, --line, --accent, --accent-contrast, --font-sans y --radius, con la variante oscura bajo prefers-color-scheme: dark. Añaden --accent-fill, colores de datos, fuente de titulares y escala. El atributo data-surface="ink" fuerza negro en la cabecera y el hero en ambos modos. <a href="tokens/globals.css">Abrir el archivo</a></p>
+    <pre data-surface="ink" style="margin:0;background:var(--bg);color:var(--text);border-radius:var(--radius);padding:24px;overflow:auto;max-height:560px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.55;tab-size:2">{{ tokensText }}</pre>
+  </section>
+
+  <section aria-labelledby="s-dec" style="margin-top:clamp(56px,8vw,96px);padding-top:40px;border-top:1px solid var(--line)">
+    <h2 id="s-dec" style="margin:0 0 24px;font-stretch:87.5%;font-weight:700;font-size:var(--step-3);line-height:var(--lh-heading);letter-spacing:-0.015em">Decisiones que dependen de ti</h2>
+    <ul style="margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:12px;max-width:var(--measure)">
+      <li>El símbolo nuevo (la p como marcador). Si lo validas, preparo los SVG finales y el icono de app con zona de respeto.</li>
+      <li>Negro y lima figura en tu propia lista de tics. Confirma que te vale que lo distintivo lo pongan la cota y el símbolo, no el color.</li>
+      <li>El tono de lima #C6F432, que solo vive sobre negro: comprueba que no lo asocias con ninguna escudería en concreto.</li>
+      <li>Cabecera y hero siempre en negro, también en modo claro. La alternativa es que sigan el modo del sistema.</li>
+      <li>Hora de salida: muestro la hora local del circuito y la de tu zona. ¿Prefieres solo la del usuario?</li>
+      <li>La tabla de ejemplo usa nombres reales de pilotos y equipos, en texto y sin colores. Confirma que encaja con la restricción de no usar nombres de equipos en la identidad.</li>
+      <li>Dominio y usuario de redes para la imagen OG y el avatar.</li>
+      <li>Idioma por defecto (español) y si las URL separan idioma (/es, /en).</li>
+    </ul>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const lum = hex => {
+  const v = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+};
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const fmt = r => r.toFixed(1).replace('.', ',') + ':1';
+const ok = r => r >= 4.5 ? ' AA' : r >= 3 ? ' (gráficos)' : '';
+
+function palette(title, c, names, bgPanel, fgPanel, mutedPanel, borderPanel) {
+  const rows = [
+    ['bg', 'Fondo', '--bg', null],
+    ['surface', 'Superficie', '--surface', 'surf'],
+    ['text', 'Texto', '--text', 'text'],
+    ['muted', 'Texto secundario', '--muted', 'text'],
+    ['line', 'Línea / borde', '--line', 'line'],
+    ['accent', 'Acento (texto y trazo)', '--accent', 'text'],
+    ['fill', 'Relleno de acento', '--accent-fill', 'fill'],
+    ['contrast', 'Texto sobre acento', '--accent-contrast', 'on']
+  ];
+  return {
+    title, bg: bgPanel, fg: fgPanel, muted: mutedPanel, border: borderPanel,
+    items: rows.map(([k, role, token, kind]) => {
+      const hex = c[k];
+      let check = '';
+      if (kind === 'text') { const r = ratio(hex, c.bg); check = `${fmt(r)} sobre fondo${ok(r)}`; }
+      else if (kind === 'surf') check = `texto ${fmt(ratio(c.text, hex))}${ok(ratio(c.text, hex))}`;
+      else if (kind === 'line') check = `${fmt(ratio(hex, c.bg))} · decorativo`;
+      else if (kind === 'fill') check = `con su texto ${fmt(ratio(c.contrast, hex))}${ok(ratio(c.contrast, hex))}`;
+      else if (kind === 'on') check = `sobre relleno ${fmt(ratio(hex, c.fill))}${ok(ratio(hex, c.fill))}`;
+      else check = 'referencia';
+      return { hex, role, token, name: names[k], check };
+    })
+  };
+}
+const LIGHT = { bg: '#FFFFFF', surface: '#F5F5F5', text: '#0A0A0A', muted: '#5A5A5A', line: '#DADADA', accent: '#0A0A0A', fill: '#0A0A0A', contrast: '#FFFFFF' };
+const DARK = { bg: '#0A0A0A', surface: '#161616', text: '#F5F5F5', muted: '#A3A3A3', line: '#2A2A2A', accent: '#C6F432', fill: '#C6F432', contrast: '#0A0A0A' };
+const N_L = { bg: 'Blanco', surface: 'Gris claro', text: 'Negro', muted: 'Grafito', line: 'Trazo', accent: 'Negro', fill: 'Negro', contrast: 'Blanco' };
+const N_D = { bg: 'Negro', surface: 'Negro alto', text: 'Blanco roto', muted: 'Gris', line: 'Trazo', accent: 'Lima', fill: 'Lima', contrast: 'Negro' };
+const PALETTES = [
+  palette('Modo claro', LIGHT, N_L, '#FFFFFF', '#0A0A0A', '#5A5A5A', '#DADADA'),
+  palette('Modo oscuro', DARK, N_D, '#0A0A0A', '#F5F5F5', '#A3A3A3', '#2A2A2A')
+];
+
+const MARK = {
+  circle: 'M12 7a5 5 0 1 1 0 10a5 5 0 1 1 0-10Z',
+  square: 'M7.5 7.5h9v9h-9Z',
+  tri: 'M12 6.5l5.5 10h-11Z',
+  diamond: 'M12 5.5l6 6.5-6 6.5-6-6.5Z',
+  cross: 'M7.5 7.5l9 9M16.5 7.5l-9 9',
+  ring: 'M12 7a5 5 0 1 1 0 10a5 5 0 1 1 0-10Z'
+};
+const SERIES = [
+  ['Negro / Lima', '#0A0A0A', '#C6F432', 'circle', ''],
+  ['Cielo', '#1F6FB2', '#62B6F0', 'square', '10 5'],
+  ['Ámbar', '#B36B00', '#F5A623', 'tri', '2 4'],
+  ['Lila', '#7B4FD6', '#B98CFF', 'diamond', '10 4 2 4'],
+  ['Pizarra', '#2F3A4A', '#E8E8E8', 'cross', '5 4'],
+  ['Gris', '#6B6B6B', '#8A8A8A', 'ring', '1 0']
+];
+const panel = (title, dark, bg, fg, muted, border, filter) => ({
+  title, bg, fg, muted, border, filter,
+  items: SERIES.map(([name, l, d, m, dash]) => {
+    const color = dark ? d : l;
+    return { name, hex: color, color, dash, marker: MARK[m], fill: m === 'cross' ? 'none' : m === 'ring' ? bg : color };
+  })
+});
+const SERIES_PANELS = [
+  panel('Sobre blanco', false, '#FFFFFF', '#0A0A0A', '#5A5A5A', '#DADADA', 'none'),
+  panel('Sobre negro', true, '#0A0A0A', '#F5F5F5', '#A3A3A3', '#2A2A2A', 'none'),
+  panel('Sin color (escala de grises)', false, '#FFFFFF', '#0A0A0A', '#5A5A5A', '#DADADA', 'grayscale(1)')
+];
+const RAMPS = {
+  seq: [
+    { label: 'Claro · --seq-1 a --seq-7 (sin lima)', steps: ['#F2F2F2', '#D9D9D9', '#B3B3B3', '#8C8C8C', '#5E5E5E', '#333333', '#0A0A0A'] },
+    { label: 'Oscuro', steps: ['#1E2410', '#2F3A14', '#485A17', '#66801B', '#8DB320', '#B0DA2A', '#D9FF6B'] }
+  ],
+  div: [
+    { label: 'Claro (lila contra negro)', steps: ['#6A3FC8', '#9C7FE0', '#DCD0F7', '#EDEDED', '#D4D4D4', '#7A7A7A', '#0A0A0A'] },
+    { label: 'Oscuro', steps: ['#B98CFF', '#7E5CC0', '#3A2C55', '#232323', '#3B4A14', '#8DB320', '#C6F432'] }
+  ]
+};
+
+const DELTA = [[0,0],[0.35,0.025],[0.8,0.11],[1.1,0.13],[1.5,0.03],[1.9,-0.08],[2.4,-0.055],[2.9,-0.1],[3.4,-0.035],[3.8,-0.05],[4.3,-0.064]];
+function smooth(pts) {
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+const X = km => km / 4.3 * 600, Y = d => 100 - d * 400;
+const LINE = smooth(DELTA.map(([k, d]) => [X(k), Y(d)]));
+const CHART = { line: LINE, area: LINE + ' L600,100 L0,100 Z', cota: `M${X(1.1).toFixed(1)} 202H${X(1.9).toFixed(1)}M${X(1.1).toFixed(1)} 194V210M${X(1.9).toFixed(1)} 194V210` };
+
+class Component extends DCLogic {
+  state = { tokens: '', ogScale: 0.5 };
+  ogRef = React.createRef();
+  componentDidMount() {
+    fetch('tokens/globals.css').then(r => r.text()).then(t => this.setState({ tokens: t })).catch(() => {});
+    const el = this.ogRef.current;
+    if (el) {
+      this.ro = new ResizeObserver(() => this.setState({ ogScale: el.clientWidth / 1200 }));
+      this.ro.observe(el);
+    }
+  }
+  componentWillUnmount() { this.ro && this.ro.disconnect(); }
+  renderVals() {
+    return {
+      palettes: PALETTES, seriesPanels: SERIES_PANELS, ramps: RAMPS, chart: CHART,
+      tokensText: this.state.tokens || 'Cargando tokens/globals.css…',
+      ogRef: this.ogRef, ogScale: this.state.ogScale.toFixed(4)
+    };
+  }
+}
+</script>
+</body>
+</html>

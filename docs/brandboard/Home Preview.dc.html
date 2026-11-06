@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;display=swap">
+<style>body{margin:0;background:#E9E9E9;font-family:Archivo,sans-serif;color:#0A0A0A}a{color:#0A0A0A}a:hover{color:#4F6E00}</style>
+</helmet>
+<section style="padding:40px 44px">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;margin-bottom:28px">
+    <h1 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:28px;letter-spacing:-0.01em">Paddock Notes · Home</h1>
+    <p style="margin:0;font-size:15px;color:#5A5A5A">Escritorio 1280 px y móvil 360 px, en claro y en oscuro. Las cuatro vistas son la misma página responsive. <a href="Home.dc.html">Abrir la home</a> · <a href="Identidad Paddock Notes.dc.html">Volver a la identidad</a></p>
+  </div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+      <figcaption style="font-size:13px;font-weight:600">Escritorio · claro</figcaption>
+      <iframe src="Home.dc.html?theme=light&amp;frame=dl" title="Home escritorio, modo claro" width="1280" height="{{ h.dl }}" style="display:block;width:1280px;border:0;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.1)"></iframe>
+    </figure>
+    <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+      <figcaption style="font-size:13px;font-weight:600">Móvil · claro</figcaption>
+      <iframe src="Home.dc.html?theme=light&amp;frame=ml" title="Home móvil, modo claro" width="360" height="{{ h.ml }}" style="display:block;width:360px;border:0;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.1)"></iframe>
+    </figure>
+  </div>
+  <div style="display:flex;gap:40px;align-items:flex-start;margin-top:56px">
+    <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+      <figcaption style="font-size:13px;font-weight:600">Escritorio · oscuro</figcaption>
+      <iframe src="Home.dc.html?theme=dark&amp;frame=dd" title="Home escritorio, modo oscuro" width="1280" height="{{ h.dd }}" style="display:block;width:1280px;border:0;background:#0A0A0A"></iframe>
+    </figure>
+    <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+      <figcaption style="font-size:13px;font-weight:600">Móvil · oscuro</figcaption>
+      <iframe src="Home.dc.html?theme=dark&amp;frame=md" title="Home móvil, modo oscuro" width="360" height="{{ h.md }}" style="display:block;width:360px;border:0;background:#0A0A0A"></iframe>
+    </figure>
+  </div>
+  <div style="display:flex;gap:40px;align-items:flex-start;margin-top:56px">
+    <figure style="margin:0;display:flex;flex-direction:column;gap:10px">
+      <figcaption style="font-size:13px;font-weight:600">Hero en inglés · escritorio</figcaption>
+      <iframe src="Home.dc.html?theme=dark&amp;lang=en&amp;frame=en" title="Home en inglés" width="1280" height="720" style="display:block;width:1280px;border:0;background:#0A0A0A"></iframe>
+    </figure>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: { dl: 900, ml: 900, dd: 900, md: 900 } };
+  componentDidMount() {
+    this.onMsg = e => {
+      const d = e.data;
+      if (d && d.pnFrame && d.pnFrame in this.state.h && d.h && d.h !== this.state.h[d.pnFrame]) {
+        this.setState(s => ({ h: { ...s.h, [d.pnFrame]: d.h } }));
+      }
+    };
+    window.addEventListener('message', this.onMsg);
+  }
+  componentWillUnmount() { window.removeEventListener('message', this.onMsg); }
+  renderVals() { return { h: this.state.h }; }
+}
+</script>
+</body>
+</html>

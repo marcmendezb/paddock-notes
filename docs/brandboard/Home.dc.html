@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paddock Notes</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="tokens/globals.css">
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--text)">
+  <a href="#contenido" style="position:absolute;left:16px;top:-60px;z-index:10;padding:10px 14px;background:var(--accent);color:var(--accent-contrast);border-radius:var(--radius-sm);text-decoration:none;font-weight:500" style-focus="top:12px">{{ t.skip }}</a>
+
+  <header data-surface="ink" style="background:var(--bg);color:var(--text);border-bottom:1px solid var(--line)">
+    <div style="max-width:1200px;margin:0 auto;padding:12px clamp(16px,4vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:4px 48px">
+      <a href="#" aria-label="Paddock Notes, inicio" style="display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;min-height:44px">
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true" style="flex:none"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" style="fill:var(--accent-fill)"></rect></g></g></svg>
+        <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-family:var(--font-display);font-stretch:var(--display-width);font-weight:700;font-size:1.25rem;line-height:1;white-space:nowrap">Paddock Notes</span>
+      </a>
+      <div style="flex:1 1 300px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <nav aria-label="{{ t.navLabel }}">
+          <ul style="list-style:none;margin:0;padding:0;display:flex;gap:4px 18px;flex-wrap:wrap">
+            <li><a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;color:var(--text);font-weight:500;font-size:var(--step--1);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:0.45em">{{ t.navHome }}</a></li>
+            <li><a href="#" style="display:flex;align-items:center;min-height:44px;color:var(--muted);font-weight:500;font-size:var(--step--1);text-decoration:none" style-hover="color:var(--text)">{{ t.navCal }}</a></li>
+            <li><a href="#" style="display:flex;align-items:center;min-height:44px;color:var(--muted);font-weight:500;font-size:var(--step--1);text-decoration:none" style-hover="color:var(--text)">{{ t.navStand }}</a></li>
+          </ul>
+        </nav>
+        <div role="group" aria-label="{{ t.langLabel }}" style="display:flex;border:1px solid var(--line);border-radius:999px;padding:2px;flex:none">
+          <button type="button" lang="es" aria-pressed="{{ esPressed }}" onClick="{{ setEs }}" style="font:500 var(--step--2)/1 var(--font-sans);min-width:44px;min-height:40px;border:0;border-radius:999px;cursor:pointer;background:{{ esBg }};color:{{ esFg }}">ES</button>
+          <button type="button" lang="en" aria-pressed="{{ enPressed }}" onClick="{{ setEn }}" style="font:500 var(--step--2)/1 var(--font-sans);min-width:44px;min-height:40px;border:0;border-radius:999px;cursor:pointer;background:{{ enBg }};color:{{ enFg }}">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main id="contenido" style="flex:1">
+    <div data-surface="ink" style="background:var(--bg);color:var(--text)">
+    <section aria-labelledby="gp-title" style="max-width:1200px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(16px,4vw,40px) clamp(40px,6vw,80px)">
+      <p style="margin:0 0 14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:var(--step--1);color:var(--muted)">
+        <span>{{ t.next }}</span><span aria-hidden="true">·</span><span>{{ roundLabel }}</span>
+        <span style="font-size:var(--step--2);border:1px dashed var(--muted);color:var(--muted);border-radius:var(--radius-sm);padding:1px 7px">{{ t.exampleCal }}</span>
+      </p>
+      <h1 id="gp-title" style="margin:0;max-width:16ch;font-family:var(--font-display);font-stretch:var(--display-width);font-weight:700;font-size:var(--step-5);line-height:var(--lh-tight);letter-spacing:-0.025em;text-wrap:balance">{{ gpName }}</h1>
+      <p style="margin:16px 0 0;font-size:var(--step-1);line-height:var(--lh-ui);color:var(--muted);text-wrap:pretty">{{ circuit }}, {{ place }}</p>
+
+      <div role="timer" aria-labelledby="cd-label" style="margin-top:clamp(44px,7vw,88px)">
+        <div style="position:relative">
+          <div style="position:relative;display:inline-block;left:{{ labelPos }};transform:translateX(-{{ labelPos }});padding-bottom:10px">
+            <p id="cd-label" style="margin:0 0 4px;font-size:var(--step--1);color:var(--muted)">{{ t.until }}</p>
+            <p aria-hidden="true" style="margin:0;display:flex;align-items:baseline;gap:0.28em;color:var(--accent);font-family:var(--font-display);font-stretch:var(--display-width);font-weight:600;font-size:var(--step-count);line-height:1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;white-space:nowrap">
+              <span>{{ cd.d }}<span style="font-family:var(--font-sans);font-weight:500;font-size:0.3em;letter-spacing:0;margin-left:0.12em;color:var(--muted)">{{ t.ud }}</span></span>
+              <span>{{ cd.h }}<span style="font-family:var(--font-sans);font-weight:500;font-size:0.3em;letter-spacing:0;margin-left:0.12em;color:var(--muted)">{{ t.uh }}</span></span>
+              <span>{{ cd.m }}<span style="font-family:var(--font-sans);font-weight:500;font-size:0.3em;letter-spacing:0;margin-left:0.12em;color:var(--muted)">{{ t.um }}</span></span>
+              <span>{{ cd.s }}<span style="font-family:var(--font-sans);font-weight:500;font-size:0.3em;letter-spacing:0;margin-left:0.12em;color:var(--muted)">{{ t.us }}</span></span>
+            </p>
+            <p style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0">{{ cdSpoken }}</p>
+          </div>
+        </div>
+        <div aria-hidden="true" style="position:relative;height:40px">
+          <svg viewBox="0 0 1000 40" preserveAspectRatio="none" width="100%" height="40" style="display:block;overflow:visible">
+            <path d="{{ ruler.minor }}" style="stroke:var(--line)" stroke-width="1" vector-effect="non-scaling-stroke" fill="none"></path>
+            <path d="{{ ruler.major }}" style="stroke:var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke" fill="none"></path>
+            <path d="{{ ruler.elapsed }}" style="stroke:var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke" fill="none"></path>
+            <path d="{{ ruler.cota }}" style="stroke:var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke" fill="none"></path>
+          </svg>
+        </div>
+        <div aria-hidden="true" style="position:relative;height:22px;font-size:var(--step--2);color:var(--muted);font-variant-numeric:tabular-nums">
+          <sc-for list="{{ ruler.days }}" as="day" hint-placeholder-count="7">
+            <span style="position:absolute;top:2px;left:{{ day.left }};transform:translateX(-50%);white-space:nowrap">{{ day.text }}</span>
+          </sc-for>
+        </div>
+        <div style="margin-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 32px;font-size:var(--step--1);line-height:var(--lh-ui)">
+          <p style="margin:0;color:var(--muted)">{{ fromLabel }}</p>
+          <p style="margin:0;text-align:right;margin-left:auto"><span style="font-family:var(--font-display);font-stretch:100%;font-weight:600;color:var(--accent)">{{ t.start }}</span> {{ startLocal }} <span style="color:var(--muted)">{{ startYours }}</span></p>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div style="max-width:1200px;margin:0 auto;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px) clamp(56px,8vw,104px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,5vw,64px);align-items:start">
+
+      <section aria-labelledby="drivers-title" style="background:var(--surface);border-radius:var(--radius);padding:clamp(20px,3vw,32px)">
+        <h2 id="drivers-title" style="margin:0 0 4px;font-family:var(--font-display);font-stretch:var(--display-width);font-weight:700;font-size:var(--step-2);line-height:var(--lh-heading);letter-spacing:-0.01em">{{ t.driversTitle }}</h2>
+        <p style="margin:0 0 20px;font-size:var(--step--1);color:var(--muted)">{{ t.driversNote }}</p>
+        <div style="overflow-x:auto">
+          <table aria-labelledby="drivers-title" style="width:100%;border-collapse:collapse;font-size:var(--step--1);line-height:var(--lh-ui);font-variant-numeric:tabular-nums">
+            <thead>
+              <tr style="border-bottom:1px solid var(--line);color:var(--muted);font-size:var(--step--2)">
+                <th scope="col" style="text-align:left;font-weight:500;padding:0 10px 10px 0;width:2.5em">{{ t.cPos }}</th>
+                <th scope="col" style="text-align:left;font-weight:500;padding:0 10px 10px 0">{{ t.cDriver }}</th>
+                <th scope="col" style="text-align:left;font-weight:500;padding:0 10px 10px 0">{{ t.cTeam }}</th>
+                <th scope="col" style="text-align:right;font-weight:500;padding:0 10px 10px 0">{{ t.cWins }}</th>
+                <th scope="col" style="text-align:right;font-weight:500;padding:0 0 10px 0">{{ t.cPts }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:13px 10px 13px 0;color:var(--muted)">1</td><th scope="row" style="text-align:left;font-weight:600;padding:13px 10px 13px 0">George Russell</th><td style="padding:13px 10px 13px 0;color:var(--muted)">Mercedes</td><td style="text-align:right;padding:13px 10px 13px 0">7</td><td style="text-align:right;padding:13px 0;font-weight:600">341</td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:13px 10px 13px 0;color:var(--muted)">2</td><th scope="row" style="text-align:left;font-weight:600;padding:13px 10px 13px 0">Lando Norris</th><td style="padding:13px 10px 13px 0;color:var(--muted)">McLaren</td><td style="text-align:right;padding:13px 10px 13px 0">5</td><td style="text-align:right;padding:13px 0;font-weight:600">318</td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:13px 10px 13px 0;color:var(--muted)">3</td><th scope="row" style="text-align:left;font-weight:600;padding:13px 10px 13px 0">Kimi Antonelli</th><td style="padding:13px 10px 13px 0;color:var(--muted)">Mercedes</td><td style="text-align:right;padding:13px 10px 13px 0">3</td><td style="text-align:right;padding:13px 0;font-weight:600">276</td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:13px 10px 13px 0;color:var(--muted)">4</td><th scope="row" style="text-align:left;font-weight:600;padding:13px 10px 13px 0">Max Verstappen</th><td style="padding:13px 10px 13px 0;color:var(--muted)">Red Bull Racing</td><td style="text-align:right;padding:13px 10px 13px 0">3</td><td style="text-align:right;padding:13px 0;font-weight:600">259</td></tr>
+              <tr><td style="padding:13px 10px 13px 0;color:var(--muted)">5</td><th scope="row" style="text-align:left;font-weight:600;padding:13px 10px 13px 0">Oscar Piastri</th><td style="padding:13px 10px 13px 0;color:var(--muted)">McLaren</td><td style="text-align:right;padding:13px 10px 13px 0">1</td><td style="text-align:right;padding:13px 0;font-weight:600">224</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin:20px 0 0;font-size:var(--step--1)"><a href="#" style="font-weight:500">{{ t.fullStandings }}</a></p>
+      </section>
+
+      <section aria-labelledby="tech-title" style="padding-top:clamp(0px,3vw,32px)">
+        <h2 id="tech-title" style="margin:0 0 6px;font-family:var(--font-display);font-stretch:var(--display-width);font-weight:700;font-size:var(--step-2);line-height:var(--lh-heading);letter-spacing:-0.01em">{{ t.techTitle }}</h2>
+        <p style="margin:0 0 16px;max-width:var(--measure);font-size:var(--step--1);color:var(--muted);text-wrap:pretty">{{ t.techDek }} <span style="font-size:var(--step--2);border:1px dashed var(--muted);color:var(--muted);border-radius:var(--radius-sm);padding:1px 7px;white-space:nowrap">{{ t.example }}</span></p>
+        <figure style="margin:0">
+          <div aria-hidden="true" style="display:flex;flex-wrap:wrap;gap:4px 18px;margin-bottom:12px;font-size:var(--step--2);color:var(--muted)">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:2px;background:var(--div-loss-1);border:1px solid var(--div-loss-2)"></span>{{ t.slower }}</span>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:2px;background:var(--div-gain-1);border:1px solid var(--div-gain-2)"></span>{{ t.faster }}</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div aria-hidden="true" style="position:relative;width:44px;flex:none;height:220px;font-size:var(--step--2);color:var(--muted);font-variant-numeric:tabular-nums;text-align:right">
+              <span style="position:absolute;right:0;top:27.3%;transform:translateY(-50%)">+0,1 s</span>
+              <span style="position:absolute;right:0;top:45.5%;transform:translateY(-50%)">0</span>
+              <span style="position:absolute;right:0;top:63.6%;transform:translateY(-50%)">−0,1 s</span>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="position:relative;height:220px">
+                <svg viewBox="0 0 600 220" preserveAspectRatio="none" width="100%" height="220" role="img" aria-label="{{ t.chartAlt }}" style="display:block;overflow:visible">
+                  <defs>
+                    <clipPath id="pn-above"><rect x="0" y="0" width="600" height="100"></rect></clipPath>
+                    <clipPath id="pn-below"><rect x="0" y="100" width="600" height="120"></rect></clipPath>
+                  </defs>
+                  <path d="M0 60H600M0 140H600" style="stroke:var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                  <path d="{{ chart.area }}" clip-path="url(#pn-above)" style="fill:var(--div-loss-1)"></path>
+                  <path d="{{ chart.area }}" clip-path="url(#pn-below)" style="fill:var(--div-gain-1)"></path>
+                  <path d="M0 100H600" style="stroke:var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                  <path d="{{ chart.line }}" style="stroke:var(--text)" stroke-width="2" fill="none" vector-effect="non-scaling-stroke" stroke-linejoin="round"></path>
+                  <path d="{{ chart.cota }}" style="stroke:var(--accent)" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"></path>
+                </svg>
+                <p style="position:absolute;left:25.6%;top:78%;max-width:72%;margin:0;font-family:var(--font-display);font-stretch:100%;font-weight:500;font-size:var(--step--1);line-height:1.25;color:var(--accent);text-wrap:balance">{{ t.note1 }}</p>
+                <span aria-hidden="true" style="position:absolute;left:100%;top:57.1%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg)"></span>
+                <p style="position:absolute;right:0;top:calc(57.1% + 10px);margin:0;font-family:var(--font-display);font-stretch:100%;font-weight:500;font-size:var(--step--1);line-height:1.25;color:var(--accent);text-align:right;white-space:nowrap">{{ t.note2 }}</p>
+              </div>
+              <div aria-hidden="true" style="position:relative;height:24px;margin-top:6px;font-size:var(--step--2);color:var(--muted);font-variant-numeric:tabular-nums">
+                <span style="position:absolute;left:0">0</span>
+                <span style="position:absolute;left:23.3%;transform:translateX(-50%)">1</span>
+                <span style="position:absolute;left:46.5%;transform:translateX(-50%)">2</span>
+                <span style="position:absolute;left:69.8%;transform:translateX(-50%)">3</span>
+                <span style="position:absolute;right:0">4,3 km</span>
+              </div>
+            </div>
+          </div>
+          <figcaption style="margin-top:14px;font-size:var(--step--1)"><a href="#" style="font-weight:500">{{ t.readAnalysis }}</a></figcaption>
+        </figure>
+      </section>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--line)">
+    <div style="max-width:1200px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 36px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px 40px;font-size:var(--step--1);line-height:var(--lh-ui);color:var(--muted)">
+      <div style="display:flex;align-items:center;gap:8px;color:var(--text)">
+        <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="currentColor" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="currentColor"></rect></g></g></svg>
+        <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-family:var(--font-display);font-stretch:var(--display-width);font-weight:700;font-size:1rem">Paddock Notes</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;max-width:60ch">
+        <p style="margin:0">{{ t.footer1 }}</p>
+        <p style="margin:0">{{ t.footer2 }}</p>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'light'|'dark'&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;es&quot;,&quot;en&quot;],&quot;default&quot;:&quot;es&quot;,&quot;tsType&quot;:&quot;'es'|'en'&quot;}}">
+const RACES = [
+  { round: 20, name: { es: 'Gran Premio de la Ciudad de México', en: 'Mexico City Grand Prix' }, short: { es: 'GP de la Ciudad de México', en: 'Mexico City GP' }, start: '2026-11-01T20:00:00Z' },
+  { round: 21, name: { es: 'Gran Premio de São Paulo', en: 'São Paulo Grand Prix' }, short: { es: 'GP de São Paulo', en: 'São Paulo GP' }, circuit: 'Autódromo José Carlos Pace (Interlagos)', place: { es: 'São Paulo, Brasil', en: 'São Paulo, Brazil' }, start: '2026-11-08T17:00:00Z', tz: 'America/Sao_Paulo' },
+  { round: 22, name: { es: 'Gran Premio de Las Vegas', en: 'Las Vegas Grand Prix' }, short: { es: 'GP de Las Vegas', en: 'Las Vegas GP' }, circuit: 'Las Vegas Strip Circuit', place: { es: 'Las Vegas, Estados Unidos', en: 'Las Vegas, United States' }, start: '2026-11-22T04:00:00Z', tz: 'America/Los_Angeles' },
+  { round: 23, name: { es: 'Gran Premio de Catar', en: 'Qatar Grand Prix' }, short: { es: 'GP de Catar', en: 'Qatar GP' }, circuit: 'Circuito Internacional de Lusail', place: { es: 'Lusail, Catar', en: 'Lusail, Qatar' }, start: '2026-11-29T16:00:00Z', tz: 'Asia/Qatar' },
+  { round: 24, name: { es: 'Gran Premio de Abu Dabi', en: 'Abu Dhabi Grand Prix' }, short: { es: 'GP de Abu Dabi', en: 'Abu Dhabi GP' }, circuit: 'Circuito Yas Marina', place: { es: 'Abu Dabi, Emiratos Árabes Unidos', en: 'Abu Dhabi, United Arab Emirates' }, start: '2026-12-06T13:00:00Z', tz: 'Asia/Dubai' }
+];
+const DEMO_NOW = Date.parse('2026-11-02T15:00:00Z');
+
+const T = {
+  es: {
+    skip: 'Saltar al contenido', navLabel: 'Principal', navHome: 'Inicio', navCal: 'Calendario', navStand: 'Clasificación', langLabel: 'Idioma',
+    next: 'Próximo Gran Premio', round: 'Ronda {r} de 24', exampleCal: 'Calendario de ejemplo', example: 'Datos de ejemplo',
+    until: 'Hasta la salida', ud: 'd', uh: 'h', um: 'min', us: 's', start: 'Salida:', from: 'Desde el {n}', local: 'hora local', yours: '({t} en tu zona)',
+    spoken: 'Faltan {d} días, {h} horas y {m} minutos para la salida.',
+    driversTitle: 'Pilotos: los cinco primeros', driversNote: 'Tras la ronda 20. Datos de ejemplo.',
+    cPos: 'Pos.', cDriver: 'Piloto', cTeam: 'Equipo', cWins: 'Victorias', cPts: 'Puntos', fullStandings: 'Ver la clasificación completa',
+    techTitle: 'Dónde se decidió la pole', techDek: 'Diferencia acumulada a lo largo de la vuelta de Q3: Russell respecto a Norris, GP de la Ciudad de México.',
+    slower: '+ Russell más lento', faster: '− Russell más rápido', note1: 'Recupera 0,21 s entre las curvas 4 y 6', note2: 'Pole por 0,064 s',
+    chartAlt: 'Russell pierde hasta 0,13 s en el primer kilómetro, recupera 0,21 s entre las curvas 4 y 6 y termina la vuelta 0,064 s por delante.',
+    readAnalysis: 'Leer el análisis completo',
+    footer1: 'Proyecto no oficial, sin afiliación con Formula 1 ni con ningún equipo.', footer2: 'Datos: Jolpica F1.'
+  },
+  en: {
+    skip: 'Skip to content', navLabel: 'Main', navHome: 'Home', navCal: 'Calendar', navStand: 'Standings', langLabel: 'Language',
+    next: 'Next Grand Prix', round: 'Round {r} of 24', exampleCal: 'Sample calendar', example: 'Sample data',
+    until: 'Until lights out', ud: 'd', uh: 'h', um: 'min', us: 's', start: 'Lights out:', from: 'Since the {n}', local: 'local time', yours: '({t} your time)',
+    spoken: '{d} days, {h} hours and {m} minutes until lights out.',
+    driversTitle: 'Drivers: the top five', driversNote: 'After round 20. Sample data.',
+    cPos: 'Pos.', cDriver: 'Driver', cTeam: 'Team', cWins: 'Wins', cPts: 'Points', fullStandings: 'See the full standings',
+    techTitle: 'Where pole was decided', techDek: 'Cumulative gap across the Q3 lap: Russell relative to Norris, Mexico City GP.',
+    slower: '+ Russell slower', faster: '− Russell faster', note1: 'Gains back 0.21 s between turns 4 and 6', note2: 'Pole by 0.064 s',
+    chartAlt: 'Russell loses up to 0.13 s in the first kilometre, gains back 0.21 s between turns 4 and 6 and finishes the lap 0.064 s ahead.',
+    readAnalysis: 'Read the full analysis',
+    footer1: 'Unofficial project, not affiliated with Formula 1 or any team.', footer2: 'Data: Jolpica F1.'
+  }
+};
+
+const DELTA = [[0,0],[0.35,0.025],[0.8,0.11],[1.1,0.13],[1.5,0.03],[1.9,-0.08],[2.4,-0.055],[2.9,-0.1],[3.4,-0.035],[3.8,-0.05],[4.3,-0.064]];
+function smooth(pts) {
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+const X = km => km / 4.3 * 600, Y = d => 100 - d * 400;
+const LINE = smooth(DELTA.map(([k, d]) => [X(k), Y(d)]));
+const CHART = {
+  line: LINE,
+  area: LINE + ' L600,100 L0,100 Z',
+  cota: `M${X(1.1).toFixed(1)} 202H${X(1.9).toFixed(1)}M${X(1.1).toFixed(1)} 194V210M${X(1.9).toFixed(1)} 194V210`
+};
+const pad = n => String(n).padStart(2, '0');
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const q = new URLSearchParams(location.search);
+    this.q = q;
+    this.offset = 0;
+    const last = Date.parse(RACES[RACES.length - 1].start);
+    if (Date.now() > last || Date.now() < Date.parse(RACES[0].start)) this.offset = DEMO_NOW - Date.now();
+    this.state = { now: Date.now() + this.offset, lang: q.get('lang') || this.props.lang || 'es' };
+  }
+  componentDidMount() {
+    this.applyTheme();
+    this.timer = setInterval(() => this.setState({ now: Date.now() + this.offset }), 1000);
+    const frame = this.q.get('frame');
+    if (frame && window.parent !== window) {
+      const post = () => { const f = document.querySelector('footer'); if (f) window.parent.postMessage({ pnFrame: frame, h: Math.ceil(f.getBoundingClientRect().bottom + window.scrollY) }, '*'); };
+      this.post = post;
+      this.ro = new ResizeObserver(post); this.ro.observe(document.body);
+      const f = document.querySelector('footer'); if (f) this.ro.observe(f.parentElement);
+      post(); window.addEventListener('load', post);
+      document.fonts && document.fonts.ready.then(post);
+    }
+  }
+  componentDidUpdate() { this.applyTheme(); this.post && this.post(); }
+  componentWillUnmount() { clearInterval(this.timer); this.ro && this.ro.disconnect(); }
+  applyTheme() {
+    const theme = this.q.get('theme') || this.props.theme || 'auto';
+    const el = document.documentElement;
+    if (theme === 'auto') el.removeAttribute('data-theme'); else el.setAttribute('data-theme', theme);
+    el.lang = this.state.lang;
+  }
+  renderVals() {
+    const { now } = this.state;
+    const lang = this.state.lang === 'en' ? 'en' : 'es';
+    const t = T[lang];
+    const loc = lang === 'es' ? 'es-ES' : 'en-GB';
+    let i = RACES.findIndex((r, k) => k > 0 && Date.parse(r.start) > now);
+    if (i < 1) i = 1;
+    const race = RACES[i], prev = RACES[i - 1];
+    const a = Date.parse(prev.start), b = Date.parse(race.start);
+    const left = Math.max(0, b - now);
+    const D = Math.floor(left / 864e5), H = Math.floor(left / 36e5) % 24, M = Math.floor(left / 6e4) % 60, S = Math.floor(left / 1e3) % 60;
+    const pct = Math.min(100, Math.max(0, (now - a) / (b - a) * 100));
+    const nx = 2 + pct / 100 * 996;
+
+    // Regla: marcas cada 6 h, días a medianoche (zona del usuario)
+    let minor = '', major = '';
+    const days = [];
+    const start = new Date(a); start.setHours(0, 0, 0, 0);
+    const spanDays = (b - a) / 864e5;
+    const every = spanDays > 9 ? 2 : 1;
+    let dayIdx = 0;
+    for (let tt = start.getTime(); tt < b; tt += 6 * 36e5) {
+      if (tt <= a) continue;
+      const x = (2 + (tt - a) / (b - a) * 996).toFixed(1);
+      const isMid = new Date(tt).getHours() === 0;
+      if (isMid) major += `M${x} 8V32`; else minor += `M${x} 14V26`;
+    }
+    for (let d = new Date(start); d.getTime() < b; d.setDate(d.getDate() + 1)) {
+      const noon = new Date(d); noon.setHours(12, 0, 0, 0);
+      const p = (noon.getTime() - a) / (b - a) * 100;
+      if (p > 4 && p < 96 && (dayIdx++ % every === 0)) {
+        const wd = new Intl.DateTimeFormat(loc, { weekday: 'short' }).format(noon).replace('.', '');
+        days.push({ left: p.toFixed(2) + '%', text: `${wd} ${noon.getDate()}` });
+      }
+    }
+    const ruler = {
+      minor, major, days,
+      elapsed: `M2 20H${nx.toFixed(1)}`,
+      cota: `M${nx.toFixed(1)} 20H998M${nx.toFixed(1)} 6V34M998 6V34`
+    };
+    const mid = ((pct + 100) / 2).toFixed(2) + '%';
+
+    const fmtLocal = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: race.tz }).format(new Date(b));
+    const fmtYours = new Intl.DateTimeFormat(loc, { hour: '2-digit', minute: '2-digit' }).format(new Date(b));
+    const isEs = lang === 'es';
+    const pressed = { bg: 'var(--accent-fill)', fg: 'var(--accent-contrast)' }, idle = { bg: 'transparent', fg: 'var(--muted)' };
+    const setLang = l => () => this.setState({ lang: l });
+    return {
+      t,
+      gpName: race.name[lang], circuit: race.circuit, place: race.place[lang],
+      roundLabel: fill(t.round, { r: race.round }),
+      cd: { d: D, h: pad(H), m: pad(M), s: pad(S) },
+      cdSpoken: fill(t.spoken, { d: D, h: H, m: M }),
+      labelPos: mid, ruler,
+      fromLabel: fill(t.from, { n: prev.short[lang] }),
+      startLocal: `${fmtLocal} ${t.local}`,
+      startYours: fill(t.yours, { t: fmtYours }),
+      chart: CHART,
+      esPressed: String(isEs), enPressed: String(!isEs),
+      esBg: isEs ? pressed.bg : idle.bg, esFg: isEs ? pressed.fg : idle.fg,
+      enBg: !isEs ? pressed.bg : idle.bg, enFg: !isEs ? pressed.fg : idle.fg,
+      setEs: setLang('es'), setEn: setLang('en')
+    };
+  }
+}
+</script>
+</body>
+</html>

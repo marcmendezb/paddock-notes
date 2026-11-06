@@ -1,0 +1,27 @@
+{
+  "name": "@paddock/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./schema": "./src/schema.ts",
+    "./f1-read": "./src/f1-read.ts",
+    "./f1-write": "./src/f1-write.ts",
+    "./community": "./src/community.ts",
+    "./mailing": "./src/mailing.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paddock/shared": "workspace:*",
+    "drizzle-orm": "^0.45.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261001.0",
+    "drizzle-kit": "^0.31.0",
+    "@types/node": "^24.0.0"
+  }
+}

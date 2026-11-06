@@ -1,0 +1,81 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "paddock-ingest",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": ["nodejs_compat"],
+  // Sin rutas públicas: solo Cron Triggers (seguridad.md §14).
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "triggers": { "crons": ["*/15 * * * *", "0 4 * * *", "0 5 * * 1", "0 8 * * 2"] },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "paddock-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "OUTBOUND_LIMITER", "class_name": "OutboundLimiter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["OutboundLimiter"] }],
+  "workflows": [
+    { "name": "paddock-backfill", "binding": "BACKFILL", "class_name": "BackfillWorkflow" },
+    { "name": "paddock-post-race", "binding": "POST_RACE", "class_name": "PostRaceWorkflow" },
+    { "name": "paddock-mailing", "binding": "MAILING", "class_name": "MailingWorkflow" }
+  ],
+  "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis", "jurisdiction": "eu" }],
+  "send_email": [{ "name": "EMAIL" }],
+  "vars": {
+    "SITE_URL": "https://paddocknotes.dev",
+    "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
+    // Pendiente: la dirección postal del responsable para el pie de la newsletter.
+    "MAIL_POSTAL_ADDRESS": "",
+    "JOLPICA_BASE_URL": "https://api.jolpi.ca/ergast/f1",
+    "JOLPICA_MAX_PER_SECOND": "1",
+    "JOLPICA_MAX_PER_HOUR": "400",
+    "JOLPICA_BACKFILL_MAX_PER_HOUR": "300",
+    "OPENF1_BASE_URL": "https://api.openf1.org/v1",
+    "OPENF1_MAX_PER_SECOND": "2",
+    "OPENF1_MAX_PER_MINUTE": "25"
+  },
+  "env": {
+    "preview": {
+      "name": "paddock-ingest-preview",
+      "workers_dev": false,
+      "preview_urls": false,
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "paddock-db-preview",
+          "database_id": "00000000-0000-0000-0000-000000000001",
+          "migrations_dir": "../../packages/db/migrations"
+        }
+      ],
+      "durable_objects": {
+        "bindings": [{ "name": "OUTBOUND_LIMITER", "class_name": "OutboundLimiter" }]
+      },
+      "workflows": [
+        { "name": "paddock-backfill-preview", "binding": "BACKFILL", "class_name": "BackfillWorkflow" },
+        { "name": "paddock-post-race-preview", "binding": "POST_RACE", "class_name": "PostRaceWorkflow" },
+        { "name": "paddock-mailing-preview", "binding": "MAILING", "class_name": "MailingWorkflow" }
+      ],
+      "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis-preview", "jurisdiction": "eu" }],
+      "send_email": [{ "name": "EMAIL" }],
+      "vars": {
+        "SITE_URL": "https://paddocknotes.dev",
+        "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
+        "MAIL_POSTAL_ADDRESS": "",
+        "JOLPICA_BASE_URL": "https://api.jolpi.ca/ergast/f1",
+        "JOLPICA_MAX_PER_SECOND": "1",
+        "JOLPICA_MAX_PER_HOUR": "400",
+        "JOLPICA_BACKFILL_MAX_PER_HOUR": "300",
+        "OPENF1_BASE_URL": "https://api.openf1.org/v1",
+        "OPENF1_MAX_PER_SECOND": "2",
+        "OPENF1_MAX_PER_MINUTE": "25"
+      }
+    }
+  }
+}

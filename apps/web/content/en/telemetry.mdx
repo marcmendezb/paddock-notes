@@ -1,0 +1,24 @@
+A telemetry chart shows how the car behaves along the lap (speed, throttle and brake); comparing two drivers shows where each one gains time.
+
+## The idea
+
+The horizontal axis is the distance covered in the lap. Each corner appears as a dip in speed, with the brake applied just before and the throttle going back to 100% on the exit.
+
+## How to read it
+
+- **Speed:** who is faster on the straights and who carries more speed through each corner.
+- **Brake:** who brakes later; in our data it's an on/off signal.
+- **Throttle:** who gets back to full throttle first.
+- **Delta:** the accumulated difference. When the curve rises, the second driver is losing time in that stretch.
+
+## A real example
+
+At Mexico 2026, Lewis Hamilton's fastest lap was 0.743 s quicker than Max Verstappen's best, with the biggest difference between metre 3,240 and 3,740.
+
+## How to spot it in our charts
+
+Open the [telemetry comparison](/en/analysis/2026/19/telemetry), hover or use the arrow keys. The track map colours each segment by who was faster.
+
+## Related terms
+
+[Telemetry](/en/learn/glossary/telemetry) · [Delta](/en/learn/glossary/delta) · [Mini-sector](/en/learn/glossary/mini-sector)

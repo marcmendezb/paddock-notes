@@ -1,0 +1,26 @@
+node_modules/
+.pnpm-store/
+
+# Builds
+.next/
+.open-next/
+dist/
+.wrangler/
+coverage/
+*.tsbuildinfo
+
+# Secretos locales (seguridad.md §11)
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+
+# Sistema
+.DS_Store
+
+# Generado por Next.js
+next-env.d.ts
+
+# Playwright
+e2e/test-results/
+e2e/playwright-report/

@@ -1,0 +1,27 @@
+{
+  "name": "paddock-notes",
+  "private": true,
+  "description": "F1 explicada con datos. Proyecto no oficial, sin afiliación con Formula 1.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:api": "pnpm --filter @paddock/api dev",
+    "dev:ingest": "pnpm --filter @paddock/ingest dev",
+    "dev:web": "pnpm --filter @paddock/web dev",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "db:generate": "pnpm --filter @paddock/db generate"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "eslint": "^10.0.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.60.0",
+    "vitest": "^4.1.0"
+  }
+}

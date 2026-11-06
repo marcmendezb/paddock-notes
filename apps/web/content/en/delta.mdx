@@ -1,0 +1,23 @@
+The delta is the accumulated time difference between two laps along the track: it shows where time is gained or lost.
+
+## How it's calculated
+
+Both laps are traced at the same time, metre by metre, and at each point one driver's elapsed time is subtracted from the other's. At the end of the lap, the delta equals the difference between the two lap times.
+
+## How to read it
+
+- If the curve rises, the second driver is losing time in that stretch.
+- If it falls, they're getting it back.
+- If it's flat, both are matched.
+
+## A caveat
+
+Our delta is an estimate: we compute distance from the recorded speed, which arrives about four times per second. It's good for trends, not for exact thousandths.
+
+## How to spot it in our charts
+
+The bottom panel of the [telemetry comparison](/en/analysis/2026/19/telemetry) is driver B's delta relative to driver A.
+
+## Related terms
+
+[Delta](/en/learn/glossary/delta) · [Telemetry](/en/learn/glossary/telemetry) · [Sector](/en/learn/glossary/sector)

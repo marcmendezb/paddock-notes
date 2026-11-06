@@ -1,0 +1,1 @@
+ALTER TABLE `analysis_artifacts` ADD `weather` text;

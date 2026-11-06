@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;display=swap">
+<style>body{margin:0;background:#0A0A0A}</style>
+</helmet>
+<div data-screen-label="OG post-carrera" style="width:1200px;height:630px;box-sizing:border-box;background:#0A0A0A;color:#F5F5F5;font-family:Archivo,sans-serif;display:grid;grid-template-columns:420px 1fr;gap:56px;padding:56px;overflow:hidden">
+  <div style="display:flex;flex-direction:column;min-width:0">
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg width="34" height="34" viewBox="0 0 32 32"><g transform="scale(.6667)"><g transform="translate(7.2 0) skewX(-12)"><path d="M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33" fill="none" stroke="#F5F5F5" stroke-width="6"></path><rect x="39" y="27" width="6" height="6" fill="#C6F432"></rect></g></g></svg>
+      <span style="text-transform:lowercase;letter-spacing:-0.05em;word-spacing:0.08em;font-style:italic;font-stretch:87.5%;font-weight:700;font-size:26px">Paddock Notes</span>
+    </div>
+    <p style="margin:64px 0 14px;font-size:20px;color:#A3A3A3">Análisis post-carrera</p>
+    <h1 style="margin:0;font-stretch:87.5%;font-weight:700;font-size:58px;line-height:1;letter-spacing:-0.025em;text-wrap:balance">La parada en la vuelta 28 decidió la carrera</h1>
+    <p style="margin:22px 0 0;font-size:22px;line-height:1.4;color:#A3A3A3;text-wrap:pretty">Russell adelantó a Norris en boxes y gestionó la ventaja hasta la bandera.</p>
+    <div style="margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;font-size:18px;color:#A3A3A3">
+      <span>Ronda 20 · GP de la Ciudad de México</span>
+      <span style="font-size:15px;border:1px dashed #A3A3A3;border-radius:3px;padding:2px 8px">Datos de ejemplo</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;min-width:0;border-left:1px solid #2A2A2A;padding-left:48px">
+    <p style="margin:0;font-stretch:87.5%;font-weight:700;font-size:24px;letter-spacing:-0.01em">Ventaja de Russell sobre Norris, vuelta a vuelta</p>
+    <div style="display:flex;gap:22px;margin:10px 0 26px;font-size:16px;color:#A3A3A3">
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:13px;height:13px;border-radius:2px;background:#3B4A14;border:1px solid #8DB320"></span>+ Russell por delante</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:13px;height:13px;border-radius:2px;background:#3A2C55;border:1px solid #7E5CC0"></span>− Russell por detrás</span>
+    </div>
+    <div style="display:flex;gap:10px;flex:1">
+      <div style="position:relative;width:44px;flex:none;height:300px;font-size:15px;color:#A3A3A3;text-align:right;font-variant-numeric:tabular-nums">
+        <span style="position:absolute;right:0;top:20%;transform:translateY(-50%)">+2 s</span>
+        <span style="position:absolute;right:0;top:50%;transform:translateY(-50%)">0</span>
+        <span style="position:absolute;right:0;top:80%;transform:translateY(-50%)">−2 s</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="position:relative;height:300px">
+          <svg viewBox="0 0 640 300" width="100%" height="300" preserveAspectRatio="none" style="display:block;overflow:visible">
+            <defs>
+              <clipPath id="og-a"><rect x="0" y="0" width="640" height="150"></rect></clipPath>
+              <clipPath id="og-b"><rect x="0" y="150" width="640" height="150"></rect></clipPath>
+            </defs>
+            <path d="M0 60H640M0 240H640" stroke="#2A2A2A" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="{{ areaA }}" clip-path="url(#og-b)" fill="#3A2C55"></path>
+            <path d="{{ areaB }}" clip-path="url(#og-a)" fill="#3B4A14"></path>
+            <path d="M0 150H640" stroke="#A3A3A3" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="{{ lineA }}" stroke="#F5F5F5" stroke-width="2.5" fill="none" vector-effect="non-scaling-stroke"></path>
+            <path d="{{ lineB }}" stroke="#F5F5F5" stroke-width="2.5" fill="none" vector-effect="non-scaling-stroke"></path>
+            <path d="{{ pit }}" stroke="#A3A3A3" stroke-width="1.5" stroke-dasharray="4 4" fill="none" vector-effect="non-scaling-stroke"></path>
+            <path d="{{ cota }}" stroke="#C6F432" stroke-width="2.5" fill="none" vector-effect="non-scaling-stroke"></path>
+          </svg>
+          <p style="position:absolute;left:46%;top:84%;transform:translateY(-50%);margin:0;font-weight:600;font-size:18px;color:#C6F432;white-space:nowrap">Undercut: gana 3,3 s en boxes</p>
+          <span style="position:absolute;left:100%;top:{{ endTop }};width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#C6F432;box-shadow:0 0 0 4px #0A0A0A"></span>
+          <p style="position:absolute;right:0;top:{{ endTop }};transform:translateY(-44px);margin:0;font-weight:600;font-size:18px;color:#C6F432;white-space:nowrap">Gana por 2,4 s</p>
+        </div>
+        <div style="position:relative;height:24px;margin-top:10px;font-size:15px;color:#A3A3A3;font-variant-numeric:tabular-nums">
+          <span style="position:absolute;left:0">Vuelta 1</span>
+          <span style="position:absolute;left:41.4%;transform:translateX(-50%)">30</span>
+          <span style="position:absolute;right:0">71</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:630}}">
+const A = [[1,-0.6],[5,-0.9],[10,-1.1],[15,-0.8],[20,-1.2],[27,-1.4]];
+const B = [[32,1.9],[40,2.3],[48,1.8],[56,2.6],[64,2.2],[71,2.4]];
+const X = l => (l - 1) / 70 * 640, Y = g => 150 - g * 45;
+function smooth(pts) {
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+const pa = A.map(([l, g]) => [X(l), Y(g)]), pb = B.map(([l, g]) => [X(l), Y(g)]);
+const lineA = smooth(pa), lineB = smooth(pb);
+class Component extends DCLogic {
+  renderVals() {
+    const a0 = pa[0], a1 = pa[pa.length - 1], b0 = pb[0], b1 = pb[pb.length - 1];
+    return {
+      lineA, lineB,
+      areaA: `${lineA} L${a1[0].toFixed(1)},150 L${a0[0].toFixed(1)},150 Z`,
+      areaB: `${lineB} L${b1[0].toFixed(1)},150 L${b0[0].toFixed(1)},150 Z`,
+      pit: `M${a1[0].toFixed(1)},${a1[1].toFixed(1)} L${b0[0].toFixed(1)},${b0[1].toFixed(1)}`,
+      cota: `M${X(27).toFixed(1)} 252H${X(32).toFixed(1)}M${X(27).toFixed(1)} 242V262M${X(32).toFixed(1)} 242V262`,
+      endTop: (b1[1] / 300 * 100).toFixed(2) + '%'
+    };
+  }
+}
+</script>
+</body>
+</html>
