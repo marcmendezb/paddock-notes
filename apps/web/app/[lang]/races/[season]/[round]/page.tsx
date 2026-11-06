@@ -13,6 +13,8 @@ import { formatDate, formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { parseLang, parseRound, parseSeason } from "@/lib/params";
 import { favoriteSet } from "@/lib/session";
+import { SITE_URL } from "@/lib/site";
+import { sportsEventLd } from "@/lib/structured-data";
 import { TOOL_ORDER } from "@/lib/tools";
 
 type Params = { params: Promise<{ lang: string; season: string; round: string }> };
@@ -73,18 +75,15 @@ export default async function RacePage({ params }: Params) {
         ]}
       />
       <JsonLd
-        data={{
-          "@type": "SportsEvent",
-          name: `${name}`,
-          sport: "Formula 1",
-          startDate: race.startsAt ?? race.date,
-          eventStatus: "https://schema.org/EventScheduled",
-          location: {
-            "@type": "Place",
-            name: race.circuit.name,
-            address: `${race.circuit.locality}, ${race.circuit.country}`,
-          },
-        }}
+        data={sportsEventLd(race, {
+          lang,
+          site: SITE_URL,
+          name,
+          description:
+            lang === "es"
+              ? `Ronda ${race.round} del Mundial de Fórmula 1 de ${season} en ${race.circuit.name}.`
+              : `Round ${race.round} of the ${season} Formula 1 World Championship at ${race.circuit.name}.`,
+        })}
       />
       <header className="stack-s">
         <p className="eyebrow">

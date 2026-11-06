@@ -284,6 +284,18 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 
 **Consecuencia:** no hay herramienta de terceros para enviar ni editor de newsletters. Fuera de temporada no sale nada hasta que exista contenido editorial (la edición quincenal de `contenido.md` §12 queda pendiente). Si un lote falla a medias, el reintento puede repetir algún email de ese lote, nunca de los anteriores.
 
+## D-25 · OpenF1 se cierra durante las sesiones en directo
+
+**Contexto:** el 6 de noviembre de 2026, con una sesión del GP de Brasil en curso, OpenF1 respondió 401 a peticiones de histórico: «Live F1 session in progress. Global API access (including past sessions) is restricted to authenticated users until the session ends». Un análisis que coincidiera con una sesión fallaba y `advanceAnalysis` lo marcaba como fallido para siempre.
+
+**Decisión:**
+
+- `advanceAnalysis` no empieza ningún análisis si, según el calendario cargado, hay una sesión en curso o terminó hace menos de 45 minutos (margen para retrasos y banderas rojas).
+- `fetchJson` convierte ese 401 concreto de OpenF1 en `LiveSessionError` (un aplazamiento, no un error) y pausa el limitador de OpenF1 15 minutos.
+- Los pasos de `POST_RACE` se reintentan 30 veces cada 5 minutos: dos horas y media, más que una sesión con interrupciones.
+
+**Consecuencia:** el análisis de una carrera puede retrasarse unas horas si el fin de semana siguiente empieza enseguida, pero no se pierde. Seguimos sin clave de pago (D-08).
+
 ---
 
 ## Fuentes (consultadas el 5 de noviembre de 2026)

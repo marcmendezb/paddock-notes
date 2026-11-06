@@ -86,7 +86,7 @@
 | CON-06 | Hecho | Newsletter de los martes tras cada carrera, compuesta con los datos (carrera en 5 líneas, gráfico, dato histórico, explicador, próxima cita), listas ES y EN, Workflow `MAILING` en lotes de 40. Falta la dirección postal del pie (`MAIL_POSTAL_ADDRESS`) y la edición quincenal fuera de temporada |
 | NUC-10 | Hecho | Alta en una línea en la home y en `/newsletter`, con Turnstile cargado al tocar el formulario y doble confirmación con botón |
 | CON-07 | Hecho | Títulos, descripciones, canónicas y hreflang |
-| CON-08 | Parcial | SportsEvent, Article, BreadcrumbList y DefinedTerm; falta validarlos con la herramienta de resultados enriquecidos |
+| CON-08 | Parcial | SportsEvent (con fin, dirección postal, coordenadas, imagen, estado y modo presencial), Article (imagen, URL, autor enlazado), BreadcrumbList y DefinedTerm, con tests de los campos que pide Google. Falta pasar la Prueba de resultados enriquecidos, que necesita una URL pública |
 | NUC-09 | Hecho | Explicador sugerido según el próximo circuito y el formato del fin de semana, con la razón en una frase (home y newsletter) |
 
 ## Cifras de calidad

@@ -80,7 +80,7 @@
 | URL base | `https://api.openf1.org/v1/` |
 | Cobertura | Todas las sesiones desde 2023 |
 | Formato | JSON (o CSV con parámetro) |
-| Autenticación | Ninguna para el histórico. Los datos en directo (de 30 min antes a 30 min después de cada sesión) son de pago: **no los usamos** |
+| Autenticación | Ninguna para el histórico. Los datos en directo (de 30 min antes a 30 min después de cada sesión) son de pago: **no los usamos**. Además, **mientras hay una sesión en directo, todo el acceso sin clave (también al histórico) responde 401** con «Live F1 session in progress» (observado el 6 de noviembre de 2026): la ingesta no pide nada en esas horas (D-25) |
 | Límites (nivel gratuito) | 3 peticiones/s y 30/min |
 | Nuestro límite | 2/s y 25/min, configurables |
 | Licencia de los datos | **CC BY-NC-SA 4.0**; uso educativo, personal y de aficionados, no comercial |

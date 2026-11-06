@@ -128,6 +128,11 @@ function regionName(lang: Lang, code: string): string | undefined {
   return names.of(code);
 }
 
+/** País de Jolpica → código ISO 3166-1 alfa-2, o null si no lo conocemos. */
+export function countryCode(country: string): string | null {
+  return COUNTRY_CODES[country] ?? null;
+}
+
 export function countryName(lang: Lang, country: string): string {
   const code = COUNTRY_CODES[country];
   return (code && regionName(lang, code)) || country;

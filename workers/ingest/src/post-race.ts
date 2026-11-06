@@ -15,6 +15,7 @@ import {
   type DriverInfo,
   type ToolName,
 } from "@paddock/analysis";
+import { isSessionLive } from "@paddock/shared";
 import { createF1Reader } from "@paddock/db/f1-read";
 import { createF1Writer } from "@paddock/db/f1-write";
 import type { Env } from "./env";
@@ -25,7 +26,11 @@ import { createOpenF1, openf1Context } from "./openf1";
  * Análisis tras cada carrera (D-08): datos de OpenF1, cálculo en TypeScript y JSON en R2.
  * Un paso para los datos de sesión y uno por piloto para la telemetría, todos idempotentes.
  */
-const STEP = { retries: { limit: 10, delay: "5 minutes", backoff: "constant" }, timeout: "10 minutes" } as const;
+/**
+ * 30 reintentos cada 5 minutos: dos horas y media de margen, lo que dura una sesión en directo con
+ * banderas rojas, durante la que OpenF1 no responde sin clave (D-25).
+ */
+const STEP = { retries: { limit: 30, delay: "5 minutes", backoff: "constant" }, timeout: "10 minutes" } as const;
 
 /** Primera temporada con datos en OpenF1. */
 export const OPENF1_FROM = 2023;
@@ -163,6 +168,8 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
   }
 
   const reader = createF1Reader(env.DB);
+  // Con una sesión en directo, OpenF1 no responde sin clave: ni se empieza (D-25).
+  if (await liveSession(reader, now)) return "aplazada: sesión en directo";
   const candidates = await reader.racesWithoutAnalysis(OPENF1_FROM, new Date(now - AFTER_RACE_MS).toISOString(), 20);
   for (const c of candidates) {
     if (await writer.getState(`analysis:failed:${c.season}:${c.round}`)) continue;
@@ -173,4 +180,14 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
   }
   if (running) await writer.setState(INSTANCE, "");
   return "al día";
+}
+
+/** Margen tras el final previsto de una sesión: retrasos y banderas rojas. */
+const LIVE_MARGIN_MS = 45 * 60_000;
+
+/** ¿Hay una sesión de F1 en directo (o recién terminada) según el calendario cargado? */
+export async function liveSession(reader: ReturnType<typeof createF1Reader>, now: number): Promise<boolean> {
+  const season = new Date(now).getUTCFullYear();
+  const schedule = await reader.getSchedule(season, now);
+  return schedule.some((r) => r.sessions.some((s) => isSessionLive(s, now) || isSessionLive(s, now - LIVE_MARGIN_MS)));
 }

@@ -6,6 +6,8 @@ import { JsonLd } from "@/components/json-ld";
 import { EXPLAINERS } from "@/content";
 import { glossaryBySlug } from "@/lib/glossary";
 import { dict } from "@/lib/i18n";
+import { SITE_URL } from "@/lib/site";
+import { definedTermLd } from "@/lib/structured-data";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string; term: string }> };
@@ -48,13 +50,7 @@ export default async function GlossaryTermPage({ params }: Props) {
         ]}
       />
       <JsonLd
-        data={{
-          "@type": "DefinedTerm",
-          name: e.term,
-          description: e.def,
-          inLanguage: lang,
-          inDefinedTermSet: { "@type": "DefinedTermSet", name: t.learn.glossary },
-        }}
+        data={definedTermLd({ id: term.slug, term: e.term, definition: e.def, setName: t.learn.glossary }, { lang, site: SITE_URL })}
       />
       <h1>{e.term}</h1>
       <p className="lede">{e.def}</p>

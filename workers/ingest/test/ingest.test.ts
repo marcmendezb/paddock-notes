@@ -8,7 +8,7 @@ import driverStandings from "../../../fixtures/jolpica/2026-driverstandings.json
 import constructorStandings from "../../../fixtures/jolpica/2026-constructorstandings.json";
 import quali2026 from "../../../fixtures/jolpica/2026-19-qualifying.json";
 import pits2026 from "../../../fixtures/jolpica/2026-19-pitstops.json";
-import { fetchJson, OutboundError } from "../src/http";
+import { fetchJson, LiveSessionError, OutboundError } from "../src/http";
 import { jolpicaContext } from "../src/jolpica";
 import type { OutboundLimiter } from "../src/limiter";
 import { runTask } from "../src/tasks";
@@ -167,6 +167,17 @@ describe("salida a internet", () => {
     );
   });
 
+  it("un 401 de OpenF1 por sesión en directo se aplaza; otro 401 es un error (D-25)", async () => {
+    const live = { detail: "Live F1 session in progress. Global API access (including past sessions) is restricted to authenticated users until the session ends." };
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json(live, { status: 401 })));
+    const ctx = { ...jolpicaContext(env), env: { ...env, OPENF1_MAX_PER_SECOND: "50" } };
+    await expect(fetchJson(ctx, "https://api.openf1.org/v1/sessions?year=2026", scheduleResponseSchema)).rejects.toBeInstanceOf(LiveSessionError);
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ detail: "bad key" }, { status: 401 })));
+    const err = await fetchJson(jolpicaContext(env), "https://api.jolpi.ca/ergast/f1/2026/races/", scheduleResponseSchema).catch((e) => e);
+    expect(err).toBeInstanceOf(OutboundError);
+    expect(err).not.toBeInstanceOf(LiveSessionError);
+  });
+
   it("rechaza respuestas que no cumplen el esquema", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json({ hola: "mundo" })));
     await expect(
@@ -297,6 +308,16 @@ describe("análisis tras la carrera (D-08)", () => {
     statuses[created[0]!.id] = "errored";
     expect(await advanceAnalysis(testEnv, now + 2)).toBe("al día");
     expect(created).toHaveLength(1);
+  });
+
+  it("no empieza un análisis durante una sesión en directo (D-25)", async () => {
+    mockJolpica();
+    await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
+    const { created, testEnv } = fakePostRace();
+    // Libres 1 de China: 13 de marzo a las 03:30 UTC.
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T04:00:00Z"))).toBe("aplazada: sesión en directo");
+    expect(created).toHaveLength(0);
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T12:00:00Z"))).toMatch(/^creada:/);
   });
 
   it("espera unas horas tras la carrera antes de pedir los datos", async () => {

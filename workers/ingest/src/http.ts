@@ -25,6 +25,18 @@ export class DeferredError extends OutboundError {
   override name = "DeferredError";
 }
 
+/**
+ * OpenF1 cierra el acceso sin clave, incluido el histórico, mientras hay una sesión de F1 en directo
+ * (respuesta 401 con «Live F1 session in progress», observada el 6 de noviembre de 2026). No es un error
+ * nuestro ni de los datos: hay que volver a intentarlo cuando termine la sesión (D-25).
+ */
+export class LiveSessionError extends DeferredError {
+  override name = "LiveSessionError";
+}
+
+/** Pausa del limitador tras un 401 por sesión en directo: ninguna otra petición lo intenta antes. */
+const LIVE_SESSION_PAUSE_MS = 15 * 60_000;
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function retryAfterMs(header: string | null, fallback: number): number {
@@ -105,6 +117,13 @@ export async function fetchJson<S extends z.ZodType>(ctx: FetchContext, url: str
     if (response.status >= 500) {
       lastError = new OutboundError(`error ${response.status} de la fuente`, response.status);
       continue;
+    }
+    if (response.status === 401 && hostname === "api.openf1.org") {
+      const detail = await readLimited(response).catch(() => "");
+      if (/live f1 session/i.test(detail)) {
+        await limiter.penalize(LIVE_SESSION_PAUSE_MS);
+        throw new LiveSessionError("OpenF1 restringido durante una sesión en directo", 401);
+      }
     }
     if (!response.ok) throw new OutboundError(`error ${response.status} de la fuente`, response.status);
 

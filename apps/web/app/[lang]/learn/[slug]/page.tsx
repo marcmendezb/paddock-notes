@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { EXPLAINERS, explainerBody } from "@/content";
 import { dict } from "@/lib/i18n";
+import { SITE_URL } from "@/lib/site";
+import { articleLd } from "@/lib/structured-data";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
@@ -37,14 +39,10 @@ export default async function ExplainerPage({ params }: Props) {
     <article className="container stack-l">
       <Breadcrumbs lang={lang} items={[{ href: `/${lang}/learn`, label: t.title }, { label: explainer.title[lang] }]} />
       <JsonLd
-        data={{
-          "@type": "Article",
-          headline: explainer.title[lang],
-          inLanguage: lang,
-          dateModified: "2026-11-06",
-          author: { "@type": "Organization", name: "Paddock Notes" },
-          publisher: { "@type": "Organization", name: "Paddock Notes" },
-        }}
+        data={articleLd(
+          { slug: explainer.slug, headline: explainer.title[lang], description: explainer.description[lang], dateModified: "2026-11-06" },
+          { lang, site: SITE_URL },
+        )}
       />
       <h1>{explainer.title[lang]}</h1>
       <div className="article lede-first">
