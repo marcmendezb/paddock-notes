@@ -24,23 +24,23 @@ const labels = {
   url: (s: number, r: number) => `https://paddocknotes.dev/es/races/${s}/${r}`,
 };
 
-describe("calendario .ics (NUC-16)", () => {
+describe(".ics calendar (NUC-16)", () => {
   const ics = seasonIcs([race], labels, "paddocknotes.dev", Date.parse("2026-11-05T00:00:00Z"));
 
-  it("genera un evento por sesión con hora UTC y duración", () => {
+  it("generates one event per session with UTC start and duration", () => {
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
     expect(ics).toContain("DTSTART:20261108T170000Z");
     expect(ics).toContain("DTEND:20261108T190000Z");
     expect(ics).toContain("UID:2026-20-race@paddocknotes.dev");
   });
 
-  it("usa CRLF, escapa comas y pliega líneas largas", () => {
+  it("uses CRLF, escapes commas, and folds long lines", () => {
     expect(ics.split("\r\n").every((l) => new TextEncoder().encode(l).length <= 75)).toBe(true);
     expect(ics).toContain("São Paulo\\, Brazil");
     expect(ics.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
   });
 
-  it("omite las rondas canceladas", () => {
+  it("omits cancelled rounds", () => {
     expect(seasonIcs([{ ...race, status: "cancelled" }], labels, "x")).not.toContain("VEVENT");
   });
 });

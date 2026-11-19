@@ -11,7 +11,7 @@ export function FormMessage({ lang, msg, okText }: { lang: Lang; msg: string | u
   const text = ok
     ? (okText ?? t.okBy[action ?? ""] ?? t.saved)
     : (errors[`${result}:${msg.split(":")[2] ?? ""}`] ??
-      (result === "Demasiadas" ? t.errors.rate : (errors[result] ?? t.failBy[action ?? ""] ?? t.errors.generic)));
+      (result === "Demasiadas" || result === "Too" || result === "rate_limited" ? t.errors.rate : (errors[result] ?? t.failBy[action ?? ""] ?? t.errors.generic)));
   return (
     <p className={ok ? "auto-note" : "notice"} role={ok ? "status" : "alert"}>
       {text}

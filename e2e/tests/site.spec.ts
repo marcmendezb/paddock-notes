@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const season = new Date().getUTCFullYear();
 
-/** Páginas núcleo de la fase 1, en los dos idiomas. */
+/** Core pages for phase 1 across languages. */
 const PAGES = [
   "/es",
   "/en",
@@ -13,7 +13,7 @@ const PAGES = [
   `/es/standings/${season}`,
   "/es/about",
   "/en/accessibility",
-  // Fase 2: histórico
+  // Phase 2: Historical archive
   "/de/compare",
   "/es/learn/circuits",
   "/de/learn/circuits",
@@ -29,14 +29,14 @@ const PAGES = [
   "/en/circuits/yas_marina",
   "/es/compare?a=russell&b=antonelli",
   "/es/search?q=ham",
-  // Fase 5: Aprende
+  // Phase 5: Learn
   "/es/learn",
   "/en/learn/undercut-overcut",
   "/es/learn/points",
   "/es/learn/glossary",
   "/en/learn/glossary/delta",
   "/es/analysis",
-  // Fase 4: sin cuenta
+  // Phase 4: Account-less interactive features
   "/es/quiz",
   "/en/simulator",
   "/es/account",
@@ -56,7 +56,7 @@ const PAGES = [
   "/de/notes/2026-mexico",
 ];
 
-/** Recoge errores de consola y de página: incluye violaciones de CSP y errores de hidratación. */
+/** Collects console and page errors, including CSP violations and hydration errors. */
 function watchErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on("console", (m) => {
@@ -67,13 +67,13 @@ function watchErrors(page: Page): string[] {
 }
 
 for (const path of PAGES) {
-  test(`${path}: carga sin errores y cumple WCAG 2.2 AA`, async ({ page }) => {
+  test(`${path}: loads without errors and satisfies WCAG 2.2 AA`, async ({ page }) => {
     const errors = watchErrors(page);
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("html")).toHaveAttribute("lang", path.slice(1, 3));
-    // Ningún enlace interno roto en la página (TRA-04): todos los href internos responden 200.
+    // No broken internal links on the page (TRA-04): all internal hrefs return 200.
     const hrefs = await page.locator("main a[href^='/']").evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute("href")!))]);
     for (const href of hrefs.filter((h) => !h.endsWith(".ics")).slice(0, 15)) {
       const res = await page.request.get(href);
@@ -117,25 +117,25 @@ test("the root redirects to the visitor's language (TRA-11, D-36)", async ({ bro
   }
 });
 
-test("el selector de idioma conserva la página (TRA-12)", async ({ page, isMobile }) => {
+test("language selector preserves current page path (TRA-12)", async ({ page, isMobile }) => {
   await page.goto(`/es/standings/${season}`);
-  // En móvil, el idioma está dentro del menú.
+  // On mobile, language switcher is inside the slide-out menu.
   if (isMobile) await page.locator(".menu-toggle").click();
-  // El desplegable de la cabecera (el pie tiene otro): se abre y se elige el idioma.
+  // Header dropdown: open summary and select target language.
   const select = page.locator(".site-header .lang-switch:visible").first();
   await select.locator("summary").click();
   await select.getByRole("link", { name: "English" }).click();
   await expect(page).toHaveURL(new RegExp(`/en/standings/${season}$`));
 });
 
-test("el enlace para saltar al contenido es lo primero con el teclado (TRA-20)", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Sin teclado en móvil");
+test("skip link is first focusable element with keyboard (TRA-20)", async ({ page, isMobile }) => {
+  test.skip(isMobile, "No physical keyboard on mobile");
   await page.goto("/es");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Saltar al contenido" })).toBeFocused();
 });
 
-test("el selector de temporada funciona sin JavaScript (TRA-34)", async ({ browser, baseURL }) => {
+test("season selector works without JavaScript (TRA-34)", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(`/es/races/${season}`);
@@ -146,7 +146,7 @@ test("el selector de temporada funciona sin JavaScript (TRA-34)", async ({ brows
   await context.close();
 });
 
-test("CSP con nonce distinto en cada petición (seguridad.md §4.1)", async ({ request }) => {
+test("CSP emits distinct nonces on each request (security.md §4.1)", async ({ request }) => {
   const nonceOf = async () => {
     const res = await request.get("/es");
     const csp = res.headers()["content-security-policy"] ?? res.headers()["content-security-policy-report-only"] ?? "";
@@ -161,7 +161,7 @@ test("CSP con nonce distinto en cada petición (seguridad.md §4.1)", async ({ r
   expect(a).not.toBe(b);
 });
 
-test("las páginas inexistentes dan 404 en el idioma de la URL (TRA-14)", async ({ page }) => {
+test("non-existent pages return 404 in the URL locale (TRA-14)", async ({ page }) => {
   for (const path of ["/es/no-existe", "/es/races/1900", "/es/races/2026/99", "/es/standings/abc"]) {
     expect((await page.goto(path))?.status(), path).toBe(404);
   }
@@ -171,20 +171,20 @@ test("las páginas inexistentes dan 404 en el idioma de la URL (TRA-14)", async 
   await expect(page.locator("h1")).toHaveText("We couldn't find this page.");
 });
 
-test("el calendario se descarga en .ics (NUC-16)", async ({ request }) => {
+test("calendar downloads in .ics format (NUC-16)", async ({ request }) => {
   const res = await request.get(`/es/races/${season}/calendar.ics`);
   expect(res.status()).toBe(200);
   expect(res.headers()["content-type"]).toContain("text/calendar");
   expect(await res.text()).toContain("BEGIN:VEVENT");
 });
 
-test("security.txt publicado (seguridad.md §19)", async ({ request }) => {
+test("security.txt published (.well-known/security.txt, security.md §19)", async ({ request }) => {
   const res = await request.get("/.well-known/security.txt");
   expect(res.status()).toBe(200);
   expect(await res.text()).toContain("Contact:");
 });
 
-test("el gráfico de evolución tiene tabla equivalente y se puede elegir pilotos sin JS (NUC-33)", async ({ browser, baseURL }) => {
+test("standings progression chart has equivalent table and works without JS (NUC-33)", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(`/es/standings/${season}`);
@@ -196,27 +196,27 @@ test("el gráfico de evolución tiene tabla equivalente y se puede elegir piloto
   await context.close();
 });
 
-test("el atajo / abre la búsqueda (TRA-03)", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Sin teclado en móvil");
+test("forward slash shortcut opens search modal (TRA-03)", async ({ page, isMobile }) => {
+  test.skip(isMobile, "No physical keyboard on mobile");
   await page.goto("/es");
-  // El atajo se registra al hidratar React.
+  // Shortcut registers once React hydrates.
   await page.waitForLoadState("networkidle");
   await page.keyboard.press("/");
   await expect(page).toHaveURL(/\/es\/search$/);
   await expect(page.getByRole("searchbox")).toBeFocused();
 });
 
-test("los IDs inválidos o inexistentes dan 404", async ({ page }) => {
+test("invalid or non-existent IDs return 404", async ({ page }) => {
   for (const path of ["/es/drivers/no_existe", "/es/drivers/Bad%20Id", "/es/records", "/es/records/wins", "/es/circuits/x"]) {
     expect((await page.goto(path))?.status(), path).toBe(404);
   }
 });
 
-test("cada herramienta de análisis carga sin errores y cumple WCAG (TEC-01 a TEC-09)", async ({ page }) => {
+test("each analysis tool loads without errors and satisfies WCAG (TEC-01 to TEC-09)", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("/es/analysis");
   const race = page.locator("main .an-latest-title a").first();
-  test.skip((await race.count()) === 0, "No hay carreras analizadas en este entorno");
+  test.skip((await race.count()) === 0, "No analyzed races available in this environment");
   await race.click();
   await page.waitForURL(/\/analysis\/\d{4}\/\d+$/);
   const tools = await page.locator("main .an-tools a.tile").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
@@ -231,11 +231,11 @@ test("cada herramienta de análisis carga sin errores y cumple WCAG (TEC-01 a TE
   expect(errors).toEqual([]);
 });
 
-test("el comparador de telemetría se recorre con el teclado (TEC-04)", async ({ page, isMobile }) => {
-  test.skip(isMobile, "Sin teclado en móvil");
+test("telemetry comparison can be navigated with keyboard (TEC-04)", async ({ page, isMobile }) => {
+  test.skip(isMobile, "No physical keyboard on mobile");
   await page.goto("/es/analysis");
   const race = page.locator("main .an-latest-title a").first();
-  test.skip((await race.count()) === 0, "No hay carreras analizadas en este entorno");
+  test.skip((await race.count()) === 0, "No analyzed races available in this environment");
   const href = await race.getAttribute("href");
   await page.goto(`${href}/telemetry`);
   const chart = page.locator("svg.telemetry-svg");
@@ -245,19 +245,19 @@ test("el comparador de telemetría se recorre con el teclado (TEC-04)", async ({
   await expect(page.locator(".readout span").first()).not.toHaveText(before ?? "");
 });
 
-test("el glosario filtra al escribir (CON-02)", async ({ page }) => {
+test("glossary filters terms dynamically while typing (CON-02)", async ({ page }) => {
   await page.goto("/es/learn/glossary");
   await page.getByRole("searchbox").fill("undercut");
   await expect(page.locator(".gx-grid dt")).toHaveCount(1);
   await expect(page.locator(".gx-grid dt")).toHaveText("Undercut");
 });
 
-test("el simulador calcula un escenario y lo guarda en la URL (COM-09)", async ({ browser, baseURL }) => {
+test("title simulator computes scenario and encodes state in URL (COM-09)", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/es/simulator");
   const selects = page.locator("form select");
-  test.skip((await selects.count()) === 0, "No quedan carreras en este entorno");
+  test.skip((await selects.count()) === 0, "No remaining races available in this environment");
   await selects.first().selectOption("1");
   await page.getByRole("button", { name: "Calcular" }).click();
   await expect(page).toHaveURL(/r\d+_[a-z0-9_-]+=1/);
@@ -265,28 +265,28 @@ test("el simulador calcula un escenario y lo guarda en la URL (COM-09)", async (
   await context.close();
 });
 
-test("el quiz corrige las respuestas sin JavaScript (COM-08)", async ({ browser, baseURL }) => {
+test("quiz grades answers without JavaScript (COM-08)", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/es/quiz");
   const questions = page.locator("fieldset.quiz-question");
-  test.skip((await questions.count()) === 0, "Sin datos para el quiz");
+  test.skip((await questions.count()) === 0, "No quiz data available");
   for (const q of await questions.all()) await q.locator(".quiz-option").first().click();
   await page.getByRole("button", { name: "Comprobar" }).click();
   await expect(page.getByRole("status")).toContainText(/Has acertado \d de \d/);
   await context.close();
 });
 
-test("las páginas de comunidad protegen los recursos sin sesión (COM-01, seguridad.md §10)", async ({ page, request }) => {
+test("community pages protect authenticated resources when unauthenticated (COM-01, security.md §10)", async ({ page, request }) => {
   await page.goto("/es/account");
   await expect(page.locator("input[type=email]")).toBeVisible();
   expect((await page.goto("/es/leagues/00000000-0000-4000-8000-000000000000"))?.status()).toBe(404);
-  // Un formulario enviado desde otro origen se rechaza (CSRF).
+  // Cross-origin form submission is rejected (CSRF protection).
   const forged = await request.post("/es/forms/profile", { headers: { origin: "https://evil.example" }, form: { name: "x" } });
   expect(forged.status()).toBe(403);
 });
 
-test("la newsletter es una demostración: no envía nada y lo explica (NUC-10, D-33)", async ({ page }) => {
+test("newsletter is a portfolio demo and clarifies no data is stored (NUC-10, D-33)", async ({ page }) => {
   const sent: string[] = [];
   page.on("request", (r) => {
     if (r.method() === "POST") sent.push(r.url());
@@ -306,7 +306,7 @@ test("la newsletter es una demostración: no envía nada y lo explica (NUC-10, D
   await expect(dialog).toBeHidden();
 });
 
-test("sin JavaScript, la newsletter tampoco guarda nada y vuelve con el aviso (D-33)", async ({ browser, baseURL }) => {
+test("without JavaScript, newsletter also displays demo notice (D-33)", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/es/newsletter");
@@ -319,23 +319,23 @@ test("sin JavaScript, la newsletter tampoco guarda nada y vuelve con el aviso (D
   await context.close();
 });
 
-test("la crónica de la portada reparte bien sus columnas (NUC-05)", async ({ page, isMobile }) => {
+test("homepage race report columns adapt cleanly to viewport (NUC-05)", async ({ page, isMobile }) => {
   await page.goto("/es");
   const points = page.locator(".rr-points");
-  test.skip((await points.count()) === 0, "Sin carrera con puntos en este entorno");
+  test.skip((await points.count()) === 0, "No scored race available in this environment");
   const width = await points.evaluate((el) => el.getBoundingClientRect().width);
   expect(width).toBeGreaterThan(isMobile ? 250 : 300);
 });
 
-test("el histórico lleva al cara a cara de la temporada en curso (D-35)", async ({ page }) => {
+test("history route redirects to current season head-to-head (D-35)", async ({ page }) => {
   await page.goto("/es/history");
   await expect(page).toHaveURL(/\/es\/compare$/);
   await expect(page.getByText(/Solo la temporada \d{4}/)).toBeVisible();
   await expect(page.locator(".cmp-duel")).toBeVisible();
 });
 
-test("cara a cara: se elige en la parrilla y solo cuenta la temporada en curso (D-35)", async ({ browser, baseURL }) => {
-  // Sin JavaScript: los radios del desplegable van en el formulario.
+test("head-to-head comparison selects from grid and bounds to current season (D-35)", async ({ browser, baseURL }) => {
+  // Without JavaScript: dropdown radios submit through form.
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/es/compare");
@@ -344,7 +344,7 @@ test("cara a cara: se elige en la parrilla y solo cuenta la temporada en curso (
   const option = b.locator(".dp-option").nth(3);
   const id = await option.locator("input").getAttribute("value");
   await option.click();
-  // Sin JavaScript el desplegable no se cierra solo: se cierra a mano, como haría cualquiera.
+  // Without JavaScript: manually close details disclosure.
   await b.locator("summary").click();
   await page.getByRole("button", { name: "Comparar" }).click();
   await expect(page).toHaveURL(new RegExp(`b=${id}`));
@@ -352,12 +352,12 @@ test("cara a cara: se elige en la parrilla y solo cuenta la temporada en curso (
   await context.close();
 });
 
-test("explicador sugerido para el próximo GP (NUC-09)", async ({ page }) => {
+test("suggested explainer displayed for upcoming GP (NUC-09)", async ({ page }) => {
   await page.goto("/es");
   await expect(page.getByText("Para entender este GP", { exact: true })).toBeVisible();
 });
 
-test("confirmar y darse de baja piden pulsar un botón, no basta con abrir el enlace (D-16)", async ({ page }) => {
+test("confirmation and unsubscribe require button click rather than bare link hit (D-16)", async ({ page }) => {
   const token = "0".repeat(48);
   for (const path of [`/es/newsletter/confirm?token=${token}`, `/es/newsletter/unsubscribe?token=${token}`]) {
     await page.goto(path);
@@ -365,7 +365,7 @@ test("confirmar y darse de baja piden pulsar un botón, no basta con abrir el en
   }
 });
 
-test("mapa de la temporada: cada punto enlaza a la ficha del circuito (NUC-17)", async ({ page }) => {
+test("season map links each venue pin to circuit profile (NUC-17)", async ({ page }) => {
   await page.goto("/es/races/2026");
   const pins = page.locator("#season-map ~ * a.map-pin, .season-map a.map-pin");
   expect(await pins.count()).toBeGreaterThan(5);
@@ -373,16 +373,16 @@ test("mapa de la temporada: cada punto enlaza a la ficha del circuito (NUC-17)",
   await expect(pins.first()).toHaveAttribute("aria-label", /Ronda \d+/);
 });
 
-test("el recálculo con el sistema actual va rotulado como recálculo (HIS-06)", async ({ page }) => {
+test("recalculated standings under modern system is explicitly labeled (HIS-06)", async ({ page }) => {
   await page.goto("/es/standings/2026");
   await page.getByRole("link", { name: /sistema actual/ }).click();
   await expect(page.getByText("Recálculo, no es la clasificación oficial").first()).toBeVisible();
 });
 
-test("la web sirve /api por Service Binding y conserva la protección CSRF (D-26)", async ({ request, baseURL }) => {
+test("web serves /api through Service Binding with CSRF protection (D-26)", async ({ request, baseURL }) => {
   const health = await request.get("/api/v1/health");
   expect(health.status()).toBe(200);
-  // Un origen ajeno no puede escribir aunque intente colar la cabecera interna.
+  // External origin cannot mutate even if attempting to spoof internal origin header.
   const forged = await request.post("/api/v1/newsletter", {
     headers: { origin: "https://evil.example", "x-paddock-origin": baseURL!, "content-type": "application/json" },
     data: { email: "x@example.com", lang: "es", consent: true },
@@ -390,16 +390,16 @@ test("la web sirve /api por Service Binding y conserva la protección CSRF (D-26
   expect(forged.status()).toBe(403);
 });
 
-test("hero: el fin de semana como calendario, con la carrera destacada (NUC-03)", async ({ page }) => {
+test("hero weekend schedule displays race session prominently (NUC-03)", async ({ page }) => {
   await page.goto("/es");
   expect(await page.locator(".cal-block").count()).toBeGreaterThanOrEqual(3);
   await expect(page.locator(".cal-race")).toHaveCount(1);
-  // Los horarios también están en texto, para lectores de pantalla.
+  // Timings also accessible in text for screen readers.
   expect(await page.locator(".sheet-sessions .sessions li").count()).toBeGreaterThanOrEqual(3);
 });
 
-test("cabecera: menú de móvil a pantalla completa, sin JavaScript también (TRA-01)", async ({ browser, baseURL, isMobile }) => {
-  test.skip(!isMobile, "Solo en móvil");
+test("mobile navigation menu opens full-screen without JavaScript (TRA-01)", async ({ browser, baseURL, isMobile }) => {
+  test.skip(!isMobile, "Mobile viewport only");
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   await page.goto("/es");
@@ -408,9 +408,9 @@ test("cabecera: menú de móvil a pantalla completa, sin JavaScript también (TR
   await context.close();
 });
 
-test("cabecera: el cronometraje empieza por un evento y alterna con datos", async ({ page }) => {
+test("ticker lead highlights current event and alternates with facts", async ({ page }) => {
   await page.goto("/es");
-  // El evento en directo (o el siguiente) va fijo; la cinta sigue con dato, evento, dato…
+  // Live or next event is fixed; ticker alternates between data and event pills.
   await expect(page.locator(".ticker-lead")).toBeVisible();
   const items = page.locator(".ticker-group").first().locator(".ticker-item");
   await expect(items.nth(0)).not.toHaveClass(/ticker-event/);

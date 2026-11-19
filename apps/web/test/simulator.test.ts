@@ -10,8 +10,8 @@ const rounds = [
   { round: 21, name: "Las Vegas", isSprintWeekend: false },
 ];
 
-describe("simulador de campeonato (COM-09)", () => {
-  it("suma carrera y sprint según la posición elegida", () => {
+describe("championship simulator (COM-09)", () => {
+  it("calculates race and sprint points according to selected positions", () => {
     const { projected } = simulate(2026, drivers, rounds, {
       [field("r", 20, "ver")]: "1",
       [field("s", 20, "ver")]: "1",
@@ -23,12 +23,12 @@ describe("simulador de campeonato (COM-09)", () => {
     expect(projected[0]!.id).toBe("ant");
   });
 
-  it("detecta dos pilotos en la misma posición", () => {
+  it("detects position conflicts when two drivers share a spot", () => {
     const { conflicts } = simulate(2026, drivers, rounds, { [field("r", 21, "ver")]: "1", [field("r", 21, "ant")]: "1" });
     expect(conflicts).toEqual([{ round: 21, kind: "r", position: 1 }]);
   });
 
-  it("ignora valores no válidos de la URL", () => {
+  it("safely ignores invalid values from URL search params", () => {
     const { projected } = simulate(2026, drivers, rounds, { [field("r", 21, "ver")]: "<script>", [field("r", 20, "ver")]: "99" });
     expect(projected.find((d) => d.id === "ver")?.total).toBe(261);
   });

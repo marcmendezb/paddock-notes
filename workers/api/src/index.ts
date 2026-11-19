@@ -16,7 +16,7 @@ const DAY = 86_400;
 
 const app = new OpenAPIHono<AppEnv>({
   defaultHook: (result, c) => {
-    if (!result.success) return errorResponse(c, "invalid_parameter", "Parámetro inválido.");
+    if (!result.success) return errorResponse(c, "invalid_parameter", "Invalid parameter.");
   },
 }).basePath("/api/v1");
 
@@ -25,9 +25,9 @@ app.use("*", requestLog, securityHeaders, publicCors, readOnlyMethods);
 app.onError((error, c) => {
   if (error instanceof HttpError) return errorResponse(c, error.code, error.message, error.retryAfter);
   console.error(JSON.stringify({ event: "unhandled_error", error: String(error) }));
-  return errorResponse(c, "internal_error", "Algo ha fallado por nuestra parte.");
+  return errorResponse(c, "internal_error", "An internal server error occurred.");
 });
-app.notFound((c) => errorResponse(c, "not_found", "Ruta no encontrada."));
+app.notFound((c) => errorResponse(c, "not_found", "Route not found."));
 
 /**
  * Registra una ruta GET en Hono y en el documento OpenAPI. Los parámetros de ruta se validan con el
@@ -41,7 +41,7 @@ function get(
   const schema = config.request?.params as z.ZodType<Record<string, string>> | undefined;
   app.get(config.path.replace(/\{(\w+)\}/g, ":$1"), async (c) => {
     const parsed = schema ? schema.safeParse(c.req.param()) : { success: true as const, data: {} };
-    if (!parsed.success) return errorResponse(c, "invalid_parameter", "Parámetro inválido.");
+    if (!parsed.success) return errorResponse(c, "invalid_parameter", "Invalid parameter.");
     return handler(c, parsed.data);
   });
 }
@@ -71,10 +71,10 @@ const apiError = z
 
 const ok = (description: string) => ({
   200: { description, content: { "application/json": { schema: envelope } } },
-  400: { description: "Parámetro inválido", content: { "application/json": { schema: apiError } } },
-  404: { description: "Sin datos", content: { "application/json": { schema: apiError } } },
-  429: { description: "Límite de peticiones", content: { "application/json": { schema: apiError } } },
-  503: { description: "D1 no disponible", content: { "application/json": { schema: apiError } } },
+  400: { description: "Invalid parameter", content: { "application/json": { schema: apiError } } },
+  404: { description: "Not found", content: { "application/json": { schema: apiError } } },
+  429: { description: "Rate limit exceeded", content: { "application/json": { schema: apiError } } },
+  503: { description: "Database unavailable", content: { "application/json": { schema: apiError } } },
 });
 
 // ---- Utilidades -----------------------------------------------------------------------------
@@ -84,12 +84,12 @@ const currentYear = () => new Date().getUTCFullYear();
 async function resolveSeason(reader: F1Reader, raw: string): Promise<number> {
   if (raw === "current") {
     const latest = await reader.latestSeason();
-    if (latest === null) throw new HttpError("not_found", "No hay ninguna temporada cargada todavía.");
+    if (latest === null) throw new HttpError("not_found", "No season loaded yet.");
     return Math.min(latest, currentYear());
   }
   const season = Number(raw);
   if (season < FIRST_SEASON || season > currentYear() + 1) {
-    throw new HttpError("invalid_parameter", `La temporada debe estar entre ${FIRST_SEASON} y ${currentYear() + 1}.`);
+    throw new HttpError("invalid_parameter", `Season must be between ${FIRST_SEASON} and ${currentYear() + 1}.`);
   }
   return season;
 }
@@ -114,7 +114,7 @@ get(
       await reader(c).ping();
       return c.json({ status: "ok" }, 200, { "cache-control": "no-store" });
     } catch {
-      return errorResponse(c, "unavailable", "La base de datos no responde.", 30);
+      return errorResponse(c, "unavailable", "Database is not responding.", 30);
     }
   },
 );
@@ -406,7 +406,7 @@ get({ method: "get", path: "/search", responses: ok("Pilotos, equipos y circuito
   const keys = [...url.searchParams.keys()];
   const q = url.searchParams.get("q")?.trim() ?? "";
   if (keys.some((k) => k !== "q") || q.length < 2 || q.length > 50) {
-    throw new HttpError("invalid_parameter", "El parámetro q debe tener entre 2 y 50 caracteres.");
+    throw new HttpError("invalid_parameter", "Parameter q must be between 2 and 50 characters.");
   }
   const results = await reader(c).search(q);
   return c.json(
@@ -430,7 +430,7 @@ app.use("/analysis/*", noQueryParams, rateLimit);
  */
 async function analysisFile(c: Context<AppEnv>, season: number, round: number, file: string) {
   const index = await reader(c).getAnalysis(season, round);
-  if (!index) throw new HttpError("not_found", "No hay análisis de esta carrera todavía.");
+  if (!index) throw new HttpError("not_found", "No analysis available for this race yet.");
   return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant: `${index.version}-${index.createdAt}` }, async () => {
     const object = await c.env.ANALYSIS.get(analysisKey(season, round, file, index.version));
     if (!object) return null;

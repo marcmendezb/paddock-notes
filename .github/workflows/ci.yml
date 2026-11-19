@@ -1,6 +1,6 @@
-# Cada pull request y cada push a main: lint, tipos, tests y build. En los PR, además, despliegue al entorno
-# de preview (stack.md §12, D-18), solo si la variable del repositorio CLOUDFLARE_READY vale "true".
-# Acciones fijadas por SHA completo; permisos mínimos (seguridad.md §13).
+# Pull requests and pushes to main: lint, types, tests, and build. Pull requests additionally
+# deploy to preview environment (stack.md §12, D-18) when CLOUDFLARE_READY is "true".
+# Actions pinned by full commit SHA; least privilege permissions (security.md §13).
 name: ci
 
 on:
@@ -32,7 +32,7 @@ jobs:
       - run: pnpm test
       - run: pnpm --filter @paddock/web build:worker
 
-  # Secretos filtrados en el historial (seguridad.md §11). Sin licencia: el repositorio es de una cuenta personal.
+  # Secret detection across git history (security.md §11).
   secrets:
     runs-on: ubuntu-latest
     permissions:
@@ -48,8 +48,8 @@ jobs:
 
   preview:
     needs: check
-    # Los PR de forks no reciben secretos (seguridad.md §13).
-    # Sin cuenta de Cloudflare configurada (CLOUDFLARE_READY), no se intenta desplegar.
+    # Fork PRs do not receive secrets (security.md §13).
+    # Skip deployment unless Cloudflare repository variable is configured.
     if: github.event.pull_request.head.repo.full_name == github.repository && vars.CLOUDFLARE_READY == 'true'
     runs-on: ubuntu-latest
     environment: preview
@@ -61,13 +61,13 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Migraciones de D1 (preview)
+      - name: Apply D1 migrations (preview)
         working-directory: workers/api
         run: pnpm exec wrangler d1 migrations apply paddock-db-preview --remote --env preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_PREVIEW }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Despliegue al entorno de preview
+      - name: Deploy to preview environment
         run: |
           pnpm --filter @paddock/api exec wrangler deploy --env preview
           pnpm --filter @paddock/ingest exec wrangler deploy --env preview
@@ -76,7 +76,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_PREVIEW }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Pruebas de extremo a extremo y accesibilidad contra la preview (TRA-46)
+      - name: End-to-end and accessibility tests against preview (TRA-46)
         run: |
           pnpm --filter @paddock/e2e exec playwright install --with-deps chromium
           pnpm --filter @paddock/e2e e2e
@@ -84,7 +84,7 @@ jobs:
           E2E_BASE_URL: ${{ vars.PREVIEW_URL }}
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-      - name: Lighthouse CI en móvil (TRA-40, TRA-41)
+      - name: Mobile Lighthouse CI (TRA-40, TRA-41)
         run: |
           pnpm dlx @lhci/cli@0.15.1 autorun \
             --collect.url="${{ vars.PREVIEW_URL }}/es" \

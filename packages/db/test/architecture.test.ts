@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-/** Test de arquitectura (D-14): falla si la API o la web importan el módulo de escritura de F1. */
+/** Architecture test (D-14): fails if API or web imports the F1 write module. */
 
 const root = path.resolve(import.meta.dirname, "../../..");
 
@@ -21,9 +21,9 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-describe("separación de lectura y escritura (D-14)", () => {
+describe("read/write separation (D-14)", () => {
   for (const area of ["workers/api/src", "apps/web"]) {
-    it(`${area} no importa @paddock/db/f1-write`, () => {
+    it(`${area} does not import @paddock/db/f1-write`, () => {
       const offenders = sourceFiles(path.join(root, area)).filter((file) =>
         /@paddock\/db\/f1-write|src\/f1-write/.test(readFileSync(file, "utf8")),
       );
@@ -31,7 +31,7 @@ describe("separación de lectura y escritura (D-14)", () => {
     });
   }
 
-  it.each(["community.ts", "mailing.ts"])("%s solo escribe en tablas de comunidad", (file) => {
+  it.each(["community.ts", "mailing.ts"])("%s only writes to community tables", (file) => {
     const source = readFileSync(path.join(root, "packages/db/src", file), "utf8");
     const f1Tables = ["races", "results", "qualifying", "pit_stops", "laps", "standings_drivers", "standings_constructors", "circuits", "drivers", "constructors", "sessions", "analysis_artifacts", "ingest_state", "ingest_runs"];
     for (const t of ["races", "results", "qualifying"]) {
@@ -41,7 +41,7 @@ describe("separación de lectura y escritura (D-14)", () => {
   });
 
   for (const file of ["f1-read.ts", "f1-history.ts"]) {
-    it(`${file} solo contiene consultas de lectura`, () => {
+    it(`${file} only contains read queries`, () => {
       const source = readFileSync(path.join(root, "packages/db/src/", file), "utf8");
       expect(source).not.toMatch(/\.(insert|update|delete)\(/);
       expect(source).not.toMatch(/\b(insert into|update \w+ set|delete from)\b/i);

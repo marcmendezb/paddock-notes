@@ -84,7 +84,7 @@ async function readLimited(response: Response): Promise<string> {
 export async function fetchJson<S extends z.ZodType>(ctx: FetchContext, url: string, schema: S): Promise<z.output<S>> {
   const { hostname, protocol } = new URL(url);
   if (protocol !== "https:" || !(ALLOWED_OUTBOUND_HOSTS as readonly string[]).includes(hostname)) {
-    throw new OutboundError(`host no permitido: ${hostname}`);
+    throw new OutboundError(`Disallowed host: ${hostname}`);
   }
   const limiter = ctx.env.OUTBOUND_LIMITER.get(ctx.env.OUTBOUND_LIMITER.idFromName(hostname));
 

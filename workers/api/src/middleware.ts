@@ -95,7 +95,7 @@ export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (isOneClick(path) && c.req.method === "POST") {
     const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-client-ip") ?? "internal";
     const { success } = await c.env.RATE_LIMIT_WRITE.limit({ key: ip });
-    if (!success) return errorResponse(c, "rate_limited", "Demasiadas peticiones. Espera un minuto.", 60);
+    if (!success) return errorResponse(c, "rate_limited", "Too many requests. Please wait a minute.", 60);
     await next();
     return;
   }
@@ -105,17 +105,17 @@ export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
     // internet Cloudflare fija siempre CF-Connecting-IP.
     const internal = !c.req.header("cf-connecting-ip");
     const origin = c.req.header("origin") ?? (internal ? c.req.header("x-paddock-origin") : undefined);
-    if (!origin || !trusted(c).includes(origin)) return errorResponse(c, "forbidden", "Origen no permitido.");
+    if (!origin || !trusted(c).includes(origin)) return errorResponse(c, "forbidden", "Forbidden origin.");
     // Las peticiones de la web llegan por Service Binding con la IP del visitante en una cabecera interna;
     // desde internet, Cloudflare fija siempre CF-Connecting-IP y esa cabecera interna no se tiene en cuenta.
     const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-client-ip") ?? "internal";
     const { success } = await c.env.RATE_LIMIT_WRITE.limit({ key: ip });
-    if (!success) return errorResponse(c, "rate_limited", "Demasiadas peticiones. Espera un minuto.", 60);
+    if (!success) return errorResponse(c, "rate_limited", "Too many requests. Please wait a minute.", 60);
     await next();
     return;
   }
   if (!["GET", "HEAD", "OPTIONS"].includes(c.req.method)) {
-    const res = errorResponse(c, "method_not_allowed", "Método no permitido.");
+    const res = errorResponse(c, "method_not_allowed", "Method not allowed.");
     res.headers.set("allow", "GET, HEAD, OPTIONS");
     return res;
   }
@@ -125,7 +125,7 @@ export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
 /** Las rutas de lectura no aceptan parámetros de consulta: los desconocidos se rechazan (seguridad.md §6). */
 export const noQueryParams: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (new URL(c.req.url).search.length > 1) {
-    return errorResponse(c, "invalid_parameter", "Esta ruta no admite parámetros de consulta.");
+    return errorResponse(c, "invalid_parameter", "This route does not accept query parameters.");
   }
   await next();
 };
@@ -140,7 +140,7 @@ export const rateLimit: MiddlewareHandler<AppEnv> = async (c, next) => {
   const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-proxy-ip");
   if (ip) {
     const { success } = await c.env.RATE_LIMIT_READ.limit({ key: ip });
-    if (!success) return errorResponse(c, "rate_limited", "Demasiadas peticiones. Espera un minuto.", 60);
+    if (!success) return errorResponse(c, "rate_limited", "Too many requests. Please wait a minute.", 60);
   }
   await next();
 };

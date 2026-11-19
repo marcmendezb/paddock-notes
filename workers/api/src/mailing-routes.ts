@@ -17,15 +17,15 @@ const noStore = { "cache-control": "no-store" };
 
 async function json<T extends z.ZodType>(c: Context<AppEnv>, schema: T): Promise<z.output<T>> {
   const text = await c.req.text();
-  if (text.length > 4_096) throw new HttpError("invalid_parameter", "Cuerpo demasiado grande.");
+  if (text.length > 4_096) throw new HttpError("invalid_parameter", "Request payload too large.");
   let raw: unknown;
   try {
     raw = JSON.parse(text || "{}");
   } catch {
-    throw new HttpError("invalid_parameter", "JSON no válido.");
+    throw new HttpError("invalid_parameter", "Invalid JSON.");
   }
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) throw new HttpError("invalid_parameter", "Datos no válidos.");
+  if (!parsed.success) throw new HttpError("invalid_parameter", "Invalid data.");
   return parsed.data;
 }
 
@@ -50,9 +50,9 @@ export function mountMailing(app: Hono<AppEnv>) {
       // Consentimiento expreso (RGPD art. 7): sin la casilla marcada no hay alta.
       z.object({ email: z.string().trim().max(200).pipe(z.email()), lang: z.string(), consent: z.literal(true) }).strict(),
     );
-    if (!isLang(lang)) throw new HttpError("invalid_parameter", "Idioma no válido.");
+    if (!isLang(lang)) throw new HttpError("invalid_parameter", "Invalid language.");
     if (!(await verifyTurnstile(c, c.req.header("x-captcha-response")))) {
-      throw new HttpError("forbidden", "Verificación anti-bots fallida.");
+      throw new HttpError("forbidden", "Bot verification failed.");
     }
     const pending = await createMailing(c.env.DB).subscribe(email, lang);
     if (pending) {
@@ -65,7 +65,7 @@ export function mountMailing(app: Hono<AppEnv>) {
   app.post("/newsletter/confirm", async (c) => {
     const body = await json(c, z.object({ token }).strict());
     const ok = await createMailing(c.env.DB).confirm(body.token);
-    if (!ok) throw new HttpError("not_found", "El enlace no es válido o ha caducado.");
+    if (!ok) throw new HttpError("not_found", "Link is invalid or has expired.");
     return c.json({ data: { ok: true } }, 200, noStore);
   });
 
@@ -81,7 +81,7 @@ export function mountMailing(app: Hono<AppEnv>) {
 
   app.post("/me/notifications", async (c) => {
     const session = await createAuth(c.env).api.getSession({ headers: c.req.raw.headers });
-    if (!session) throw new HttpError("unauthorized", "Necesitas iniciar sesión.");
+    if (!session) throw new HttpError("unauthorized", "Unauthorized. Please sign in.");
     const prefs = await json(c, z.object({ race: z.boolean(), analysis: z.boolean() }).strict());
     await createMailing(c.env.DB).setNotifications(session.user.id, prefs);
     return c.json({ data: { ok: true } }, 200, noStore);

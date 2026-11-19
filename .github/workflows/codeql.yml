@@ -1,5 +1,4 @@
-# Análisis estático con CodeQL (seguridad.md §13). En repositorios privados exige GitHub Advanced Security,
-# así que solo corre cuando el repositorio es público.
+# Static analysis with CodeQL (security.md §13).
 name: codeql
 
 on:

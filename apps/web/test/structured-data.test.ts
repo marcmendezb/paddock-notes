@@ -20,13 +20,13 @@ const ctx = { lang: "es" as const, site: "https://paddocknotes.dev", name: "Gran
 describe("SportsEvent (CON-08)", () => {
   const ld = sportsEventLd(race, ctx);
 
-  it("lleva los campos obligatorios de Google", () => {
+  it("includes Google mandatory schema fields", () => {
     expect(ld.name).toBe("Gran Premio de Brasil");
     expect(ld.startDate).toBe("2026-11-08T17:00:00.000Z");
     expect(ld.location.address).toEqual({ "@type": "PostalAddress", addressLocality: "São Paulo", addressCountry: "BR" });
   });
 
-  it("y los recomendados que tenemos de verdad, sin organizador", () => {
+  it("includes recommended fields without fictitious organizers", () => {
     expect(ld.endDate).toBe("2026-11-08T19:00:00.000Z");
     expect(ld.eventAttendanceMode).toBe("https://schema.org/OfflineEventAttendanceMode");
     expect(ld.url).toBe("https://paddocknotes.dev/es/races/2026/20");
@@ -34,26 +34,26 @@ describe("SportsEvent (CON-08)", () => {
     expect(ld).not.toHaveProperty("organizer");
   });
 
-  it("una carrera cancelada lo dice", () => {
+  it("marks cancelled races with EventCancelled status", () => {
     expect(sportsEventLd({ ...race, status: "cancelled" }, ctx).eventStatus).toBe("https://schema.org/EventCancelled");
   });
 
-  it("sin hora de salida usa la fecha", () => {
+  it("falls back to race date when start time is not provided", () => {
     const ld2 = sportsEventLd({ ...race, startsAt: null }, ctx);
     expect(ld2.startDate).toBe("2026-11-08");
     expect(ld2.endDate).toBe("2026-11-08");
   });
 });
 
-describe("Article y DefinedTerm (CON-08)", () => {
-  it("Article con imagen, fecha y autor enlazado", () => {
+describe("Article and DefinedTerm schemas (CON-08)", () => {
+  it("generates Article schema with image, date and author link", () => {
     const ld = articleLd({ slug: "points", headline: "Cómo se reparten los puntos", description: "Desde 2010…", dateModified: "2026-11-06" }, { lang: "es", site: "https://paddocknotes.dev" });
     expect(ld.image).toEqual(["https://paddocknotes.dev/es/opengraph-image"]);
     expect(ld.author).toEqual({ "@type": "Organization", name: "Paddock Notes", url: "https://paddocknotes.dev/es/about" });
     expect(ld.url).toBe("https://paddocknotes.dev/es/learn/points");
   });
 
-  it("DefinedTerm enlazado a su glosario", () => {
+  it("links DefinedTerm schema to glossary set", () => {
     const ld = definedTermLd({ id: "undercut", term: "Undercut", definition: "Parar antes…", setName: "Glosario" }, { lang: "es", site: "https://paddocknotes.dev" });
     expect(ld.url).toBe("https://paddocknotes.dev/es/learn/glossary/undercut");
     expect(ld.inDefinedTermSet.url).toBe("https://paddocknotes.dev/es/learn/glossary");

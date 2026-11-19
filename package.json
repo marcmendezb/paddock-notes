@@ -1,7 +1,7 @@
 {
   "name": "paddock-notes",
   "private": true,
-  "description": "F1 explicada con datos. Proyecto no oficial, sin afiliación con Formula 1.",
+  "description": "Formula 1 explained with data. Unofficial project, not affiliated with Formula 1.",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.30.3",

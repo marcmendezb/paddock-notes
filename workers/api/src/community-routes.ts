@@ -33,33 +33,33 @@ const profileSchema = z
 
 async function requireUser(c: Context<AppEnv>) {
   const session = await createAuth(c.env).api.getSession({ headers: c.req.raw.headers });
-  if (!session) throw new HttpError("unauthorized", "Necesitas iniciar sesión.");
+  if (!session) throw new HttpError("unauthorized", "Unauthorized. Please sign in.");
   return session.user;
 }
 
 async function body<T extends z.ZodType>(c: Context<AppEnv>, schema: T): Promise<z.output<T>> {
   const text = await c.req.text();
   // Cuerpo máximo de 16 kB en rutas POST (seguridad.md §6).
-  if (text.length > 16_384) throw new HttpError("invalid_parameter", "Cuerpo demasiado grande.");
+  if (text.length > 16_384) throw new HttpError("invalid_parameter", "Request payload too large.");
   let json: unknown;
   try {
     json = JSON.parse(text || "{}");
   } catch {
-    throw new HttpError("invalid_parameter", "JSON no válido.");
+    throw new HttpError("invalid_parameter", "Invalid JSON.");
   }
   const parsed = schema.safeParse(json);
-  if (!parsed.success) throw new HttpError("invalid_parameter", "Datos no válidos.");
+  if (!parsed.success) throw new HttpError("invalid_parameter", "Invalid data.");
   return parsed.data;
 }
 
 const noStore = { "cache-control": "no-store" };
 const seasonOf = (raw: string) => {
-  if (!/^\d{4}$/.test(raw)) throw new HttpError("invalid_parameter", "Temporada no válida.");
+  if (!/^\d{4}$/.test(raw)) throw new HttpError("invalid_parameter", "Invalid season.");
   return Number(raw);
 };
 
 const roundOf = (raw: string) => {
-  if (!/^\d{1,2}$/.test(raw)) throw new HttpError("invalid_parameter", "Ronda no válida.");
+  if (!/^\d{1,2}$/.test(raw)) throw new HttpError("invalid_parameter", "Invalid round.");
   return Number(raw);
 };
 
@@ -96,7 +96,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
       const problem = validateName(data.name);
       if (problem) throw new HttpError("invalid_parameter", `alias:${problem}`);
     }
-    if (data.lang !== undefined && !isLang(data.lang)) throw new HttpError("invalid_parameter", "Idioma no válido.");
+    if (data.lang !== undefined && !isLang(data.lang)) throw new HttpError("invalid_parameter", "Invalid language.");
     await createCommunity(c.env.DB).updateProfile(user.id, { ...data, name: data.name?.trim() });
     return c.json({ data: { ok: true } }, 200, noStore);
   });
@@ -146,7 +146,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
       reader.getDriverStandings(season),
       createCommunity(c.env.DB).myPredictions(user.id, season),
     ]);
-    if (!race) throw new HttpError("not_found", "Esta carrera no existe.");
+    if (!race) throw new HttpError("not_found", "Race not found.");
     const deadline = predictionDeadline(race.sessions);
     return c.json(
       {
@@ -170,13 +170,13 @@ export function mountCommunity(app: Hono<AppEnv>) {
     const picks = await body(c, picksSchema);
     const reader = createF1Reader(c.env.DB);
     const [race, standings] = await Promise.all([reader.getRace(season, round), reader.getDriverStandings(season)]);
-    if (!race) throw new HttpError("not_found", "Esta carrera no existe.");
+    if (!race) throw new HttpError("not_found", "Race not found.");
     const deadline = predictionDeadline(race.sessions);
     if (!deadline || Date.parse(deadline) <= Date.now()) {
-      throw new HttpError("forbidden", "Las predicciones de esta carrera ya están cerradas.");
+      throw new HttpError("forbidden", "Predictions for this race are closed.");
     }
     const allowed = new Set((standings?.rows ?? []).map((r) => r.driver.id));
-    if (!validPicks(picks, allowed)) throw new HttpError("invalid_parameter", "Predicción no válida.");
+    if (!validPicks(picks, allowed)) throw new HttpError("invalid_parameter", "Invalid prediction.");
     await createCommunity(c.env.DB).savePrediction(user.id, season, round, picks);
     return c.json({ data: { ok: true } }, 200, noStore);
   });
@@ -196,8 +196,8 @@ export function mountCommunity(app: Hono<AppEnv>) {
     const result = await createCommunity(c.env.DB).joinLeague(user.id, token);
     if (!result.ok) {
       throw result.reason === "full"
-        ? new HttpError("forbidden", "La liga está completa.")
-        : new HttpError("not_found", "La invitación no es válida.");
+        ? new HttpError("forbidden", "League is full.")
+        : new HttpError("not_found", "Invalid or expired invite.");
     }
     return c.json({ data: { id: result.id } }, 200, noStore);
   });
@@ -205,9 +205,9 @@ export function mountCommunity(app: Hono<AppEnv>) {
   app.get("/leagues/:id/:season", async (c) => {
     const user = await requireUser(c);
     const leagueId = c.req.param("id");
-    if (!/^[0-9a-f-]{36}$/.test(leagueId)) throw new HttpError("not_found", "Liga no encontrada.");
+    if (!/^[0-9a-f-]{36}$/.test(leagueId)) throw new HttpError("not_found", "League not found.");
     const league = await createCommunity(c.env.DB).league(user.id, leagueId, seasonOf(c.req.param("season")));
-    if (!league) throw new HttpError("not_found", "Liga no encontrada.");
+    if (!league) throw new HttpError("not_found", "League not found.");
     return c.json({ data: league }, 200, noStore);
   });
 

@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { predictionDeadline, rankUsers, scorePrediction, validateName, validPicks } from "../src";
 
-describe("puntuación de predicciones (COM-05)", () => {
+describe("prediction scoring (COM-05)", () => {
   const podium = ["ver", "ham", "ant"];
-  it("puntúa podio exacto, podio en otra posición y pole", () => {
+  it("scores exact podium, swapped podium, and pole position", () => {
     expect(scorePrediction({ p1: "ver", p2: "ham", p3: "ant", pole: "ham" }, podium, "ham")).toEqual({ points: 18, exact: 3, podium: 0, pole: true });
     expect(scorePrediction({ p1: "ham", p2: "ver", p3: "nor", pole: "ver" }, podium, "ham")).toEqual({ points: 4, exact: 0, podium: 2, pole: false });
     expect(scorePrediction({ p1: "nor", p2: "pia", p3: "rus", pole: "lec" }, podium, null).points).toBe(0);
   });
 });
 
-describe("cierre de predicciones (COM-04)", () => {
-  it("cierra con la primera sesión competitiva", () => {
+describe("prediction lock time (COM-04)", () => {
+  it("locks with first competitive session", () => {
     expect(
       predictionDeadline([
         { kind: "fp1", startsAt: "2026-11-06T14:30:00.000Z", date: "2026-11-06" },
@@ -23,15 +23,15 @@ describe("cierre de predicciones (COM-04)", () => {
   });
 });
 
-describe("validación", () => {
+describe("validation", () => {
   const allowed = new Set(["ver", "ham", "ant", "nor"]);
-  it("el podio no repite pilotos y todos están en la parrilla", () => {
+  it("podium does not duplicate drivers and all exist on grid", () => {
     expect(validPicks({ p1: "ver", p2: "ham", p3: "ant", pole: "ver" }, allowed)).toBe(true);
     expect(validPicks({ p1: "ver", p2: "ver", p3: "ant", pole: "ver" }, allowed)).toBe(false);
     expect(validPicks({ p1: "ver", p2: "ham", p3: "xxx", pole: "ver" }, allowed)).toBe(false);
   });
 
-  it("alias y nombres de liga (COM-13)", () => {
+  it("usernames and league names (COM-13)", () => {
     expect(validateName("Undercut_Club")).toBeNull();
     expect(validateName("Peña Ñúñez")).toBeNull();
     expect(validateName("ab")).toBe("length");
@@ -41,8 +41,8 @@ describe("validación", () => {
   });
 });
 
-describe("ranking (COM-06)", () => {
-  it("desempata por podios exactos y poles, y comparte posición si siguen igual", () => {
+describe("rankings (COM-06)", () => {
+  it("breaks ties by exact podiums and poles, sharing rank on ties", () => {
     const ranked = rankUsers([
       { id: "a", points: 20, exact: 2, poles: 1 },
       { id: "b", points: 20, exact: 3, poles: 0 },

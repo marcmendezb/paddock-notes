@@ -66,9 +66,9 @@ export async function cached<T>(
     console.error(JSON.stringify({ event: "d1_error", path: new URL(c.req.url).pathname, error: String(error) }));
     const copy = options.kvFallback ? await c.env.CACHE.get<ApiEnvelope<T>>(KV_PREFIX + key.url, "json") : null;
     if (copy) return respond(c, copy, 30, true);
-    throw new HttpError("unavailable", "El servicio no está disponible. Vuelve a intentarlo en unos segundos.", 30);
+    throw new HttpError("unavailable", "Service unavailable. Please try again in a few seconds.", 30);
   }
-  if (!payload) throw new HttpError("not_found", "No hay datos para este recurso todavía.");
+  if (!payload) throw new HttpError("not_found", "No data available for this resource yet.");
 
   const envelope: ApiEnvelope<T> = {
     data: payload.data,

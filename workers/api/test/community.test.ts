@@ -105,8 +105,8 @@ afterEach(() => {
   sent.length = 0;
 });
 
-describe("cuentas (COM-01 a COM-03)", () => {
-  it("entra con enlace mágico, sin contraseña, y la sesión da acceso al perfil", async () => {
+describe("user accounts (COM-01 to COM-03)", () => {
+  it("signs in with magic link without password, session grants profile access", async () => {
     const cookie = await signIn("ana@example.com");
     const me = await call("/me", { cookie });
     expect(me.status).toBe(200);
@@ -115,7 +115,7 @@ describe("cuentas (COM-01 a COM-03)", () => {
     expect(body.data).toMatchObject({ email: "ana@example.com", lang: "es" });
   });
 
-  it("el enlace solo funciona una vez", async () => {
+  it("magic link token is single-use", async () => {
     await call("/auth/sign-in/magic-link", {
       method: "POST",
       headers: { "x-captcha-response": "test-token" },
@@ -128,24 +128,24 @@ describe("cuentas (COM-01 a COM-03)", () => {
     expect(second.headers.getSetCookie().some((c) => c.startsWith("__Host-pn.session_token=") && !c.includes("Max-Age=0"))).toBe(false);
   });
 
-  it("sin sesión, 401", async () => {
+  it("returns 401 without active session", async () => {
     expect((await call("/me")).status).toBe(401);
   });
 
-  it("valida el alias (COM-13)", async () => {
+  it("validates username format and rules (COM-13)", async () => {
     const cookie = await signIn("alias@example.com");
     expect((await call("/me", { method: "POST", cookie, body: JSON.stringify({ name: "Undercut Club" }) })).status).toBe(200);
     expect((await call("/me", { method: "POST", cookie, body: JSON.stringify({ name: "admin oficial" }) })).status).toBe(400);
     expect((await call("/me", { method: "POST", cookie, body: JSON.stringify({ email: "x@y.z" }) })).status).toBe(400);
   });
 
-  it("rechaza escrituras sin un origen de confianza (CSRF)", async () => {
+  it("rejects mutations without trusted origin (CSRF protection)", async () => {
     const cookie = await signIn("csrf@example.com");
     const evil = await call("/me", { method: "POST", cookie, headers: { origin: "https://evil.example" }, body: "{}" });
     expect(evil.status).toBe(403);
   });
 
-  it("la cabecera interna de origen no vale para peticiones de internet", async () => {
+  it("internal origin header is rejected for internet requests", async () => {
     const cookie = await signIn("spoof@example.com");
     const internal = await call("/me", {
       method: "POST",
@@ -163,7 +163,7 @@ describe("cuentas (COM-01 a COM-03)", () => {
     expect(external.status).toBe(403);
   });
 
-  it("exporta los datos y borra la cuenta de inmediato", async () => {
+  it("exports account data and immediately deletes account", async () => {
     const cookie = await signIn("borrar@example.com");
     const exported = await call("/me/export", { cookie });
     expect(exported.headers.get("content-disposition")).toContain("attachment");
@@ -173,8 +173,8 @@ describe("cuentas (COM-01 a COM-03)", () => {
   });
 });
 
-describe("predicciones (COM-04 a COM-06)", () => {
-  it("guarda una predicción válida y rechaza las que no lo son", async () => {
+describe("predictions (COM-04 to COM-06)", () => {
+  it("saves valid prediction and rejects malformed submissions", async () => {
     const cookie = await signIn("pred@example.com");
     const form = await (await call("/predictions/2099/1", { cookie })).json<{ data: { open: boolean; drivers: unknown[] } }>();
     expect(form.data.open).toBe(true);
@@ -189,7 +189,7 @@ describe("predicciones (COM-04 a COM-06)", () => {
     expect(mine.data).toEqual([expect.objectContaining({ round: 1, score: null })]);
   });
 
-  it("no deja predecir una carrera cerrada", async () => {
+  it("forbids submitting predictions for locked race", async () => {
     const cookie = await signIn("tarde@example.com");
     await createF1Writer(env.DB).write({
       races: [{ season: 2099, round: 2, name: "Past GP", circuitId: "test_ring", date: "2000-01-02", startsAt: "2000-01-02T13:00:00.000Z", isSprintWeekend: false }],
@@ -200,8 +200,8 @@ describe("predicciones (COM-04 a COM-06)", () => {
   });
 });
 
-describe("ligas privadas (COM-07, seguridad.md §10)", () => {
-  it("solo los miembros ven la liga y el token lo ve solo el propietario", async () => {
+describe("private leagues (COM-07, security.md §10)", () => {
+  it("only members view league and invite token is visible only to owner", async () => {
     const owner = await signIn("owner@example.com");
     const friend = await signIn("friend@example.com");
     const outsider = await signIn("outsider@example.com");
@@ -221,13 +221,13 @@ describe("ligas privadas (COM-07, seguridad.md §10)", () => {
     expect(friendView.data.inviteToken).toBeNull();
     expect(friendView.data.ranking).toHaveLength(2);
 
-    // El propietario revoca la invitación: el enlace anterior deja de valer.
+    // Owner revokes invitation: old link becomes invalid.
     await call(`/leagues/${id}/invite`, { method: "POST", cookie: owner });
     const late = await call("/leagues/join", { method: "POST", cookie: outsider, body: JSON.stringify({ token: ownerView.data.inviteToken }) });
     expect(late.status).toBe(404);
   });
 
-  it("resumen del último GP: lo que sumó cada miembro, y quién no predijo", async () => {
+  it("latest GP recap: points scored per member and non-participants", async () => {
     const owner = await signIn("recap-owner@example.com");
     const friend = await signIn("recap-friend@example.com");
     const created = await call("/leagues", { method: "POST", cookie: owner, body: JSON.stringify({ name: "Liga Resumen" }) });
@@ -237,7 +237,7 @@ describe("ligas privadas (COM-07, seguridad.md §10)", () => {
     const pick = await call("/predictions/2099/1", { method: "POST", cookie: friend, body: JSON.stringify({ p1: "ver", p2: "ham", p3: "rus", pole: "ver" }) });
     expect(pick.status).toBe(200);
 
-    // Resultado oficial: ver, ham, ant; pole de ver por la parrilla.
+    // Official result: ver, ham, ant; pole to ver from grid.
     const row = (driver: string, position: number) =>
       env.DB.prepare(
         "insert into results (season, round, kind, driver_id, constructor_id, position, position_text, grid, laps, status, points) values (2099, 1, 'race', ?, 'team', ?, ?, ?, 50, 'Finished', 0)",
@@ -250,7 +250,7 @@ describe("ligas privadas (COM-07, seguridad.md §10)", () => {
       expect(recap.data.lastRound.round).toBe(1);
       expect(recap.data.lastRound.gp).toBe("Test Grand Prix");
       const [first, second] = recap.data.lastRound.rows;
-      // ver y ham en su posición (5 + 5) y la pole (3); rus no está en el podio.
+      // ver and ham in position (5 + 5) plus pole (3); rus off the podium.
       expect(first).toMatchObject({ points: 13, exact: 2, pole: true });
       expect(second).toMatchObject({ points: null });
     } finally {
@@ -259,8 +259,8 @@ describe("ligas privadas (COM-07, seguridad.md §10)", () => {
   });
 });
 
-describe("quiz con cuenta (COM-08)", () => {
-  it("el servidor corrige y guarda la racha", async () => {
+describe("quiz with authenticated account (COM-08)", () => {
+  it("server grades answers and updates streak", async () => {
     const cookie = await signIn("quiz@example.com");
     const res = await call("/quiz-scores", { method: "POST", cookie, body: JSON.stringify({ week: "2099-W01", answers: {} }) });
     expect(res.status).toBe(200);
@@ -268,8 +268,8 @@ describe("quiz con cuenta (COM-08)", () => {
   });
 });
 
-describe("límite de escritura (seguridad.md §6)", () => {
-  it("más de 10 escrituras por minuto desde la misma IP reciben 429", async () => {
+describe("mutation rate limiting (security.md §6)", () => {
+  it("exceeding 10 mutations per minute from single IP triggers 429", async () => {
     const statuses: number[] = [];
     for (let i = 0; i < 12; i++) {
       statuses.push((await call("/me", { method: "POST", ip: "flood", body: "{}" })).status);
@@ -278,7 +278,7 @@ describe("límite de escritura (seguridad.md §6)", () => {
   });
 });
 
-describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
+describe("newsletter and notifications (NUC-10, CON-06, COM-11, D-16)", () => {
   const subscribe = (email: string, extra: RequestInit = {}) =>
     call("/newsletter", {
       ip: `nl-${email}`,
@@ -287,7 +287,7 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
       body: JSON.stringify({ email, lang: "es", consent: true }),
     });
 
-  it("doble confirmación: alta, un solo email aunque se repita, confirmación y baja en un clic", async () => {
+  it("double opt-in: signup, single email on retry, confirmation, and one-click unsubscribe", async () => {
     expect((await subscribe("Lector@Example.com")).status).toBe(202);
     expect((await subscribe("lector@example.com")).status).toBe(202);
     expect(sent).toHaveLength(1);
@@ -299,24 +299,24 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
     const confirm = (token: string) => call("/newsletter/confirm", { ip: "nl-confirm", method: "POST", body: JSON.stringify({ token }) });
     expect((await confirm(link[1]!)).status).toBe(200);
     expect((await row())!.status).toBe("active");
-    // El token de confirmación es de un solo uso.
+    // Confirmation token is single-use.
     expect((await confirm(link[1]!)).status).toBe(404);
 
-    // Ya activo: repetir el alta no envía nada ni revela nada.
+    // Already active: repeating signup sends nothing and leaks no state.
     sent.length = 0;
     expect((await subscribe("lector@example.com")).status).toBe(202);
     expect(sent).toHaveLength(0);
 
-    // RFC 8058: el proveedor de correo hace POST sin Origin ni cookies.
+    // RFC 8058: mail provider sends POST without Origin or cookies.
     const { token } = (await row())!;
     const res = await call(`/email/unsubscribe/${token}`, { ip: "mail-provider", method: "POST", headers: { origin: "" }, body: "List-Unsubscribe=One-Click" });
     expect(res.status).toBe(200);
     expect(await row()).toBeNull();
-    // Repetir la baja no es un error.
+    // Repeating unsubscribe is idempotent.
     expect((await call(`/email/unsubscribe/${token}`, { ip: "mail-provider", method: "POST", headers: { origin: "" } })).status).toBe(200);
   });
 
-  it("el alta exige consentimiento, Turnstile, email válido y origen propio", async () => {
+  it("signup requires consent, Turnstile, valid email, and trusted origin", async () => {
     const noConsent = await call("/newsletter", { ip: "nl-c", method: "POST", headers: { "x-captcha-response": "t" }, body: JSON.stringify({ email: "x@example.com", lang: "es" }) });
     expect(noConsent.status).toBe(400);
     const noCaptcha = await call("/newsletter", { ip: "nl-x", method: "POST", body: JSON.stringify({ email: "x@example.com", lang: "es", consent: true }) });
@@ -326,7 +326,7 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
     expect(sent).toHaveLength(0);
   });
 
-  it("avisos de la cuenta: se activan, se ven en /me y se apagan con el enlace de baja", async () => {
+  it("account notifications: enabled, visible in /me, and disabled via unsubscribe link", async () => {
     const cookie = await signIn("avisos@example.com");
     const set = await call("/me/notifications", { cookie, method: "POST", body: JSON.stringify({ race: true, analysis: false }) });
     expect(set.status).toBe(200);
@@ -338,11 +338,11 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
     await call(`/email/unsubscribe/${user!.token}`, { ip: "mail-provider-2", method: "POST", headers: { origin: "" } });
     const after = (await (await call("/me", { cookie })).json()) as { data: { notifications: { race: boolean } } };
     expect(after.data.notifications.race).toBe(false);
-    // Sin sesión no se pueden tocar.
+    // Unauthenticated requests cannot modify notification preferences.
     expect((await call("/me/notifications", { ip: "anon-n", method: "POST", body: JSON.stringify({ race: true, analysis: true }) })).status).toBe(401);
   });
 
-  it("favoritos (COM-10): solo pilotos (d:) y equipos (c:)", async () => {
+  it("favorites (COM-10): only drivers (d:) and constructors (c:)", async () => {
     const cookie = await signIn("fav@example.com");
     const ok = await call("/me", { cookie, method: "POST", body: JSON.stringify({ favorites: ["d:ver", "c:team"] }) });
     expect(ok.status).toBe(200);

@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { newsletterEmail, raceNoticeEmail, suggestedExplainer, unsubscribeHeaders, type RaceDigest } from "../src";
 
-describe("explicador sugerido (NUC-09)", () => {
-  it("el sprint manda sobre el tipo de circuito", () => {
+describe("suggested explainer (NUC-09)", () => {
+  it("sprint takes precedence over circuit type", () => {
     expect(suggestedExplainer("monza", true, "es").explainer.slug).toBe("sprint");
   });
-  it("cada circuito conocido tiene su explicador y su razón", () => {
+  it("each known circuit has its explainer and reason", () => {
     expect(suggestedExplainer("monaco", false, "es")).toMatchObject({ explainer: { slug: "qualifying" }, reason: expect.stringMatching(/adelantar/) });
     expect(suggestedExplainer("marina_bay", false, "en").explainer.slug).toBe("safety-car");
   });
-  it("un circuito sin clasificar lleva a la guía", () => {
+  it("unclassified circuit defaults to guide", () => {
     expect(suggestedExplainer("nuevo", false, "es").explainer.slug).toBe("guide");
   });
 });
@@ -33,34 +33,34 @@ const digest: RaceDigest = {
   next: { season: 2026, round: 20, gp: "São Paulo Grand Prix", circuitId: "interlagos", isSprintWeekend: false, raceStart: "2026-11-08T17:00:00Z" },
 };
 
-describe("newsletter (CON-06, contenido.md §5.5)", () => {
+describe("newsletter (CON-06, content.md §5.5)", () => {
   const email = newsletterEmail("es", digest, "https://paddocknotes.dev", "https://paddocknotes.dev/es/newsletter/unsubscribe?token=t", "");
 
-  it("asunto con el hallazgo en menos de 60 caracteres", () => {
+  it("subject with key takeaway under 60 characters", () => {
     expect(email.subject).toBe("Max Verstappen gana el Gran Premio de la Ciudad de México");
     expect(email.subject.length).toBeLessThan(60);
   });
 
-  it("la carrera en 5 líneas como máximo, con el Mundial antes que la vuelta rápida", () => {
+  it("race recap in 5 lines max, championship before fastest lap", () => {
     const block = email.text.split("\n\n")[0]!.split("\n");
     expect(block.slice(1, -1)).toHaveLength(5);
     expect(block.join("\n")).toContain("En el Mundial manda Andrea Kimi Antonelli");
     expect(block.join("\n")).not.toContain("Vuelta rápida");
   });
 
-  it("enlaza la nota de la carrera si está publicada (CON-04)", () => {
+  it("links race note when published (CON-04)", () => {
     expect(email.text).toContain("LA NOTA DE LA CARRERA\nUna parada en la vuelta 43 cambió México\nhttps://paddocknotes.dev/es/notes/2026-mexico");
   });
 
-  it("próxima cita en la hora de la lista y pie con baja y aviso de no afiliación", () => {
+  it("next event in subscriber timezone with unsubscribe link and disclaimer", () => {
     expect(email.text).toContain("Domingo, 8 de noviembre, 18:00 CET");
     expect(email.text).toContain("Darte de baja en un clic: https://paddocknotes.dev/es/newsletter/unsubscribe?token=t");
     expect(email.text).toContain("no oficial");
   });
 });
 
-describe("avisos (COM-11)", () => {
-  it("aviso de GP con los horarios en la zona de la lista", () => {
+describe("notifications (COM-11)", () => {
+  it("GP notification with session schedule in subscriber timezone", () => {
     const email = raceNoticeEmail(
       "en",
       { season: 2026, round: 20, gp: "São Paulo Grand Prix", sessions: [{ kind: "fp1", startsAt: "2026-11-06T14:30:00Z" }, { kind: "race", startsAt: null }] },
@@ -74,7 +74,7 @@ describe("avisos (COM-11)", () => {
     expect(email.text.trim().endsWith("Calle 1, Barcelona")).toBe(true);
   });
 
-  it("cabeceras de baja en un clic (RFC 8058)", () => {
+  it("one-click unsubscribe headers (RFC 8058)", () => {
     expect(unsubscribeHeaders("https://x/u/1")).toEqual({ "List-Unsubscribe": "<https://x/u/1>", "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" });
   });
 });

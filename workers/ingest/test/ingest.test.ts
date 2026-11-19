@@ -74,8 +74,8 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("tarea diaria de calendario", () => {
-  it("carga el calendario y los resultados de las rondas disputadas que faltan", async () => {
+describe("daily schedule task", () => {
+  it("loads schedule and missing results for completed rounds", async () => {
     const calls = mockJolpica();
     const now = Date.parse("2026-03-10T12:00:00Z");
     const outcome = await runTask(env, "schedule", now);
@@ -88,7 +88,7 @@ describe("tarea diaria de calendario", () => {
       "/ergast/f1/2026/1/driverstandings/",
       "/ergast/f1/2026/1/constructorstandings/",
     ]);
-    // Los fixtures de Q1–Q3 y paradas son de la ronda 19: se guardan con la ronda que se pide.
+    // Fixtures for Q1-Q3 and pit stops are from round 19: saved with the requested round.
     const quali = await env.DB.prepare("select count(*) as n from qualifying where round = 1").first<{ n: number }>();
     expect(quali?.n).toBe(22);
 
@@ -110,7 +110,7 @@ describe("tarea diaria de calendario", () => {
     expect(run).toEqual({ task: "schedule", status: "ok", requests: 6 });
   });
 
-  it("desde octubre carga también el calendario de la temporada siguiente (NUC-07)", async () => {
+  it("from October onwards also loads next season schedule (NUC-07)", async () => {
     const calls = mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
     expect(calls.some((c) => c.includes("/2027/races"))).toBe(false);
@@ -118,7 +118,7 @@ describe("tarea diaria de calendario", () => {
     expect(calls.some((c) => c.includes("/2027/races"))).toBe(true);
   });
 
-  it("es idempotente: repetir la tarea no duplica filas", async () => {
+  it("is idempotent: re-running task does not duplicate rows", async () => {
     mockJolpica();
     const now = Date.parse("2026-03-10T12:00:00Z");
     await runTask(env, "schedule", now);
@@ -128,14 +128,14 @@ describe("tarea diaria de calendario", () => {
   });
 });
 
-describe("cron de 15 minutos", () => {
-  it("no hace nada si no hay carreras cerca", async () => {
+describe("15-minute cron", () => {
+  it("skips execution when no races are near", async () => {
     const calls = mockJolpica();
     expect(await runTask(env, "recent", Date.parse("2026-03-10T12:00:00Z"))).toEqual({ status: "skipped" });
     expect(calls).toHaveLength(0);
   });
 
-  it("reingesta la carrera que acaba de terminar", async () => {
+  it("re-ingests recently finished race", async () => {
     mockJolpica({ "2026/1/results": emptyRaces });
     await runTask(env, "schedule", Date.parse("2026-03-07T00:00:00Z"));
     const calls = mockJolpica();
@@ -146,8 +146,8 @@ describe("cron de 15 minutos", () => {
   });
 });
 
-describe("cuarentena", () => {
-  it("no sobrescribe un resultado consolidado que cambia demasiado", async () => {
+describe("quarantine guard", () => {
+  it("does not overwrite established results with erratic changes", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
 
@@ -162,14 +162,14 @@ describe("cuarentena", () => {
   });
 });
 
-describe("salida a internet", () => {
-  it("rechaza hosts fuera de la lista", async () => {
+describe("outbound HTTP client", () => {
+  it("rejects disallowed hosts", async () => {
     await expect(fetchJson(jolpicaContext(env), "https://evil.example/x", scheduleResponseSchema)).rejects.toThrow(
       OutboundError,
     );
   });
 
-  it("un 401 de OpenF1 por sesión en directo se aplaza; otro 401 es un error (D-25)", async () => {
+  it("OpenF1 401 during live session is deferred; other 401 is treated as fatal (D-25)", async () => {
     const live = { detail: "Live F1 session in progress. Global API access (including past sessions) is restricted to authenticated users until the session ends." };
     vi.stubGlobal("fetch", vi.fn(async () => Response.json(live, { status: 401 })));
     const ctx = { ...jolpicaContext(env), env: { ...env, OPENF1_MAX_PER_SECOND: "50" } };
@@ -180,7 +180,7 @@ describe("salida a internet", () => {
     expect(err).not.toBeInstanceOf(LiveSessionError);
   });
 
-  it("rechaza respuestas que no cumplen el esquema", async () => {
+  it("rejects schema-invalid responses", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json({ hola: "mundo" })));
     await expect(
       fetchJson(jolpicaContext(env), "https://api.jolpi.ca/ergast/f1/2026/races/", scheduleResponseSchema),
@@ -188,10 +188,10 @@ describe("salida a internet", () => {
   });
 });
 
-describe("limitador", () => {
+describe("rate limiter", () => {
   const policy = { perSecond: 3, perWindow: 5, windowMs: 3_600_000 };
 
-  it("respeta el límite por segundo y por ventana", async () => {
+  it("respects per-second and window rate limits", async () => {
     const stub = env.OUTBOUND_LIMITER.get(env.OUTBOUND_LIMITER.idFromName("test-host"));
     await runInDurableObject(stub, async (limiter: OutboundLimiter) => {
       const t = 1_000_000;
@@ -205,7 +205,7 @@ describe("limitador", () => {
     });
   });
 
-  it("deja de llamar a la fuente tras un 429", async () => {
+  it("backs off calls after receiving 429", async () => {
     const stub = env.OUTBOUND_LIMITER.get(env.OUTBOUND_LIMITER.idFromName("penalized-host"));
     await runInDurableObject(stub, async (limiter: OutboundLimiter) => {
       await limiter.penalize(60_000, 5_000);
@@ -214,14 +214,14 @@ describe("limitador", () => {
   });
 });
 
-describe("entrada HTTP", () => {
-  it("responde 404 a cualquier petición", async () => {
+describe("HTTP entry point", () => {
+  it("responds with 404 to any incoming request", async () => {
     const response = await exports.default.fetch("https://paddock-ingest/anything");
     expect(response.status).toBe(404);
   });
 });
 
-describe("carga del histórico (D-11)", () => {
+describe("historical backfill workflow (D-11)", () => {
   function fakeBackfill(statuses: Record<string, string> = {}) {
     const created: { id: string; params: { season: number } }[] = [];
     const binding = {
@@ -239,7 +239,7 @@ describe("carga del histórico (D-11)", () => {
     return { created, testEnv: { ...env, BACKFILL: binding } as unknown as typeof env };
   }
 
-  it("empieza por la temporada en curso y retrocede de una en una", async () => {
+  it("starts from current season and steps backward one by one", async () => {
     const { created, testEnv } = fakeBackfill();
     const now = Date.parse("2026-11-06T00:00:00Z");
     expect(await advanceBackfill(testEnv, now)).toMatch(/^creada: backfill-2026-/);
@@ -247,7 +247,7 @@ describe("carga del histórico (D-11)", () => {
     expect(created.map((c) => c.params.season)).toEqual([2026]);
   });
 
-  it("pasa a la temporada anterior cuando la instancia termina", async () => {
+  it("advances to previous season once instance completes", async () => {
     const statuses: Record<string, string> = {};
     const { created, testEnv } = fakeBackfill(statuses);
     const now = Date.parse("2026-11-06T00:00:00Z");
@@ -257,7 +257,7 @@ describe("carga del histórico (D-11)", () => {
     expect(created.map((c) => c.params.season)).toEqual([2026, 2025]);
   });
 
-  it("reintenta la misma temporada si la instancia falla", async () => {
+  it("retries the same season if instance errors", async () => {
     const statuses: Record<string, string> = {};
     const { created, testEnv } = fakeBackfill(statuses);
     const now = Date.parse("2026-11-06T00:00:00Z");
@@ -267,7 +267,7 @@ describe("carga del histórico (D-11)", () => {
     expect(created.map((c) => c.params.season)).toEqual([2026, 2026]);
   });
 
-  it("termina y recrea una instancia atascada más de 12 horas", async () => {
+  it("terminates and restarts an instance stalled over 12 hours", async () => {
     const statuses: Record<string, string> = {};
     const { created, testEnv } = fakeBackfill(statuses);
     const now = Date.parse("2026-11-06T00:00:00Z");
@@ -278,7 +278,7 @@ describe("carga del histórico (D-11)", () => {
     expect(created.map((c) => c.params.season)).toEqual([2026, 2026]);
   });
 
-  it("termina tras 1950", async () => {
+  it("terminates after reaching 1950", async () => {
     const { created, testEnv } = fakeBackfill();
     await env.DB.prepare("insert into ingest_state (resource, updated_at) values ('backfill:cursor', '1949')").run();
     expect(await advanceBackfill(testEnv)).toBe("completa");
@@ -286,7 +286,7 @@ describe("carga del histórico (D-11)", () => {
   });
 });
 
-describe("análisis tras la carrera (D-08)", () => {
+describe("post-race analysis workflow (D-08)", () => {
   function fakePostRace(statuses: Record<string, string> = {}) {
     const created: { id: string; params: { season: number; round: number } }[] = [];
     const binding = {
@@ -299,7 +299,7 @@ describe("análisis tras la carrera (D-08)", () => {
     return { created, testEnv: { ...env, POST_RACE: binding } as unknown as typeof env };
   }
 
-  it("analiza la carrera más reciente sin análisis y marca las que fallan", async () => {
+  it("analyzes most recent pending race and records failures", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
     const statuses: Record<string, string> = {};
@@ -312,7 +312,7 @@ describe("análisis tras la carrera (D-08)", () => {
     expect(created).toHaveLength(1);
   });
 
-  it("vuelve a analizar las carreras con una versión anterior del análisis", async () => {
+  it("re-analyzes races processed with older analysis version", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
     const writer = createF1Writer(env.DB);
@@ -323,19 +323,19 @@ describe("análisis tras la carrera (D-08)", () => {
     expect(await advanceAnalysis(fakePostRace().testEnv, Date.parse("2026-03-10T12:00:00Z"))).toMatch(/^creada: postrace-2026-1-/);
   });
 
-  it("no empieza un análisis durante una sesión en directo (D-25)", async () => {
+  it("defers analysis during live track session (D-25)", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
     const { created, testEnv } = fakePostRace();
-    // Libres 1 de China: 13 de marzo a las 03:30 UTC.
+    // Chinese GP FP1: March 13 at 03:30 UTC.
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T04:00:00Z"))).toBe("aplazada: sesión en directo");
-    // Y tampoco en la hora previa: OpenF1 se cierra 30 minutos antes de cada sesión.
+    // Defers in preceding window: OpenF1 closes 30 minutes before session start.
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T03:00:00Z"))).toBe("aplazada: sesión en directo");
     expect(created).toHaveLength(0);
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T12:00:00Z"))).toMatch(/^creada:/);
   });
 
-  it("espera unas horas tras la carrera antes de pedir los datos", async () => {
+  it("waits several hours after race completion before fetching data", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-08T07:00:00Z"));
     const { created, testEnv } = fakePostRace();
@@ -344,8 +344,8 @@ describe("análisis tras la carrera (D-08)", () => {
   });
 });
 
-describe("retención de cuentas inactivas (seguridad.md §17)", () => {
-  it("avisa, espera 30 días y borra; volver a entrar anula el aviso", async () => {
+describe("inactive account retention (security.md §17)", () => {
+  it("warns, waits 30 days, and purges; logging back in cancels warning", async () => {
     const sent: { to: string; subject: string }[] = [];
     const testEnv = { ...env, EMAIL: { send: async (m: { to: string; subject: string }) => void sent.push(m) } } as unknown as typeof env;
     const now = Date.parse("2028-12-01T00:00:00Z");
@@ -358,21 +358,21 @@ describe("retención de cuentas inactivas (seguridad.md §17)", () => {
     expect(await purgeInactiveAccounts(testEnv, now)).toEqual({ warned: 1, deleted: 0 });
     expect(sent.map((m) => m.to)).toEqual(["ana@example.com"]);
 
-    // A los 10 días: ni otro aviso ni borrado.
+    // At 10 days: no duplicate warning, no deletion.
     expect(await purgeInactiveAccounts(testEnv, now + 10 * 86_400_000)).toEqual({ warned: 0, deleted: 0 });
-    // Pasado el plazo: se borra.
+    // After grace period expires: deleted.
     expect(await purgeInactiveAccounts(testEnv, now + GRACE_MS + 86_400_000)).toEqual({ warned: 0, deleted: 1 });
     const left = await env.DB.prepare("select id from users").all();
     expect(left.results.map((r) => r.id)).toEqual(["b"]);
   });
 
-  it("si el usuario vuelve tras el aviso, no se borra", async () => {
+  it("if user returns after warning, account is retained", async () => {
     const testEnv = { ...env, EMAIL: { send: async () => undefined } } as unknown as typeof env;
     const now = Date.parse("2028-12-01T00:00:00Z");
     const old = now - INACTIVE_AFTER_MS - 86_400_000;
     await env.DB.prepare("insert into users (id, name, email, lang, favorites, created_at, updated_at) values ('c', 'Carla', 'c@example.com', 'es', '[]', ?, ?)").bind(old, old).run();
     expect(await purgeInactiveAccounts(testEnv, now)).toEqual({ warned: 1, deleted: 0 });
-    // Entra a los 5 días: la sesión renovada es actividad posterior al aviso.
+    // Logs in at 5 days: renewed session represents activity after warning.
     await env.DB.prepare("insert into auth_sessions (id, user_id, token, expires_at, created_at, updated_at) values ('s', 'c', 't', ?, ?, ?)")
       .bind(now + 40 * 86_400_000, now + 5 * 86_400_000, now + 5 * 86_400_000).run();
     expect(await purgeInactiveAccounts(testEnv, now + GRACE_MS + 86_400_000)).toEqual({ warned: 0, deleted: 0 });
@@ -380,14 +380,14 @@ describe("retención de cuentas inactivas (seguridad.md §17)", () => {
   });
 });
 
-describe("envíos (CON-06, COM-11, D-16)", () => {
+describe("email dispatches (CON-06, COM-11, D-16)", () => {
   function withMailing() {
     const created: { id: string; params: unknown }[] = [];
     const testEnv = { ...env, MAILING: { create: async (o: { id: string; params: unknown }) => void created.push(o) } } as unknown as typeof env;
     return { testEnv, created };
   }
 
-  it("la newsletter del martes sale una sola vez, con la carrera, el próximo GP y un explicador", async () => {
+  it("Tuesday newsletter sends once with race recap, next GP, and suggested explainer", async () => {
     mockJolpica();
     const tuesday = Date.parse("2026-03-10T08:00:00Z");
     await runTask(env, "schedule", tuesday);
@@ -395,7 +395,7 @@ describe("envíos (CON-06, COM-11, D-16)", () => {
     expect(await scheduleNewsletter(testEnv, tuesday)).toBe("creado: newsletter-2026-1");
     expect(await scheduleNewsletter(testEnv, tuesday + 60_000)).toBe("ya enviado: newsletter-2026-1");
     expect(created.map((c) => c.id)).toEqual(["newsletter-2026-1"]);
-    // Una semana después ya no toca.
+    // Not dispatched once a week has passed.
     expect(await scheduleNewsletter(testEnv, tuesday + 8 * 86_400_000)).toMatch(/sin carrera/);
 
     const digest = (await composeDigest(env, 2026, 1, tuesday))!;
@@ -418,7 +418,7 @@ describe("envíos (CON-06, COM-11, D-16)", () => {
     expect(en.subject).toMatch(/ wins the Australian Grand Prix$/);
   });
 
-  it("aviso de GP: solo cuando la primera sesión empieza en las próximas 48 h", async () => {
+  it("GP alert: triggered only when first session is within 48 hours", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T04:00:00Z"));
     const { testEnv, created } = withMailing();
@@ -427,7 +427,7 @@ describe("envíos (CON-06, COM-11, D-16)", () => {
     expect(created).toEqual([{ id: "race-2026-2", params: { kind: "race", season: 2026, round: 2 } }]);
   });
 
-  it("aviso de análisis: no para carreras antiguas analizadas al cargar el histórico", async () => {
+  it("analysis notification: excluded for historical backfill races", async () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-10T04:00:00Z"));
     const { testEnv, created } = withMailing();
@@ -437,7 +437,7 @@ describe("envíos (CON-06, COM-11, D-16)", () => {
   });
 });
 
-describe("resultado provisional de OpenF1 (D-31)", () => {
+describe("OpenF1 provisional result processing (D-31)", () => {
   const lineup = Array.from({ length: 20 }, (_, i) => ({ driverId: `d${i + 1}`, code: `D${String(i + 1).padStart(2, "0")}`, constructorId: `t${Math.ceil((i + 1) / 2)}` }));
   const drivers = lineup.map((e, i) => ({ driver_number: i + 1, name_acronym: e.code }));
   const classified = (n: number) => ({
@@ -452,7 +452,7 @@ describe("resultado provisional de OpenF1 (D-31)", () => {
     gap_to_leader: n === 1 ? 0 : n === 20 ? "+2 LAPS" : n === 2 ? 0.799 : 62.345,
   });
 
-  it("convierte la clasificación con el formato de Jolpica", async () => {
+  it("normalizes standings to Jolpica result format", async () => {
     const { toProvisional } = await import("../src/provisional");
     const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
     results[18] = { ...results[18]!, position: null, dnf: true, number_of_laps: 40, gap_to_leader: null } as never;
@@ -465,14 +465,14 @@ describe("resultado provisional de OpenF1 (D-31)", () => {
     expect(rows[19]).toMatchObject({ position: 20, status: "+2 Laps", timeText: null });
   });
 
-  it("omite hasta dos debutantes fuera del podio", async () => {
+  it("tolerates up to two non-podium debutants", async () => {
     const { toProvisional } = await import("../src/provisional");
     const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
     const rookies = drivers.map((d) => (d.driver_number === 9 || d.driver_number === 14 ? { ...d, name_acronym: "NEW" } : d));
     expect(toProvisional(results, rookies, lineup)).toHaveLength(18);
   });
 
-  it("no escribe nada si faltan más pilotos, uno del podio o las posiciones no cuadran", async () => {
+  it("skips write if missing key drivers, podium finisher, or inconsistent ranks", async () => {
     const { toProvisional } = await import("../src/provisional");
     const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
     expect(toProvisional(results, drivers.slice(1), lineup)).toBeNull();
@@ -481,7 +481,7 @@ describe("resultado provisional de OpenF1 (D-31)", () => {
     expect(toProvisional(results.slice(0, 5), drivers, lineup)).toBeNull();
   });
 
-  it("casa la sesión de OpenF1 con la ronda por la hora de salida", async () => {
+  it("matches OpenF1 session to calendar round by start timestamp", async () => {
     const { matchSession } = await import("../src/provisional");
     const race = { date: "2026-11-08", startsAt: "2026-11-08T17:00:00Z" } as never;
     const sessions = [
@@ -492,7 +492,7 @@ describe("resultado provisional de OpenF1 (D-31)", () => {
     expect(matchSession(sessions.slice(0, 1), race)).toBeNull();
   });
 
-  it("la API sirve el provisional mientras no hay oficial, y el oficial lo sustituye", async () => {
+  it("serves provisional results until official results replace them", async () => {
     const writer = createF1Writer(env.DB);
     const reader = createF1Reader(env.DB);
     await writer.write({

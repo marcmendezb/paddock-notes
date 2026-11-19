@@ -49,8 +49,8 @@ beforeAll(async () => {
   await writer.write({ drivers: q.drivers, constructors: q.constructors, qualifying: q.qualifying, pitStops: p });
 });
 
-describe("contrato de respuesta", () => {
-  it("devuelve el calendario con fuente, licencia y fecha de actualización", async () => {
+describe("response contract", () => {
+  it("returns schedule with source, license, and updated_at timestamp", async () => {
     const res = await api("/seasons/2026/schedule");
     expect(res.status).toBe(200);
     const body = await res.json<{ data: { round: number; status: string }[]; source: string[]; license: string; updated_at: string }>();
@@ -61,13 +61,13 @@ describe("contrato de respuesta", () => {
     expect(body.data[0]).toMatchObject({ round: 1, status: "completed", winner: { id: "russell" } });
   });
 
-  it("marca como antiguo un calendario con resultados retrasados", async () => {
-    // Las rondas 2 a 19 ya se han disputado y no tienen resultado en los datos de prueba.
+  it("flags stale header on schedule with overdue results", async () => {
+    // Rounds 2 to 19 have already taken place with no results in test fixtures.
     const res = await api("/seasons/2026/schedule");
     expect(res.headers.get("x-data-stale")).toBe("true");
   });
 
-  it("acepta `current`", async () => {
+  it("accepts `current` alias", async () => {
     const res = await api("/seasons/current/standings/drivers");
     expect(res.status).toBe(200);
     const body = await res.json<{ data: { round: number; rows: { driver: { id: string }; podiums: number }[] } }>();
@@ -76,7 +76,7 @@ describe("contrato de respuesta", () => {
     expect(body.data.rows.find((r) => r.driver.id === "russell")?.podiums).toBe(1);
   });
 
-  it("devuelve una carrera con sus sesiones y resultado", async () => {
+  it("returns a race with sessions and classified results", async () => {
     const res = await api("/seasons/2026/races/1");
     const body = await res.json<{ data: { results: { position: number | null; positionsGained: number | null }[]; sessions: unknown[] } }>();
     expect(body.data.results).toHaveLength(22);
@@ -84,20 +84,20 @@ describe("contrato de respuesta", () => {
     expect(body.data.sessions).toHaveLength(5);
   });
 
-  it("devuelve la última carrera y la próxima", async () => {
+  it("returns last and next race", async () => {
     const last = await (await api("/races/last")).json<{ data: { round: number } }>();
     expect(last.data.round).toBe(1);
     const next = await api("/races/next");
     expect([200, 404]).toContain(next.status);
   });
 
-  it("devuelve la clasificación de constructores", async () => {
+  it("returns constructor standings", async () => {
     const body = await (await api("/seasons/2026/standings/constructors")).json<{ data: { rows: { constructor: { id: string }; gapToLeader: number }[] } }>();
     expect(body.data.rows[0]).toMatchObject({ constructor: { id: "mercedes" }, gapToLeader: 0 });
   });
 });
 
-describe("errores", () => {
+describe("error handling", () => {
   it.each([
     ["/seasons/abc/schedule", 400],
     ["/seasons/1900/schedule", 400],
@@ -105,7 +105,7 @@ describe("errores", () => {
     ["/seasons/2026/races/99", 404],
     ["/seasons/1990/schedule", 404],
     ["/nada", 404],
-  ])("%s → %i con el formato uniforme", async (path, status) => {
+  ])("%s → %i with uniform error schema", async (path, status) => {
     const res = await api(path);
     expect(res.status).toBe(status);
     const body = await res.json<{ error: { code: string; message: string } }>();
@@ -113,15 +113,15 @@ describe("errores", () => {
     expect(body.error.message.length).toBeGreaterThan(0);
   });
 
-  it("rechaza métodos de escritura con 405", async () => {
+  it("rejects write methods with 405", async () => {
     const res = await api("/seasons/2026/schedule", { method: "POST" });
     expect(res.status).toBe(405);
     expect(res.headers.get("allow")).toBe("GET, HEAD, OPTIONS");
   });
 });
 
-describe("seguridad", () => {
-  it("aplica CORS abierto sin credenciales y cabeceras de seguridad", async () => {
+describe("security", () => {
+  it("enforces open CORS without credentials and sets security headers", async () => {
     const res = await api("/seasons/2026/schedule");
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
     expect(res.headers.get("access-control-allow-credentials")).toBeNull();
@@ -129,13 +129,13 @@ describe("seguridad", () => {
     expect(res.headers.get("strict-transport-security")).toContain("max-age=63072000");
   });
 
-  it("responde al preflight", async () => {
+  it("handles preflight OPTIONS requests", async () => {
     const res = await api("/seasons/2026/schedule", { method: "OPTIONS" });
     expect(res.status).toBe(204);
     expect(res.headers.get("access-control-allow-methods")).toBe("GET, HEAD, OPTIONS");
   });
 
-  it("limita las peticiones por IP", async () => {
+  it("enforces IP-based rate limiting", async () => {
     const statuses: number[] = [];
     for (let i = 0; i < 65; i++) {
       statuses.push((await api("/seasons/2026/races/1", { headers: { "cf-connecting-ip": "203.0.113.7" } })).status);
@@ -143,39 +143,39 @@ describe("seguridad", () => {
     expect(statuses).toContain(429);
   });
 
-  it("también limita lo que llega por el proxy /api de la web, con la IP del visitante (D-26)", async () => {
+  it("rate-limits web proxy requests using visitor IP header (D-26)", async () => {
     const statuses: number[] = [];
     for (let i = 0; i < 65; i++) {
       statuses.push((await api("/seasons/2026/races/1", { headers: { "x-paddock-proxy-ip": "203.0.113.9" } })).status);
     }
     expect(statuses).toContain(429);
-    // Las llamadas internas de la web (render en servidor) no llevan esa cabecera y no se limitan.
+    // Internal server-side render calls omit this header and bypass visitor rate limits.
     expect((await api("/seasons/2026/races/1")).status).toBe(200);
   });
 });
 
-describe("servicio", () => {
-  it("comprueba la salud", async () => {
+describe("service endpoints", () => {
+  it("checks health endpoint", async () => {
     const res = await api("/health");
     expect(res.status).toBe(200);
     expect(res.headers.get("cache-control")).toBe("no-store");
   });
 
-  it("publica la documentación OpenAPI", async () => {
+  it("serves OpenAPI specification", async () => {
     const doc = await (await api("/docs")).json<{ openapi: string; paths: Record<string, unknown> }>();
     expect(doc.openapi).toBe("3.1.0");
     expect(Object.keys(doc.paths)).toContain("/api/v1/seasons/{season}/schedule");
   });
 });
 
-describe("fase 2: histórico", () => {
+describe("phase 2: historical archive", () => {
   const data = async <T>(path: string) => {
     const res = await api(path);
     expect(res.status, path).toBe(200);
     return (await res.json<{ data: T }>()).data;
   };
 
-  it("devuelve Q1–Q3 y paradas de una carrera", async () => {
+  it("returns Q1-Q3 times and pit stops for a race", async () => {
     const q = await data<{ position: number; q3: string | null }[]>("/seasons/2026/races/1/qualifying");
     expect(q[0]).toMatchObject({ position: 1 });
     const p = await data<{ lap: number; durationMs: number }[]>("/seasons/2026/races/1/pitstops");
@@ -183,13 +183,13 @@ describe("fase 2: histórico", () => {
     expect((await api("/seasons/2026/races/1/sprint")).status).toBe(404);
   });
 
-  it("navega entre carreras", async () => {
+  it("provides navigation links between races", async () => {
     const nav = await data<{ previous: unknown; next: { round: number } }>("/seasons/2026/races/1/navigation");
     expect(nav.previous).toBeNull();
     expect(nav.next.round).toBe(2);
   });
 
-  it("devuelve la evolución del campeonato y la clasificación tras una ronda", async () => {
+  it("returns championship progression and round standings", async () => {
     const history = await data<{ rounds: unknown[]; drivers: { points: (number | null)[] }[] }>("/seasons/2026/standings/history");
     expect(history.rounds).toHaveLength(1);
     expect(history.drivers[0]!.points).toEqual([380]);
@@ -197,7 +197,7 @@ describe("fase 2: histórico", () => {
     expect((await api("/seasons/2026/rounds/5/standings/drivers")).status).toBe(404);
   });
 
-  it("recalcula los puntos con el sistema actual, rotulado como recálculo (HIS-06)", async () => {
+  it("recalculates standings under modern scoring system (HIS-06)", async () => {
     const r = await data<{ races: number; sprints: number; rows: { position: number; driver: { id: string }; points: number; wins: number; actualPosition: number | null }[] }>(
       "/seasons/2026/standings/recalculated",
     );
@@ -208,7 +208,7 @@ describe("fase 2: histórico", () => {
     expect((await api("/seasons/2025/standings/recalculated")).status).toBe(404);
   });
 
-  it("devuelve la ficha de un piloto con estadísticas definidas", async () => {
+  it("returns driver profile with aggregated statistics", async () => {
     const d = await data<{ stats: { wins: number; races: number; poles: number }; seasons: unknown[] }>("/drivers/russell");
     expect(d.stats).toMatchObject({ wins: 1, races: 1, poles: 1 });
     expect(d.seasons).toHaveLength(1);
@@ -216,14 +216,14 @@ describe("fase 2: histórico", () => {
     expect((await api("/drivers/Bad%20Id")).status).toBe(400);
   });
 
-  it("devuelve fichas de equipo y circuito", async () => {
+  it("returns constructor and circuit profile views", async () => {
     const c = await data<{ stats: { wins: number } }>("/constructors/mercedes");
     expect(c.stats.wins).toBe(1);
     const circuit = await data<{ races: { winner: { id: string } | null }[] }>("/circuits/albert_park");
     expect(circuit.races[0]!.winner?.id).toBe("russell");
   });
 
-  it("la ficha de circuito trae vueltas y vuelta rápida de carrera calculadas (CON-05)", async () => {
+  it("circuit profile includes total laps and fastest race lap (CON-05)", async () => {
     const circuit = await data<{ facts: { laps: { season: number; laps: number } | null; fastestRaceLap: { time: string; season: number } | null } }>(
       "/circuits/albert_park",
     );
@@ -232,13 +232,13 @@ describe("fase 2: histórico", () => {
     expect(circuit.facts.fastestRaceLap?.time).toMatch(/^\d:\d{2}\.\d{3}$/);
   });
 
-  it("compara dos pilotos", async () => {
+  it("compares two drivers head-to-head", async () => {
     const cmp = await data<{ headToHead: { races: unknown[]; aAhead: number; bAhead: number } }>("/compare/drivers/russell/antonelli");
     expect(cmp.headToHead.races).toHaveLength(1);
     expect(cmp.headToHead.aAhead + cmp.headToHead.bAhead).toBe(1);
   });
 
-  it("devuelve récords y rechaza tipos desconocidos", async () => {
+  it("returns all-time records and rejects unknown record types", async () => {
     const wins = await data<{ rank: number; driver: { id: string }; value: number }[]>("/records/wins");
     expect(wins[0]).toMatchObject({ rank: 1, driver: { id: "russell" }, value: 1 });
     const comebacks = await data<{ value: number; detail: string }[]>("/records/comebacks");
@@ -246,7 +246,7 @@ describe("fase 2: histórico", () => {
     expect((await api("/records/nada")).status).toBe(400);
   });
 
-  it("busca pilotos, equipos y circuitos", async () => {
+  it("searches across drivers, constructors, and circuits", async () => {
     const res = await api("/search?q=russ");
     const body = await res.json<{ data: { kind: string; id: string }[] }>();
     expect(body.data[0]).toMatchObject({ kind: "driver", id: "russell" });
@@ -256,13 +256,13 @@ describe("fase 2: histórico", () => {
     expect(tricky.status).toBe(200);
   });
 
-  it("lista las temporadas", async () => {
+  it("lists available seasons", async () => {
     expect(await data<number[]>("/seasons")).toEqual([2026]);
   });
 });
 
-describe("fase 3: zona técnica", () => {
-  it("sirve los análisis guardados en R2 con fuente OpenF1", async () => {
+describe("phase 3: technical analysis", () => {
+  it("serves analysis artifacts stored in R2 with OpenF1 attribution", async () => {
     const writer = createF1Writer(env.DB);
     await env.ANALYSIS.put("analysis/2026/1/v1/strategy.json", JSON.stringify({ laps: 58, drivers: [] }));
     await env.ANALYSIS.put("analysis/2026/1/v1/telemetry/63.json", JSON.stringify({ lap: 40 }));
@@ -295,7 +295,7 @@ describe("fase 3: zona técnica", () => {
     expect((await api("/analysis/2026/2")).status).toBe(404);
   });
 
-  it("un análisis rehecho (otra versión) se sirve al momento, sin esperar a que caduque la caché", async () => {
+  it("recomputed analysis version invalidates cache immediately", async () => {
     const writer = createF1Writer(env.DB);
     const base = { season: 2026, round: 1, sessionKey: 9999, tools: ["strategy"], telemetryDrivers: [] };
     await env.ANALYSIS.put("analysis/2026/1/v1/strategy.json", JSON.stringify({ laps: 58, drivers: [] }));

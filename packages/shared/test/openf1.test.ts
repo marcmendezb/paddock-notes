@@ -10,7 +10,7 @@ import car from "../../../fixtures/openf1/lap-car_data.json";
 import loc from "../../../fixtures/openf1/lap-location.json";
 import sessions from "../../../fixtures/openf1/sessions-mexico.json";
 
-describe("esquemas de OpenF1 con datos reales (México 2026)", () => {
+describe("OpenF1 schemas against real data (Mexico 2026)", () => {
   it.each([
     ["sessions", s.sessionSchema, sessions],
     ["drivers", s.driverSchema, drivers],
