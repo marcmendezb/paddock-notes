@@ -432,3 +432,20 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
   - los puntos del 4.º al 10.º.
 
 **Consecuencia:** una página nueva empieza por `PageHero` y reutiliza estas piezas. Las pruebas en navegador apuntan a las clases nuevas (`.an-latest-title`, `.an-tools`, `.sim-champion`).
+
+## D-33 · Newsletter de demostración, vídeo sin pausa y selector de idioma al pasar el ratón
+
+**Contexto:** Paddock Notes es un proyecto de portfolio. El autor no quiere recoger emails de visitantes ni que el vídeo del hero se pueda pausar, y quiere que el selector de idioma se comporte como los desplegables de la cabecera.
+
+**Decisión:**
+
+- **Newsletter (NUC-10) como demostración:**
+  - El formulario se ve como el real, pero al enviarlo no sale nada del navegador: se vacía y se abre un aviso (`<dialog>` nativo) que explica que es un proyecto de portfolio, que el email no se ha guardado y que no se enviará nada.
+  - Sin JavaScript, la ruta de formularios responde sin leer el cuerpo y vuelve a `/newsletter` con el mismo aviso.
+  - El formulario ya no carga Turnstile.
+  - La política de privacidad lo dice en los tres idiomas.
+  - El endpoint de la API se conserva por si se reactiva; la web no lo llama.
+- **Vídeo del hero sin botón de pausa:** es una excepción consciente a WCAG 2.2.2 (pausar contenido en movimiento de más de 5 s). Para atenuarla, con movimiento reducido el vídeo no se reproduce y queda en su primer fotograma, y el velo del hero lo mantiene en segundo plano.
+- **Selector de idioma:** con ratón se abre al pasar por encima y se cierra al salir, con 150 ms de margen y un puente invisible sobre el hueco. Con teclado y en táctil sigue siendo un `<details>` que se abre al pulsar.
+
+**Consecuencia:** la newsletter de los martes (CON-06) no tiene destinatarios mientras dure la demostración. Si se reactiva, se sustituye esta decisión y vuelven Turnstile y el texto de privacidad anterior.

@@ -19,6 +19,7 @@
 - **Alemán** como tercer idioma en toda la web y en los emails (D-29).
 - **Resultado provisional de OpenF1** tras cada carrera (D-31).
 - **Anclas** del subencabezado de carrera y circuito comprobadas en Chromium, WebKit y Firefox (D-30).
+- **Newsletter de demostración:** el alta no guarda ni envía nada y lo explica en un aviso (D-33). El vídeo del hero no se puede pausar, una excepción consciente a WCAG 2.2.2 (D-33).
 
 ## Fase 1 · MVP
 

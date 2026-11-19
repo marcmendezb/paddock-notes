@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Levanta el stack local completo con una D1 compartida en .wrangler/state:
 #   ingesta en :8788, API en :8787 y web (build de OpenNext) en :8789.
-# Uso: scripts/local-stack.sh [--seed]   (--seed lanza la tarea diaria de ingesta contra Jolpica)
+# Uso: scripts/local-stack.sh [--seed | --backfill | --no-cron]   (--seed lanza la tarea diaria de ingesta contra Jolpica)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -35,6 +35,24 @@ fi
 if [[ "${1:-}" == "--backfill" ]]; then
   curl -s "http://localhost:8788/__scheduled?cron=*/15+*+*+*+*" >/dev/null
   echo "Avance del histórico lanzado (ver .wrangler/logs/ingest.log)"
+fi
+
+# Crons de la ingesta: wrangler dev no los dispara solos (--test-scheduled solo los expone). Mientras el
+# stack está arriba se lanzan como en producción (workers/ingest/wrangler.jsonc): el de 15 minutos
+# (resultados recientes, provisional de OpenF1, análisis e histórico), el diario (calendario y rondas sin
+# resultado) y el semanal (sanciones), los tres también al arrancar. --no-cron los desactiva.
+if [[ "${1:-}" != "--no-cron" ]]; then
+  (
+    tick=0
+    while true; do
+      curl -s "http://localhost:8788/__scheduled?cron=*/15+*+*+*+*" >/dev/null || true
+      if ((tick % 96 == 0)); then curl -s "http://localhost:8788/__scheduled?cron=0+4+*+*+*" >/dev/null || true; fi
+      if ((tick % 672 == 0)); then curl -s "http://localhost:8788/__scheduled?cron=0+5+*+*+1" >/dev/null || true; fi
+      tick=$((tick + 1))
+      sleep 900
+    done
+  ) &
+  echo "Crons de la ingesta activos: cada 15 min, diario y semanal (--no-cron para desactivarlos)"
 fi
 
 wait

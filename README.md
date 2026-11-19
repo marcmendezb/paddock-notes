@@ -32,7 +32,7 @@ Requisitos: Node 22 o superior y pnpm 10.
 ```sh
 pnpm install
 pnpm --filter @paddock/web build:worker
-scripts/local-stack.sh --seed   # API :8787, ingesta :8788 y web :8789, con una D1 local compartida
+scripts/local-stack.sh --seed   # API :8787, ingesta :8788 y web :8789, con una D1 local compartida y los crons activos
 ```
 
 `--seed` carga la temporada en curso desde Jolpica. Abre http://localhost:8789/es.

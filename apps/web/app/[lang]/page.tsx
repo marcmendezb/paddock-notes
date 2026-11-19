@@ -84,7 +84,7 @@ export default async function HomePage({ params }: Params) {
   return (
     <>
       <section className="hero" data-surface="ink" aria-labelledby="next-gp">
-        <HeroVideo labels={t.home.video} />
+        <HeroVideo />
         <div className="container">
           {next === "error" ? (
             <p className="notice">{t.error.data}</p>
@@ -152,7 +152,7 @@ export default async function HomePage({ params }: Params) {
             : null
         }
         next={next && next !== "error" ? next.data : null}
-        form={<NewsletterForm lang={lang} back="newsletter" lazy />}
+        form={<NewsletterForm lang={lang} back="newsletter" />}
       />
     </>
   );

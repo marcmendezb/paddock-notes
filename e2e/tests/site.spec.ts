@@ -274,11 +274,37 @@ test("las páginas de comunidad protegen los recursos sin sesión (COM-01, segur
   expect(forged.status()).toBe(403);
 });
 
-test("la newsletter de la home no carga Turnstile hasta tocar el formulario (NUC-10)", async ({ page }) => {
+test("la newsletter es una demostración: no envía nada y lo explica (NUC-10, D-33)", async ({ page }) => {
+  const sent: string[] = [];
+  page.on("request", (r) => {
+    if (r.method() === "POST") sent.push(r.url());
+  });
   await page.goto("/es");
   await expect(page.locator("script[data-turnstile]")).toHaveCount(0);
-  await page.locator("form[action$='/forms/newsletter'] input[name=email]").focus();
-  await expect(page.locator("script[data-turnstile]")).toHaveCount(1);
+  const form = page.locator("form[action$='/forms/newsletter']").first();
+  await form.locator("input[name=email]").fill("prueba@example.com");
+  await form.locator("input[name=consent]").check();
+  await form.getByRole("button", { name: "Apuntarme" }).click();
+  const dialog = page.getByRole("dialog", { name: "Esto es un proyecto de portfolio" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("no se ha guardado en ningún sitio");
+  expect(sent).toEqual([]);
+  await expect(form.locator("input[name=email]")).toHaveValue("");
+  await dialog.getByRole("button", { name: "Entendido" }).click();
+  await expect(dialog).toBeHidden();
+});
+
+test("sin JavaScript, la newsletter tampoco guarda nada y vuelve con el aviso (D-33)", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/es/newsletter");
+  const form = page.locator("form[action$='/forms/newsletter']").first();
+  await form.locator("input[name=email]").fill("prueba@example.com");
+  await form.locator("input[name=consent]").check();
+  await form.getByRole("button", { name: "Apuntarme" }).click();
+  await expect(page).toHaveURL(/\/es\/newsletter\?msg=newsletter%3Aok/);
+  await expect(page.getByRole("status")).toContainText("no se ha guardado en ningún sitio");
+  await context.close();
 });
 
 test("explicador sugerido para el próximo GP (NUC-09)", async ({ page }) => {

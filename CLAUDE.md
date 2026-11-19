@@ -25,7 +25,7 @@ Web no oficial que explica la F1 con datos. Monorepo pnpm, todo en TypeScript y 
 pnpm lint && pnpm typecheck && pnpm test
 pnpm db:generate                        # tras cambiar packages/db/src/schema.ts
 pnpm --filter @paddock/web build:worker # build de OpenNext
-scripts/local-stack.sh [--seed]         # stack local completo en :8787, :8788 y :8789
+scripts/local-stack.sh [--seed]         # stack local completo en :8787, :8788 y :8789, con los crons de la ingesta
 pnpm --filter @paddock/e2e e2e          # Playwright + axe contra el stack local
 ```
 

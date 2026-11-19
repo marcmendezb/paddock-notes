@@ -20,13 +20,13 @@ interface NetworkInformation {
  * Carga sin estorbar a la página: el HTML no lo pide; se le da la fuente cuando la página ya ha cargado
  * (versión de 480 px en pantallas estrechas) y aparece con un fundido solo cuando puede reproducirse sin
  * cortes. Hasta entonces, negro. Con ahorro de datos o conexión 2G no se carga.
- * Se puede pausar (WCAG 2.2.2) y, con movimiento reducido, se queda quieto en su primer fotograma.
+ * Sin botón de pausa por decisión del autor (D-33, excepción a WCAG 2.2.2): con movimiento reducido no se
+ * reproduce y se queda quieto en su primer fotograma.
  */
-export function HeroVideo({ labels }: { labels: { pause: string; play: string } }) {
+export function HeroVideo() {
   const ref = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: NetworkInformation }).connection;
@@ -46,30 +46,14 @@ export function HeroVideo({ labels }: { labels: { pause: string; play: string } 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const show = () => {
       setReady(true);
-      if (reduced) {
-        video.pause();
-        setPaused(true);
-      } else {
-        void video.play().catch(() => setPaused(true));
-      }
+      if (reduced) video.pause();
+      else void video.play().catch(() => undefined);
     };
     // canplaythrough: el navegador calcula que puede reproducirlo entero sin pararse a cargar.
     if (video.readyState >= 4) show();
     else video.addEventListener("canplaythrough", show, { once: true });
     return () => video.removeEventListener("canplaythrough", show);
   }, [src]);
-
-  const toggle = () => {
-    const video = ref.current;
-    if (!video) return;
-    if (video.paused) {
-      void video.play();
-      setPaused(false);
-    } else {
-      video.pause();
-      setPaused(true);
-    }
-  };
 
   return (
     <>
@@ -88,14 +72,6 @@ export function HeroVideo({ labels }: { labels: { pause: string; play: string } 
         tabIndex={-1}
       />
       </div>
-      {ready ? (
-        <button type="button" className="hero-video-toggle" onClick={toggle} aria-pressed={paused}>
-          <svg className="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            {paused ? <path d="M7 4.5v15l12-7.5-12-7.5Z" /> : <path d="M7 4.5v15M17 4.5v15" />}
-          </svg>
-          <span className="visually-hidden">{paused ? labels.play : labels.pause}</span>
-        </button>
-      ) : null}
     </>
   );
 }

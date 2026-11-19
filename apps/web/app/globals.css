@@ -361,6 +361,9 @@ p { margin: 0; max-width: var(--measure); }
 .lang-switch[open] .lang-chevron { transform: rotate(180deg); }
 .lang-menu { position: absolute; inset-block-start: calc(100% + 6px); inset-inline-end: 0; z-index: 60; min-inline-size: 11rem; list-style: none; margin: 0; padding: 0.35rem; background: var(--bg); border: 1px solid var(--line); box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.6); animation: lang-in 0.25s var(--ease-out-expo) both; }
 .lang-switch.is-up .lang-menu { inset-block-start: auto; inset-block-end: calc(100% + 6px); }
+/* Puente invisible sobre el hueco de 6 px: el ratón no «sale» del selector al bajar hasta el menú. */
+.lang-menu::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: -8px; block-size: 8px; }
+.lang-switch.is-up .lang-menu::before { inset-block-start: auto; inset-block-end: -8px; }
 @keyframes lang-in { from { opacity: 0; transform: translateY(-4px); } }
 .lang-menu a { display: flex; align-items: center; gap: 0.6rem; min-block-size: 40px; padding-inline: 0.6rem; font-size: var(--step--1); font-weight: 600; color: var(--text); text-decoration: none; transition: background-color 0.15s ease-out; }
 .lang-menu a:hover { background: var(--surface); font-style: italic; }
@@ -433,9 +436,6 @@ p { margin: 0; max-width: var(--measure); }
 .hero-video { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center 40%; opacity: 0; transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
 /* Aparece con un fundido solo cuando puede reproducirse sin cortes; hasta entonces, negro. */
 .hero-video.is-ready { opacity: 1; }
-.hero-video-toggle { position: absolute; z-index: 3; inset-block-start: calc(var(--header-total) + 0.75rem); inset-inline-end: clamp(16px, 4vw, 48px); display: inline-grid; place-items: center; inline-size: 44px; block-size: 44px; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 0; background: rgb(10 10 10 / 0.6); color: var(--text); }
-.hero-video-toggle:hover { border-color: var(--text); }
-.hero-video-toggle .icon { inline-size: 18px; block-size: 18px; }
 
 .gp-name { font-size: var(--step-5); line-height: var(--lh-tight); letter-spacing: -0.03em; }
 
@@ -2550,3 +2550,84 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .srch-form input { inline-size: 100%; min-block-size: 56px; font-size: var(--step-1); }
 .srch-form .cmp-go { min-block-size: 56px; }
 .tx-h2 { font-size: var(--step-2); scroll-margin-top: calc(var(--header-total) + 1.5rem); }
+
+/* Aviso de la newsletter de demostración (D-33): <dialog> nativo, foco atrapado y Escape para cerrar. */
+.demo-dialog { inline-size: min(92vw, 34rem); max-block-size: 90vh; margin: auto; padding: 0; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.demo-dialog::backdrop { background: rgb(10 10 10 / 0.72); }
+.demo-dialog[open] { animation: demo-in 0.45s var(--ease-out-expo) both; }
+@keyframes demo-in { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
+.demo-dialog-body { display: grid; gap: 1rem; padding: clamp(1.5rem, 4vw, 2.5rem); }
+.demo-dialog-kicker { margin: 0; font-size: var(--step--1); font-weight: 700; color: var(--accent); }
+.demo-dialog-title { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1; letter-spacing: -0.03em; }
+.demo-dialog-text { margin: 0; font-size: var(--step-0); line-height: 1.55; color: var(--muted); }
+.demo-dialog .cmp-go { justify-self: start; min-inline-size: 10rem; }
+@media (prefers-reduced-motion: reduce) { .demo-dialog[open] { animation: none; } }
+
+/* ── Newsletter (página) ─────────────────────────────────────────────────────────────────────────────
+   Bandeja de entrada con un número por GP disputado, el formulario en la cabecera, la anatomía de un
+   número con llamadas numeradas y las fechas de los próximos envíos. */
+.nlx-hero { position: relative; overflow: hidden; margin-block: -2rem clamp(2.5rem, 5vw, 3.5rem); padding-block: clamp(2rem, 4.5vw, 3.5rem) clamp(2.5rem, 5vw, 4rem); background: var(--bg); color: var(--text); }
+.nlx-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(2rem, 5vw, 4.5rem); }
+@media (max-width: 960px) { .nlx-hero-grid { grid-template-columns: minmax(0, 1fr); } }
+.nlx-copy { display: grid; gap: 1.25rem; min-inline-size: 0; }
+.nlx-title { margin: 0; max-inline-size: 16ch; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.92; letter-spacing: -0.045em; text-wrap: balance; }
+.nlx-form { display: grid; gap: 0.75rem; max-inline-size: 34rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
+.nlx-form input[type="email"] { min-inline-size: min(100%, 18rem); }
+.nlx-form button[type="submit"] { border-color: var(--accent-fill); background: var(--accent-fill); color: var(--accent-contrast); font-weight: 800; }
+.nlx-form button[type="submit"]:hover { font-style: italic; }
+
+.nlx-inbox { min-inline-size: 0; border: 1px solid var(--line); background: var(--surface); box-shadow: 0 30px 80px -40px rgb(0 0 0 / 0.8); transform: rotate(-1.2deg); animation: nlx-in 0.9s var(--ease-out-expo) 0.15s both; }
+@keyframes nlx-in { from { opacity: 0; transform: translateY(24px) rotate(-3deg); } }
+.nlx-inbox-bar { display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); }
+.nlx-dots { display: inline-flex; gap: 5px; }
+.nlx-dots span { inline-size: 9px; block-size: 9px; background: var(--line); }
+.nlx-dots span:first-child { background: var(--accent); }
+.nlx-inbox-title { margin: 0; font-family: inherit; font-size: var(--step--1); font-weight: 700; letter-spacing: 0; }
+.nlx-inbox-count { margin-inline-start: auto; font-size: var(--step--2); color: var(--muted); }
+.nlx-mails { display: grid; margin: 0; padding: 0; list-style: none; }
+.nlx-mails li { animation: rise 0.7s var(--ease-out-expo) both; }
+.nlx-mails li:nth-child(2) { animation-delay: 0.08s; }
+.nlx-mails li:nth-child(3) { animation-delay: 0.16s; }
+.nlx-mails li:nth-child(4) { animation-delay: 0.24s; }
+.nlx-mails li:nth-child(5) { animation-delay: 0.32s; }
+.nlx-mails li:nth-child(6) { animation-delay: 0.4s; }
+.nlx-mails li:nth-child(7) { animation-delay: 0.48s; }
+.nlx-mail { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "from date" "subject subject"; gap: 0.2rem 1rem; padding: 0.85rem 1.1rem 0.9rem 2rem; border-block-end: 1px solid var(--line); color: var(--text); text-decoration: none; transition: background-color 0.2s ease-out; }
+.nlx-mail:hover { background: var(--bg); }
+.nlx-mail-from { grid-area: from; font-size: var(--step--1); font-weight: 700; }
+.nlx-mail-no { font-weight: 500; color: var(--muted); }
+.nlx-mail-date { grid-area: date; font-size: var(--step--2); color: var(--muted); }
+.nlx-mail-subject { grid-area: subject; overflow: hidden; font-size: var(--step--1); color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+.nlx-mail:hover .nlx-mail-subject { color: var(--text); font-style: italic; }
+.is-unread .nlx-mail::before { content: ""; position: absolute; inset-block-start: 1.15rem; inset-inline-start: 0.9rem; inline-size: 8px; block-size: 8px; background: var(--accent); }
+.is-unread .nlx-mail-subject { color: var(--text); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .nlx-inbox, .nlx-mails li { animation: none; } }
+
+.nlx-anatomy-grid { display: grid; grid-template-columns: minmax(0, 30rem) minmax(0, 1fr); align-items: center; gap: clamp(2rem, 5vw, 4.5rem); }
+@media (max-width: 860px) { .nlx-anatomy-grid { grid-template-columns: minmax(0, 1fr); } }
+.nlx-issue { display: grid; gap: 1.1rem; padding: clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 3vw, 2rem) clamp(2.5rem, 5vw, 3.25rem); background: var(--bg); color: var(--text); }
+.nlx-part { position: relative; display: grid; gap: 0.5rem; padding-block-start: 0.85rem; border-block-start: 1px solid var(--line); }
+.nlx-part::before { content: attr(data-n); position: absolute; inset-block-start: 0.8rem; inset-inline-start: calc(-1 * clamp(2rem, 4vw, 2.6rem)); display: grid; place-items: center; inline-size: 1.65rem; block-size: 1.3rem; background: var(--accent-fill); color: var(--accent-contrast); font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.nlx-part .nl-issue-label { margin: 0; }
+.nlx-bars { display: block; inline-size: 100%; block-size: auto; }
+.nlx-bar { fill: var(--line); }
+.nlx-bar.is-first { fill: var(--accent); }
+.nlx-callouts { display: grid; margin: 0; padding: 0; list-style: none; }
+.nlx-callouts li { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 1rem; padding-block: 1.2rem; border-block-start: 1px solid var(--line); }
+.nlx-callouts li:last-child { border-block-end: 1px solid var(--line); }
+.nlx-callout-n { font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; font-stretch: var(--display-width); line-height: 0.8; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1.25px var(--text); }
+.nlx-callout-icon { display: inline-grid; place-items: center; inline-size: 2.5rem; block-size: 2.5rem; border: 1px solid var(--text); }
+.nlx-callout-icon .icon { inline-size: 1.3rem; block-size: 1.3rem; }
+.nlx-callout-text { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; font-stretch: var(--display-width); line-height: 1.25; }
+
+.nlx-next { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.nlx-next li { display: grid; gap: 0.35rem; padding: 1.25rem; border: 1px solid var(--line); background: var(--bg); }
+.nlx-next li.is-next { border-color: var(--accent-2); box-shadow: inset 0 0 0 1px var(--accent-2); }
+.nlx-next-date { font-family: var(--font-display); font-size: var(--step-3); font-weight: 800; font-stretch: var(--display-width); line-height: 1; letter-spacing: -0.03em; }
+.nlx-next li.is-next .nlx-next-date { color: var(--accent-2); }
+.nlx-next-gp { font-weight: 600; }
+.nlx-next-no { font-size: var(--step--2); color: var(--muted); }
+.nlx-demo { display: flex; align-items: flex-start; gap: 0.65rem; max-inline-size: 70ch; margin-block-end: 0; padding: 1rem 1.15rem; border: 1px solid var(--line); font-size: var(--step--1); color: var(--muted); }
+.nlx-demo .icon { flex: none; inline-size: 1.25em; block-size: 1.25em; margin-block-start: 0.1em; color: var(--text); }
+.nlx-demo a { color: var(--text); }
+.nlx-part .nl-next { padding: 0; border: 0; }

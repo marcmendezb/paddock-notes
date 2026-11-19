@@ -45,12 +45,27 @@ function Flag({ lang }: { lang: Lang }) {
  * los tres idiomas con su bandera y su nombre. Cada enlace cambia solo el prefijo y conserva la página;
  * es una carga completa, para que cambie también el idioma del documento.
  * Es un <details>: funciona sin JavaScript. Con JavaScript, además se cierra al pulsar fuera, con Escape
- * y al cambiar de página. `up` lo abre hacia arriba (pie de página).
+ * y al cambiar de página, y con ratón se abre al pasar por encima, como los desplegables de la cabecera
+ * (con un margen al salir para cruzar el hueco hasta el menú). `up` lo abre hacia arriba (pie de página).
  */
 export function LangSwitch({ current, label, up = false }: { current: Lang; label: string; up?: boolean }) {
   const pathname = usePathname() ?? "/";
   const rest = pathname.replace(/^\/(es|en|de)(?=\/|$)/, "");
   const ref = useRef<HTMLDetailsElement>(null);
+  const closing = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverable = () => window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const enter = () => {
+    if (!hoverable() || !ref.current) return;
+    if (closing.current) clearTimeout(closing.current);
+    ref.current.open = true;
+  };
+  const leave = () => {
+    if (!hoverable()) return;
+    if (closing.current) clearTimeout(closing.current);
+    closing.current = setTimeout(() => {
+      if (ref.current) ref.current.open = false;
+    }, 150);
+  };
 
   useEffect(() => {
     if (ref.current) ref.current.open = false;
@@ -77,8 +92,14 @@ export function LangSwitch({ current, label, up = false }: { current: Lang; labe
   }, []);
 
   return (
-    <details ref={ref} className={up ? "lang-switch is-up" : "lang-switch"}>
-      <summary aria-label={`${label}: ${LANG_NAMES[current]}`}>
+    <details ref={ref} className={up ? "lang-switch is-up" : "lang-switch"} onMouseEnter={enter} onMouseLeave={leave}>
+      <summary
+        aria-label={`${label}: ${LANG_NAMES[current]}`}
+        // Con ratón, el clic no lo cierra: ya se abrió al pasar por encima y se cierra al salir.
+        onClick={(event) => {
+          if (hoverable() && ref.current?.open) event.preventDefault();
+        }}
+      >
         <Flag lang={current} />
         <span className="lang-code">{current.toUpperCase()}</span>
         <svg className="lang-chevron" viewBox="0 0 12 12" aria-hidden="true" focusable="false">

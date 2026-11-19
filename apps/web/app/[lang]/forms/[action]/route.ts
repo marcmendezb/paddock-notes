@@ -79,7 +79,7 @@ const ACTIONS: Record<string, Action> = {
     path: () => "/me/notifications",
     body: (f) => ({ race: f("race") === "on", analysis: f("analysis") === "on" }),
   },
-  /** Newsletter (NUC-10): alta con consentimiento y Turnstile; la API manda el email de confirmación. */
+  /** Newsletter (NUC-10): hoy es una demostración y el POST no llega aquí (D-33); se conserva para reactivarla. */
   newsletter: {
     method: "POST",
     path: () => "/newsletter",
@@ -104,6 +104,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ lan
   const origin = new URL(request.url).origin;
   if (!isLang(lang) || !action) return new NextResponse(null, { status: 404 });
   if (request.headers.get("origin") !== origin) return new NextResponse("Forbidden", { status: 403 });
+
+  // Newsletter de demostración (D-33): no se lee el formulario ni se llama a la API; vuelve con el aviso.
+  if (name === "newsletter") {
+    const url = new URL(`/${lang}/newsletter`, origin);
+    url.searchParams.set("msg", "newsletter:ok");
+    return NextResponse.redirect(url, 303);
+  }
 
   const form = await request.formData();
   const field: Field = (key) => {
