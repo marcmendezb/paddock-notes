@@ -24,3 +24,6 @@ next-env.d.ts
 # Playwright
 e2e/test-results/
 e2e/playwright-report/
+
+# Originales de vídeo e imagen: solo se publican las versiones optimizadas de public/
+apps/web/media-src/

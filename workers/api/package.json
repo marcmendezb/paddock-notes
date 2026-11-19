@@ -13,7 +13,7 @@
     "@hono/zod-openapi": "^1.0.0",
     "@paddock/db": "workspace:*",
     "@paddock/shared": "workspace:*",
-    "hono": "^4.9.0",
+    "hono": "^4.13.16",
     "zod": "^4.1.0",
     "@paddock/analysis": "workspace:*",
     "better-auth": "^1.6.0",
