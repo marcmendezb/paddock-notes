@@ -20,6 +20,9 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:8789",
     extraHTTPHeaders: accessHeaders,
     timezoneId: "Europe/Madrid",
+    // Las pruebas miran la página en reposo: con movimiento reducido no hay entradas a medio animar,
+    // que axe leería como contraste insuficiente.
+    contextOptions: { reducedMotion: "reduce" },
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

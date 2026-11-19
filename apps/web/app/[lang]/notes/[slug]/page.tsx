@@ -11,7 +11,9 @@ import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
 import { SITE_URL } from "@/lib/site";
 import { articleLd } from "@/lib/structured-data";
-import { TOOL_ORDER } from "@/lib/tools";
+import { TOOL_ICON, TOOL_ORDER } from "@/lib/tools";
+import { Icon } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
 
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: note.description[lang],
     alternates: {
       canonical: `/${lang}/notes/${note.slug}`,
-      languages: { es: `/es/notes/${note.slug}`, en: `/en/notes/${note.slug}` },
+      languages: { es: `/es/notes/${note.slug}`, en: `/en/notes/${note.slug}`, de: `/de/notes/${note.slug}` },
     },
   };
 }
@@ -43,8 +45,7 @@ export default async function NotePage({ params }: Props) {
   const explainer = EXPLAINERS.find((e) => e.slug === note.explainer);
   const analysis = `/${lang}/analysis/${note.season}/${note.round}`;
   return (
-    <article className="container stack-l">
-      <Breadcrumbs lang={lang} items={[{ href: `/${lang}/notes`, label: t.notes.title }, { label: note.title[lang] }]} />
+    <article>
       <JsonLd
         data={articleLd(
           {
@@ -58,36 +59,52 @@ export default async function NotePage({ params }: Props) {
           { lang, site: SITE_URL },
         )}
       />
-      <header className="stack-s prose">
-        <p className="eyebrow tabular">{formatDate(lang, note.date)}</p>
-        <h1>{note.title[lang]}</h1>
-      </header>
-      <div className="article lede-first">
-        <Body components={figureComponents(lang)} />
-      </div>
-      <section aria-labelledby="explore" className="stack-s prose">
-        <h2 id="explore" className="h-small">
-          {t.notes.tools}
-        </h2>
-        <ul className="link-list">
-          <li>
-            <Link href={`/${lang}/races/${note.season}/${note.round}`}>{t.notes.race}</Link>
-          </li>
-          {TOOL_ORDER.map((tool) => (
-            <li key={tool}>
-              <Link href={`${analysis}/${tool}`}>{t.analysis.tools[tool].name}</Link>
-            </li>
-          ))}
-          {explainer ? (
+      <PageHero
+        icon="flag"
+        size="m"
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/notes`, label: t.notes.title }, { label: note.title[lang] }]} />}
+        kicker={
+          <>
+            {t.notes.title} · <span className="tabular">{formatDate(lang, note.date)}</span>
+          </>
+        }
+        title={note.title[lang]}
+        lede={<p>{note.description[lang]}</p>}
+      />
+      <div className="container reading">
+        <div className="article lede-first reading-main">
+          <Body components={figureComponents(lang)} />
+          <p className="source">
+            {t.notes.published(formatDate(lang, note.date))} {t.notes.sources}
+          </p>
+        </div>
+        <aside className="reading-aside" aria-labelledby="explore">
+          <h2 id="explore" className="reading-aside-title">
+            {t.notes.tools}
+          </h2>
+          <ul className="reading-links">
             <li>
-              <Link href={`/${lang}/learn/${explainer.slug}`}>{explainer.title[lang]}</Link>
+              <Link href={`/${lang}/races/${note.season}/${note.round}`}>
+                <Icon name="flag" /> {t.notes.race}
+              </Link>
             </li>
-          ) : null}
-        </ul>
-      </section>
-      <p className="source">
-        {t.notes.published(formatDate(lang, note.date))} {t.notes.sources}
-      </p>
+            {TOOL_ORDER.map((tool) => (
+              <li key={tool}>
+                <Link href={`${analysis}/${tool}`}>
+                  <Icon name={TOOL_ICON[tool]} /> {t.analysis.tools[tool].name}
+                </Link>
+              </li>
+            ))}
+            {explainer ? (
+              <li>
+                <Link href={`/${lang}/learn/${explainer.slug}`}>
+                  <Icon name="book" /> {explainer.title[lang]}
+                </Link>
+              </li>
+            ) : null}
+          </ul>
+        </aside>
+      </div>
     </article>
   );
 }

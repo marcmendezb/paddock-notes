@@ -3,6 +3,7 @@ import Link from "next/link";
 import { NOTES } from "@paddock/shared";
 import { formatDate } from "@/lib/format";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string }> };
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.title,
     description: t.lede,
-    alternates: { canonical: `/${lang}/notes`, languages: { es: "/es/notes", en: "/en/notes" } },
+    alternates: { canonical: `/${lang}/notes`, languages: { es: "/es/notes", en: "/en/notes", de: "/de/notes" } },
   };
 }
 
@@ -23,26 +24,28 @@ export default async function NotesPage({ params }: Props) {
   const t = dict(lang).notes;
   const notes = [...NOTES].sort((a, b) => b.date.localeCompare(a.date));
   return (
-    <div className="container stack-l prose">
-      <h1>{t.title}</h1>
-      <p className="lede">{t.lede}</p>
-      {notes.length ? (
-        <ul className="link-list stack">
-          {notes.map((n) => (
-            <li key={n.slug} className="stack-s">
-              <p className="eyebrow">
-                {n.season} · <span className="tabular">{formatDate(lang, n.date)}</span>
-              </p>
-              <h2 className="h-small">
-                <Link href={`/${lang}/notes/${n.slug}`}>{n.title[lang]}</Link>
-              </h2>
-              <p className="muted">{n.description[lang]}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="muted">{t.empty}</p>
-      )}
-    </div>
+    <>
+      <PageHero icon="flag" kicker={dict(lang).learn.title} title={t.title} lede={<p>{t.lede}</p>} />
+      <div className="container">
+        {notes.length ? (
+          <ul className="nt-list">
+            {notes.map((n, i) => (
+              <li key={n.slug}>
+                <Link href={`/${lang}/notes/${n.slug}`} className={i === 0 ? "nt-card is-first" : "nt-card"} data-surface={i === 0 ? "ink" : undefined}>
+                  <span className="nt-date tabular">
+                    {n.season} · {formatDate(lang, n.date)}
+                  </span>
+                  <span className="nt-title">{n.title[lang]}</span>
+                  <span className="nt-text">{n.description[lang]}</span>
+                  <span className="nt-cta">{t.readNote} →</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="muted">{t.empty}</p>
+        )}
+      </div>
+    </>
   );
 }

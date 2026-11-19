@@ -37,7 +37,7 @@ export function PositionChart({
           <g key={tick} className={tick === 1 ? "chart-baseline" : "chart-grid"}>
             <line x1={M.left} x2={W - M.right} y1={y(tick)} y2={y(tick)} />
             <text x={M.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="chart-axis">
-              {tick === 1 ? (lang === "es" ? "1.º" : "1st") : tick}
+              {tick === 1 ? { es: "1.º", en: "1st", de: "1." }[lang] : tick}
             </text>
           </g>
         ))}

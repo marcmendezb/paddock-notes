@@ -3,6 +3,8 @@ import { gpName } from "@paddock/shared";
 import { api } from "@/lib/api";
 import { formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
+import { Icon } from "@/components/icons";
+import { HeroStats, PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 import { field, parsePosition, simulate, type Choices } from "@/lib/simulator";
 
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.title,
     description: t.lede,
-    alternates: { canonical: `/${lang}/simulator`, languages: { es: "/es/simulator", en: "/en/simulator" } },
+    alternates: { canonical: `/${lang}/simulator`, languages: { es: "/es/simulator", en: "/en/simulator", de: "/de/simulator" } },
   };
 }
 
@@ -40,19 +42,36 @@ export default async function SimulatorPage({ params, searchParams }: Props) {
   const positions = Array.from({ length: 10 }, (_, i) => i + 1);
 
   return (
-    <div className="container stack-xl">
-      <div className="stack-s">
-        <h1>{t.simulator.title}</h1>
-        <p className="lede">{t.simulator.lede}</p>
-      </div>
+    <>
+      <PageHero
+        icon="gauge"
+        kicker={t.standings2.kicker(season)}
+        title={t.simulator.title}
+        lede={<p>{t.simulator.lede}</p>}
+        aside={
+          drivers.length ? (
+            <HeroStats
+              items={drivers.slice(0, 3).map((d, i) => ({
+                label: d.name,
+                value: formatPoints(lang, d.points),
+                sub: "pts",
+                accent: i === 0,
+              }))}
+            />
+          ) : undefined
+        }
+      />
+      <div className="container stack-xl">
 
       {rounds.length === 0 || drivers.length === 0 ? (
         <p className="muted">{t.simulator.noRounds}</p>
       ) : (
         <>
           {hasChoices && champion ? (
-            <section aria-labelledby="result" className="stack">
-              <h2 id="result">{t.simulator.result}</h2>
+            <section aria-labelledby="result" className="sim-result" data-surface="ink">
+              <h2 id="result" className="sim-result-title">
+                {t.simulator.result}
+              </h2>
               {conflicts.length > 0 ? (
                 <ul className="notice" role="alert">
                   {[...new Set(conflicts.map((c) => c.round))].map((round) => (
@@ -60,10 +79,12 @@ export default async function SimulatorPage({ params, searchParams }: Props) {
                   ))}
                 </ul>
               ) : (
-                <p className="auto-note">{t.simulator.champion(champion.name, formatPoints(lang, champion.total))}</p>
+                <p className="sim-champion">
+                  <Icon name="trophy" /> {t.simulator.champion(champion.name, formatPoints(lang, champion.total))}
+                </p>
               )}
               <div className="table-wrap" tabIndex={0} role="region" aria-label={t.simulator.result}>
-                <table>
+                <table className="timing-table">
                   <thead>
                     <tr>
                       <th scope="col" className="num">{t.standings.columns.pos}</th>
@@ -75,9 +96,9 @@ export default async function SimulatorPage({ params, searchParams }: Props) {
                   </thead>
                   <tbody>
                     {projected.map((d, i) => (
-                      <tr key={d.id}>
-                        <td className="num">{i + 1}</td>
-                        <th scope="row">{d.name}</th>
+                      <tr key={d.id} className={i === 0 ? "is-p1" : undefined}>
+                        <td className="num timing-pos">{i + 1}</td>
+                        <th scope="row" className="timing-driver">{d.name}</th>
                         <td className="num">{formatPoints(lang, d.points)}</td>
                         <td className="num">+{formatPoints(lang, d.gained)}</td>
                         <td className="num">{formatPoints(lang, d.total)}</td>
@@ -90,15 +111,18 @@ export default async function SimulatorPage({ params, searchParams }: Props) {
             </section>
           ) : null}
 
-          <form action={`/${lang}/simulator#result`} method="get" className="stack-l">
+          <form action={`/${lang}/simulator#result`} method="get" className="sim-form">
             <p className="muted">{t.simulator.help}</p>
+            <div className="sim-rounds">
             {rounds.map((r) => (
-              <fieldset key={r.round} className="stack-s sim-round">
-                <legend className="h-small">
-                  {t.home.round(r.round, season)} · {r.name}
+              <fieldset key={r.round} className="sim-round">
+                <legend className="sim-legend">
+                  <span className="sim-round-n tabular">{String(r.round).padStart(2, "0")}</span>
+                  <span className="sim-round-name">{r.name}</span>
+                  {r.isSprintWeekend ? <span className="tag">{t.simulator.sprint}</span> : null}
                 </legend>
                 <div className="table-wrap" tabIndex={0} role="region" aria-label={r.name}>
-                  <table>
+                  <table className="sim-table">
                     <thead>
                       <tr>
                         <th scope="col">{t.standings.columns.driver}</th>
@@ -133,10 +157,16 @@ export default async function SimulatorPage({ params, searchParams }: Props) {
                 </div>
               </fieldset>
             ))}
-            <button type="submit">{t.simulator.calculate}</button>
+            </div>
+            <div className="sim-submit">
+              <button type="submit" className="cmp-go">
+                {t.simulator.calculate}
+              </button>
+            </div>
           </form>
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 }

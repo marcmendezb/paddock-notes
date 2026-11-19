@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GlossarySearch } from "@/components/glossary-search";
+import { HeroStats, PageHero } from "@/components/page-hero";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { GLOSSARY, GROUPS, type GroupKey } from "@/lib/glossary";
 import { dict } from "@/lib/i18n";
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.glossary,
     description: t.glossaryLede,
-    alternates: { canonical: `/${lang}/learn/glossary`, languages: { es: "/es/learn/glossary", en: "/en/learn/glossary" } },
+    alternates: { canonical: `/${lang}/learn/glossary`, languages: { es: "/es/learn/glossary", en: "/en/learn/glossary", de: "/de/learn/glossary" } },
   };
 }
 
@@ -22,17 +23,24 @@ export default async function GlossaryPage({ params }: Props) {
   const t = dict(lang);
   const items = GLOSSARY.map((g) => ({ slug: g.slug, term: g[lang].term, def: g[lang].def, group: g.group }));
   return (
-    <div className="container stack-l prose">
-      <Breadcrumbs lang={lang} items={[{ href: `/${lang}/learn`, label: t.learn.title }, { label: t.learn.glossary }]} />
-      <h1>{t.learn.glossary}</h1>
-      <p className="lede">{t.learn.glossaryLede}</p>
-      <GlossarySearch
-        lang={lang}
-        items={items}
-        groups={(Object.keys(GROUPS) as GroupKey[]).map((key) => ({ key, label: GROUPS[key][lang] }))}
-        label={t.learn.searchGlossary}
-        empty={t.search.empty("{q}")}
+    <>
+      <PageHero
+        icon="book"
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/learn`, label: t.learn.title }, { label: t.learn.glossary }]} />}
+        kicker={t.learn.title}
+        title={t.learn.glossary}
+        lede={<p>{t.learn.glossaryLede}</p>}
+        aside={<HeroStats items={[{ label: t.learn.statTerms, value: items.length, accent: true }]} />}
       />
-    </div>
+      <div className="container gl-index">
+        <GlossarySearch
+          lang={lang}
+          items={items}
+          groups={(Object.keys(GROUPS) as GroupKey[]).map((key) => ({ key, label: GROUPS[key][lang] }))}
+          label={t.learn.searchGlossary}
+          empty={t.search.empty("{q}")}
+        />
+      </div>
+    </>
   );
 }

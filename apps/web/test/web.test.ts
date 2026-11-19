@@ -8,7 +8,9 @@ describe("idioma preferido (TRA-11)", () => {
     [null, "es"],
     ["en-GB,en;q=0.9", "en"],
     ["fr-FR,fr;q=0.9,en;q=0.8,es;q=0.7", "en"],
-    ["de-DE", "es"],
+    ["de-DE", "de"],
+    ["de-CH,de;q=0.9,en;q=0.8", "de"],
+    ["it-IT", "es"],
     ["es;q=0.5, en;q=0.9", "en"],
     ["en;q=0", "es"],
   ])("%s → %s", (header, lang) => {

@@ -21,7 +21,7 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
       sections: [
         {
           paragraphs: [
-            "Paddock Notes es un proyecto personal y no oficial que explica la Fórmula 1 con datos. Lo construí para demostrar cómo diseño un producto de datos completo: una API propia sobre fuentes públicas, visualizaciones hechas a mano, una web bilingüe y accesible, y una estrategia de contenido medible.",
+            "Paddock Notes es un proyecto personal y no oficial que explica la Fórmula 1 con datos. Lo construí para demostrar cómo diseño un producto de datos completo: una API propia sobre fuentes públicas, visualizaciones hechas a mano, una web en tres idiomas y accesible, y una estrategia de contenido medible.",
           ],
         },
         {
@@ -33,7 +33,7 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         {
           heading: "De dónde salen los datos",
           paragraphs: [
-            "Jolpica F1 (resultados e histórico) y OpenF1 (timing desde 2023), ambos con licencia CC BY-NC-SA 4.0. Los datos y gráficos de Paddock Notes se publican con la misma licencia. La API pública está en /api/v1/docs.",
+            "Jolpica F1 (resultados e histórico) y OpenF1 (timing desde 2023), ambos con licencia CC BY-NC-SA 4.0. Los trazados de los circuitos sin telemetría salen de bacinger/f1-circuits (licencia MIT). Los datos y gráficos de Paddock Notes se publican con la misma licencia. La API pública está en /api/v1/docs.",
           ],
         },
         {
@@ -48,7 +48,7 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
       sections: [
         {
           paragraphs: [
-            "Paddock Notes is a personal, unofficial project that explains Formula 1 with data. I built it to show how I design a complete data product: an own API on top of public sources, hand-made visualisations, a bilingual and accessible website, and a measurable content strategy.",
+            "Paddock Notes is a personal, unofficial project that explains Formula 1 with data. I built it to show how I design a complete data product: an own API on top of public sources, hand-made visualisations, a trilingual and accessible website, and a measurable content strategy.",
           ],
         },
         {
@@ -60,12 +60,39 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         {
           heading: "Where the data comes from",
           paragraphs: [
-            "Jolpica F1 (results and history) and OpenF1 (timing since 2023), both licensed CC BY-NC-SA 4.0. Paddock Notes data and charts are published under the same licence. The public API lives at /api/v1/docs.",
+            "Jolpica F1 (results and history) and OpenF1 (timing since 2023), both licensed CC BY-NC-SA 4.0. Layouts for circuits without telemetry come from bacinger/f1-circuits (MIT licence). Paddock Notes data and charts are published under the same licence. The public API lives at /api/v1/docs.",
           ],
         },
         {
           heading: "How it's made",
           paragraphs: ["The code is open source (MIT licence) and the decisions are documented in the repository."],
+        },
+      ],
+    },
+    de: {
+      title: "Über das Projekt",
+      description: "Was Paddock Notes ist, woher die Daten kommen und wie es gebaut ist.",
+      sections: [
+        {
+          paragraphs: [
+            "Paddock Notes ist ein persönliches, inoffizielles Projekt, das die Formel 1 mit Daten erklärt. Ich habe es gebaut, um zu zeigen, wie ich ein vollständiges Datenprodukt gestalte: eine eigene API auf öffentlichen Quellen, handgemachte Visualisierungen, eine dreisprachige und barrierefreie Website und eine messbare Content-Strategie.",
+          ],
+        },
+        {
+          heading: "Was dahintersteckt",
+          paragraphs: [
+            "Next.js und React auf Cloudflare, eine Datenbank mit der Geschichte der F1 und Analysen, die nach jedem Rennen berechnet werden.",
+          ],
+        },
+        {
+          heading: "Woher die Daten kommen",
+          paragraphs: [
+            "Jolpica F1 (Ergebnisse und Historie) und OpenF1 (Zeitnahme seit 2023), beide lizenziert unter CC BY-NC-SA 4.0. Die Streckenverläufe ohne Telemetrie stammen aus bacinger/f1-circuits (MIT-Lizenz). Die Daten und Grafiken von Paddock Notes erscheinen unter derselben Lizenz. Die öffentliche API ist unter /api/v1/docs erreichbar.",
+          ],
+        },
+        {
+          heading: "Wie es gemacht ist",
+          paragraphs: ["Der Code ist Open Source (MIT-Lizenz), und die Entscheidungen sind im Repository dokumentiert."],
         },
       ],
     },
@@ -107,6 +134,24 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         },
       ],
     },
+    de: {
+      title: "Datenschutz",
+      description: "Welche Daten Paddock Notes verarbeitet.",
+      sections: [
+        {
+          paragraphs: [
+            "Wenn du kein Konto anlegst und dich nicht für den Newsletter anmeldest, verarbeitet Paddock Notes keine personenbezogenen Daten: Besuche werden mit Cloudflare Web Analytics gemessen, ohne Cookies und ohne jemanden zu identifizieren. Deshalb gibt es kein Einwilligungsbanner.",
+            "Newsletter: Wir speichern nur deine E-Mail-Adresse und deine Sprache (Rechtsgrundlage: deine Einwilligung). Deine Anmeldung bleibt ausstehend, bis du sie über die E-Mail bestätigst; bestätigst du nicht innerhalb von 48 Stunden, löschen wir sie. Jede Ausgabe hat einen Abmeldelink mit einem Klick, und die Abmeldung löscht deine Adresse aus der Liste.",
+            "Wenn du ein Konto anlegst, speichern wir deine E-Mail-Adresse, den gewählten Namen, deine Sprache, deine Tipps, deine Ligen und deine Quiz-Ergebnisse, nur damit diese Funktionen laufen (Rechtsgrundlage: Erbringung des gewünschten Dienstes). Es gibt keine Passwörter: Du meldest dich über einen Link per E-Mail an.",
+            "Die Sitzung nutzt ein einziges technisch notwendiges Cookie (__Host-pn.session_token), nie für Werbung. Deine IP-Adresse speichern wir nicht.",
+            "Die E-Mail-Benachrichtigungen des Kontos (vor jedem Grand Prix und bei Erscheinen der Analyse) sind standardmäßig aus. Du schaltest sie in deinem Konto oder über den Abmeldelink in jeder E-Mail an oder aus.",
+            "Du kannst deine Daten jederzeit als JSON herunterladen und dein Konto auf deiner Kontoseite löschen: Die Löschung erfolgt sofort. Konten, die 24 Monate inaktiv sind, werden nach einer Vorwarnung gelöscht.",
+            "Technische Protokolle speichern den Pfad, den Antwortcode und das Land, nie die vollständige IP-Adresse oder Autorisierungs-Header.",
+            "Dienstleister: Cloudflare, Inc. (Hosting, Datenbank in der EU, E-Mail-Versand, Bot-Schutz und Analyse). Maßgebliche Vorschriften: DSGVO (EU) und revDSG (Schweiz).",
+          ],
+        },
+      ],
+    },
   },
   legal: {
     es: {
@@ -129,6 +174,18 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
           paragraphs: [
             "Paddock Notes is a personal, non-commercial and unofficial project, not affiliated with Formula 1, the FIA or any team. F1, FORMULA 1 and related marks belong to their owners.",
             "Data: Jolpica F1 and OpenF1, licensed CC BY-NC-SA 4.0. Derived data is published under the same licence. Code: MIT licence.",
+          ],
+        },
+      ],
+    },
+    de: {
+      title: "Impressum",
+      description: "Verantwortlicher, Art des Projekts und Lizenzen.",
+      sections: [
+        {
+          paragraphs: [
+            "Paddock Notes ist ein persönliches, nicht kommerzielles und inoffizielles Projekt ohne Verbindung zur Formel 1, zur FIA oder zu einem Team. F1, FORMULA 1 und verwandte Marken gehören ihren Inhabern.",
+            "Daten: Jolpica F1 und OpenF1, lizenziert unter CC BY-NC-SA 4.0. Abgeleitete Daten erscheinen unter derselben Lizenz. Code: MIT-Lizenz.",
           ],
         },
       ],
@@ -157,6 +214,19 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
             "Target: WCAG 2.2 level AA. Every page is checked with a keyboard and with axe on every change.",
             "Known issues: interactive charts don't exist yet; when they arrive, each one will have an equivalent table.",
             "If you find a barrier, tell us and we'll fix it.",
+          ],
+        },
+      ],
+    },
+    de: {
+      title: "Barrierefreiheit",
+      description: "Angestrebtes Niveau der Barrierefreiheit und bekannte Probleme.",
+      sections: [
+        {
+          paragraphs: [
+            "Ziel: WCAG 2.2 Stufe AA. Jede Seite wird bei jeder Änderung mit der Tastatur und mit axe geprüft.",
+            "Bekannte Probleme: Interaktive Grafiken gibt es noch nicht; wenn sie kommen, bekommt jede eine gleichwertige Tabelle.",
+            "Wenn du auf eine Barriere stößt, sag es uns, und wir beheben sie.",
           ],
         },
       ],

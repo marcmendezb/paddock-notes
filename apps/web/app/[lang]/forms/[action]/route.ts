@@ -79,11 +79,11 @@ const ACTIONS: Record<string, Action> = {
     path: () => "/me/notifications",
     body: (f) => ({ race: f("race") === "on", analysis: f("analysis") === "on" }),
   },
-  /** Newsletter (NUC-10): alta con Turnstile; la API manda el email de confirmación. */
+  /** Newsletter (NUC-10): alta con consentimiento y Turnstile; la API manda el email de confirmación. */
   newsletter: {
     method: "POST",
     path: () => "/newsletter",
-    body: (f, { lang }) => ({ email: f("email"), lang }),
+    body: (f, { lang }) => ({ email: f("email"), lang, consent: f("consent") === "on" }),
     headers: (f) => ({ "x-captcha-response": f("cf-turnstile-response") }),
   },
   "newsletter-confirm": { method: "POST", path: () => "/newsletter/confirm", body: (f) => ({ token: f("token") }), next: () => "newsletter" },

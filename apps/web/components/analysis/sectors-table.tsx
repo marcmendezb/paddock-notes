@@ -1,11 +1,12 @@
 import type { SectorsData } from "@paddock/analysis";
 import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
+import { localeOf } from "@/lib/format";
 
 /** Sectores (TEC-06): diferencia con el mejor de cada sector; el signo siempre acompaña al color. */
 export function SectorsTable({ lang, data, mode }: { lang: Lang; data: SectorsData; mode: "best" | "average" }) {
   const t = dict(lang).analysis;
-  const fmt = new Intl.NumberFormat(lang === "es" ? "es-ES" : "en-GB", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const fmt = new Intl.NumberFormat(localeOf(lang), { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   const reference = [0, 1, 2].map((i) => {
     const values = data.drivers.map((d) => d[mode][i]).filter((v): v is number => v !== null && v !== undefined);
     return values.length ? Math.min(...values) : null;

@@ -5,6 +5,8 @@
 
 ## 1. Idea
 
+**Eslogan:** «La Fórmula 1, explicada con datos.» (en inglés, «Formula 1, explained with data.»). Es el de Paddock Notes en todas partes: pie de página, etiqueta del logo y metadatos. Se escribe así, con «Fórmula 1» completo y punto final.
+
 **La cota del dibujo técnico:** una línea de medida entre dos marcas con el valor escrito encima. Sirve para la cuenta atrás (el hueco hasta la salida), para anotar un tramo en un gráfico o un undercut en una estrategia. "Notes" es el gesto: el valor escrito sobre la medida.
 
 ## 2. Logo
@@ -21,10 +23,11 @@
 
 - Negro y lima, con lila como acento puntual. Proporción: negro 80 %, blanco roto y grises 16 %, lima 3 %, lila 1 %.
 - **La lima y la lila solo aparecen sobre negro**, y solo marcan lo que hay que mirar: cifras clave, notas, cotas y estado activo. Nunca como fondo amplio, degradado ni brillo.
-- Lima y lila nunca en el mismo elemento ni en el logo.
+- Lima y lila nunca en el mismo elemento ni en el logo. Única excepción, decidida por el autor: la vuelta animada del logo al pasar por encima (o al enfocarlo) va en lila; el punto sigue en lima.
 - **Cabecera y hero siempre en negro**, también en modo claro: atributo `data-surface="ink"`.
 - En modo claro: fondo `#FFFFFF`, texto `#0A0A0A`, secundario `#5A5A5A`, acento negro; lila oscura `#6A3FC8` como acento secundario.
 - `--line` es solo para bordes y rejillas, nunca para texto.
+- **Nada de filetes de un solo lado** en color o más gruesos que el resto (franja lateral, superior o inferior que marca un bloque). Para destacar: fondo (negro o gris), borde completo de 1 px, un pictograma o nada.
 
 Los tokens se copian tal cual de `brandboard/tokens/globals.css` a `apps/web/app/globals.css`.
 

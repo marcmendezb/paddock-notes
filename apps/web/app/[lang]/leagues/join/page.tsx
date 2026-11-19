@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 import { currentUser } from "@/lib/session";
 
@@ -15,8 +16,9 @@ export default async function JoinLeaguePage({ params, searchParams }: Props) {
   const t = dict(lang);
   const me = await currentUser();
   return (
+    <>
+      <PageHero icon="trophy" size="m" kicker={t.predictions.title} title={t.league.joinTitle} />
     <div className="container stack-l prose">
-      <h1>{t.league.joinTitle}</h1>
       {!me ? (
         <p>
           <Link href={`/${lang}/account`}>{t.predictions.signInFirst}</Link>
@@ -29,5 +31,6 @@ export default async function JoinLeaguePage({ params, searchParams }: Props) {
         </form>
       )}
     </div>
+    </>
   );
 }

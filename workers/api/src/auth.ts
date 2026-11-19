@@ -53,7 +53,8 @@ export function createAuth(env: Env) {
         storeToken: "hashed",
         sendMagicLink: async ({ email, url }) => {
           // El idioma del email sale de la página a la que vuelve el enlace (/es/... o /en/...).
-          const lang = decodeURIComponent(url).includes("/en/") ? "en" : "es";
+          const decoded = decodeURIComponent(url);
+          const lang = decoded.includes("/en/") ? "en" : decoded.includes("/de/") ? "de" : "es";
           await sendEmail(env, { to: email, ...magicLinkEmail(lang, url) });
         },
       }),

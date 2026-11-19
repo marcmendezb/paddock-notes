@@ -8,6 +8,12 @@ export const INACTIVE_AFTER_MS = 730 * DAY;
 export const GRACE_MS = 30 * DAY;
 
 function warning(lang: string, url: string) {
+  if (lang === "de") {
+    return {
+      subject: "Dein Konto bei Paddock Notes wird gelöscht",
+      text: `Du hast dein Konto bei Paddock Notes seit zwei Jahren nicht genutzt. Wenn du dich nicht innerhalb von 30 Tagen anmeldest, löschen wir es zusammen mit deinen Tipps und Ligen.\n\nMelde dich an, um es zu behalten: ${url}/de/account`,
+    };
+  }
   return lang === "en"
     ? {
         subject: "Your Paddock Notes account will be deleted",

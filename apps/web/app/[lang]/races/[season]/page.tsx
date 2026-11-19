@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SeasonPicker } from "@/components/season-picker";
 import { StaleNotice } from "@/components/site-chrome";
 import { SeasonMap } from "@/components/season-map";
-import { CalendarTable } from "@/components/tables";
+import { NextRaceFeature, SeasonHero, SeasonRounds } from "@/components/season-view";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { dict } from "@/lib/i18n";
@@ -15,14 +15,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const lang = parseLang(p.lang);
   const season = parseSeason(p.season);
   return {
-    title: lang === "es" ? `Calendario F1 ${season}: fechas y horarios` : `${season} F1 calendar: dates and times`,
-    description:
-      lang === "es"
-        ? `Todas las carreras de la temporada ${season} con horarios en tu zona horaria.`
-        : `Every race of the ${season} season with times in your time zone.`,
+    title: { es: `Calendario F1 ${season}: fechas y horarios`, en: `${season} F1 calendar: dates and times`, de: `F1-Kalender ${season}: Termine und Zeiten` }[lang],
+    description: {
+      es: `Todas las carreras de la temporada ${season} con horarios en tu zona horaria.`,
+      en: `Every race of the ${season} season with times in your time zone.`,
+      de: `Alle Rennen der Saison ${season} mit Zeiten in deiner Zeitzone.`,
+    }[lang],
     alternates: {
       canonical: `/${lang}/races/${season}`,
-      languages: { es: `/es/races/${season}`, en: `/en/races/${season}` },
+      languages: { es: `/es/races/${season}`, en: `/en/races/${season}`, de: `/de/races/${season}` },
     },
   };
 }
@@ -33,33 +34,34 @@ export default async function CalendarPage({ params }: Params) {
   const season = parseSeason(p.season);
   const t = dict(lang);
   const schedule = await api.schedule(season);
+  const races = schedule?.data ?? [];
+  const next = races.find((r) => r.status === "next") ?? null;
+  const layout = next ? await api.circuitLayout(next.circuit.id).catch(() => null) : null;
+  const picker = <SeasonPicker lang={lang} season={season} base="races" />;
 
   return (
-    <div className="container stack-l">
-      <div className="page-head">
-        <h1>{t.calendar.title(season)}</h1>
-        <SeasonPicker lang={lang} season={season} base="races" />
+    <>
+      <SeasonHero lang={lang} season={season} races={races} picker={picker} />
+      <div className="container stack-xl">
+        {schedule?.stale ? <StaleNotice lang={lang} updatedAt={schedule.updatedAt} /> : null}
+        {schedule ? (
+          <>
+            {next ? <NextRaceFeature lang={lang} race={next} layout={layout?.data.points ?? null} /> : null}
+            <SeasonRounds lang={lang} races={races} />
+            <section aria-labelledby="season-map" className="stack">
+              <h2 id="season-map" className="sv-section-title">
+                {t.map.title}
+              </h2>
+              <SeasonMap lang={lang} races={races.filter((r) => r.status !== "cancelled")} season={season} />
+            </section>
+            {schedule.updatedAt ? (
+              <p className="source">{t.source("Jolpica F1", formatDate(lang, schedule.updatedAt))}</p>
+            ) : null}
+          </>
+        ) : (
+          <p className="muted">{t.home.noData}</p>
+        )}
       </div>
-      {schedule?.stale ? <StaleNotice lang={lang} updatedAt={schedule.updatedAt} /> : null}
-      {schedule ? (
-        <>
-          <CalendarTable lang={lang} races={schedule.data} />
-          <p>
-            <a href={`/${lang}/races/${season}/calendar.ics`} download>
-              {t.home.addToCalendar}
-            </a>
-          </p>
-          <section aria-labelledby="season-map" className="stack">
-            <h2 id="season-map">{t.map.title}</h2>
-            <SeasonMap lang={lang} races={schedule.data.filter((r) => r.status !== "cancelled")} season={season} />
-          </section>
-          {schedule.updatedAt ? (
-            <p className="source">{t.source("Jolpica F1", formatDate(lang, schedule.updatedAt))}</p>
-          ) : null}
-        </>
-      ) : (
-        <p className="muted">{t.home.noData}</p>
-      )}
-    </div>
+    </>
   );
 }

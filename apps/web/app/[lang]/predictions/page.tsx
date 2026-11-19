@@ -5,6 +5,8 @@ import { FormMessage } from "@/components/form-message";
 import { api } from "@/lib/api";
 import { formatDateTime, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
+import { Icon } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 import { currentUser, userGet, type Driver } from "@/lib/session";
 
@@ -42,12 +44,30 @@ export default async function PredictionsPage({ params, searchParams }: Props) {
   };
 
   return (
-    <div className="container stack-xl prose">
+    <>
+      <PageHero
+        icon="trophy"
+        kicker={dict(lang).standings2.kicker(season)}
+        title={t.title}
+        lede={<p>{t.lede}</p>}
+        aside={
+          next ? (
+            <div className="pr-next">
+              <span className="pr-next-kicker">
+                <Icon name="flag" /> {dict(lang).home.round(next.data.round, next.data.season)}
+              </span>
+              <span className="pr-next-name">{gpName(lang, next.data.name)}</span>
+              {form?.deadline ? (
+                <span className="pr-next-deadline">{form.open ? t.closes(`${formatDateTime(lang, form.deadline, "UTC")} (UTC)`) : t.closed}</span>
+              ) : null}
+            </div>
+          ) : undefined
+        }
+      />
+      <div className="container stack-xl pr">
       <div className="stack-s">
-        <h1>{t.title}</h1>
-        <p className="lede">{t.lede}</p>
-        <details>
-          <summary>{lang === "es" ? "Cómo se puntúa" : "How scoring works"}</summary>
+        <details className="pf-defs">
+          <summary>{{ es: "Cómo se puntúa", en: "How scoring works", de: "So wird gewertet" }[lang]}</summary>
           <p className="muted">{t.rules}</p>
           <p className="muted">{t.tieBreak}</p>
         </details>
@@ -57,21 +77,28 @@ export default async function PredictionsPage({ params, searchParams }: Props) {
       {!next ? (
         <p className="muted">{t.none}</p>
       ) : !me ? (
-        <p>
-          <Link href={`/${lang}/account`}>{t.signInFirst}</Link>
-        </p>
+        <Link href={`/${lang}/account`} className="st-recalc pr-signin" data-surface="ink">
+          <span className="st-recalc-kicker">
+            <Icon name="user" /> {dict(lang).account.nav}
+          </span>
+          <span className="st-recalc-title">{t.signInFirst}</span>
+          <span className="recap-note-arrow" aria-hidden="true">
+            →
+          </span>
+        </Link>
       ) : form ? (
-        <section aria-labelledby="next" className="stack">
-          <h2 id="next">{t.next(gpName(lang, next.data.name))}</h2>
-          {form.deadline ? <p className="muted">{form.open ? t.closes(`${formatDateTime(lang, form.deadline, "UTC")} (UTC)`) : t.closed}</p> : null}
+        <section aria-labelledby="next" className="rv-section">
+          <h2 id="next" className="rv-h2">
+            {t.next(gpName(lang, next.data.name))}
+          </h2>
           {form.open ? (
-            <form action={`/${lang}/forms/prediction`} method="post" className="stack">
+            <form action={`/${lang}/forms/prediction`} method="post" className="pr-form">
               <input type="hidden" name="back" value="predictions" />
               <input type="hidden" name="season" value={next.data.season} />
               <input type="hidden" name="round" value={next.data.round} />
-              {(["p1", "p2", "p3", "pole"] as const).map((key) => (
-                <label key={key} className="inline-form">
-                  <span>{t[key]}</span>
+              {(["p2", "p1", "p3", "pole"] as const).map((key) => (
+                <label key={key} className={`pr-pick pr-pick-${key}`} data-surface={key === "p1" ? "ink" : undefined}>
+                  <span className="pr-pick-label">{t[key]}</span>
                   <select name={key} defaultValue={form.picks?.[key] ?? ""} required>
                     <option value="" disabled>
                       —
@@ -84,17 +111,22 @@ export default async function PredictionsPage({ params, searchParams }: Props) {
                   </select>
                 </label>
               ))}
-              <button type="submit">{t.save}</button>
+              <button type="submit" className="cmp-go pr-save">
+                {t.save}
+              </button>
             </form>
           ) : null}
         </section>
       ) : null}
 
       {mine && mine.length > 0 ? (
-        <section aria-labelledby="mine" className="stack">
-          <h2 id="mine">{t.mine}</h2>
+        <section aria-labelledby="mine" className="rv-section">
+          <h2 id="mine" className="rv-h2">
+            {t.mine}
+          </h2>
+          <div className="timing" data-surface="ink">
           <div className="table-wrap" tabIndex={0} role="region" aria-label={t.mine}>
-            <table>
+            <table className="timing-table">
               <thead>
                 <tr>
                   <th scope="col" className="num">{dict(lang).standings2.round}</th>
@@ -115,14 +147,18 @@ export default async function PredictionsPage({ params, searchParams }: Props) {
               </tbody>
             </table>
           </div>
+          </div>
         </section>
       ) : null}
 
-      <section aria-labelledby="ranking" className="stack">
-        <h2 id="ranking">{t.ranking}</h2>
+      <section aria-labelledby="ranking" className="rv-section">
+        <h2 id="ranking" className="rv-h2">
+          {t.ranking}
+        </h2>
         {ranking && ranking.data.length > 0 ? (
+          <div className="timing" data-surface="ink">
           <div className="table-wrap" tabIndex={0} role="region" aria-label={t.ranking}>
-            <table>
+            <table className="timing-table">
               <thead>
                 <tr>
                   <th scope="col" className="num">Pos.</th>
@@ -132,19 +168,21 @@ export default async function PredictionsPage({ params, searchParams }: Props) {
               </thead>
               <tbody>
                 {ranking.data.map((r, i) => (
-                  <tr key={i}>
-                    <td className="num">{r.rank}</td>
-                    <th scope="row">{r.name}</th>
-                    <td className="num">{r.points}</td>
+                  <tr key={i} className={r.rank <= 3 ? `is-p${r.rank}` : undefined}>
+                    <td className="num timing-pos">{r.rank}</td>
+                    <th scope="row" className="timing-driver">{r.name}</th>
+                    <td className="num timing-points">{r.points}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          </div>
         ) : (
           <p className="muted">{t.noRanking}</p>
         )}
       </section>
-    </div>
+      </div>
+    </>
   );
 }

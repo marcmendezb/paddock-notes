@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Icon } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { EXPLAINERS, explainerBody } from "@/content";
@@ -26,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: explainer.description[lang],
     alternates: {
       canonical: `/${lang}/learn/${explainer.slug}`,
-      languages: { es: `/es/learn/${explainer.slug}`, en: `/en/learn/${explainer.slug}` },
+      languages: { es: `/es/learn/${explainer.slug}`, en: `/en/learn/${explainer.slug}`, de: `/de/learn/${explainer.slug}` },
     },
   };
 }
@@ -35,23 +38,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ExplainerPage({ params }: Props) {
   const { lang, explainer, Body } = await load(params);
   const t = dict(lang).learn;
+  const list = EXPLAINERS;
+  const i = list.findIndex((e) => e.slug === explainer.slug);
+  const next = list[(i + 1) % list.length];
   return (
-    <article className="container stack-l">
-      <Breadcrumbs lang={lang} items={[{ href: `/${lang}/learn`, label: t.title }, { label: explainer.title[lang] }]} />
+    <article>
       <JsonLd
         data={articleLd(
           { slug: explainer.slug, headline: explainer.title[lang], description: explainer.description[lang], dateModified: "2026-11-06" },
           { lang, site: SITE_URL },
         )}
       />
-      <h1>{explainer.title[lang]}</h1>
-      <div className="article lede-first">
-        <Body />
+      <PageHero
+        icon="book"
+        size="m"
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/learn`, label: t.title }, { label: explainer.title[lang] }]} />}
+        kicker={t.explainer}
+        title={explainer.title[lang]}
+        lede={<p>{explainer.description[lang]}</p>}
+      />
+      <div className="container reading">
+        <div className="article lede-first reading-main">
+          <Body />
+        </div>
+        <aside className="reading-aside">
+          <p className="reading-meta">
+            <Icon name="clock" /> {t.updated}
+          </p>
+          {explainer.regulated ? <p className="reading-flag">{t.regulated}</p> : null}
+          {next && next.slug !== explainer.slug ? (
+            <Link href={`/${lang}/learn/${next.slug}`} className="tile">
+              <span className="tile-meta">{t.explainer}</span>
+              <span className="tile-arrow" aria-hidden="true">
+                →
+              </span>
+              <span className="tile-title">{next.title[lang]}</span>
+            </Link>
+          ) : null}
+          <Link href={`/${lang}/learn`} className="ln-more">
+            ← {t.title}
+          </Link>
+        </aside>
       </div>
-      <p className="source">
-        {t.updated}
-        {explainer.regulated ? ` ${t.regulated}` : ""}
-      </p>
     </article>
   );
 }

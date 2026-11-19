@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ token?: string }> };
@@ -16,8 +17,9 @@ export default async function NewsletterConfirmPage({ params, searchParams }: Pr
   const t = dict(lang).newsletter;
   const valid = /^[a-f0-9]{48}$/.test(token);
   return (
+    <>
+      <PageHero icon="book" size="m" kicker="Newsletter" title={t.confirmTitle} />
     <div className="container stack-l prose">
-      <h1>{t.confirmTitle}</h1>
       {valid ? (
         <form action={`/${lang}/forms/newsletter-confirm`} method="post" className="stack">
           <p>{t.confirmLede}</p>
@@ -31,5 +33,6 @@ export default async function NewsletterConfirmPage({ params, searchParams }: Pr
         </p>
       )}
     </div>
+    </>
   );
 }

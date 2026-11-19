@@ -124,7 +124,13 @@ export function PointsChart({
           <g className="chart-note">
             <circle cx={x(n - 1)} cy={y(lastValue(first.points))} r={4.5} />
             <text x={x(n - 1) - 10} y={y(lastValue(first.points)) - 14} textAnchor="end">
-              {lang === "es" ? `${formatPoints(lang, lead)} puntos de ventaja` : `${formatPoints(lang, lead)}-point lead`}
+              {
+                {
+                  es: `${formatPoints(lang, lead)} puntos de ventaja`,
+                  en: `${formatPoints(lang, lead)}-point lead`,
+                  de: `${formatPoints(lang, lead)} Punkte Vorsprung`,
+                }[lang]
+              }
             </text>
           </g>
         ) : null}

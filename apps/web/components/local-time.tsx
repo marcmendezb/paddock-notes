@@ -10,6 +10,8 @@ interface Props {
   /** Zona horaria del circuito, si se conoce (NUC-03). */
   circuitTimeZone: string | null;
   circuitLabel: string;
+  /** Las dos horas en líneas separadas (cajetín y columnas del hero), sin el separador «·». */
+  stacked?: boolean;
 }
 
 /**
@@ -18,7 +20,7 @@ interface Props {
  * (o UTC) y se sustituye al montar. Las dos partes existen desde el HTML: al hidratar solo cambia el
  * texto, nunca el número de líneas (sin desplazamientos de diseño).
  */
-export function LocalTime({ iso, lang, circuitTimeZone, circuitLabel }: Props) {
+export function LocalTime({ iso, lang, circuitTimeZone, circuitLabel, stacked = false }: Props) {
   const [visitorZone, setVisitorZone] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,9 +36,9 @@ export function LocalTime({ iso, lang, circuitTimeZone, circuitLabel }: Props) {
         {!visitorZone && !circuitTimeZone ? " UTC" : ""}
       </span>
       {circuitTimeZone ? (
-        <span className="muted">
-          {" "}
-          · {formatTime(lang, iso, circuitTimeZone)} {circuitLabel}
+        <span className={stacked ? "muted block" : "muted"}>
+          {stacked ? "" : " · "}
+          {formatTime(lang, iso, circuitTimeZone)} {circuitLabel}
         </span>
       ) : null}
     </time>

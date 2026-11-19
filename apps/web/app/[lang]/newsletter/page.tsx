@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FormMessage } from "@/components/form-message";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ msg?: string }> };
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.title,
     description: t.lede,
-    alternates: { canonical: `/${lang}/newsletter`, languages: { es: "/es/newsletter", en: "/en/newsletter" } },
+    alternates: { canonical: `/${lang}/newsletter`, languages: { es: "/es/newsletter", en: "/en/newsletter", de: "/de/newsletter" } },
   };
 }
 
@@ -23,19 +24,27 @@ export default async function NewsletterPage({ params, searchParams }: Props) {
   const { msg } = await searchParams;
   const t = dict(lang).newsletter;
   return (
-    <div className="container stack-l prose">
-      <h1>{t.title}</h1>
-      <p className="lede">{t.lede}</p>
-      <ul>
-        {t.contents.map((line) => (
-          <li key={line}>{line}</li>
-        ))}
-      </ul>
-      <FormMessage lang={lang} msg={msg} />
-      <NewsletterForm lang={lang} back="newsletter" />
-      <p className="source">
-        <Link href={`/${lang}/privacy`}>{dict(lang).footer.privacy}</Link>
-      </p>
-    </div>
+    <>
+      <PageHero icon="book" kicker="Paddock Notes" title={t.title} lede={<p>{t.lede}</p>} />
+      <div className="container nlp">
+        <ol className="nlp-steps">
+          {t.contents.map((line, i) => (
+            <li key={line}>
+              <span className="nlp-n tabular" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span>{line}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="nlp-form" data-surface="ink">
+          <FormMessage lang={lang} msg={msg} />
+          <NewsletterForm lang={lang} back="newsletter" />
+          <p className="source">
+            <Link href={`/${lang}/privacy`}>{dict(lang).footer.privacy}</Link>
+          </p>
+        </div>
+      </div>
+    </>
   );
 }

@@ -89,7 +89,7 @@ export function delta(a: TelemetryData, b: TelemetryData): { distance: number[];
  * caja de 0 a 1000 y se reduce a un punto cada `every` metros. El SVG se dibuja en la web.
  */
 /** Versión de la detección de frenadas: forma parte de la clave de caché del trazado. Súbela al cambiarla. */
-export const CORNERS_VERSION = 2;
+export const CORNERS_VERSION = 4;
 
 export interface BrakingZone {
   /** Orden en la vuelta, desde la línea de meta. */
@@ -155,10 +155,19 @@ export function brakingZones(t: TelemetryData, { minDrop = 20, window = 600, mer
   }));
 }
 
-export function circuitLayout(
-  t: TelemetryData,
-  every = 40,
-): { points: [number, number][]; length: number; corners: (Omit<BrakingZone, "index"> & { point: [number, number] })[] } {
+export interface CircuitLayout {
+  points: [number, number][];
+  /** Segundo de la vuelta en que se pasa por cada punto: permite recorrer el trazado al ritmo real. */
+  times: number[];
+  /** Velocidad (km/h) en cada punto: el trazado se colorea con ella. */
+  speeds: number[];
+  length: number;
+  lapTime: number;
+  driver: { code: string; name: string };
+  corners: (Omit<BrakingZone, "index"> & { point: [number, number] })[];
+}
+
+export function circuitLayout(t: TelemetryData, every = 40): CircuitLayout {
   const step = Math.max(1, Math.round(every / t.step));
   const xs = t.x;
   const ys = t.y;
@@ -167,7 +176,21 @@ export function circuitLayout(
   // El eje y de las coordenadas crece hacia arriba; en SVG, hacia abajo.
   const project = (i: number): [number, number] => [Math.round((xs[i]! - minX) * scale), Math.round((maxY - ys[i]!) * scale)];
   const points: [number, number][] = [];
-  for (let i = 0; i < xs.length; i += step) points.push(project(i));
+  const times: number[] = [];
+  const speeds: number[] = [];
+  for (let i = 0; i < xs.length; i += step) {
+    points.push(project(i));
+    times.push(Math.round((t.time[i] ?? 0) * 100) / 100);
+    speeds.push(Math.round(t.speed[i] ?? 0));
+  }
   const corners = brakingZones(t).map(({ index, ...zone }) => ({ ...zone, point: project(index) }));
-  return { points, length: Math.round(t.distance.at(-1) ?? 0), corners };
+  return {
+    points,
+    times,
+    speeds,
+    length: Math.round(t.distance.at(-1) ?? 0),
+    lapTime: t.lapTime,
+    driver: { code: t.driver.code, name: t.driver.name },
+    corners,
+  };
 }

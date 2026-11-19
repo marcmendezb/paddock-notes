@@ -3,6 +3,7 @@ import type { PaceData } from "@paddock/analysis";
 import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 import { Marker, seriesClass } from "../charts/series";
+import { localeOf } from "@/lib/format";
 
 /**
  * Ritmo de carrera (TEC-03): tiempo por vuelta de hasta cuatro pilotos y tendencia de cada stint.
@@ -93,7 +94,7 @@ export function PaceChart({
 
 export function PaceTable({ lang, data, selected }: { lang: Lang; data: PaceData; selected: number[] }) {
   const t = dict(lang).analysis;
-  const fmt = new Intl.NumberFormat(lang === "es" ? "es-ES" : "en-GB", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const fmt = new Intl.NumberFormat(localeOf(lang), { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   return (
     <div className="table-wrap" tabIndex={0} role="region" aria-label={t.tableAlt}>
       <table>

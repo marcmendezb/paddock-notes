@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { SearchResult } from "@paddock/shared";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
+import { Icon } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ q?: string }> };
@@ -22,30 +24,43 @@ export default async function SearchPage({ params, searchParams }: Props) {
   const results = q.length >= 2 ? await api.search(q) : null;
 
   return (
-    <div className="container stack-l">
-      <h1>{t.title}</h1>
-      <form action={`/${lang}/search`} method="get" role="search" className="inline-form">
-        <label>
-          {t.label}
-          <input type="search" name="q" defaultValue={q} minLength={2} maxLength={50} autoFocus />
-        </label>
-        <button type="submit">{t.button}</button>
-      </form>
+    <>
+      <PageHero icon="search" size="m" kicker={t.label} title={t.title}>
+        <form action={`/${lang}/search`} method="get" role="search" className="srch-form">
+          <label>
+            <span className="visually-hidden">{t.label}</span>
+            <input type="search" name="q" defaultValue={q} minLength={2} maxLength={50} autoFocus placeholder={t.label} />
+          </label>
+          <button type="submit" className="cmp-go">
+            {t.button}
+          </button>
+        </form>
+      </PageHero>
+      <div className="container stack-l">
       {results && results.data.length > 0 ? (
-        <ul className="stack-s" aria-live="polite">
+        <ul className="tiles" aria-live="polite">
           {results.data.map((r) => (
             <li key={`${r.kind}-${r.id}`}>
-              <Link href={`/${lang}/${HREF[r.kind]}/${r.id}`}>{r.label}</Link>{" "}
-              <span className="muted">
-                · {t.kinds[r.kind]}
-                {r.detail ? ` · ${r.detail}` : ""}
-              </span>
+              <Link href={`/${lang}/${HREF[r.kind]}/${r.id}`} className="tile">
+                <span className="tile-icon">
+                  <Icon name={r.kind === "driver" ? "user" : r.kind === "constructor" ? "wrench" : "pin"} />
+                </span>
+                <span className="tile-arrow" aria-hidden="true">
+                  →
+                </span>
+                <span className="tile-title">{r.label}</span>
+                <span className="tile-meta">
+                  {t.kinds[r.kind]}
+                  {r.detail ? ` · ${r.detail}` : ""}
+                </span>
+              </Link>
             </li>
           ))}
         </ul>
       ) : q.length >= 2 ? (
         <p>{t.empty(q)}</p>
       ) : null}
-    </div>
+      </div>
+    </>
   );
 }

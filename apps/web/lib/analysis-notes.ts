@@ -2,6 +2,7 @@ import type { PaceData, ReplayData, SectorsData, StrategyData, TelemetryData } f
 import { delta } from "@paddock/analysis";
 import type { Lang } from "@paddock/shared";
 import { dict } from "./i18n";
+import { localeOf } from "@/lib/format";
 
 /**
  * Notas automáticas bajo cada gráfico (TEC-08). Se generan con reglas a partir de los datos y solo
@@ -9,7 +10,7 @@ import { dict } from "./i18n";
  */
 
 const fmt = (lang: Lang, n: number, digits = 3) =>
-  new Intl.NumberFormat(lang === "es" ? "es-ES" : "en-GB", { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(n);
+  new Intl.NumberFormat(localeOf(lang), { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(n);
 
 export function strategyNote(lang: Lang, data: StrategyData): string | null {
   const t = dict(lang).analysis;

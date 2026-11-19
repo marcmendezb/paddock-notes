@@ -304,6 +304,54 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 
 **Consecuencia:** el mismo flujo funciona en local, en la preview y en producción. En producción el proxy no se usa, porque la ruta del dominio llega antes.
 
+## D-27 · Cabecera, hero y movimiento
+
+**Contexto:** rediseño de la cabecera y del hero de la home, pedido por el autor, para que la web tenga una primera impresión a la altura del contenido.
+
+**Decisión:**
+
+- **Cabecera de muro de boxes.** Arriba, un cronometraje que se desplaza sin parar: empieza por lo que está en directo o por el próximo evento y alterna evento y dato (sesiones que quedan, siguientes GP, líderes, último ganador, vuelta rápida, remontada, análisis, nota y efeméride). Se recalcula cada 30 s y pide datos nuevos cada 10 minutos. Debajo, una barra flotante con el símbolo (solo el símbolo; el nombre va en la etiqueta accesible), las secciones con un bloque lima que se desliza bajo la señalada y un panel con datos reales por sección. En móvil, menú a pantalla completa con un `<details>`, que funciona sin JavaScript.
+- **Hero.** Vídeo propio de fondo, grabado desde la grada, en blanco y negro, sin sonido y recortado para que no aparezca ninguna marca; pesa 700 kB (escritorio) o 400 kB (móvil), se carga cuando la página ya ha cargado y aparece con un fundido cuando puede reproducirse sin cortes. Se sirve por `/media`, que responde a peticiones por rangos (HTTP 206), porque los recursos estáticos de Workers no lo hacen y Safari en iPhone lo necesita. Encima, el trazado del próximo circuito coloreado por velocidad con un cuadrado lima que lo recorre al ritmo real de la vuelta rápida, la cuenta atrás como cota y el fin de semana como calendario.
+- **Movimiento.** Desplazamiento suave con Lenis; entrada coreografiada del hero y animaciones ligadas al scroll con CSS (`animation-timeline`), solo `transform` y `opacity` y curvas exponenciales. Todo se desactiva con «reducir movimiento». Las pruebas en navegador se ejecutan con movimiento reducido: comprueban la página en reposo.
+
+**Excepción consciente a WCAG 2.2.2 (Pausar, detener, ocultar, nivel A).** El autor decidió que el cronometraje no se pueda parar. El único mecanismo que queda es la preferencia «reducir movimiento» del sistema, con la que se queda quieto. Es un incumplimiento de TRA-20 asumido y documentado; para volver a cumplir basta con recuperar el botón de pausa del componente `TimingStrip`. El vídeo del hero sí tiene su botón de pausa.
+
+**Consecuencia:** la CSP añade `media-src 'self'`. La cabecera hace siete consultas a la API por página, todas cacheadas en la capa de datos y tolerantes a fallos: si la API no responde, la navegación sale igual.
+
+## D-28 · Secciones de la home, foco y colores de estado
+
+**Contexto:** segunda tanda del rediseño, pedida por el autor: última carrera, clasificación y newsletter, y reglas visuales que valen para toda la web.
+
+**Decisión:**
+
+- **Colores de estado.** «Siguiente» va siempre en lila (acento 2) y «en directo» siempre en lima (acento 1): en el cronometraje (lo fijo de la izquierda, un bloque de color entero con texto negro, completa D-27), en el calendario del fin de semana y en las cuentas atrás de la cinta.
+- **Última carrera.** Banda clara (gris de la marca) que abre una franja a cuadros de meta, con el circuito de la carrera de fondo (curva suave y un círculo lila que lo recorre). El ganador y la nota van en bloques negros; el gráfico de posiciones, en una tarjeta con leyenda y las cuatro cifras al pie. La meta muestra las posiciones ganadas o perdidas (+4, −1).
+- **Clasificación como pelea por el título.** Banda negra con un carril por piloto (y por equipo): puntos, lo que aún puede sumar, los puntos del líder y el máximo posible. El titular sale de la cuenta de NUC-36 («X, campeón del mundo», «Cosa de dos», «N pilotos aún pueden ser campeones»). Los equipos suman como máximo un primero y un segundo por ronda.
+- **Newsletter que se enseña.** Junto al formulario, un número de muestra hecho con la última carrera (nota, cinco primeros, línea de posición del ganador y próxima cita en hora de Madrid o Londres), rotulado como muestra.
+- **Pictogramas animados.** Cada pictograma tiene una pieza que se mueve (aguja, bandera, manecillas…) al pasar por encima de su enlace o botón y, en bloques marcados, al entrar en pantalla. Quietos con «reducir movimiento».
+- **Foco sin anillo.** El autor no quiere anillos de selección. El foco con teclado sigue viéndose (WCAG 2.4.7): los enlaces se subrayan con el color de foco, los controles toman un fondo tenue y el logo se pinta en lila.
+- **Sin filetes de un solo lado** en color o más gruesos (marca.md §3): se destacan los bloques con fondo, borde completo o pictograma.
+- **Pie de página.** Siempre en negro. A la izquierda, el símbolo en grande: una luz lila lo recorre sin parar por una trazada curva y sin esquinas, con estela dentro de las letras; el punto lima no se mueve (no se deforma) y respira al volver la luz. Se inclina en 3D hacia el cursor. Debajo, el eslogan y la newsletter. A la derecha, la temporada carrera a carrera y la navegación. Lo legal, en una línea pequeña con el contraste mínimo de AA.
+- **Transición entre páginas.** Cortina en dos capas (lima y lila, alternando cuál va delante) que sube desde abajo al instante del clic, tapa mientras se carga la página nueva y sigue subiendo para descubrirla. Se hace con un componente propio (`RouteCurtain`), no con la View Transitions API: esta solo anima cuando la página nueva ya ha cargado, y el clic se quedaba sin respuesta. Sin JavaScript o con «reducir movimiento», navegación normal.
+- **Cabecera.** Negra a todo el ancho en todas las páginas, también en la home. La página activa y el hover van en cursiva. El panel de «Carreras» es un panel ancho con el próximo GP (sesiones en la hora del visitante), la temporada alrededor de hoy y la última carrera.
+- **Scroll.** Lenis con más inercia y sin rebote elástico en los bordes.
+- **Newsletter.** Casilla de consentimiento obligatoria con enlace a la política de privacidad, comprobada también en la API.
+
+**Consecuencia:** la home pide además el calendario de la temporada y el trazado del circuito de la última carrera; las dos consultas son tolerantes a fallos y, sin ellas, las secciones salen sin el dato que falta.
+
+
+## D-29 · Alemán como tercer idioma
+
+**Contexto:** el autor quiere toda la web también en alemán, con opción de elegirlo.
+
+**Decisión:**
+
+- `LANGS` pasa a `es`, `en` y `de`. Rutas `/de/…`, `hreflang` en todas las páginas y en el sitemap, y negociación por `Accept-Language` (un navegador en alemán entra en `/de`; los idiomas sin traducción siguen yendo al español).
+- Todo se escribe en alemán por separado, no se traduce en tiempo real: el diccionario de interfaz, los 13 explicadores, las fichas de circuito, las notas de carrera, el glosario, las páginas de texto, las notas de curvas, los nombres de Grandes Premios («Großer Preis von Brasilien») y los emails (newsletter, avisos, enlace de acceso y aviso de borrado). Se tutea, como en español.
+- Fechas y números con `de-DE`; la lista alemana de la newsletter usa la hora de Berlín.
+- El selector de idioma enseña los tres (ES · EN · DE, con el nombre completo como etiqueta accesible) y conserva la página.
+
+**Consecuencia:** cada texto nuevo de interfaz o contenido se escribe en los tres idiomas; TypeScript lo exige (`Record<Lang, …>`). Las pruebas en navegador incluyen páginas en alemán.
 ---
 
 ## Fuentes (consultadas el 5 de noviembre de 2026)
@@ -324,3 +372,63 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 - Containers, control de salida (ya no aplica tras D-08) — https://developers.cloudflare.com/containers/platform-details/outbound-traffic/
 - `bacinger/f1-circuits` (MIT) — https://github.com/bacinger/f1-circuits
 - Reglamento 2026 — https://www.formula1.com/en/latest/article/from-smaller-cars-to-a-bigger-budget-cap-12-rule-changes-you-need-to-know-in.56uUTFhB0z5j3iZfhC0rGP
+
+## D-30 · Ficha de circuito, anclas y animación de entrada
+
+**Contexto:** la ficha de circuito se leía como una lista (un mapamundi en una tarjeta, un trazado en negro y una tabla), y el subencabezado de carrera y circuito llevaba a una sección equivocada.
+
+**Decisión:**
+
+- **Ficha de circuito:**
+  - **La vuelta rápida a tiempo real** en el hero: el trazado coloreado por la velocidad de cada tramo y el cuadrado lima recorriéndolo con los tiempos de la telemetría. La acompañan un velocímetro, el crono y una barra de progreso. Se mueve con `requestAnimationFrame` y atributos SVG; se puede pausar (WCAG 2.2.2), se para fuera de pantalla y con movimiento reducido no arranca sola.
+  - **«La vuelta»**, en una banda negra: cifras de la vuelta, la traza de velocidad metro a metro con dos notas (la punta y la frenada más lenta) y una ficha por frenada con la nota editorial. Sustituye a la tabla de frenadas.
+  - **«Dónde está»**: un globo ortográfico girado hacia el circuito, con la noche de ese momento (posición del sol aproximada a un grado), la hora local y la diferencia con la del visitante.
+  - **Palmarés**: ranking de pilotos y equipos (desde cuatro Grandes Premios) y todos los ganadores, año a año.
+  - Sin telemetría, el hero usa el trazado de bacinger/f1-circuits (MIT) y la ficha omite «La vuelta».
+- **Anclas:** las lleva `SmoothScroll` y no Lenis. Lenis no cancelaba el salto nativo, restaba dos veces el margen y medía con las transformaciones de las animaciones de entrada.
+  - La posición se calcula con `offsetTop` y se descuentan la cabecera y el subencabezado.
+  - Sin JavaScript, `scroll-margin-top` deja el título en el mismo sitio.
+  - La pestaña pulsada queda marcada hasta que se vuelve a desplazar a mano.
+  - Comprobado en Chromium, WebKit y Firefox.
+- **Animación de entrada:** una vez por sesión del navegador (`sessionStorage`). Al recargar o navegar no se repite, para no hacer esperar al lector.
+
+**Consecuencia:** `topojson-client` y `world-atlas` pasan a dependencias de ejecución de la web. Safari aplica `upgrade-insecure-requests` también a `http://localhost`, así que para probar WebKit en local hay que quitar esa directiva de la CSP en la prueba (en producción, con HTTPS, no afecta).
+
+## D-31 · Resultado provisional de OpenF1
+
+**Contexto:** el 8 de noviembre de 2026, tras el GP de São Paulo, Jolpica dejó de responder durante horas. La web siguió sin resultado aunque OpenF1 tenía la clasificación final minutos después de la bandera a cuadros. El autor quiere la web siempre al día.
+
+**Decisión:**
+
+- En el cron de 15 minutos, tras una carrera y antes de pedir el oficial a Jolpica, la ingesta lee `session_result` y `drivers` de OpenF1 (validados con Zod) y los guarda en una tabla aparte, `provisional_results`. Si OpenF1 falla (por ejemplo, cerrado por otra sesión en directo, D-25), se intenta el oficial igualmente.
+- Los pilotos se casan por su código de tres letras con la parrilla de la temporada. No se inventan identificadores: hasta dos debutantes se omiten, salvo que estén en el podio; si algo más no cuadra (posiciones repetidas, sin ganador, número de coches imposible), no se escribe nada.
+- La API sirve el provisional, con `provisional: true`, solo mientras no hay resultado oficial; también cuenta como «última carrera» de la portada. No entra en clasificaciones, récords ni histórico. Cuando llega el oficial, la siguiente pasada borra el provisional.
+- La página de carrera lo muestra con un aviso: falta la confirmación oficial, puede cambiar por sanciones y sus puntos aún no cuentan en el Mundial. Sin parrilla ni vuelta rápida, que OpenF1 no da en esa respuesta.
+
+**Consecuencia:** sigue sin clave de pago (D-08). El directo vuelta a vuelta durante la carrera queda fuera: exige la cuenta de pago de OpenF1 y sería una decisión aparte.
+
+## D-32 · Cabecera y piezas comunes de las páginas de sección
+
+**Contexto:** las páginas que no tenían diseño propio (análisis, aprende, notas, glosario, récords, fichas de piloto y equipo, cara a cara, quiz, simulador, predicciones, newsletter, cuenta, búsqueda, páginas de texto y ligas) eran un título sobre blanco con listas y formularios del navegador.
+
+**Decisión:**
+
+- **`PageHero`** (`components/page-hero.tsx`): la misma banda negra que las páginas de carrera, circuito, histórico y clasificación.
+  - Contiene antetítulo con pictograma, título grande, entradilla y un hueco a la derecha para cifras (`HeroStats`) o acciones.
+  - Detrás, el pictograma de la sección en gigante y en trazo tenue.
+- **Fichas de piloto y equipo** (`components/profile-view.tsx`):
+  - el dorsal (o las iniciales del equipo) enorme en contorno, detrás;
+  - los títulos como insignias lima;
+  - el balance frente al compañero de equipo como barra partida;
+  - temporada a temporada en tabla oscura, con barra de puntos.
+- **Tarjetas enlazadas (`.tile`)** para listas de destinos: herramientas, explicadores, carreras analizadas y resultados de búsqueda.
+- **Tablas de datos en el estilo de cronometraje** (`.timing`, con barras): récords, simulador, predicciones, recálculo y trayectorias.
+- **Formularios con el lenguaje de la marca:** campos de borde completo, opciones grandes en el quiz, podio para las predicciones y «A vs B» en cara a cara.
+- **La crónica de la portada (`race-report.tsx`)** es una plantilla fija que se rellena solo con el resultado, también el provisional (D-31):
+  - un titular escrito con los datos;
+  - el podio escalonado;
+  - seis claves;
+  - el gráfico de salida a meta de toda la parrilla;
+  - los puntos del 4.º al 10.º.
+
+**Consecuencia:** una página nueva empieza por `PageHero` y reutiliza estas piezas. Las pruebas en navegador apuntan a las clases nuevas (`.an-latest-title`, `.an-tools`, `.sim-champion`).

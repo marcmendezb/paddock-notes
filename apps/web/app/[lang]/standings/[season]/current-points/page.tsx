@@ -5,6 +5,7 @@ import { DriverLink } from "@/components/links";
 import { api } from "@/lib/api";
 import { formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang, parseSeason } from "@/lib/params";
 import { favoriteSet } from "@/lib/session";
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: t.description(season),
     alternates: {
       canonical: `/${lang}/standings/${season}/current-points`,
-      languages: { es: `/es/standings/${season}/current-points`, en: `/en/standings/${season}/current-points` },
+      languages: { es: `/es/standings/${season}/current-points`, en: `/en/standings/${season}/current-points`, de: `/de/standings/${season}/current-points` },
     },
   };
 }
@@ -38,13 +39,10 @@ export default async function CurrentPointsPage({ params }: Props) {
   const actualChampion = data.rows.find((r) => r.actualPosition === 1);
 
   return (
+    <>
+      <PageHero icon="layers" size="m" kicker={t.recalc.label} title={t.recalc.title(season)} lede={<p>{t.recalc.lede}</p>} />
     <div className="container stack-xl">
       <div className="stack-s prose">
-        <p className="eyebrow">
-          <span className="tag tag-accent">{t.recalc.label}</span>
-        </p>
-        <h1>{t.recalc.title(season)}</h1>
-        <p className="lede">{t.recalc.lede}</p>
         {champion && actualChampion ? (
           <p className="auto-note">
             {champion.driver.id === actualChampion.driver.id
@@ -55,8 +53,9 @@ export default async function CurrentPointsPage({ params }: Props) {
         <p className="muted">{t.recalc.counted(data.races, data.sprints)}</p>
       </div>
 
+      <div className="timing" data-surface="ink">
       <div className="table-wrap" tabIndex={0} role="region" aria-label={t.recalc.title(season)}>
-        <table>
+        <table className="timing-table">
           <caption className="visually-hidden">{t.recalc.label}</caption>
           <thead>
             <tr>
@@ -74,8 +73,8 @@ export default async function CurrentPointsPage({ params }: Props) {
               const fav = favorites.has(`d:${r.driver.id}`);
               return (
                 <tr key={r.driver.id} className={fav ? "is-favorite" : undefined}>
-                  <td className="num">{r.position}</td>
-                  <th scope="row">
+                  <td className="num timing-pos">{r.position}</td>
+                  <th scope="row" className="timing-driver">
                     <DriverLink lang={lang} driver={r.driver} />
                     {fav ? <span className="tag tag-fav">{t.favorite}</span> : null}
                   </th>
@@ -91,10 +90,14 @@ export default async function CurrentPointsPage({ params }: Props) {
           </tbody>
         </table>
       </div>
+      </div>
 
       <p>
-        <Link href={`/${lang}/standings/${season}`}>{t.recalc.back(season)}</Link>
+        <Link href={`/${lang}/standings/${season}`} className="ln-more">
+          ← {t.recalc.back(season)}
+        </Link>
       </p>
     </div>
+    </>
   );
 }

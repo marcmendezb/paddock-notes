@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { gpName } from "@paddock/shared";
 import { FormMessage } from "@/components/form-message";
+import { PageHero } from "@/components/page-hero";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
@@ -34,10 +35,16 @@ export default async function LeaguePage({ params, searchParams }: Props) {
   const form = (name: string) => `/${lang}/forms/${name}`;
 
   return (
+    <>
+      <PageHero
+        icon="trophy"
+        size="m"
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/account`, label: t.account.title }, { label: league.name }]} />}
+        kicker={t.predictions.title}
+        title={league.name}
+      />
     <div className="container stack-xl prose">
       <div className="stack-s">
-        <Breadcrumbs lang={lang} items={[{ href: `/${lang}/account`, label: t.account.title }, { label: league.name }]} />
-        <h1>{league.name}</h1>
         <FormMessage lang={lang} msg={msg} okText={msg?.startsWith("report") ? t.league.reported : undefined} />
       </div>
 
@@ -105,5 +112,6 @@ export default async function LeaguePage({ params, searchParams }: Props) {
         </form>
       </div>
     </div>
+    </>
   );
 }

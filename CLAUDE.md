@@ -17,7 +17,7 @@ Web no oficial que explica la F1 con datos. Monorepo pnpm, todo en TypeScript y 
 - **D-04:** todo el HTML se renderiza por petición con CSP con nonce (`apps/web/middleware.ts`). Nada de `style=""` en línea, ni `dangerouslySetInnerHTML`, ni scripts de terceros sin justificar en `docs/seguridad.md` §4.1.
 - **D-19:** pnpm no instala versiones con menos de 14 días (`pnpm-workspace.yaml`).
 - Todo lo externo es hostil: valida con Zod antes de escribir en D1.
-- Textos de interfaz en ES y EN por separado (`apps/web/lib/i18n.ts`); la voz está en `docs/contenido.md` §2.
+- Textos de interfaz en ES, EN y DE por separado (`apps/web/lib/i18n.ts`, D-29); la voz está en `docs/contenido.md` §2.
 
 ## Comandos
 

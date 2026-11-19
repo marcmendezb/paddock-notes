@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { DEFAULT_LANG, isLang } from "@paddock/shared";
+import { INTRO_SCRIPT, IntroLoader } from "@/components/intro-loader";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -19,15 +20,22 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const requested = (await headers()).get("x-lang") ?? DEFAULT_LANG;
+  const h = await headers();
+  const requested = h.get("x-lang") ?? DEFAULT_LANG;
+  const nonce = h.get("x-nonce") ?? undefined;
   const lang = isLang(requested) ? requested : DEFAULT_LANG;
   return (
-    <html lang={lang}>
+    // suppressHydrationWarning: el script de la entrada puede marcar <html data-intro> antes de hidratar.
+    <html lang={lang} suppressHydrationWarning>
       <head>
         {/* La fuente del titular y la cuenta atrás: precargarla evita que el LCP espere a descubrirla en el CSS. */}
         <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </head>
-      <body>{children}</body>
+      <body>
+        <script nonce={nonce}>{INTRO_SCRIPT}</script>
+        <IntroLoader />
+        {children}
+      </body>
     </html>
   );
 }

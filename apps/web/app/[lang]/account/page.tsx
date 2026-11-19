@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { fullName } from "@/lib/format";
 import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 import { currentUser } from "@/lib/session";
 
@@ -27,9 +28,12 @@ export default async function AccountPage({ params, searchParams }: Props) {
 
   if (!me) {
     return (
-      <div className="container stack-l prose">
-        <h1>{t.signInTitle}</h1>
-        <p className="lede">{t.signInLede}</p>
+      <>
+      <PageHero icon="user" size="m" kicker={t.nav} title={t.signInTitle} lede={<p>{t.signInLede}</p>} />
+      <div className="container acc-card-wrap">
+      <div className="acc-card">
+
+
         <FormMessage lang={lang} msg={msg} />
         <form action={action("magic-link")} method="post" className="stack">
           <input type="hidden" name="back" value="account" />
@@ -47,14 +51,18 @@ export default async function AccountPage({ params, searchParams }: Props) {
           <Link href={`/${lang}/privacy`}>{dict(lang).footer.privacy}</Link>
         </p>
       </div>
+      </div>
+      </>
     );
   }
 
   return (
-    <div className="container stack-xl prose">
+    <>
+      <PageHero icon="user" size="m" kicker={t.nav} title={t.title} lede={<p>{me.email}</p>} />
+      <div className="container stack-xl prose acc">
       <div className="stack-s">
-        <h1>{t.title}</h1>
-        <p className="muted">{me.email}</p>
+
+
         <FormMessage lang={lang} msg={msg} />
       </div>
 
@@ -72,6 +80,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
           <select name="lang" defaultValue={me.lang}>
             <option value="es">Español</option>
             <option value="en">English</option>
+            <option value="de">Deutsch</option>
           </select>
         </label>
         <button type="submit">{t.save}</button>
@@ -152,6 +161,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
         </form>
       </section>
     </div>
+    </>
   );
 }
 

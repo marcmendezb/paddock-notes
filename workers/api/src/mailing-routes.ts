@@ -47,7 +47,8 @@ export function mountMailing(app: Hono<AppEnv>) {
   app.post("/newsletter", async (c) => {
     const { email, lang } = await json(
       c,
-      z.object({ email: z.string().trim().max(200).pipe(z.email()), lang: z.string() }).strict(),
+      // Consentimiento expreso (RGPD art. 7): sin la casilla marcada no hay alta.
+      z.object({ email: z.string().trim().max(200).pipe(z.email()), lang: z.string(), consent: z.literal(true) }).strict(),
     );
     if (!isLang(lang)) throw new HttpError("invalid_parameter", "Idioma no válido.");
     if (!(await verifyTurnstile(c, c.req.header("x-captcha-response")))) {

@@ -93,6 +93,7 @@
 | `/meetings` | Correspondencia entre el Gran Premio de Jolpica y el de OpenF1 | Todas las de fase 3 |
 | `/sessions` | Claves de sesión (`session_key`) y horarios | Todas las de fase 3 |
 | `/drivers` | Número, código y equipo de cada piloto por sesión | TEC-02–07 |
+| `/session_result` | Clasificación final de la carrera, minutos después de la bandera a cuadros: resultado provisional (D-31) | NUC-05, NUC-22 |
 | `/weather` | Temperatura de aire y pista, lluvia | NUC-27 |
 | `/stints` | Compuesto y vueltas de cada stint | TEC-02 |
 | `/pit` | Paradas (`lane_duration`; `stop_duration` solo desde el GP de EE. UU. de 2024) | NUC-26 (desde 2023), TEC-02 |

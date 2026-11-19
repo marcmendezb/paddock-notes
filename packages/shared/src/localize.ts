@@ -69,14 +69,86 @@ const SPECIAL_ES: Record<string, string> = {
   "United States Grand Prix West": "Gran Premio del Oeste de Estados Unidos",
 };
 
-/** Nombre del GP en el idioma de la página: "Brazilian Grand Prix" → "Gran Premio de Brasil". */
+/** "Australian" → "von Australien". Incluye la preposición o el artículo que pide cada nombre. */
+const GP_DE: Record<string, string> = {
+  "70th Anniversary": "zum 70. Jubiläum",
+  "Abu Dhabi": "von Abu Dhabi",
+  Argentine: "von Argentinien",
+  Australian: "von Australien",
+  Austrian: "von Österreich",
+  Azerbaijan: "von Aserbaidschan",
+  Bahrain: "von Bahrain",
+  Barcelona: "von Barcelona",
+  Belgian: "von Belgien",
+  Brazilian: "von Brasilien",
+  British: "von Großbritannien",
+  "Caesars Palace": "von Caesars Palace",
+  Canadian: "von Kanada",
+  Chinese: "von China",
+  Dallas: "von Dallas",
+  Detroit: "von Detroit",
+  Dutch: "der Niederlande",
+  Eifel: "der Eifel",
+  "Emilia Romagna": "der Emilia-Romagna",
+  European: "von Europa",
+  French: "von Frankreich",
+  German: "von Deutschland",
+  Hungarian: "von Ungarn",
+  Indian: "von Indien",
+  Italian: "von Italien",
+  Japanese: "von Japan",
+  Korean: "von Korea",
+  "Las Vegas": "von Las Vegas",
+  Luxembourg: "von Luxemburg",
+  Madrid: "von Madrid",
+  Malaysian: "von Malaysia",
+  Mexican: "von Mexiko",
+  "Mexico City": "von Mexiko-Stadt",
+  Miami: "von Miami",
+  Monaco: "von Monaco",
+  Moroccan: "von Marokko",
+  Pacific: "des Pazifiks",
+  Pescara: "von Pescara",
+  Portuguese: "von Portugal",
+  Qatar: "von Katar",
+  Russian: "von Russland",
+  Sakhir: "von Sakhir",
+  "San Marino": "von San Marino",
+  "São Paulo": "von São Paulo",
+  "Saudi Arabian": "von Saudi-Arabien",
+  Singapore: "von Singapur",
+  "South African": "von Südafrika",
+  Spanish: "von Spanien",
+  Styrian: "der Steiermark",
+  Swedish: "von Schweden",
+  Swiss: "der Schweiz",
+  Turkish: "der Türkei",
+  Tuscan: "der Toskana",
+  "United States": "der USA",
+};
+
+const SPECIAL_DE: Record<string, string> = {
+  "Indianapolis 500": "Indianapolis 500",
+  "United States Grand Prix West": "Großer Preis der USA West",
+};
+
+/** Nombre del GP en el idioma de la página: "Brazilian Grand Prix" → "Gran Premio de Brasil" / "Großer Preis von Brasilien". */
 export function gpName(lang: Lang, name: string): string {
   if (lang === "en") return name;
-  const special = SPECIAL_ES[name];
+  const special = (lang === "de" ? SPECIAL_DE : SPECIAL_ES)[name];
   if (special) return special;
   const match = /^(.+) Grand Prix$/.exec(name);
-  const of = match ? GP_ES[match[1]!] : undefined;
-  return of ? `Gran Premio ${of}` : name;
+  const of = match ? (lang === "de" ? GP_DE : GP_ES)[match[1]!] : undefined;
+  if (!of) return name;
+  return lang === "de" ? `Großer Preis ${of}` : `Gran Premio ${of}`;
+}
+
+/** Nombre corto del GP, sin «Gran Premio de» / «Grand Prix» / «Großer Preis von»: «Brasil», «Brazilian», «Brasilien». */
+export function gpShortName(lang: Lang, name: string): string {
+  return gpName(lang, name)
+    .replace(/^Gran Premio (?:de la |de los |de las |del |de )?/, "")
+    .replace(/^Großer Preis (?:von |der |des |zum )?/, "")
+    .replace(/ Grand Prix$/, "");
 }
 
 /** País de Jolpica → código ISO 3166, para que Intl ponga el nombre en cada idioma. */

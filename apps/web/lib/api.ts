@@ -129,7 +129,11 @@ export const api = {
   circuitLayout: (id: string) =>
     get<{
       points: [number, number][];
+      times: number[];
+      speeds: number[];
       length: number;
+      lapTime: number;
+      driver: { code: string; name: string };
       season: number;
       round: number;
       corners: { n: number; at: number; speed: number; gear: number; point: [number, number] }[];

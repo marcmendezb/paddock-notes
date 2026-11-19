@@ -29,6 +29,8 @@ export function contentSecurityPolicy(nonce: string): string {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
     `style-src 'self'${isDev ? " 'unsafe-inline'" : ""}`,
     "img-src 'self' data:",
+    // Vídeo de fondo del hero, servido desde el propio sitio.
+    "media-src 'self'",
     "font-src 'self'",
     "connect-src 'self' https://cloudflareinsights.com",
     // Turnstile (COM-12): su script se carga con el nonce; el widget vive en un iframe.
@@ -87,5 +89,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // `api/`: proxy a la API (D-26), sin redirección de idioma ni CSP de página.
-  matcher: ["/((?!_next/static|_next/image|api/|fonts/|brand/|og-fonts/|icon.svg|favicon.ico|robots.txt|sitemap.xml|\\.well-known/).*)"],
+  matcher: ["/((?!_next/static|_next/image|api/|fonts/|brand/|og-fonts/|video/|media/|icon.svg|favicon.ico|robots.txt|sitemap.xml|\\.well-known/).*)"],
 };

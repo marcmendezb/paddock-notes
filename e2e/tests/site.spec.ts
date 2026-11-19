@@ -48,6 +48,12 @@ const PAGES = [
   "/en/newsletter",
   "/es/newsletter/confirm?token=nope",
   "/en/predictions",
+  "/de",
+  "/de/races/2026",
+  "/de/standings/2026",
+  "/de/learn/undercut-overcut",
+  "/de/learn/glossary",
+  "/de/notes/2026-mexico",
 ];
 
 /** Recoge errores de consola y de página: incluye violaciones de CSP y errores de hidratación. */
@@ -88,7 +94,8 @@ test("la raíz redirige al idioma preferido (TRA-11)", async ({ browser, baseURL
   for (const [locale, lang] of [
     ["en-GB", "en"],
     ["es-ES", "es"],
-    ["de-DE", "es"],
+    ["de-DE", "de"],
+    ["it-IT", "es"],
   ]) {
     const context = await browser.newContext({ baseURL, locale });
     const page = await context.newPage();
@@ -98,9 +105,14 @@ test("la raíz redirige al idioma preferido (TRA-11)", async ({ browser, baseURL
   }
 });
 
-test("el selector de idioma conserva la página (TRA-12)", async ({ page }) => {
+test("el selector de idioma conserva la página (TRA-12)", async ({ page, isMobile }) => {
   await page.goto(`/es/standings/${season}`);
-  await page.getByRole("link", { name: "English" }).click();
+  // En móvil, el idioma está dentro del menú.
+  if (isMobile) await page.locator(".menu-toggle").click();
+  // El desplegable de la cabecera (el pie tiene otro): se abre y se elige el idioma.
+  const select = page.locator(".site-header .lang-switch:visible").first();
+  await select.locator("summary").click();
+  await select.getByRole("link", { name: "English" }).click();
   await expect(page).toHaveURL(new RegExp(`/en/standings/${season}$`));
 });
 
@@ -191,16 +203,16 @@ test("los IDs inválidos o inexistentes dan 404", async ({ page }) => {
 test("cada herramienta de análisis carga sin errores y cumple WCAG (TEC-01 a TEC-09)", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("/es/analysis");
-  const race = page.locator("main h3 a").first();
+  const race = page.locator("main .an-latest-title a").first();
   test.skip((await race.count()) === 0, "No hay carreras analizadas en este entorno");
   await race.click();
   await page.waitForURL(/\/analysis\/\d{4}\/\d+$/);
-  const tools = await page.locator("main .cards h2 a").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
+  const tools = await page.locator("main .an-tools a.tile").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
   expect(tools.length).toBeGreaterThanOrEqual(4);
   for (const href of tools) {
     const response = await page.goto(href);
     expect(response?.status(), href).toBe(200);
-    await expect(page.locator("details summary").first()).toBeVisible();
+    await expect(page.locator("main details summary").first()).toBeVisible();
     const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
     expect(axe.violations.map((v) => `${href} ${v.id}: ${v.nodes.length}`)).toEqual([]);
   }
@@ -210,7 +222,7 @@ test("cada herramienta de análisis carga sin errores y cumple WCAG (TEC-01 a TE
 test("el comparador de telemetría se recorre con el teclado (TEC-04)", async ({ page, isMobile }) => {
   test.skip(isMobile, "Sin teclado en móvil");
   await page.goto("/es/analysis");
-  const race = page.locator("main h3 a").first();
+  const race = page.locator("main .an-latest-title a").first();
   test.skip((await race.count()) === 0, "No hay carreras analizadas en este entorno");
   const href = await race.getAttribute("href");
   await page.goto(`${href}/telemetry`);
@@ -237,7 +249,7 @@ test("el simulador calcula un escenario y lo guarda en la URL (COM-09)", async (
   await selects.first().selectOption("1");
   await page.getByRole("button", { name: "Calcular" }).click();
   await expect(page).toHaveURL(/r\d+_[a-z0-9_-]+=1/);
-  await expect(page.locator(".auto-note")).toContainText("sería campeón");
+  await expect(page.locator(".sim-champion")).toContainText("sería campeón");
   await context.close();
 });
 
@@ -271,7 +283,7 @@ test("la newsletter de la home no carga Turnstile hasta tocar el formulario (NUC
 
 test("explicador sugerido para el próximo GP (NUC-09)", async ({ page }) => {
   await page.goto("/es");
-  await expect(page.getByText("Para entender este GP:")).toBeVisible();
+  await expect(page.getByText("Para entender este GP", { exact: true })).toBeVisible();
 });
 
 test("confirmar y darse de baja piden pulsar un botón, no basta con abrir el enlace (D-16)", async ({ page }) => {
@@ -302,7 +314,34 @@ test("la web sirve /api por Service Binding y conserva la protección CSRF (D-26
   // Un origen ajeno no puede escribir aunque intente colar la cabecera interna.
   const forged = await request.post("/api/v1/newsletter", {
     headers: { origin: "https://evil.example", "x-paddock-origin": baseURL!, "content-type": "application/json" },
-    data: { email: "x@example.com", lang: "es" },
+    data: { email: "x@example.com", lang: "es", consent: true },
   });
   expect(forged.status()).toBe(403);
+});
+
+test("hero: el fin de semana como calendario, con la carrera destacada (NUC-03)", async ({ page }) => {
+  await page.goto("/es");
+  expect(await page.locator(".cal-block").count()).toBeGreaterThanOrEqual(3);
+  await expect(page.locator(".cal-race")).toHaveCount(1);
+  // Los horarios también están en texto, para lectores de pantalla.
+  expect(await page.locator(".sheet-sessions .sessions li").count()).toBeGreaterThanOrEqual(3);
+});
+
+test("cabecera: menú de móvil a pantalla completa, sin JavaScript también (TRA-01)", async ({ browser, baseURL, isMobile }) => {
+  test.skip(!isMobile, "Solo en móvil");
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto("/es");
+  await page.locator(".menu-toggle").click();
+  await expect(page.locator(".menu-sheet").getByRole("link", { name: /Clasificación/ })).toBeVisible();
+  await context.close();
+});
+
+test("cabecera: el cronometraje empieza por un evento y alterna con datos", async ({ page }) => {
+  await page.goto("/es");
+  // El evento en directo (o el siguiente) va fijo; la cinta sigue con dato, evento, dato…
+  await expect(page.locator(".ticker-lead")).toBeVisible();
+  const items = page.locator(".ticker-group").first().locator(".ticker-item");
+  await expect(items.nth(0)).not.toHaveClass(/ticker-event/);
+  await expect(items.nth(1)).toHaveClass(/ticker-event/);
 });

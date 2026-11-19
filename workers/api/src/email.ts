@@ -17,6 +17,12 @@ export async function sendEmail(env: Env, email: OutgoingEmail): Promise<void> {
 }
 
 export function magicLinkEmail(lang: string, url: string): Omit<OutgoingEmail, "to"> {
+  if (lang === "de") {
+    return {
+      subject: "Dein Anmeldelink für Paddock Notes",
+      text: `Mit diesem Link meldest du dich bei Paddock Notes an. Er funktioniert einmal und läuft nach 15 Minuten ab.\n\n${url}\n\nWenn du ihn nicht angefordert hast, ignoriere diese E-Mail.`,
+    };
+  }
   return lang === "en"
     ? {
         subject: "Your Paddock Notes sign-in link",

@@ -1,6 +1,6 @@
 # Paddock Notes — Estado de las funcionalidades
 
-> Qué está construido y probado, por ID de [funcionalidades.md](funcionalidades.md). Última revisión: 6 de noviembre de 2026.
+> Qué está construido y probado, por ID de [funcionalidades.md](funcionalidades.md). Última revisión: 19 de noviembre de 2026.
 > **Hecho:** implementado y cubierto por tests (unitarios, de Workers o en navegador). **Parcial:** funciona con limitaciones anotadas. **Pendiente:** sin empezar.
 
 ## Resumen
@@ -13,16 +13,23 @@
 | 4 · Comunidad | 13 | 0 | 0 |
 | 5 · Contenido y SEO | 7 | 3 | 0 |
 
+## Novedades del 6 al 19 de noviembre
+
+- **Diseño:** cabecera y pie nuevos, transición de cortina entre páginas, desplazamiento suave (D-28). Rediseño de la portada, las carreras, la página de cada GP, la ficha de circuito (vuelta rápida a tiempo real, globo, telemetría, «La previa» como doble página; D-30), la clasificación, el histórico y el resto de páginas con una cabecera común (D-32).
+- **Alemán** como tercer idioma en toda la web y en los emails (D-29).
+- **Resultado provisional de OpenF1** tras cada carrera (D-31).
+- **Anclas** del subencabezado de carrera y circuito comprobadas en Chromium, WebKit y Firefox (D-30).
+
 ## Fase 1 · MVP
 
 | ID | Estado | Nota |
 |---|---|---|
-| NUC-01 a NUC-06 | Hecho | Próximo GP, cuenta atrás, horarios en dos zonas, sesión en curso, última carrera, clasificación resumida |
+| NUC-01 a NUC-06 | Hecho | Próximo GP, cuenta atrás, horarios en dos zonas, sesión en curso, última carrera, clasificación resumida. La última carrera es una crónica con plantilla fija que se rellena solo con el resultado (titular escrito con los datos, podio, seis claves, salida → meta de toda la parrilla), también con el provisional (D-31, D-32) |
 | NUC-07 | Hecho | Campeón y arranque de la temporada siguiente (primer GP y fecha); desde octubre la ingesta carga el calendario siguiente en cuanto Jolpica lo publica, y mientras no está se dice |
 | NUC-11 a NUC-16 | Hecho | Calendario, estados, ganador, sprint, selector desde 1950, .ics |
-| NUC-20 a NUC-23 | Hecho | Página de GP con resultado, posiciones ganadas y vuelta rápida |
+| NUC-20 a NUC-23 | Hecho | Página de GP con resultado, posiciones ganadas y vuelta rápida, en tablas de cronometraje con subencabezado por secciones. Tras la carrera, resultado provisional de OpenF1 mientras Jolpica no publica el oficial (D-31) |
 | NUC-30 a NUC-32 | Hecho | Clasificaciones con podios y diferencia con el líder |
-| TRA-01, TRA-10 a TRA-14 | Hecho | Navegación, ES/EN, redirección por idioma, formatos, 404/500 bilingües |
+| TRA-01, TRA-10 a TRA-14 | Hecho | Navegación, ES/EN/DE (D-29), redirección por idioma, formatos, 404/500 en los tres idiomas |
 | TRA-20 a TRA-25 | Hecho | axe WCAG 2.2 AA en escritorio, móvil y modo oscuro en cada PR |
 | TRA-30 | Parcial | Solo en componentes que cargan datos en el cliente (D-22) |
 | TRA-31, TRA-32, TRA-34 | Hecho | Estados sin datos y datos antiguos; contenido sin JavaScript |

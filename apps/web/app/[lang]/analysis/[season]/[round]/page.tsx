@@ -6,7 +6,10 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
 import { parseLang, parseRound, parseSeason } from "@/lib/params";
-import { TOOL_ORDER } from "@/lib/tools";
+import { TOOL_ICON, TOOL_ORDER } from "@/lib/tools";
+import { Icon } from "@/components/icons";
+import { HeroStats, PageHero } from "@/components/page-hero";
+import { formatDate } from "@/lib/format";
 
 type Props = { params: Promise<{ lang: string; season: string; round: string }> };
 
@@ -28,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: dict(lang).analysis.lede,
     alternates: {
       canonical: `/${lang}/analysis/${season}/${round}`,
-      languages: { es: `/es/analysis/${season}/${round}`, en: `/en/analysis/${season}/${round}` },
+      languages: { es: `/es/analysis/${season}/${round}`, en: `/en/analysis/${season}/${round}`, de: `/de/analysis/${season}/${round}` },
     },
   };
 }
@@ -37,28 +40,55 @@ export default async function RaceAnalysisPage({ params }: Props) {
   const { lang, season, round, index, race } = await load(params);
   const t = dict(lang);
   const name = `${gpName(lang, race.name)} ${season}`;
+  const winner = race.results[0];
+  const tools = TOOL_ORDER.filter((tool) => index.tools.includes(tool));
   return (
-    <div className="container stack-xl">
-      <div className="stack">
-        <Breadcrumbs
-          lang={lang}
-          items={[{ href: `/${lang}/analysis`, label: t.analysis.title }, { label: name }]}
-        />
-        <h1>{name}</h1>
-        <p>
-          <Link href={`/${lang}/races/${season}/${round}`}>{t.home.seeRace}</Link>
-        </p>
+    <>
+      <PageHero
+        icon="chart"
+        size="m"
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/analysis`, label: t.analysis.title }, { label: name }]} />}
+        kicker={
+          <>
+            {t.analysis.kicker} · {t.analysis.round(round)} · <span className="tabular">{formatDate(lang, race.date)}</span>
+          </>
+        }
+        title={name}
+        lede={
+          <p>
+            <Link href={`/${lang}/races/${season}/${round}`} className="ph-link">
+              {t.home.seeRace} →
+            </Link>
+          </p>
+        }
+        aside={
+          <HeroStats
+            items={[
+              ...(winner ? [{ label: t.analysis.winner, value: winner.driver.familyName, sub: winner.constructor.name, accent: true }] : []),
+              { label: t.analysis.statTools, value: tools.length },
+            ]}
+          />
+        }
+      />
+      <div className="container">
+        <ol className="tiles an-tools">
+          {tools.map((tool, i) => (
+            <li key={tool}>
+              <Link href={`/${lang}/analysis/${season}/${round}/${tool}`} className="tile">
+                <span className="tile-icon">
+                  <Icon name={TOOL_ICON[tool]} />
+                </span>
+                <span className="tile-arrow" aria-hidden="true">
+                  →
+                </span>
+                <span className="tile-title">{t.analysis.tools[tool].name}</span>
+                <span className="tile-text">{t.analysis.tools[tool].q}</span>
+                <span className="tile-meta tabular">{String(i + 1).padStart(2, "0")}</span>
+              </Link>
+            </li>
+          ))}
+        </ol>
       </div>
-      <div className="cards">
-        {TOOL_ORDER.filter((tool) => index.tools.includes(tool)).map((tool) => (
-          <section key={tool} className="stack-s" aria-labelledby={`tool-${tool}`}>
-            <h2 id={`tool-${tool}`} className="h-small">
-              <Link href={`/${lang}/analysis/${season}/${round}/${tool}`}>{t.analysis.tools[tool].name}</Link>
-            </h2>
-            <p className="muted">{t.analysis.tools[tool].q}</p>
-          </section>
-        ))}
-      </div>
-    </div>
+    </>
   );
 }

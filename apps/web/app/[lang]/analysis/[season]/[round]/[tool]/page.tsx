@@ -16,6 +16,7 @@ import { paceNote, replayNote, sectorsNote, strategyNote, telemetryNote } from "
 import { dict } from "@/lib/i18n";
 import { parseLang, parseRound, parseSeason } from "@/lib/params";
 import { isTool, TOOL_ORDER } from "@/lib/tools";
+import { localeOf } from "@/lib/format";
 
 type Props = {
   params: Promise<{ lang: string; season: string; round: string; tool: string }>;
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: t.q,
     alternates: {
       canonical: `/${lang}/analysis/${season}/${round}/${tool}`,
-      languages: { es: `/es/analysis/${season}/${round}/${tool}`, en: `/en/analysis/${season}/${round}/${tool}` },
+      languages: { es: `/es/analysis/${season}/${round}/${tool}`, en: `/en/analysis/${season}/${round}/${tool}`, de: `/de/analysis/${season}/${round}/${tool}` },
     },
   };
 }
@@ -221,7 +222,7 @@ async function Tool({
         <button type="submit">{dict(lang).compare.go}</button>
       </form>
       <TelemetryView
-        locale={lang === "es" ? "es-ES" : "en-GB"}
+        locale={localeOf(lang)}
         a={a.data}
         b={b.data}
         labels={{

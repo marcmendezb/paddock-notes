@@ -3,6 +3,7 @@ import Link from "next/link";
 import { gpName, isoWeek, type QuizQuestion } from "@paddock/shared";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
+import { PageHero } from "@/components/page-hero";
 import { parseLang } from "@/lib/params";
 import { currentUser } from "@/lib/session";
 
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.title,
     description: t.lede,
-    alternates: { canonical: `/${lang}/quiz`, languages: { es: "/es/quiz", en: "/en/quiz" } },
+    alternates: { canonical: `/${lang}/quiz`, languages: { es: "/es/quiz", en: "/en/quiz", de: "/de/quiz" } },
   };
 }
 
@@ -33,41 +34,57 @@ export default async function QuizPage({ params, searchParams }: Props) {
     t.quiz.prompts[q.kind](q.kind === "race-winner" || q.kind === "pole" ? gpName(lang, q.subject ?? "") : (q.subject ?? ""), q.season);
 
   return (
-    <div className="container stack-xl prose">
-      <div className="stack-s">
-        <h1>{t.quiz.title}</h1>
-        <p className="lede">{t.quiz.lede}</p>
-        <p className="muted tabular">{week}</p>
-      </div>
+    <>
+      <PageHero
+        icon="bolt"
+        kicker={<span className="tabular">{week}</span>}
+        title={t.quiz.title}
+        lede={<p>{t.quiz.lede}</p>}
+        aside={
+          answered ? (
+            <div className="qz-score" role="status">
+              <span className="qz-score-n tabular">
+                {score}
+                <span className="qz-score-total">/{questions.length}</span>
+              </span>
+              <span className="qz-score-text">{t.quiz.score(score, questions.length)}</span>
+            </div>
+          ) : undefined
+        }
+      />
+      <div className="container stack-xl qz">
 
       {questions.length === 0 ? (
         <p className="muted">{t.quiz.empty}</p>
       ) : (
         <form action={`/${lang}/quiz`} method="get" className="stack-l">
           <input type="hidden" name="w" value={week} />
-          {answered ? (
-            <p className="auto-note" role="status">
-              {t.quiz.score(score, questions.length)}
-            </p>
-          ) : null}
           {questions.map((q, i) => {
             const chosen = query[q.id];
             const right = q.options.find((o) => o.id === q.answer)!;
             return (
-              <fieldset key={q.id} className="stack-s quiz-question">
-                <legend className="h-small">
-                  {i + 1}. {prompt(q)}
+              <fieldset key={q.id} className="quiz-question">
+                <legend className="quiz-legend">
+                  <span className="quiz-n tabular" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{prompt(q)}</span>
                 </legend>
+                <div className="quiz-options">
                 {q.options.map((o) => (
-                  <label key={o.id} className="quiz-option">
+                  <label
+                    key={o.id}
+                    className={`quiz-option${answered && o.id === q.answer ? " is-right" : ""}${answered && o.id === chosen && chosen !== q.answer ? " is-wrong" : ""}`}
+                  >
                     <input type="radio" name={q.id} value={o.id} defaultChecked={chosen === o.id} required />
                     {o.label}
                     {answered && o.id === q.answer ? <strong> · {t.quiz.correct}</strong> : null}
                     {answered && o.id === chosen && chosen !== q.answer ? <span> · {t.quiz.wrong}</span> : null}
                   </label>
                 ))}
+                </div>
                 {answered ? (
-                  <p className="muted">
+                  <p className="quiz-explain">
                     {chosen === undefined ? `${t.quiz.unanswered}. ` : ""}
                     {t.quiz.answer(right.label)}{" "}
                     {q.race ? (
@@ -80,7 +97,9 @@ export default async function QuizPage({ params, searchParams }: Props) {
               </fieldset>
             );
           })}
-          <button type="submit">{t.quiz.check}</button>
+          <button type="submit" className="cmp-go qz-check">
+            {t.quiz.check}
+          </button>
         </form>
       )}
       {answered && me ? (
@@ -88,9 +107,10 @@ export default async function QuizPage({ params, searchParams }: Props) {
           <input type="hidden" name="week" value={week} />
           <input type="hidden" name="back" value={`quiz?w=${week}`} />
           {questions.map((q) => (query[q.id] ? <input key={q.id} type="hidden" name={q.id} value={query[q.id]} /> : null))}
-          <button type="submit">{lang === "es" ? "Guardar mi puntuación" : "Save my score"}</button>
+          <button type="submit">{{ es: "Guardar mi puntuación", en: "Save my score", de: "Mein Ergebnis speichern" }[lang]}</button>
         </form>
       ) : null}
-    </div>
+      </div>
+    </>
   );
 }

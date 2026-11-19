@@ -26,6 +26,19 @@ import PointsEn from "./en/points.mdx";
 import PenaltiesEn from "./en/penalties.mdx";
 import DeltaEn from "./en/delta.mdx";
 import OvertakeModeEn from "./en/overtake-mode.mdx";
+import GuideDe from "./de/guide.mdx";
+import UndercutOvercutDe from "./de/undercut-overcut.mdx";
+import TyreDegradationDe from "./de/tyre-degradation.mdx";
+import TyreCompoundsDe from "./de/tyre-compounds.mdx";
+import QualifyingDe from "./de/qualifying.mdx";
+import SprintDe from "./de/sprint.mdx";
+import SafetyCarDe from "./de/safety-car.mdx";
+import DirtyAirDe from "./de/dirty-air.mdx";
+import TelemetryDe from "./de/telemetry.mdx";
+import PointsDe from "./de/points.mdx";
+import PenaltiesDe from "./de/penalties.mdx";
+import DeltaDe from "./de/delta.mdx";
+import OvertakeModeDe from "./de/overtake-mode.mdx";
 
 export { EXPLAINERS, GUIDE_SLUG, type Explainer } from "@paddock/shared";
 
@@ -59,6 +72,21 @@ const BODIES: Record<Lang, Record<string, MDXContent>> = {
     "penalties": PenaltiesEn,
     "delta": DeltaEn,
     "overtake-mode": OvertakeModeEn,
+  },
+  de: {
+    "guide": GuideDe,
+    "undercut-overcut": UndercutOvercutDe,
+    "tyre-degradation": TyreDegradationDe,
+    "tyre-compounds": TyreCompoundsDe,
+    "qualifying": QualifyingDe,
+    "sprint": SprintDe,
+    "safety-car": SafetyCarDe,
+    "dirty-air": DirtyAirDe,
+    "telemetry": TelemetryDe,
+    "points": PointsDe,
+    "penalties": PenaltiesDe,
+    "delta": DeltaDe,
+    "overtake-mode": OvertakeModeDe,
   },
 };
 

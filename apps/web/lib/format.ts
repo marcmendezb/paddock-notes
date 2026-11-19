@@ -2,12 +2,14 @@ import type { Lang } from "@paddock/shared";
 
 /** Formatos localizados con Intl (TRA-13, contenido.md §2). */
 
-const locale = (lang: Lang) => (lang === "es" ? "es-ES" : "en-GB");
+/** Configuración regional de cada idioma para Intl (fechas, números). */
+export const localeOf = (lang: Lang): string => ({ es: "es-ES", en: "en-GB", de: "de-DE" })[lang];
+const locale = localeOf;
 
 /** "16 mar 2025" (ES) / "Mar 16, 2025" (EN). */
 export function formatDate(lang: Lang, isoDate: string, timeZone = "UTC"): string {
   const date = isoDate.length === 10 ? new Date(`${isoDate}T12:00:00Z`) : new Date(isoDate);
-  return new Intl.DateTimeFormat(lang === "es" ? "es-ES" : "en-US", {
+  return new Intl.DateTimeFormat(lang === "en" ? "en-US" : localeOf(lang), {
     day: "numeric",
     month: "short",
     year: "numeric",

@@ -284,7 +284,7 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
       ip: `nl-${email}`,
       method: "POST",
       headers: { "x-captcha-response": "test-token", ...(extra.headers as Record<string, string>) },
-      body: JSON.stringify({ email, lang: "es" }),
+      body: JSON.stringify({ email, lang: "es", consent: true }),
     });
 
   it("doble confirmación: alta, un solo email aunque se repita, confirmación y baja en un clic", async () => {
@@ -316,10 +316,12 @@ describe("newsletter y avisos (NUC-10, CON-06, COM-11, D-16)", () => {
     expect((await call(`/email/unsubscribe/${token}`, { ip: "mail-provider", method: "POST", headers: { origin: "" } })).status).toBe(200);
   });
 
-  it("el alta exige Turnstile, email válido y origen propio", async () => {
-    const noCaptcha = await call("/newsletter", { ip: "nl-x", method: "POST", body: JSON.stringify({ email: "x@example.com", lang: "es" }) });
+  it("el alta exige consentimiento, Turnstile, email válido y origen propio", async () => {
+    const noConsent = await call("/newsletter", { ip: "nl-c", method: "POST", headers: { "x-captcha-response": "t" }, body: JSON.stringify({ email: "x@example.com", lang: "es" }) });
+    expect(noConsent.status).toBe(400);
+    const noCaptcha = await call("/newsletter", { ip: "nl-x", method: "POST", body: JSON.stringify({ email: "x@example.com", lang: "es", consent: true }) });
     expect(noCaptcha.status).toBe(403);
-    expect((await call("/newsletter", { ip: "nl-y", method: "POST", headers: { "x-captcha-response": "t" }, body: JSON.stringify({ email: "no-es-email", lang: "es" }) })).status).toBe(400);
+    expect((await call("/newsletter", { ip: "nl-y", method: "POST", headers: { "x-captcha-response": "t" }, body: JSON.stringify({ email: "no-es-email", lang: "es", consent: true }) })).status).toBe(400);
     expect((await subscribe("z@example.com", { headers: { origin: "https://evil.example" } })).status).toBe(403);
     expect(sent).toHaveLength(0);
   });
