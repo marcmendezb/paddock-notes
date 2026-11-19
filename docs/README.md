@@ -1,21 +1,24 @@
-# Documentación de Paddock Notes
+# Paddock Notes documentation
 
-Web no oficial que explica la Fórmula 1 con datos. Pieza de portfolio de un perfil developer + marketer.
+An unofficial site that explains Formula 1 with data. A portfolio piece for a developer and marketer profile.
 
-| Documento | Contenido |
+| Document | Contents |
 |---|---|
-| [funcionalidades.md](funcionalidades.md) | Todas las funcionalidades con ID, fase, prioridad y criterio de aceptación |
-| [estado.md](estado.md) | Qué funcionalidades están hechas, a medias o pendientes |
-| [decisiones.md](decisiones.md) | Registro de decisiones (`D-xx`) con su contexto, alternativas descartadas y fuentes |
-| [stack.md](stack.md) | Stack técnico y despliegue completo en Cloudflare |
-| [apis.md](apis.md) | Todas las APIs: para qué, quién las llama, autenticación, límites, licencias y fase |
-| [seguridad.md](seguridad.md) | Modelo de amenazas, controles por capa, secretos, cadena de suministro e incidentes |
-| [contenido.md](contenido.md) | Voz, textos de cada página, plantillas, explicadores, glosario, microcopy y SEO |
-| [marca.md](marca.md) | Reglas del brandboard que afectan al código |
-| [brandboard/](brandboard/) | Brandboard v3: logos, tokens y aplicaciones de referencia |
+| [features.md](features.md) | Every feature with its ID, phase, priority and acceptance criterion |
+| [status.md](status.md) | Which features are done, partial or pending |
+| [decisions.md](decisions.md) | Decision log (`D-xx`) with context, ruled-out alternatives and sources |
+| [stack.md](stack.md) | Technical stack and the full Cloudflare deployment |
+| [apis.md](apis.md) | Every API: purpose, caller, authentication, limits, licences and phase |
+| [security.md](security.md) | Threat model, controls per layer, secrets, supply chain and incidents |
+| [content.md](content.md) | Voice, copy for each page, templates, explainers, glossary, microcopy and SEO |
+| [brand.md](brand.md) | The brandboard rules that affect the code |
+| [setup.md](setup.md) | Step-by-step checklist to go from this repository to the live site |
+| [brandboard/](brandboard/) | Brandboard v3: logos, tokens and reference applications |
 
-Orden de lectura recomendado: funcionalidades → decisiones → stack → apis → seguridad → contenido → marca.
+Suggested reading order: features → decisions → stack → apis → security → content → brand.
 
-Las dependencias de terceros (límites, precios, licencias, compatibilidad) se comprobaron en su documentación oficial el 5 de noviembre de 2026; las fuentes están en `decisiones.md`. Solo queda una acción pendiente del autor: comprar el dominio (D-20).
+Third-party dependencies (limits, prices, licences, compatibility) were checked against their official documentation on 5 November 2026; the sources are listed in `decisions.md`. One action remains for the author: buying the domain (D-20).
 
-Última revisión: 5 de noviembre de 2026.
+The repository is written in English; the product itself is trilingual (Spanish, English and German, D-29 and D-36).
+
+Last reviewed: 19 November 2026.

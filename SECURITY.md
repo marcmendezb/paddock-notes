@@ -1,10 +1,10 @@
-# Seguridad
+# Security
 
-Si encuentras una vulnerabilidad en Paddock Notes, escríbenos a **security@paddocknotes.dev** en lugar de abrir un issue público.
+If you discover a security vulnerability in Paddock Notes, please email **security@paddocknotes.dev** rather than opening a public issue.
 
-- **Qué incluir:** la URL o el componente afectado, los pasos para reproducirlo y el impacto que crees que tiene.
-- **Qué esperar:** acuse de recibo en 72 horas y una valoración en una semana. Te avisaremos cuando esté corregido.
-- **Fuera de alcance:** ataques de denegación de servicio, ingeniería social, informes automáticos sin prueba de impacto y vulnerabilidades en servicios de terceros (Jolpica, OpenF1, Cloudflare).
-- No hay programa de recompensas. Si quieres, te agradeceremos públicamente el aviso.
+- **What to include:** The affected URL or component, steps to reproduce, and the expected impact.
+- **What to expect:** Acknowledgement within 72 hours and an assessment within a week. We will notify you once resolved.
+- **Out of scope:** Denial of service attacks, social engineering, automated reports without proof of impact, and vulnerabilities in third-party services (Jolpica, OpenF1, Cloudflare).
+- There is no bug bounty program. We are happy to publicly acknowledge your contribution if desired.
 
-El modelo de amenazas y los controles están en [docs/seguridad.md](docs/seguridad.md).
+The threat model and controls are documented in [docs/security.md](docs/security.md).

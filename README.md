@@ -1,69 +1,69 @@
 # Paddock Notes
 
-La Fórmula 1 explicada con datos: calendario y resultados, histórico desde 1950, análisis técnico de cada carrera y explicadores para entender lo que pasa en pista. Proyecto personal y **no oficial**, sin afiliación con Formula 1, la FIA ni ningún equipo.
+Formula 1 explained with data: calendar and results, history since 1950, technical analysis for every race, and explainers to understand what happens on track. A personal and **unofficial** project, without any affiliation with Formula 1, the FIA, or any team.
 
-Todo corre en Cloudflare: una web en Next.js, una API pública propia y un Worker de ingesta que carga los datos de Jolpica F1 y OpenF1 en D1 y R2. La documentación completa (decisiones, seguridad, contenido, marca) está en [docs/](docs/README.md); qué está hecho, en [docs/estado.md](docs/estado.md).
+Everything runs on Cloudflare: a Next.js web application, our own public API, and an ingestion Worker that loads data from Jolpica F1 and OpenF1 into D1 and R2. Full documentation (decisions, security, content, brand) is in [docs/](docs/README.md); what is built, in [docs/status.md](docs/status.md).
 
-## Qué hay
+## What's included
 
-- **Temporada:** próximo GP con cuenta atrás y horarios en tu zona, resultados, clasificaciones, aspirantes al título y mapa de circuitos.
-- **Histórico:** todas las temporadas desde 1950, fichas de pilotos, equipos y circuitos, récords, cara a cara y puntos recalculados con el sistema actual.
-- **Zona técnica** (desde 2023): estrategia, ritmo por vuelta, sectores, telemetría comparada y la carrera vuelta a vuelta, con notas automáticas.
-- **Aprende:** explicadores, una guía para entender una carrera en 10 minutos y un glosario.
-- **Comunidad:** cuentas sin contraseña, predicciones, ligas privadas, quiz semanal, simulador de campeonato, favoritos, avisos y newsletter.
+- **Season:** Next Grand Prix with countdown and times in your local zone, results, standings, title contenders, and circuit map.
+- **History:** Every season since 1950, driver, team, and circuit profiles, records, head-to-head, and points recalculated under the modern system.
+- **Technical zone** (since 2023): Strategy, lap pace, sectors, compared telemetry, and lap-by-lap race replay with automated notes.
+- **Learn:** Explainers, a guide to understand a race in 10 minutes, and a glossary.
+- **Community:** Passwordless accounts, predictions, private leagues, weekly quiz, championship simulator, favourites, notifications, and newsletter.
 
-## Arquitectura
+## Architecture
 
-| Carpeta | Qué es |
+| Folder | What it is |
 |---|---|
-| `apps/web` | Next.js 16 + React 19 con OpenNext → Worker `paddock-web`. HTML por petición con CSP con nonce |
-| `workers/api` | API pública `/api/v1` (Hono + OpenAPI) y rutas de comunidad (Better Auth) → Worker `paddock-api` |
-| `workers/ingest` | Cron Triggers, Workflows (histórico, análisis post-carrera, envíos) y limitador saliente en un Durable Object → Worker `paddock-ingest` |
-| `packages/shared` | Tipos del contrato, esquemas Zod, normalización de las fuentes, plantillas de email |
-| `packages/db` | Esquema Drizzle, migraciones de D1 y módulos separados de lectura y escritura (D-14) |
-| `packages/analysis` | Cálculos de la zona técnica en TypeScript puro |
-| `e2e/` | Playwright + axe en escritorio, móvil y modo oscuro |
-| `fixtures/` | Respuestas reales de Jolpica y OpenF1 para los tests |
+| `apps/web` | Next.js 16 + React 19 with OpenNext → Worker `paddock-web`. Per-request HTML with nonce-based CSP |
+| `workers/api` | Public API `/api/v1` (Hono + OpenAPI) and community routes (Better Auth) → Worker `paddock-api` |
+| `workers/ingest` | Cron Triggers, Workflows (history backfill, post-race analysis, mailings), and outbound rate limiter in a Durable Object → Worker `paddock-ingest` |
+| `packages/shared` | Contract types, Zod schemas, source normalisation, email templates |
+| `packages/db` | Drizzle schema, D1 migrations, and separate read/write modules (D-14) |
+| `packages/analysis` | Pure TypeScript technical zone calculations |
+| `e2e/` | Playwright + axe on desktop, mobile, and dark mode |
+| `fixtures/` | Real responses from Jolpica and OpenF1 for tests |
 
-## Desarrollo local
+## Local development
 
-Requisitos: Node 22 o superior y pnpm 10.
+Requirements: Node 22 or higher and pnpm 10.
 
 ```sh
 pnpm install
 pnpm --filter @paddock/web build:worker
-scripts/local-stack.sh --seed   # API :8787, ingesta :8788 y web :8789, con una D1 local compartida y los crons activos
+scripts/local-stack.sh --seed   # API :8787, ingest :8788, and web :8789, with a shared local D1 and active crons
 ```
 
-`--seed` carga la temporada en curso desde Jolpica. Abre http://localhost:8789/es.
+`--seed` loads the current season from Jolpica. Open http://localhost:8789/en.
 
-Para la comunidad hace falta `workers/api/.dev.vars` (no se sube al repositorio), con valores de desarrollo y las claves de prueba de Turnstile:
+For community features, `workers/api/.dev.vars` is required (not committed to the repository), with development secrets and Turnstile test keys:
 
 ```sh
-AUTH_SECRET=<32 bytes en hexadecimal>
+AUTH_SECRET=<32 bytes in hex>
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 AUTH_BASE_URL=http://localhost:8789
 TRUSTED_ORIGINS=http://localhost:8789,http://localhost:8787
 SITE_URL=http://localhost:8789
 ```
 
-En local, los emails (enlace mágico, newsletter, avisos) no se envían: se guardan como texto en `workers/*/.wrangler/tmp/email/`.
+Locally, emails (magic link, newsletter, notifications) are not dispatched: they are saved as plain text in `workers/*/.wrangler/tmp/email/`.
 
-## Comprobaciones
+## Quality checks
 
 ```sh
-pnpm lint                         # incluye la regla D-14: la API y la web no pueden importar el módulo de escritura
+pnpm lint                         # includes rule D-14: API and web cannot import the write module
 pnpm typecheck
-pnpm test                         # los tests de Workers se ejecutan en workerd con D1 local
-pnpm --filter @paddock/e2e e2e    # contra el stack local
+pnpm test                         # Worker tests run in workerd with local D1
+pnpm --filter @paddock/e2e e2e    # against the local stack
 pnpm audit --audit-level high
 ```
 
-La CI de GitHub pasa lo mismo en cada push y en cada PR, además de gitleaks. La puesta en marcha en Cloudflare está en [docs/puesta-en-marcha.md](docs/puesta-en-marcha.md).
+GitHub CI runs the same checks on every push and PR, plus gitleaks. The Cloudflare deployment guide is in [docs/setup.md](docs/setup.md).
 
-## Licencias
+## Licences
 
-- Código: [MIT](LICENSE).
-- Datos de F1: Jolpica F1 y OpenF1, con licencia [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Los datos derivados se publican con la misma licencia (D-12).
-- Contornos del mapa: Natural Earth, dominio público.
-- Fuente Archivo: SIL Open Font License (`apps/web/public/fonts/OFL.txt`).
+- Code: [MIT](LICENSE).
+- F1 Data: Jolpica F1 and OpenF1, under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Derived data is published under the same licence (D-12).
+- Map outlines: Natural Earth, public domain.
+- Archivo Font: SIL Open Font License (`apps/web/public/fonts/OFL.txt`).

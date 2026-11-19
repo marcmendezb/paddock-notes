@@ -16,7 +16,7 @@ export function userAgent(siteUrl: string): string {
 
 export const LANGS = ["es", "en", "de"] as const;
 export type Lang = (typeof LANGS)[number];
-export const DEFAULT_LANG: Lang = "es";
+export const DEFAULT_LANG: Lang = "en";
 
 export function isLang(value: string): value is Lang {
   return (LANGS as readonly string[]).includes(value);

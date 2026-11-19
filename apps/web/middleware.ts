@@ -4,10 +4,19 @@ import { DEFAULT_LANG, isLang, type Lang } from "@paddock/shared";
 
 const isDev = process.env.NODE_ENV === "development";
 
-/** Idioma preferido según `Accept-Language` (TRA-11); español por defecto. */
-export function preferredLang(header: string | null): Lang {
-  if (!header) return DEFAULT_LANG;
-  const ranked = header
+/**
+ * Language for a request without a language prefix (TRA-11, D-36). The visitor's country decides, via the
+ * `cf-ipcountry` header Cloudflare adds: Germany and Switzerland get German, Spain gets Spanish, every
+ * other country gets English. Without a usable country (local development, Tor, unknown) the browser's
+ * `Accept-Language` decides, and English is the fallback.
+ */
+const COUNTRY_LANG: Record<string, Lang> = { DE: "de", CH: "de", ES: "es" };
+
+export function preferredLang(country: string | null, acceptLanguage: string | null): Lang {
+  const code = country?.trim().toUpperCase() ?? "";
+  if (/^[A-Z]{2}$/.test(code) && code !== "XX" && code !== "T1") return COUNTRY_LANG[code] ?? "en";
+  if (!acceptLanguage) return DEFAULT_LANG;
+  const ranked = acceptLanguage
     .split(",")
     .map((part) => {
       const [tag = "", ...params] = part.trim().split(";");
@@ -16,7 +25,7 @@ export function preferredLang(header: string | null): Lang {
     })
     .filter((x) => x.q > 0)
     .sort((a, b) => b.q - a.q);
-  return ranked.find((x) => isLang(x.lang))?.lang as Lang | undefined ?? DEFAULT_LANG;
+  return (ranked.find((x) => isLang(x.lang))?.lang as Lang | undefined) ?? DEFAULT_LANG;
 }
 
 /**
@@ -50,10 +59,10 @@ export function middleware(request: NextRequest) {
   // Sin prefijo de idioma: redirección interna y relativa al idioma preferido. No hay ningún parámetro
   // que acepte URLs externas (seguridad.md §5).
   if (!isLang(first)) {
-    const lang = preferredLang(request.headers.get("accept-language"));
+    const lang = preferredLang(request.headers.get("cf-ipcountry"), request.headers.get("accept-language"));
     const target = new URL(`/${lang}${pathname === "/" ? "" : pathname}${search}`, request.url);
     const response = NextResponse.redirect(target, 307);
-    response.headers.set("vary", "accept-language");
+    response.headers.set("vary", "cf-ipcountry, accept-language");
     return response;
   }
 

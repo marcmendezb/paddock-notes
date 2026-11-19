@@ -89,15 +89,27 @@ for (const path of PAGES) {
   });
 }
 
-test("la raíz redirige al idioma preferido (TRA-11)", async ({ browser, baseURL }) => {
-  // El navegador envía Accept-Language según su locale.
+test("the root redirects to the visitor's language (TRA-11, D-36)", async ({ browser, baseURL }) => {
+  // Locally there is no Cloudflare country: the browser's Accept-Language decides, English by default.
   for (const [locale, lang] of [
     ["en-GB", "en"],
     ["es-ES", "es"],
     ["de-DE", "de"],
-    ["it-IT", "es"],
+    ["it-IT", "en"],
   ]) {
     const context = await browser.newContext({ baseURL, locale });
+    const page = await context.newPage();
+    await page.goto("/");
+    expect(new URL(page.url()).pathname).toBe(`/${lang}`);
+    await context.close();
+  }
+  // With a country, the country decides: Switzerland reads German even with a French browser.
+  for (const [country, locale, lang] of [
+    ["CH", "fr-CH", "de"],
+    ["ES", "en-GB", "es"],
+    ["MX", "es-MX", "en"],
+  ] as const) {
+    const context = await browser.newContext({ baseURL, locale, extraHTTPHeaders: { "cf-ipcountry": country } });
     const page = await context.newPage();
     await page.goto("/");
     expect(new URL(page.url()).pathname).toBe(`/${lang}`);

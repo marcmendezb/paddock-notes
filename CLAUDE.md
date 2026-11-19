@@ -1,48 +1,48 @@
 # Paddock Notes
 
-Web no oficial que explica la F1 con datos. Monorepo pnpm, todo en TypeScript y desplegado en Cloudflare.
+Unofficial web app that explains F1 with data. pnpm monorepo, entirely TypeScript and deployed on Cloudflare.
 
-## Fuente de verdad
+## Source of truth
 
-- `docs/` manda. Antes de cambiar algo, lee la decisión que lo cubre en `docs/decisiones.md` (`D-xx`).
-- Si cambias una decisión, no la borres: márcala como sustituida y añade una nueva.
-- Funcionalidades por ID en `docs/funcionalidades.md` (por ejemplo, `NUC-03`). Úsalos en commits y tests.
-- Qué está hecho y qué falta: `docs/estado.md`. Actualízalo al terminar cada funcionalidad.
-- Reglas visuales en `docs/marca.md`; tokens en `apps/web/app/globals.css`, copiados del brandboard sin cambios.
+- `docs/` is the authority. Before changing anything, read the decision that covers it in `docs/decisions.md` (`D-xx`).
+- If you change a decision, do not delete it: mark it as superseded and add a new one.
+- Features by ID in `docs/features.md` (e.g. `NUC-03`). Use them in commits and tests.
+- What is done and what is pending: `docs/status.md`. Update it when finishing each feature.
+- Visual rules in `docs/brand.md`; tokens in `apps/web/app/globals.css`, copied from the brandboard without changes.
 
-## Reglas que no se rompen
+## Non-negotiable rules
 
-- **D-05:** solo `workers/ingest` llama a Jolpica y OpenF1, siempre a través de `fetchJson` (lista cerrada de hosts, limitador, Zod).
-- **D-14:** la API y la web nunca importan `@paddock/db/f1-write`. Lo vigilan ESLint y `packages/db/test/architecture.test.ts`.
-- **D-04:** todo el HTML se renderiza por petición con CSP con nonce (`apps/web/middleware.ts`). Nada de `style=""` en línea, ni `dangerouslySetInnerHTML`, ni scripts de terceros sin justificar en `docs/seguridad.md` §4.1.
-- **D-19:** pnpm no instala versiones con menos de 14 días (`pnpm-workspace.yaml`).
-- Todo lo externo es hostil: valida con Zod antes de escribir en D1.
-- Textos de interfaz en ES, EN y DE por separado (`apps/web/lib/i18n.ts`, D-29); la voz está en `docs/contenido.md` §2.
+- **D-05:** Only `workers/ingest` calls Jolpica and OpenF1, always through `fetchJson` (closed host whitelist, rate limiter, Zod).
+- **D-14:** The API and web never import `@paddock/db/f1-write`. Enforced by ESLint and `packages/db/test/architecture.test.ts`.
+- **D-04:** All HTML is rendered per request with nonce-based CSP (`apps/web/middleware.ts`). No inline `style=""`, no `dangerouslySetInnerHTML`, no third-party scripts unjustified in `docs/security.md` §4.1.
+- **D-19:** pnpm does not install versions released under 14 days ago (`pnpm-workspace.yaml`).
+- All external data is hostile: validate with Zod before writing to D1.
+- Interface copy is kept separately in ES, EN, and DE (`apps/web/lib/i18n.ts`, D-29); brand voice is in `docs/content.md` §2.
 
-## Comandos
+## Commands
 
 ```sh
 pnpm lint && pnpm typecheck && pnpm test
-pnpm db:generate                        # tras cambiar packages/db/src/schema.ts
-pnpm --filter @paddock/web build:worker # build de OpenNext
-scripts/local-stack.sh [--seed]         # stack local completo en :8787, :8788 y :8789, con los crons de la ingesta
-pnpm --filter @paddock/e2e e2e          # Playwright + axe contra el stack local
+pnpm db:generate                        # after changing packages/db/src/schema.ts
+pnpm --filter @paddock/web build:worker # OpenNext build
+scripts/local-stack.sh [--seed]         # full local stack on :8787, :8788 and :8789, with ingest crons
+pnpm --filter @paddock/e2e e2e          # Playwright + axe against the local stack
 ```
 
-Desarrollo local completo: ver `README.md`.
+Full local development guide: see `README.md`.
 
-## Trampas conocidas
+## Known pitfalls
 
-- En selects de Drizzle, no uses `constructor` como clave de campo: choca con `Object.prototype.constructor`.
-- Las respuestas servidas desde la Cache API tienen cabeceras inmutables: cópialas (`new Response(res.body, res)`) antes de tocarlas.
-- `@cloudflare/vitest-pool-workers` se llama ahora `@cloudflare/vitest-plugin` (`cloudflareTest()` en `vitest.config.ts`).
-- `middleware.ts` y no `proxy.ts`: OpenNext solo admite de forma estable el middleware edge (D-03).
-- Nada de `loading.tsx` de página entera: rompe los 404 y el contenido sin JavaScript (D-22).
-- Un título o una clasificación final solo valen si la temporada está completa (`COMPLETE_DRIVERS` en f1-history): durante la carga del histórico hay temporadas a medias.
-- En local, cambiar código o `wrangler.jsonc` de la ingesta recarga el Worker y pierde las instancias de Workflow en curso: hay que reiniciar `backfill:instance` / `analysis:instance` en `ingest_state`.
-- `wrangler dev` reescribe el host y el Origin al dominio de `routes`: la web local se arranca con `--local-upstream localhost:8789` (ya en `scripts/local-stack.sh`), o la protección CSRF rechaza los formularios.
-- Por Service Binding no se puede reenviar la cabecera Origin (es "prohibida" en fetch): la web manda `x-paddock-origin`, que la API solo acepta en peticiones internas (sin CF-Connecting-IP).
-- Los enlaces de los emails van a `/api/*` en el host de la web, que los reenvía a la API (D-26). En local, `AUTH_BASE_URL=http://localhost:8789` en `workers/api/.dev.vars`.
-- OpenF1 responde 401 a todo, también al histórico, mientras hay una sesión de F1 en directo (D-25): no es un fallo nuestro.
-- Nunca pongas líneas de coautoría ni de atribución a Claude en los commits ni en los PR.
-- Las pruebas en navegador también corren en modo oscuro: comprueba el contraste de cualquier color nuevo en los dos modos.
+- In Drizzle selects, never use `constructor` as a field key: it collides with `Object.prototype.constructor`.
+- Responses served from the Cache API have immutable headers: clone them (`new Response(res.body, res)`) before mutating.
+- `@cloudflare/vitest-pool-workers` is now `@cloudflare/vitest-plugin` (`cloudflareTest()` in `vitest.config.ts`).
+- `middleware.ts` and not `proxy.ts`: OpenNext only stably supports edge middleware (D-03).
+- No page-level `loading.tsx`: it breaks genuine 404s and no-JavaScript content (D-22).
+- A title or championship finish is only valid if the season is complete (`COMPLETE_DRIVERS` in f1-history): during backfill there are half-loaded seasons.
+- Locally, changing code or `wrangler.jsonc` of ingest reloads the Worker and drops in-flight Workflow instances: restart `backfill:instance` / `analysis:instance` in `ingest_state`.
+- `wrangler dev` rewrites the host and Origin to the `routes` domain: local web is booted with `--local-upstream localhost:8789` (already in `scripts/local-stack.sh`), or CSRF protection rejects form submissions.
+- Over Service Binding, the Origin header cannot be forwarded (it is forbidden in fetch): the web sends `x-paddock-origin`, which the API accepts only for internal requests (without CF-Connecting-IP).
+- Email links go to `/api/*` on the web host, which proxies to the API (D-26). Locally, `AUTH_BASE_URL=http://localhost:8789` in `workers/api/.dev.vars`.
+- OpenF1 returns 401 to all requests, including historical ones, during a live F1 session (D-25): this is upstream behaviour, not a bug on our end.
+- Never add co-authorship or attribution lines to Claude in commits or PRs.
+- Browser tests also run in dark mode: verify contrast for any new colour in both light and dark themes.
