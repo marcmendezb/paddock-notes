@@ -2837,3 +2837,95 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .xp-chapter:hover .xp-chapter-n { color: var(--text); }
 @media (max-width: 640px) { .xp-chapter { grid-template-columns: minmax(0, 1fr); } .xp-chapter-side { position: static; grid-auto-flow: column; align-items: center; } }
 @media (prefers-reduced-motion: reduce) { .xp-progress { display: none; } }
+
+/* Término del glosario: ejemplo gráfico en negro, «en la práctica», relacionados y paginación. */
+.gl-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); grid-template-areas: "main side" "pager pager"; align-items: start; gap: clamp(1.5rem, 4vw, 3.5rem); }
+@media (max-width: 900px) { .gl-page { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "side" "pager"; } }
+.gl-main { grid-area: main; display: grid; gap: 1.5rem; min-inline-size: 0; }
+.gl-side { grid-area: side; display: grid; gap: 1.5rem; }
+.gl-figure { display: grid; gap: 0.75rem; margin: 0; padding: clamp(1rem, 3vw, 2rem); background: var(--bg); color: var(--text); }
+.gl-figure-cap { display: inline-flex; align-items: center; gap: 0.45rem; font-size: var(--step--1); font-weight: 700; color: var(--muted); }
+.gf { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
+.gf-t { fill: var(--text); font-size: 13px; font-weight: 700; }
+.gf-m { fill: var(--muted); font-size: 12px; font-weight: 600; }
+.gf-a-t { fill: var(--accent); font-size: 14px; font-weight: 800; }
+.gf-b-t { fill: var(--accent-2); font-size: 14px; font-weight: 800; }
+.gf-axis { stroke: var(--line); stroke-width: 1.5; }
+.gf-dash { stroke-dasharray: 4 5; }
+.gf-stint { fill: var(--surface); stroke: var(--line); }
+.gf-stint.is-hl { stroke: var(--accent); stroke-width: 2; }
+.gf-stint-t { fill: var(--text); font-size: 11px; font-weight: 800; }
+.gf-pit { fill: var(--accent-2); }
+.gf-curve { fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.gf-a { stroke: var(--accent); }
+.gf-b { stroke: var(--accent-2); }
+.gf-track { fill: none; stroke: var(--line); stroke-width: 12; stroke-linejoin: round; }
+.gf-sector { fill: none; stroke-width: 4; stroke-linejoin: round; }
+.gf-sector.s1 { stroke: var(--accent); stroke-dasharray: 1 2; }
+.gf-sector.s2 { stroke: var(--accent-2); stroke-dasharray: 0 1 1 1; }
+.gf-minis { fill: none; stroke: var(--accent); stroke-width: 4; stroke-dasharray: 0.82 0.18; }
+.gf-car-body { fill: var(--text); }
+.gf-car.is-b .gf-car-body { fill: var(--accent-2); }
+.gf-car-wing { fill: var(--text); }
+.gf-wheel { fill: var(--bg); stroke: var(--text); stroke-width: 3; }
+.gf-dot { fill: var(--surface); stroke: var(--muted); }
+.gf-a-f { fill: var(--accent); stroke: var(--accent); }
+.gf-b-f { fill: var(--accent-2); stroke: var(--accent-2); }
+.gf-m-f { fill: none; stroke: var(--muted); stroke-dasharray: 3 3; }
+.gf-sc { fill: var(--text); stroke: var(--text); }
+.gf-arrow line, .gf-arrow path { fill: none; stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.gf-arrow.gf-a line, .gf-arrow.gf-a path { stroke: var(--accent); }
+.gf-arrow.gf-b line, .gf-arrow.gf-b path { stroke: var(--accent-2); }
+.gf-arrow.gf-m-s line, .gf-arrow.gf-m-s path { stroke: var(--muted); }
+.gf-lane { fill: var(--surface); stroke: var(--line); }
+.gf-window { fill: color-mix(in oklab, var(--accent-2) 16%, transparent); stroke: var(--accent-2); stroke-dasharray: 4 4; }
+.gf-swap { fill: none; stroke: var(--accent-2); stroke-width: 2.5; stroke-dasharray: 5 4; }
+.gf-pole { stroke: var(--text); stroke-width: 3; }
+.gf-flag { fill: var(--accent-2); }
+.gf-tyre { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.gf-tyre-band { fill: none; stroke-width: 5; }
+.gf-c-S { stroke: var(--accent-2); fill: var(--surface); }
+.gf-c-M { stroke: var(--accent); fill: var(--surface); }
+.gf-c-H { stroke: var(--text); fill: var(--surface); }
+.gf-c-I { stroke: var(--accent); fill: var(--surface); stroke-dasharray: 6 4; }
+.gf-c-W { stroke: var(--accent-2); fill: var(--surface); stroke-dasharray: 3 3; }
+.gf-stint.gf-c-S, .gf-stint.gf-c-M, .gf-stint.gf-c-H { stroke-width: 2; }
+.gf-rim { fill: var(--bg); stroke: var(--line); }
+.gf-tyre-t { fill: var(--text); font-size: 16px; font-weight: 800; }
+.gf-rain { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.gf-rain.is-heavy { stroke: var(--accent-2); }
+.gf-blister { fill: var(--accent-2); }
+.gf-mark-b { fill: var(--accent-2); stroke: var(--bg); stroke-width: 3; }
+.gf-turb { fill: none; stroke: var(--accent-2); stroke-width: 2; }
+.gf-wake { fill: color-mix(in oklab, var(--accent-2) 22%, transparent); }
+.gf-flow { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; }
+.gf-focus { fill: none; stroke: var(--accent); stroke-width: 3; }
+.gf-rail { fill: var(--surface); }
+.gf-bar { fill: var(--muted); }
+.gf-bar-a { fill: var(--accent); }
+.gf-bar-b { fill: var(--accent-2); }
+.gf-box { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 6 4; }
+.gf-kerb { fill: none; stroke: var(--line); stroke-width: 26; }
+.gf-limit { fill: none; stroke: var(--text); stroke-width: 3; }
+.gf-cap { stroke: var(--accent-2); stroke-width: 3; }
+.gf-head { fill: var(--surface); stroke: var(--muted); }
+.gl-practice { display: grid; gap: 0.5rem; padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
+.gl-practice p { margin: 0; font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; font-stretch: var(--display-width); line-height: 1.35; }
+.gl-pager { grid-area: pager; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.gl-pager-link { display: grid; gap: 0.25rem; padding: 1.1rem 1.25rem; border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out; }
+.gl-pager-link.is-next { text-align: end; }
+.gl-pager-link:hover { border-color: var(--text); }
+.gl-pager-dir { font-size: var(--step--2); font-weight: 700; color: var(--muted); }
+.gl-pager-term { font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; font-stretch: var(--display-width); }
+.gl-pager-link:hover .gl-pager-term { font-style: italic; }
+
+/* Quiz: barra fija de progreso y resultado por pregunta. */
+.qz-bar { position: sticky; inset-block-end: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-block-start: 0.5rem; padding: 0.85rem 1rem; border: 1px solid var(--line); background: var(--bg); }
+.qz-bar-dots { display: flex; gap: 5px; }
+.qz-bar-dots span { inline-size: 22px; block-size: 8px; background: var(--surface); transition: background-color 0.3s var(--ease-out-quart); }
+.qz-bar-dots .is-done { background: var(--text); }
+.qz-bar-text { font-size: var(--step--1); font-weight: 600; color: var(--muted); }
+.qz-bar .qz-check { margin-inline-start: auto; }
+.quiz-result { margin-inline-start: 0.5rem; padding: 0.1rem 0.45rem; font-size: var(--step--2); font-weight: 800; }
+.quiz-result.is-right { background: var(--text); color: var(--bg); }
+.quiz-result.is-wrong { border: 1px solid var(--accent-2); color: var(--accent-2); }

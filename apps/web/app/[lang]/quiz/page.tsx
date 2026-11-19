@@ -4,6 +4,7 @@ import { gpName, isoWeek, type QuizQuestion } from "@paddock/shared";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
 import { PageHero } from "@/components/page-hero";
+import { QuizBar } from "@/components/quiz-bar";
 import { Icon, type IconName } from "@/components/icons";
 import { formatDate } from "@/lib/format";
 import { parseLang } from "@/lib/params";
@@ -36,6 +37,8 @@ export default async function QuizPage({ params, searchParams }: Props) {
   const monday = new Date();
   monday.setUTCDate(monday.getUTCDate() + (((8 - monday.getUTCDay()) % 7) || 7));
   const KIND_ICON: Record<QuizQuestion["kind"], IconName> = { "race-winner": "flag", champion: "trophy", "constructor-champion": "wrench", "season-wins": "bolt", pole: "stopwatch" };
+
+  const progressLabel = { es: "{n} de {total} respondidas", en: "{n} of {total} answered", de: "{n} von {total} beantwortet" }[lang];
 
   const prompt = (q: QuizQuestion) =>
     t.quiz.prompts[q.kind](q.kind === "race-winner" || q.kind === "pole" ? gpName(lang, q.subject ?? "") : (q.subject ?? ""), q.season);
@@ -95,6 +98,11 @@ export default async function QuizPage({ params, searchParams }: Props) {
                   <span className="quiz-prompt">
                     <span className="quiz-kind">
                       <Icon name={KIND_ICON[q.kind]} /> {t.quiz.kinds[q.kind]}
+                      {answered ? (
+                        <span className={chosen === q.answer ? "quiz-result is-right" : "quiz-result is-wrong"}>
+                          {chosen === q.answer ? t.quiz.correct : t.quiz.wrong}
+                        </span>
+                      ) : null}
                     </span>
                     {prompt(q)}
                   </span>
@@ -126,9 +134,7 @@ export default async function QuizPage({ params, searchParams }: Props) {
               </fieldset>
             );
           })}
-          <button type="submit" className="cmp-go qz-check">
-            {t.quiz.check}
-          </button>
+          <QuizBar total={questions.length} template={progressLabel} button={t.quiz.check} />
         </form>
       )}
       {answered && me ? (
