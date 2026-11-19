@@ -436,3 +436,82 @@ describe("envíos (CON-06, COM-11, D-16)", () => {
     expect(created).toHaveLength(1);
   });
 });
+
+describe("resultado provisional de OpenF1 (D-31)", () => {
+  const lineup = Array.from({ length: 20 }, (_, i) => ({ driverId: `d${i + 1}`, code: `D${String(i + 1).padStart(2, "0")}`, constructorId: `t${Math.ceil((i + 1) / 2)}` }));
+  const drivers = lineup.map((e, i) => ({ driver_number: i + 1, name_acronym: e.code }));
+  const classified = (n: number) => ({
+    driver_number: n,
+    position: n,
+    number_of_laps: n === 20 ? 69 : 71,
+    points: [25, 18, 15, 12, 10, 8, 6, 4, 2, 1][n - 1] ?? 0,
+    dnf: false,
+    dns: false,
+    dsq: false,
+    duration: n === 1 ? 5723.504 : null,
+    gap_to_leader: n === 1 ? 0 : n === 20 ? "+2 LAPS" : n === 2 ? 0.799 : 62.345,
+  });
+
+  it("convierte la clasificación con el formato de Jolpica", async () => {
+    const { toProvisional } = await import("../src/provisional");
+    const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
+    results[18] = { ...results[18]!, position: null, dnf: true, number_of_laps: 40, gap_to_leader: null } as never;
+    const rows = toProvisional(results, drivers, lineup)!;
+    expect(rows).toHaveLength(20);
+    expect(rows[0]).toMatchObject({ driverId: "d1", constructorId: "t1", position: 1, positionText: "1", timeText: "1:35:23.504", status: "Finished", points: 25 });
+    expect(rows[1]).toMatchObject({ timeText: "+0.799" });
+    expect(rows[2]).toMatchObject({ timeText: "+1:02.345" });
+    expect(rows[18]).toMatchObject({ position: null, positionText: "R", status: "Retired", timeText: null });
+    expect(rows[19]).toMatchObject({ position: 20, status: "+2 Laps", timeText: null });
+  });
+
+  it("omite hasta dos debutantes fuera del podio", async () => {
+    const { toProvisional } = await import("../src/provisional");
+    const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
+    const rookies = drivers.map((d) => (d.driver_number === 9 || d.driver_number === 14 ? { ...d, name_acronym: "NEW" } : d));
+    expect(toProvisional(results, rookies, lineup)).toHaveLength(18);
+  });
+
+  it("no escribe nada si faltan más pilotos, uno del podio o las posiciones no cuadran", async () => {
+    const { toProvisional } = await import("../src/provisional");
+    const results = Array.from({ length: 20 }, (_, i) => classified(i + 1));
+    expect(toProvisional(results, drivers.slice(1), lineup)).toBeNull();
+    expect(toProvisional(results, drivers.slice(0, 17), lineup)).toBeNull();
+    expect(toProvisional(results.map((r) => ({ ...r, position: r.position === 1 ? 2 : r.position })), drivers, lineup)).toBeNull();
+    expect(toProvisional(results.slice(0, 5), drivers, lineup)).toBeNull();
+  });
+
+  it("casa la sesión de OpenF1 con la ronda por la hora de salida", async () => {
+    const { matchSession } = await import("../src/provisional");
+    const race = { date: "2026-11-08", startsAt: "2026-11-08T17:00:00Z" } as never;
+    const sessions = [
+      { session_key: 1, date_start: "2026-11-01T20:00:00+00:00" },
+      { session_key: 2, date_start: "2026-11-08T17:00:00+00:00" },
+    ];
+    expect(matchSession(sessions, race)?.session_key).toBe(2);
+    expect(matchSession(sessions.slice(0, 1), race)).toBeNull();
+  });
+
+  it("la API sirve el provisional mientras no hay oficial, y el oficial lo sustituye", async () => {
+    const writer = createF1Writer(env.DB);
+    const reader = createF1Reader(env.DB);
+    await writer.write({
+      circuits: [{ id: "c", name: "C", locality: "L", country: "X", lat: 0, lng: 0 }],
+      races: [{ season: 2030, round: 1, name: "Test Grand Prix", circuitId: "c", date: "2030-03-01", startsAt: "2030-03-01T15:00:00Z", isSprintWeekend: false, cancelled: false }],
+      drivers: [{ id: "a", code: "AAA", givenName: "A", familyName: "Alpha" }],
+      constructors: [{ id: "t", name: "T" }],
+    } as never);
+    await writer.replaceProvisional(2030, 1, [
+      { driverId: "a", constructorId: "t", position: 1, positionText: "1", laps: 50, status: "Finished", timeText: "1:30:00.000", points: 25, fetchedAt: "2030-03-01T17:00:00Z" },
+    ]);
+    const prov = await reader.getRace(2030, 1);
+    expect(prov?.provisional).toBe(true);
+    expect(prov?.results[0]?.driver.id).toBe("a");
+    await writer.write({
+      results: [{ season: 2030, round: 1, kind: "race", driverId: "a", constructorId: "t", position: 1, positionText: "1", grid: 2, laps: 50, status: "Finished", timeText: "1:30:01.000", millis: null, points: 25, fastestLapRank: null, fastestLapLap: null, fastestLapTime: null }],
+    } as never);
+    const official = await reader.getRace(2030, 1);
+    expect(official?.provisional).toBeUndefined();
+    expect(official?.results[0]?.time).toBe("1:30:01.000");
+  });
+});

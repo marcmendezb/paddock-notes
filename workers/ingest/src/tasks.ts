@@ -5,6 +5,7 @@ import { IncoherentDataError } from "@paddock/shared/jolpica";
 import type { Env } from "./env";
 import { DeferredError } from "./http";
 import { createJolpica, jolpicaContext } from "./jolpica";
+import { ingestProvisional } from "./provisional";
 import { QuarantineError, ingestLaps, ingestRound, ingestSchedule, type RoundContext } from "./rounds";
 
 export { QuarantineError } from "./rounds";
@@ -36,7 +37,8 @@ async function refreshSchedule(t: TaskContext, season: number) {
 
 /**
  * Cron de 15 min: si una clasificación, un sprint o una carrera terminó en las últimas 6 h, reingesta esa
- * ronda (y sus vueltas, si fue la carrera). Si no, no llama a la fuente.
+ * ronda (y sus vueltas, si fue la carrera). Tras una carrera, antes que nada, el resultado provisional de
+ * OpenF1 (D-31). Si no, no llama a la fuente.
  */
 async function ingestRecent(t: TaskContext, season: number) {
   const reader = createF1Reader(t.env.DB);
@@ -48,6 +50,15 @@ async function ingestRecent(t: TaskContext, season: number) {
       return end <= t.now && t.now - end <= RECENT_WINDOW_MS;
     });
     if (ended.length === 0) continue;
+    // Primero el provisional de OpenF1 (D-31): minutos después de la carrera, aunque Jolpica tarde o falle.
+    // Si falla (OpenF1 cerrado por otra sesión en directo, D-25), no impide intentar el oficial.
+    if (ended.some((s) => s.kind === "race")) {
+      try {
+        t.rows += await ingestProvisional(t.env, race, t.now);
+      } catch (error) {
+        console.warn(JSON.stringify({ event: "provisional_failed", round: race.round, detail: String(error) }));
+      }
+    }
     const ref = { season, round: race.round, isSprintWeekend: race.isSprintWeekend, date: race.date };
     t.rows += await ingestRound(t, ref);
     if (ended.some((s) => s.kind === "race")) t.rows += await ingestLaps(t, season, race.round);

@@ -153,8 +153,60 @@ export function createF1Reader(d1: D1Database) {
     ]);
 
     const resultsOut = resultRows.map(({ result: r, driver, team }) => toResultRow(r, driver, team));
+    if (resultsOut.length) return { ...summary, results: resultsOut };
 
-    return { ...summary, results: resultsOut };
+    // Sin resultado oficial todavía: el provisional de OpenF1, marcado como tal (D-31).
+    const provisional = await provisionalRows(season, round);
+    return provisional.length ? { ...summary, results: provisional, provisional: true } : { ...summary, results: [] };
+  }
+
+  async function provisionalRows(season: number, round: number): Promise<RaceResultRow[]> {
+    const p = schema.provisionalResults;
+    const rows = await db
+      .select({ result: p, driver: drivers, team: constructors })
+      .from(p)
+      .innerJoin(drivers, eq(drivers.id, p.driverId))
+      .innerJoin(constructors, eq(constructors.id, p.constructorId))
+      .where(and(eq(p.season, season), eq(p.round, round)))
+      .orderBy(sql`${p.position} is null`, asc(p.position), desc(p.laps));
+    return rows.map(({ result: r, driver, team }) => ({
+      position: r.position,
+      positionText: r.positionText,
+      driver: driverRef(driver),
+      constructor: { id: team.id, name: team.name },
+      grid: null,
+      positionsGained: null,
+      laps: r.laps,
+      time: r.timeText,
+      status: r.status,
+      points: r.points,
+      fastestLap: null,
+    }));
+  }
+
+  /**
+   * Parrilla de la temporada para casar a los pilotos de OpenF1 (por su código de tres letras) con los de
+   * Jolpica: cada piloto con código y su equipo en la última carrera que corrió (D-31).
+   */
+  async function seasonLineup(season: number): Promise<{ driverId: string; code: string; constructorId: string }[]> {
+    const rows = await db
+      .select({ driverId: results.driverId, constructorId: results.constructorId, round: results.round, code: drivers.code })
+      .from(results)
+      .innerJoin(drivers, eq(drivers.id, results.driverId))
+      .where(and(eq(results.season, season), eq(results.kind, "race")))
+      .orderBy(asc(results.round));
+    const latest = new Map<string, { driverId: string; code: string; constructorId: string }>();
+    for (const r of rows) if (r.code) latest.set(r.driverId, { driverId: r.driverId, code: r.code, constructorId: r.constructorId });
+    return [...latest.values()];
+  }
+
+  /** ¿Tiene ya la carrera su resultado oficial? */
+  async function hasRaceResult(season: number, round: number): Promise<boolean> {
+    const [row] = await db
+      .select({ n: sql<number>`count(*)` })
+      .from(results)
+      .where(and(eq(results.season, season), eq(results.round, round), eq(results.kind, "race")));
+    return (row?.n ?? 0) > 0;
   }
 
   /** Resultado del sprint de una ronda (NUC-25). */
@@ -180,15 +232,26 @@ export function createF1Reader(d1: D1Database) {
     return next ? getRace(next.season, next.round, now) : null;
   }
 
-  /** Última carrera con resultado guardado (NUC-05). */
+  /** Última carrera con resultado guardado (NUC-05); si la última solo tiene el provisional, esa (D-31). */
   async function getLastRace(now = Date.now()): Promise<RaceDetail | null> {
-    const [last] = await db
-      .select({ season: results.season, round: results.round })
-      .from(results)
-      .where(and(eq(results.kind, "race"), eq(results.position, 1)))
-      .orderBy(desc(results.season), desc(results.round))
-      .limit(1);
-    return last ? getRace(last.season, last.round, now) : null;
+    const p = schema.provisionalResults;
+    const [[last], [prov]] = await Promise.all([
+      db
+        .select({ season: results.season, round: results.round })
+        .from(results)
+        .where(and(eq(results.kind, "race"), eq(results.position, 1)))
+        .orderBy(desc(results.season), desc(results.round))
+        .limit(1),
+      db
+        .select({ season: p.season, round: p.round })
+        .from(p)
+        .where(eq(p.position, 1))
+        .orderBy(desc(p.season), desc(p.round))
+        .limit(1),
+    ]);
+    const newer = prov && (!last || prov.season > last.season || (prov.season === last.season && prov.round > last.round));
+    const pick = newer ? prov : last;
+    return pick ? getRace(pick.season, pick.round, now) : null;
   }
 
   /** Última ronda con clasificación; con `upTo`, la última hasta esa ronda (NUC-35). */
@@ -300,6 +363,8 @@ export function createF1Reader(d1: D1Database) {
     getSprintResults,
     getSchedule,
     getRace,
+    seasonLineup,
+    hasRaceResult,
     getNextRace,
     getLastRace,
     getDriverStandings,

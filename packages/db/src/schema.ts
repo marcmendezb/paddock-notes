@@ -92,6 +92,32 @@ export const results = sqliteTable(
   ],
 );
 
+/**
+ * Resultado provisional de una carrera, leído de OpenF1 minutos después de la bandera a cuadros (D-31).
+ * Solo se sirve mientras Jolpica no publica el oficial y no cuenta para clasificaciones ni récords.
+ */
+export const provisionalResults = sqliteTable(
+  "provisional_results",
+  {
+    season: integer("season").notNull(),
+    round: integer("round").notNull(),
+    driverId: text("driver_id")
+      .notNull()
+      .references(() => drivers.id),
+    constructorId: text("constructor_id")
+      .notNull()
+      .references(() => constructors.id),
+    position: integer("position"),
+    positionText: text("position_text").notNull(),
+    laps: integer("laps").notNull(),
+    status: text("status").notNull(),
+    timeText: text("time_text"),
+    points: real("points").notNull(),
+    fetchedAt: text("fetched_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.season, t.round, t.driverId] })],
+);
+
 export const qualifying = sqliteTable(
   "qualifying",
   {

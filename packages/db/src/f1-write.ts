@@ -4,7 +4,7 @@
  * Todas las escrituras son idempotentes (INSERT ... ON CONFLICT DO UPDATE).
  */
 import { drizzle } from "drizzle-orm/d1";
-import { getTableColumns, sql, type SQL } from "drizzle-orm";
+import { and, eq, getTableColumns, sql, type SQL } from "drizzle-orm";
 import type { SQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import type {
   CircuitRow,
@@ -126,6 +126,22 @@ export function createF1Writer(d1: D1Database) {
         (batch.pitStops?.length ?? 0) +
         (batch.laps?.length ?? 0)
       );
+    },
+
+    /**
+     * Sustituye el resultado provisional de una carrera (D-31): borra el anterior y escribe el nuevo en la
+     * misma transacción. Sin filas, solo borra (por ejemplo, cuando ya está el oficial).
+     */
+    async replaceProvisional(season: number, round: number, rows: Omit<typeof schema.provisionalResults.$inferInsert, "season" | "round">[]) {
+      const where = and(eq(schema.provisionalResults.season, season), eq(schema.provisionalResults.round, round));
+      const del = db.delete(schema.provisionalResults).where(where);
+      if (rows.length === 0) {
+        await del;
+        return 0;
+      }
+      const inserts = upserts(db, schema.provisionalResults, ["season", "round", "driverId"], rows.map((r) => ({ ...r, season, round })));
+      await db.batch([del, ...inserts]);
+      return rows.length;
     },
 
     /** Resultados ya guardados de una carrera, para la cuarentena (seguridad.md §8). */

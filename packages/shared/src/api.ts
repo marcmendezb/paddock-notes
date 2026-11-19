@@ -76,6 +76,8 @@ export interface RaceSummary {
 
 export interface RaceDetail extends RaceSummary {
   results: RaceResultRow[];
+  /** Resultado provisional de OpenF1, sin la confirmación oficial de Jolpica (D-31). */
+  provisional?: boolean;
 }
 
 export interface DriverRef {

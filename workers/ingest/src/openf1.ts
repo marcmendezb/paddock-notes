@@ -27,6 +27,7 @@ export function createOpenF1(ctx: FetchContext) {
   return {
     raceSessions: (year: number) => get(`sessions?year=${year}&session_name=Race`, s.sessionSchema),
     drivers: bySession("drivers", s.driverSchema),
+    sessionResult: bySession("session_result", s.sessionResultSchema),
     stints: bySession("stints", s.stintSchema),
     pit: bySession("pit", s.pitSchema),
     laps: bySession("laps", s.lapSchema),

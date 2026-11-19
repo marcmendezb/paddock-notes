@@ -18,6 +18,20 @@ export const sessionSchema = z.object({
   date_end: isoDate.nullish(),
 });
 
+/** Clasificación final de una sesión (`session_result`). En carrera, duración y diferencia son un número;
+ *  la diferencia de un doblado llega como texto («+1 LAP»). */
+export const sessionResultSchema = z.object({
+  driver_number: int,
+  position: int.min(1).max(40).nullish(),
+  number_of_laps: int.min(0).max(200).nullish(),
+  points: num.min(0).max(50).nullish(),
+  dnf: z.boolean().nullish(),
+  dns: z.boolean().nullish(),
+  dsq: z.boolean().nullish(),
+  duration: z.union([num, z.array(num.nullable())]).nullish(),
+  gap_to_leader: z.union([num, z.string().max(20), z.array(z.union([num, z.string().max(20)]).nullable())]).nullish(),
+});
+
 export const driverSchema = z.object({
   driver_number: int,
   name_acronym: z.string().max(4).nullish(),
