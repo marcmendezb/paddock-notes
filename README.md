@@ -12,6 +12,15 @@ Paddock Notes transforms 75 years of Formula 1 telemetry and race results into i
 
 *A personal and non-commercial portfolio project. Unofficial and not affiliated with Formula 1, the FIA, or Formula 1 teams.*
 
+**This repository is public on purpose as a portfolio work sample.** If you are a recruiter or hiring manager reading this, treat it as concrete evidence of engineering practice: modern serverless edge architecture, progressive enhancement, WCAG 2.2 AA accessibility, and automated architectural boundary enforcement.
+
+A few places worth a direct look in the codebase:
+- [`packages/db/test/architecture.test.ts`](packages/db/test/architecture.test.ts): Automated architectural test enforcing CQRS (D-14). Fails CI if API or Web layers import mutation logic.
+- [`packages/analysis/src/`](packages/analysis/src/): Mathematics engine for telemetry downsampling, OLS pace regressions, and braking zone detection under a 300 KB payload budget (TEC-13).
+- [`apps/web/proxy.ts`](apps/web/proxy.ts): Dynamic nonce-based CSP injection per request, with zero inline script exceptions (D-04).
+- [`workers/ingest/src/limiter.ts`](workers/ingest/src/limiter.ts): Outbound rate limiter coordinated via Cloudflare Durable Objects (D-10).
+- [`e2e/tests/site.spec.ts`](e2e/tests/site.spec.ts): Full accessibility and zero-JS regression suite running with Playwright and axe-core.
+
 ---
 
 ## Technical Highlights
@@ -216,7 +225,9 @@ Continuous Integration runs on GitHub Actions on every pull request and push to 
 
 ## Author
 
-**Marc Méndez**  
-Full Stack & Cloudflare Edge Engineer  
-- GitHub: [@marcmendezb](https://github.com/marcmendezb)  
+**Marc Mendez**  
+Full-stack developer & MarTech specialist. Seven years in marketing, three building products. Based near Zürich, Switzerland.
+
+- Portfolio: [marcmendezb.com](https://marcmendezb.com)
+- GitHub: [@marcmendezb](https://github.com/marcmendezb)
 - Email: [marcmendezb@gmail.com](mailto:marcmendezb@gmail.com)
