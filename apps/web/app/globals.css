@@ -2752,11 +2752,11 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .quiz-option input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
 
 /* Cara a cara (D-35): selector con la parrilla en tarjetas y la cuadrícula carrera a carrera. */
-.cmp-form-pickers { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: stretch; max-inline-size: 64rem; }
-.cmp-form-pickers .cmp-vs { padding: 0; }
-.cmp-form-pickers .cmp-go { align-self: end; min-block-size: 56px; }
+.cmp-form-pickers { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: start; max-inline-size: 64rem; }
+.cmp-form-pickers .cmp-vs { align-self: start; padding-block-start: 1.6rem; }
+.cmp-form-pickers .cmp-go { align-self: start; min-block-size: 56px; margin-block-start: 2.1rem; }
 .dp { position: relative; min-inline-size: 0; }
-.dp > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label change" "current current"; gap: 0.4rem 0.75rem; block-size: 100%; padding: 0.85rem 1rem 0.95rem; border: 1px solid var(--line); background: var(--surface); cursor: pointer; list-style: none; transition: border-color 0.2s ease-out; }
+.dp > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label change" "current current"; gap: 0.4rem 0.75rem; padding: 0.85rem 1rem 0.95rem; border: 1px solid var(--line); background: var(--surface); cursor: pointer; list-style: none; transition: border-color 0.2s ease-out; }
 .dp > summary::-webkit-details-marker { display: none; }
 .dp.is-a > summary { border-color: var(--accent); }
 .dp.is-b > summary { border-color: var(--accent-2); }
@@ -2772,9 +2772,9 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .dp-who { display: grid; min-inline-size: 0; }
 .dp-name { overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .dp-team { font-size: var(--step--2); color: var(--muted); }
-.dp-panel { position: absolute; z-index: 20; inset-block-start: calc(100% + 6px); inset-inline-start: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.4rem; inline-size: min(92vw, 44rem); max-block-size: min(60vh, 32rem); margin: 0; padding: 0.6rem; overflow: auto; border: 1px solid var(--line); background: var(--bg); box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8); animation: dp-in 0.3s var(--ease-out-expo) both; }
+/* El panel se abre dentro del formulario (la cabecera recorta lo que sobresale): la parrilla, debajo. */
+.dp-panel { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.25rem, 1fr)); gap: 0.4rem; margin: 0.4rem 0 0; padding: 0.5rem; max-block-size: 24rem; overflow: auto; border: 1px solid var(--line); background: var(--bg); animation: dp-in 0.3s var(--ease-out-expo) both; }
 @keyframes dp-in { from { opacity: 0; transform: translateY(-6px); } }
-.dp.is-b .dp-panel { inset-inline-start: auto; inset-inline-end: 0; }
 .dp-option { position: relative; display: grid; gap: 0.1rem; padding: 0.6rem 0.7rem; border: 1px solid var(--line); cursor: pointer; transition: border-color 0.15s ease-out, background-color 0.15s ease-out; }
 .dp-option input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
 .dp-option:hover { border-color: var(--text); }
@@ -2788,7 +2788,8 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .dp-option:has(input:checked) .dp-option-pos, .dp-option:has(input:checked) .dp-option-team { color: inherit; opacity: 0.75; }
 @media (max-width: 760px) {
   .cmp-form-pickers { grid-template-columns: minmax(0, 1fr); }
-  .dp-panel { position: static; inline-size: 100%; margin-block-start: 0.4rem; }
+  .cmp-form-pickers .cmp-vs { padding: 0; }
+  .cmp-form-pickers .cmp-go { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .dp-panel { animation: none; } }
 .cmp-races { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
@@ -2929,3 +2930,31 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .quiz-result { margin-inline-start: 0.5rem; padding: 0.1rem 0.45rem; font-size: var(--step--2); font-weight: 800; }
 .quiz-result.is-right { background: var(--text); color: var(--bg); }
 .quiz-result.is-wrong { border: 1px solid var(--accent-2); color: var(--accent-2); }
+
+/* Desplegable de cara a cara (menú): el duelo por el título como cartel y los compañeros con su reparto de puntos. */
+.cmx { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
+.cmx > .mega-col { min-inline-size: 0; }
+.cmx-duel { display: grid; gap: 0.55rem; min-inline-size: 0; margin-block-start: 0.5rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out; }
+.cmx-duel:hover { border-color: var(--text); }
+.cmx-duel-names { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; min-inline-size: 0; }
+.cmx-code { font-family: var(--font-display); font-size: clamp(2rem, 3vw, 2.9rem); font-weight: 800; font-stretch: var(--display-width); line-height: 0.82; letter-spacing: -0.05em; }
+.cmx-code.is-a { color: var(--accent); }
+.cmx-code.is-b { color: var(--accent-2); }
+.cmx-vs { font-family: var(--font-display); font-size: var(--step-1); font-weight: 800; color: transparent; -webkit-text-stroke: 1px var(--text); }
+.cmx-duel-who, .cmx-duel-pts, .cmx-pair-pts { display: flex; justify-content: space-between; gap: 0.5rem; font-size: var(--step--1); }
+.cmx-duel-who { font-weight: 600; color: var(--muted); }
+.cmx-duel-pts { font-weight: 800; }
+.cmx-split { display: block; inline-size: 100%; block-size: 8px; }
+.cmx-split-a { fill: var(--accent); }
+.cmx-split-b { fill: var(--accent-2); }
+.cmx-duel-gap { margin-block-start: 0.35rem; padding-block-start: 0.6rem; border-block-start: 1px solid var(--line); font-size: var(--step--1); font-weight: 700; }
+.cmx-duel:hover .cmx-duel-gap { font-style: italic; }
+.cmx-pairs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.4rem; margin: 0.5rem 0 0; padding: 0; list-style: none; }
+.cmx-pair { display: grid; gap: 0.3rem; padding: 0.6rem 0.75rem 0.65rem; border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out; }
+.cmx-pair:hover { border-color: var(--text); }
+.cmx-pair-team { overflow: hidden; font-size: var(--step--2); font-weight: 600; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+.cmx-pair-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; }
+.cmx-pair-row .cmx-split { block-size: 6px; }
+.cmx-pair-code { font-family: var(--font-display); font-size: var(--step-0); font-weight: 800; font-stretch: var(--display-width); }
+.cmx-pair:hover .cmx-pair-code { font-style: italic; }
+.cmx-pair-pts { font-size: var(--step--2); font-weight: 700; color: var(--muted); }

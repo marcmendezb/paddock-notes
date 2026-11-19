@@ -261,43 +261,67 @@ export function ComparePanel({ lang, drivers }: { lang: Lang; drivers: Standings
   }
   const pairs = [...byTeam.values()].filter((e) => e.rows.length === 2).slice(0, 8);
 
+  const share = (x: number, y: number) => (x + y > 0 ? (x / (x + y)) * 100 : 50);
+  const split = (a: number, b: number) => (
+    <svg className="cmx-split" aria-hidden="true" focusable="false">
+      <rect x="0" y="0" width={`${share(a, b).toFixed(2)}%`} height="100%" className="cmx-split-a" />
+      <rect x={`${share(a, b).toFixed(2)}%`} y="0" width={`${(100 - share(a, b)).toFixed(2)}%`} height="100%" className="cmx-split-b" />
+    </svg>
+  );
+
   return (
-    <div className="mega">
+    <div className="mega cmx">
       {p1 && p2 ? (
         <section className="mega-col" aria-label={c.titleDuel}>
           <p className="panel-kicker">
             {c.titleDuel} · {drivers.season}
           </p>
-          <Link href={href(p1.driver.id, p2.driver.id)} className="cmp-mega-duel">
-            <span className="cmp-mega-side is-a">
-              <span className="cmp-mega-code">{code(p1)}</span>
-              <span className="cmp-mega-pts tabular">{formatPoints(lang, p1.points)} pts</span>
+          <Link href={href(p1.driver.id, p2.driver.id)} className="cmx-duel">
+            <span className="cmx-duel-names">
+              <span className="cmx-code is-a">{code(p1)}</span>
+              <span className="cmx-vs" aria-hidden="true">
+                VS
+              </span>
+              <span className="cmx-code is-b">{code(p2)}</span>
             </span>
-            <span className="cmp-mega-vs" aria-hidden="true">
-              VS
+            <span className="cmx-duel-who">
+              <span>{p1.driver.familyName}</span>
+              <span>{p2.driver.familyName}</span>
             </span>
-            <span className="cmp-mega-side is-b">
-              <span className="cmp-mega-code">{code(p2)}</span>
-              <span className="cmp-mega-pts tabular">{formatPoints(lang, p2.points)} pts</span>
+            {split(p1.points, p2.points)}
+            <span className="cmx-duel-pts tabular">
+              <span>{formatPoints(lang, p1.points)}</span>
+              <span>{formatPoints(lang, p2.points)}</span>
             </span>
-            <span className="cmp-mega-gap">{c.gap(formatPoints(lang, p1.points - p2.points))}</span>
+            <span className="cmx-duel-gap">
+              {c.gap(formatPoints(lang, p1.points - p2.points))} <span aria-hidden="true">→</span>
+            </span>
           </Link>
         </section>
       ) : null}
 
       <section className="mega-col" aria-label={c.teammates}>
         <p className="panel-kicker">{c.teammates}</p>
-        <ul className="cmp-mega-pairs">
-          {pairs.map((p) => (
-            <li key={p.team}>
-              <Link href={href(p.rows[0]!.driver.id, p.rows[1]!.driver.id)}>
-                <span className="cmp-mega-pair tabular">
-                  {code(p.rows[0]!)} <span aria-hidden="true">·</span> {code(p.rows[1]!)}
-                </span>
-                <span className="cmp-mega-team">{p.team}</span>
-              </Link>
-            </li>
-          ))}
+        <ul className="cmx-pairs">
+          {pairs.map((p) => {
+            const [x, y] = p.rows as [DriverStandingRow, DriverStandingRow];
+            return (
+              <li key={p.team}>
+                <Link href={href(x.driver.id, y.driver.id)} className="cmx-pair">
+                  <span className="cmx-pair-team">{p.team}</span>
+                  <span className="cmx-pair-row">
+                    <span className="cmx-pair-code is-a">{code(x)}</span>
+                    {split(x.points, y.points)}
+                    <span className="cmx-pair-code is-b">{code(y)}</span>
+                  </span>
+                  <span className="cmx-pair-pts tabular">
+                    <span>{formatPoints(lang, x.points)}</span>
+                    <span>{formatPoints(lang, y.points)}</span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
