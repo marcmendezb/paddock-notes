@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { formatDate, formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
-import { isRecordType, RECORD_ICON } from "@/lib/records";
+import { isRecordType, RECORD_ICON, RECORDS_PUBLIC } from "@/lib/records";
 import { HeroStats, PageHero } from "@/components/page-hero";
 
 type Props = { params: Promise<{ lang: string; type: string }> };
@@ -14,7 +14,7 @@ type Props = { params: Promise<{ lang: string; type: string }> };
 async function load(params: Props["params"]) {
   const p = await params;
   const lang = parseLang(p.lang);
-  if (!isRecordType(p.type)) notFound();
+  if (!RECORDS_PUBLIC || !isRecordType(p.type)) notFound();
   return { lang, type: p.type };
 }
 

@@ -118,3 +118,78 @@ export function PositionBadge({ position }: { position: number | null }) {
   if (!position) return <>—</>;
   return <span className={position === 1 ? "pf-pos is-1" : position <= 3 ? "pf-pos is-podium" : "pf-pos"}>P{position}</span>;
 }
+
+/** Qué temporadas cuentan las cifras de la ficha: el histórico se carga de la más reciente hacia atrás. */
+export function DataNote({ lang, from, to }: { lang: Lang; from: number; to: number }) {
+  return (
+    <p className="pf-data-note">
+      <Icon name="calendar" />
+      <span>{dict(lang).driver.dataNote(from, to)}</span>
+    </p>
+  );
+}
+
+/** Victorias, podios y puntos por carrera como anillos: el porcentaje, en texto dentro de cada uno. */
+export function RateRings({ items }: { items: { label: string; value: number; text: string; accent?: boolean }[] }) {
+  const R = 42;
+  const C = 2 * Math.PI * R;
+  return (
+    <ul className="pf-rings">
+      {items.map((it) => (
+        <li key={it.label} className={it.accent ? "is-accent" : undefined}>
+          <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="50" r={R} className="pf-ring-rail" />
+            <circle
+              cx="50"
+              cy="50"
+              r={R}
+              className="pf-ring-fill"
+              strokeDasharray={`${(Math.max(0, Math.min(1, it.value)) * C).toFixed(1)} ${C.toFixed(1)}`}
+              transform="rotate(-90 50 50)"
+            />
+          </svg>
+          <span className="pf-ring-text tabular">{it.text}</span>
+          <span className="pf-ring-label">{it.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Año a año: una columna por temporada con su equipo (o pilotos), la posición final y una barra de puntos. */
+export function SeasonRibbon({
+  lang,
+  title,
+  seasons,
+  winsLabel,
+}: {
+  lang: Lang;
+  title: string;
+  winsLabel: string;
+  seasons: { season: number; who: string; position: number | null; wins: number; points: number | null }[];
+}) {
+  const top = Math.max(1, ...seasons.map((s) => s.points ?? 0));
+  return (
+    <div className="pf-ribbon-wrap" tabIndex={0} role="region" aria-label={title}>
+    <ol className="pf-ribbon">
+      {seasons.map((s) => (
+        <li key={s.season} className={s.position === 1 ? "is-champion" : undefined}>
+          <span className="pf-ribbon-year tabular">{s.season}</span>
+          <span className="pf-ribbon-pos tabular">{s.position ? `P${s.position}` : "—"}</span>
+          <svg className="pf-ribbon-bar" aria-hidden="true" focusable="false">
+            <rect x="0" y="0" width="100%" height="100%" className="pf-ribbon-rail" />
+            <rect x="0" y="0" width={`${(((s.points ?? 0) / top) * 100).toFixed(2)}%`} height="100%" className="pf-ribbon-fill" />
+          </svg>
+          <span className="pf-ribbon-pts tabular">{s.points === null ? "—" : `${formatPoints(lang, s.points)} pts`}</span>
+          <span className="pf-ribbon-who">{s.who}</span>
+          {s.wins ? (
+            <span className="pf-ribbon-wins tabular">
+              {s.wins} {winsLabel}
+            </span>
+          ) : null}
+        </li>
+      ))}
+    </ol>
+    </div>
+  );
+}

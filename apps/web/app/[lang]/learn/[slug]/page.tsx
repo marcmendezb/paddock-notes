@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { PageHero } from "@/components/page-hero";
+import { ExplainerBody, ExplainerToc, explainerSections } from "@/components/explainer-body";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
 import { EXPLAINERS, explainerBody } from "@/content";
@@ -41,6 +42,11 @@ export default async function ExplainerPage({ params }: Props) {
   const list = EXPLAINERS;
   const i = list.findIndex((e) => e.slug === explainer.slug);
   const next = list[(i + 1) % list.length];
+  const parts = explainerSections(Body);
+  // La entradilla del MDX repite la descripción de la cabecera: no se pinta dos veces.
+  const norm = (x: string) => x.replace(/\s+/g, " ").trim().slice(0, 60);
+  const leadText = parts?.lead.map((n) => String((n.props as { children?: unknown }).children ?? "")).join(" ") ?? "";
+  const lead = parts && norm(leadText) === norm(explainer.description[lang]) ? [] : (parts?.lead ?? []);
   return (
     <article>
       <JsonLd
@@ -58,10 +64,17 @@ export default async function ExplainerPage({ params }: Props) {
         lede={<p>{explainer.description[lang]}</p>}
       />
       <div className="container reading">
-        <div className="article lede-first reading-main">
-          <Body />
+        <div className="reading-main">
+          {parts ? (
+            <ExplainerBody lead={lead} sections={parts.sections} />
+          ) : (
+            <div className="article lede-first">
+              <Body />
+            </div>
+          )}
         </div>
         <aside className="reading-aside">
+          {parts ? <ExplainerToc sections={parts.sections} label={t.contents} /> : null}
           <p className="reading-meta">
             <Icon name="clock" /> {t.updated}
           </p>

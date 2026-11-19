@@ -114,11 +114,14 @@ export default async function LearnPage({ params }: Props) {
               <h2 id="circuit-guides" className="section-title">
                 {t.circuitGuides}
               </h2>
+              <Link href={`/${lang}/learn/circuits`} className="ln-more">
+                {t.allGuides} →
+              </Link>
             </div>
             <ul className="tiles ln-guides">
               {guides.map((id) => (
                 <li key={id}>
-                  <Link href={`/${lang}/circuits/${id}#guide`} className="tile">
+                  <Link href={`/${lang}/circuits/${id}`} className="tile">
                     <span className="tile-icon">
                       <Icon name="pin" />
                     </span>

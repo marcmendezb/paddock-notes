@@ -16,6 +16,7 @@ import {
 import { formatPoints, fullName, localeOf } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { TOOL_ICON, TOOL_ORDER } from "@/lib/tools";
+import { RECORDS_PUBLIC } from "@/lib/records";
 import { Icon, type IconName } from "./icons";
 
 /**
@@ -273,11 +274,12 @@ export function HistoryPanel({ lang, events }: { lang: Lang; events: HistoryEven
         <p className="panel-kicker">{m.history.explore}</p>
         <ul className="mega-list">
           <Described href={`/${lang}/history`} icon="calendar" name={t.history.seasons} line={m.history.seasonsLine} />
-          <Described href={`/${lang}/records`} icon="trophy" name={t.history.records} line={m.history.recordsLine} />
+          {RECORDS_PUBLIC ? <Described href={`/${lang}/records`} icon="trophy" name={t.history.records} line={m.history.recordsLine} /> : null}
           <Described href={`/${lang}/compare`} icon="user" name={t.history.compare} line={m.history.compareLine} />
         </ul>
       </section>
 
+      {RECORDS_PUBLIC ? (
       <section className="mega-col" aria-label={t.records.title}>
         <p className="panel-kicker">{t.records.title}</p>
         <ul className="mega-links">
@@ -288,11 +290,12 @@ export function HistoryPanel({ lang, events }: { lang: Lang; events: HistoryEven
           ))}
         </ul>
       </section>
+      ) : null}
 
       <Quick
         items={[
           { href: `/${lang}/history`, icon: "calendar", label: t.history.seasons },
-          { href: `/${lang}/records`, icon: "trophy", label: t.history.records },
+          ...(RECORDS_PUBLIC ? [{ href: `/${lang}/records`, icon: "trophy" as const, label: t.history.records }] : []),
           { href: `/${lang}/compare`, icon: "user", label: t.history.compare },
         ]}
       />
@@ -347,7 +350,7 @@ export function LearnPanel({ lang }: { lang: Lang }) {
         <p className="panel-kicker">{m.learn.more}</p>
         <ul className="mega-list">
           <Described href={`/${lang}/learn/glossary`} icon="book" name={t.learn.glossary} line={m.learn.glossaryLine} />
-          <Described href={`/${lang}/learn#circuit-guides`} icon="pin" name={t.learn.circuitGuides} line={m.learn.circuitsLine} />
+          <Described href={`/${lang}/learn/circuits`} icon="pin" name={t.learn.circuitGuides} line={m.learn.circuitsLine} />
           <Described href={`/${lang}/quiz`} icon="eye" name={t.quiz.title} line={m.learn.quizLine} />
         </ul>
       </section>

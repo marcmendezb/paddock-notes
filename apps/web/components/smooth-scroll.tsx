@@ -35,6 +35,7 @@ export function scrollToAnchor(el: HTMLElement) {
  * siendo el del sistema) y deja en paz las zonas con scroll propio: tablas anchas y el menú de móvil.
  * Al cambiar de página, vuelve arriba sin animación, como haría el navegador. Un enlace a la página en la
  * que ya se está (el logo en la home, «Volver a la salida» en el pie) sube hasta arriba deslizándose.
+ * La URL no guarda el «#»: se desplaza a la sección y la dirección sigue limpia.
  * Las anclas (#seccion) las lleva este componente y no Lenis: Lenis no cancela el salto nativo, resta dos
  * veces el margen y mide con las transformaciones de las animaciones; acababa en otra sección.
  */
@@ -62,7 +63,16 @@ export function SmoothScroll() {
     };
   }, []);
 
+  // Al cambiar de página, arriba; si se llega con un ancla (/circuits/x#guide), a esa sección, y la URL se
+  // queda limpia, sin «#»: el ancla solo sirve para llegar.
   useEffect(() => {
+    const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
+    const target = id && id !== "top" ? document.getElementById(id) : null;
+    if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
+    if (target) {
+      requestAnimationFrame(() => scrollToAnchor(target));
+      return;
+    }
     lenis.current?.scrollTo(0, { immediate: true });
   }, [pathname]);
 
@@ -79,7 +89,6 @@ export function SmoothScroll() {
         // Sin stopPropagation: la pestaña del subencabezado escucha el mismo clic.
         event.preventDefault();
         scrollToAnchor(target);
-        history.replaceState(history.state, "", url.hash);
         target.focus({ preventScroll: true });
         return;
       }

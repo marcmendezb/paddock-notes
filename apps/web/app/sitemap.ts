@@ -4,7 +4,7 @@ import { EXPLAINERS } from "@/content";
 import { api } from "@/lib/api";
 import { GLOSSARY } from "@/lib/glossary";
 import { PAGE_SLUGS } from "@/lib/pages";
-import { RECORD_TYPES } from "@/lib/records";
+import { RECORD_TYPES, RECORDS_PUBLIC } from "@/lib/records";
 import { SITE_URL } from "@/lib/site";
 
 // Se genera por petición: incluye las carreras y los análisis que haya en la API.
@@ -18,15 +18,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     `/races/${season}`,
     `/standings/${season}`,
     "/history",
-    "/records",
+    ...(RECORDS_PUBLIC ? ["/records"] : []),
     "/compare",
     "/analysis",
     "/learn",
+    "/learn/circuits",
     "/learn/glossary",
     "/quiz",
     "/simulator",
     ...PAGE_SLUGS.map((s) => `/${s}`),
-    ...RECORD_TYPES.map((t) => `/records/${t}`),
+    ...(RECORDS_PUBLIC ? RECORD_TYPES.map((t) => `/records/${t}`) : []),
     ...EXPLAINERS.map((e) => `/learn/${e.slug}`),
     "/notes",
     ...NOTES.map((n) => `/notes/${n.slug}`),

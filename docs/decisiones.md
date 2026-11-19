@@ -449,3 +449,24 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 - **Selector de idioma:** con ratón se abre al pasar por encima y se cierra al salir, con 150 ms de margen y un puente invisible sobre el hueco. Con teclado y en táctil sigue siendo un `<details>` que se abre al pulsar.
 
 **Consecuencia:** la newsletter de los martes (CON-06) no tiene destinatarios mientras dure la demostración. Si se reactiva, se sustituye esta decisión y vuelven Turnstile y el texto de privacidad anterior.
+
+## D-34 · Récords ocultos y cobertura de los datos a la vista
+
+**Contexto:** el histórico se carga de la temporada más reciente hacia atrás (D-11) y todavía no llega a 1950. Un «récord» calculado con tres o cuatro temporadas no es el récord de la Fórmula 1, y una ficha de piloto o un cara a cara sin decir de qué años son sus cifras engaña.
+
+**Decisión:**
+
+- **Páginas de récords ocultas** (`RECORDS_PUBLIC = false` en `lib/records.ts`):
+  - `/records` y `/records/*` responden 404 y salen del menú, del panel de carreras, del histórico y del sitemap;
+  - las tarjetas de «Los grandes números» del histórico dejan de enlazar a ellas.
+  - El código se queda: se vuelven a publicar cambiando el interruptor cuando el histórico esté completo.
+- **Cobertura a la vista:**
+  - las fichas de piloto y de equipo dicen de qué años son sus datos (temporadas cargadas) y avisan de que una trayectoria anterior aún no aparece;
+  - cara a cara dice lo mismo en su cabecera y en el duelo.
+- **Cara a cara con desplegables:**
+  - la API sirve `GET /drivers` con cada piloto, su primera y última temporada en los datos y sus carreras;
+  - los desplegables los agrupan por última temporada;
+  - sin elección, se comparan los dos primeros del Mundial actual.
+- **URL limpias:** el desplazamiento a una sección no añade `#` a la dirección y, si se llega con uno, se quita tras desplazarse. Las fichas de circuito de «Aprende» tienen página propia (`/learn/circuits`).
+
+**Consecuencia:** cuando el histórico llegue a 1950, se revisan las tres piezas: el interruptor de récords, los textos de cobertura y la nota de las fichas.

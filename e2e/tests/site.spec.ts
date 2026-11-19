@@ -15,8 +15,8 @@ const PAGES = [
   "/en/accessibility",
   // Fase 2: histórico
   "/es/history",
-  "/en/records",
-  "/es/records/wins",
+  "/es/learn/circuits",
+  "/de/learn/circuits",
   "/es/drivers/russell",
   "/en/constructors/mercedes",
   "/es/circuits/albert_park",
@@ -195,7 +195,7 @@ test("el atajo / abre la búsqueda (TRA-03)", async ({ page, isMobile }) => {
 });
 
 test("los IDs inválidos o inexistentes dan 404", async ({ page }) => {
-  for (const path of ["/es/drivers/no_existe", "/es/drivers/Bad%20Id", "/es/records/nada", "/es/circuits/x"]) {
+  for (const path of ["/es/drivers/no_existe", "/es/drivers/Bad%20Id", "/es/records", "/es/records/wins", "/es/circuits/x"]) {
     expect((await page.goto(path))?.status(), path).toBe(404);
   }
 });
@@ -236,8 +236,8 @@ test("el comparador de telemetría se recorre con el teclado (TEC-04)", async ({
 test("el glosario filtra al escribir (CON-02)", async ({ page }) => {
   await page.goto("/es/learn/glossary");
   await page.getByRole("searchbox").fill("undercut");
-  await expect(page.locator(".glossary-list dt")).toHaveCount(1);
-  await expect(page.locator(".glossary-list dt")).toHaveText("Undercut");
+  await expect(page.locator(".gx-grid dt")).toHaveCount(1);
+  await expect(page.locator(".gx-grid dt")).toHaveText("Undercut");
 });
 
 test("el simulador calcula un escenario y lo guarda en la URL (COM-09)", async ({ browser, baseURL }) => {
@@ -259,7 +259,7 @@ test("el quiz corrige las respuestas sin JavaScript (COM-08)", async ({ browser,
   await page.goto("/es/quiz");
   const questions = page.locator("fieldset.quiz-question");
   test.skip((await questions.count()) === 0, "Sin datos para el quiz");
-  for (const q of await questions.all()) await q.locator("input[type=radio]").first().check();
+  for (const q of await questions.all()) await q.locator(".quiz-option").first().click();
   await page.getByRole("button", { name: "Comprobar" }).click();
   await expect(page.getByRole("status")).toContainText(/Has acertado \d de \d/);
   await context.close();
@@ -305,6 +305,14 @@ test("sin JavaScript, la newsletter tampoco guarda nada y vuelve con el aviso (D
   await expect(page).toHaveURL(/\/es\/newsletter\?msg=newsletter%3Aok/);
   await expect(page.getByRole("status")).toContainText("no se ha guardado en ningún sitio");
   await context.close();
+});
+
+test("la crónica de la portada reparte bien sus columnas (NUC-05)", async ({ page, isMobile }) => {
+  await page.goto("/es");
+  const points = page.locator(".rr-points");
+  test.skip((await points.count()) === 0, "Sin carrera con puntos en este entorno");
+  const width = await points.evaluate((el) => el.getBoundingClientRect().width);
+  expect(width).toBeGreaterThan(isMobile ? 250 : 300);
 });
 
 test("explicador sugerido para el próximo GP (NUC-09)", async ({ page }) => {

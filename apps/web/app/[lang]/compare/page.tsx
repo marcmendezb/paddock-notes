@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { DriverProfile, Lang } from "@paddock/shared";
+import type { DriverIndexEntry, DriverProfile, Lang } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { PageHero } from "@/components/page-hero";
 import { PositionBadge } from "@/components/profile-view";
+import { Icon } from "@/components/icons";
 import { api } from "@/lib/api";
 import { formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
@@ -30,30 +31,64 @@ export default async function ComparePage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const q = await searchParams;
   const t = dict(lang);
-  const [a, b] = await Promise.all([resolveDriver(q.a), resolveDriver(q.b)]);
+  const [index, standings, loaded] = await Promise.all([
+    api.drivers().catch(() => null),
+    api.driverStandings("current").catch(() => null),
+    api.seasons().catch(() => null),
+  ]);
+  const drivers = index?.data ?? [];
+  // Sin elección, el duelo de los dos primeros del Mundial: la página nunca empieza vacía.
+  const leaders = standings?.data.rows.slice(0, 2).map((r) => r.driver.id) ?? [];
+  const [a, b] = await Promise.all([resolveDriver(q.a ?? leaders[0]), resolveDriver(q.b ?? leaders[1])]);
   const comparison = a && b && a !== b ? await api.compare(a, b) : null;
+  // Las mismas temporadas cargadas que citan las fichas de piloto y equipo.
+  const seasons = loaded?.data ?? [];
+  const from = seasons.length ? Math.min(...seasons) : drivers.length ? Math.min(...drivers.map((d) => d.first)) : null;
+  const to = seasons.length ? Math.max(...seasons) : drivers.length ? Math.max(...drivers.map((d) => d.last)) : null;
+  const groups = [...new Set(drivers.map((d) => d.last))].map((season) => ({ season, list: drivers.filter((d) => d.last === season) }));
+  const span = (d: DriverIndexEntry) => (d.first === d.last ? String(d.first) : `${d.first}–${d.last}`);
+  const byId = new Map(drivers.map((d) => [d.driver.id, d]));
+
+  const picker = (name: "a" | "b", label: string, value: string | null) => (
+    <label className="cmp-pick">
+      <span>{label}</span>
+      <select name={name} defaultValue={value ?? ""} required>
+        <option value="" disabled>
+          {t.compare.pick}
+        </option>
+        {groups.map((g) => (
+          <optgroup key={g.season} label={t.compare.group(g.season)}>
+            {g.list.map((d) => (
+              <option key={d.driver.id} value={d.driver.id}>
+                {fullName(d.driver)} · {span(d)}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </label>
+  );
 
   return (
     <>
       <PageHero
         icon="user"
         crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: t.compare.title }]} />}
-        kicker={t.history.title}
+        kicker={from !== null && to !== null ? t.compare.coverageShort(from, to) : t.history.title}
         title={t.compare.title}
-        lede={<p>{t.compare.lede}</p>}
+        lede={
+          <>
+            <p>{t.compare.lede}</p>
+            {from !== null && to !== null ? <p className="cmp-coverage">{t.compare.coverage(from, to, drivers.length)}</p> : null}
+          </>
+        }
       >
         <form action={`/${lang}/compare`} method="get" className="cmp-form">
-          <label>
-            <span>{t.compare.a}</span>
-            <input type="text" name="a" defaultValue={comparison ? comparison.data.a.driver.id : q.a} required maxLength={50} />
-          </label>
+          {picker("a", t.compare.a, comparison ? comparison.data.a.driver.id : a)}
           <span className="cmp-vs" aria-hidden="true">
             VS
           </span>
-          <label>
-            <span>{t.compare.b}</span>
-            <input type="text" name="b" defaultValue={comparison ? comparison.data.b.driver.id : q.b} required maxLength={50} />
-          </label>
+          {picker("b", t.compare.b, comparison ? comparison.data.b.driver.id : b)}
           <button type="submit" className="cmp-go">
             {t.compare.go}
           </button>
@@ -63,7 +98,20 @@ export default async function ComparePage({ params, searchParams }: Props) {
       <div className="container stack-xl">
         {q.a && !a ? <p className="notice">{t.compare.notFound(q.a)}</p> : null}
         {q.b && !b ? <p className="notice">{t.compare.notFound(q.b)}</p> : null}
-        {comparison ? <Comparison lang={lang} {...comparison.data} /> : null}
+        {comparison ? (
+          <Comparison
+            lang={lang}
+            {...comparison.data}
+            spans={[byId.get(comparison.data.a.driver.id), byId.get(comparison.data.b.driver.id)].map((d) =>
+              d ? t.compare.inData(span(d), d.races) : null,
+            )}
+            coverage={from !== null && to !== null ? t.compare.coverageShort(from, to) : null}
+          />
+        ) : null}
+        <p className="nlx-demo">
+          <Icon name="clock" />
+          <span>{t.compare.growing}</span>
+        </p>
       </div>
     </>
   );
@@ -74,8 +122,12 @@ function Comparison({
   a,
   b,
   headToHead,
+  spans,
+  coverage,
 }: {
   lang: Lang;
+  spans: (string | null)[];
+  coverage: string | null;
   a: DriverProfile;
   b: DriverProfile;
   headToHead: { races: { season: number; round: number; name: string; a: number; b: number }[]; aAhead: number; bAhead: number };
@@ -100,11 +152,17 @@ function Comparison({
   return (
     <div className="stack-xl">
       <section className="cmp-duel" data-surface="ink" aria-labelledby="stats">
+        {coverage ? (
+          <p className="cmp-duel-kicker">
+            <Icon name="calendar" /> {t.compare.title} · {coverage}
+          </p>
+        ) : null}
         <div className="cmp-names">
           <Link href={`/${lang}/drivers/${a.driver.id}`} className="cmp-name is-a">
             <span className="cmp-given">{a.driver.givenName}</span>
             <span className="cmp-family">{a.driver.familyName}</span>
             <span className="cmp-team">{teamOf(a)}</span>
+            {spans[0] ? <span className="cmp-span">{spans[0]}</span> : null}
           </Link>
           <span className="cmp-vs-big" aria-hidden="true">
             VS
@@ -113,6 +171,7 @@ function Comparison({
             <span className="cmp-given">{b.driver.givenName}</span>
             <span className="cmp-family">{b.driver.familyName}</span>
             <span className="cmp-team">{teamOf(b)}</span>
+            {spans[1] ? <span className="cmp-span">{spans[1]}</span> : null}
           </Link>
         </div>
         <h2 id="stats" className="visually-hidden">

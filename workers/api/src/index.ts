@@ -238,7 +238,7 @@ const idParam = (name: string) =>
     .openapi({ param: { name, in: "path" }, example: "hamilton" });
 const recordTypes = ["wins", "poles", "podiums", "points", "starts", "comebacks", "dnfs", "win-streak"] as const;
 
-for (const prefix of ["/drivers/*", "/constructors/*", "/circuits/*", "/compare/*", "/records/*", "/history/*", "/seasons"]) {
+for (const prefix of ["/drivers", "/drivers/*", "/constructors/*", "/circuits/*", "/compare/*", "/records/*", "/history/*", "/seasons"]) {
   app.use(prefix, noQueryParams, rateLimit);
 }
 app.use("/search", rateLimit);
@@ -325,6 +325,13 @@ for (const kind of ["drivers", "constructors"] as const) {
     },
   );
 }
+
+get({ method: "get", path: "/drivers", responses: ok("Pilotos con carreras en los datos cargados") }, async (c) =>
+  cached(c, { ttl: 3600 }, async () => {
+    const r = reader(c);
+    return historyPayload(r, await r.listDrivers());
+  }),
+);
 
 get({ method: "get", path: "/seasons", responses: ok("Temporadas disponibles") }, async (c) =>
   cached(c, { ttl: 3600 }, async () => {

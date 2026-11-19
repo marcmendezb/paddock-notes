@@ -39,6 +39,7 @@ export default async function GlossaryPage({ params }: Props) {
           groups={(Object.keys(GROUPS) as GroupKey[]).map((key) => ({ key, label: GROUPS[key][lang] }))}
           label={t.learn.searchGlossary}
           empty={t.search.empty("{q}")}
+          allLabel={{ es: "Todos", en: "All", de: "Alle" }[lang]}
         />
       </div>
     </>

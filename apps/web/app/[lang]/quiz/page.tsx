@@ -4,6 +4,8 @@ import { gpName, isoWeek, type QuizQuestion } from "@paddock/shared";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
 import { PageHero } from "@/components/page-hero";
+import { Icon, type IconName } from "@/components/icons";
+import { formatDate } from "@/lib/format";
 import { parseLang } from "@/lib/params";
 import { currentUser } from "@/lib/session";
 
@@ -30,6 +32,11 @@ export default async function QuizPage({ params, searchParams }: Props) {
   const answered = questions.some((q) => query[q.id] !== undefined);
   const score = questions.filter((q) => query[q.id] === q.answer).length;
 
+  // El quiz cambia cada lunes: el siguiente lunes en UTC.
+  const monday = new Date();
+  monday.setUTCDate(monday.getUTCDate() + (((8 - monday.getUTCDay()) % 7) || 7));
+  const KIND_ICON: Record<QuizQuestion["kind"], IconName> = { "race-winner": "flag", champion: "trophy", "constructor-champion": "wrench", "season-wins": "bolt", pole: "stopwatch" };
+
   const prompt = (q: QuizQuestion) =>
     t.quiz.prompts[q.kind](q.kind === "race-winner" || q.kind === "pole" ? gpName(lang, q.subject ?? "") : (q.subject ?? ""), q.season);
 
@@ -47,7 +54,24 @@ export default async function QuizPage({ params, searchParams }: Props) {
                 {score}
                 <span className="qz-score-total">/{questions.length}</span>
               </span>
-              <span className="qz-score-text">{t.quiz.score(score, questions.length)}</span>
+              <span className="qz-score-text">
+                {t.quiz.score(score, questions.length)} {t.quiz.verdict(score, questions.length)}
+              </span>
+              <span className="qz-strip" aria-hidden="true">
+                {questions.map((q) => (
+                  <span key={q.id} className={query[q.id] === q.answer ? "is-right" : "is-wrong"} />
+                ))}
+              </span>
+            </div>
+          ) : questions.length ? (
+            <div className="qz-score">
+              <span className="qz-score-text">{t.quiz.meta(questions.length)}</span>
+              <span className="qz-strip" aria-hidden="true">
+                {questions.map((q) => (
+                  <span key={q.id} />
+                ))}
+              </span>
+              <span className="pr-next-deadline">{t.quiz.nextQuiz(formatDate(lang, monday.toISOString().slice(0, 10)))}</span>
             </div>
           ) : undefined
         }
@@ -68,7 +92,12 @@ export default async function QuizPage({ params, searchParams }: Props) {
                   <span className="quiz-n tabular" aria-hidden="true">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span>{prompt(q)}</span>
+                  <span className="quiz-prompt">
+                    <span className="quiz-kind">
+                      <Icon name={KIND_ICON[q.kind]} /> {t.quiz.kinds[q.kind]}
+                    </span>
+                    {prompt(q)}
+                  </span>
                 </legend>
                 <div className="quiz-options">
                 {q.options.map((o) => (

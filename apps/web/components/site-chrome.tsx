@@ -270,6 +270,8 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
       <div className="container ft">
         {/* Izquierda: el símbolo entero, con un brillo lila a 12° que lo recorre sin parar, y el eslogan. */}
         <div className="ft-brand">
+          {/* Como el logo de la cabecera: lleva a la portada. */}
+          <Link href={`/${lang}`} className="ft-mark-link" aria-label={`${t.name}, ${t.tagline}`}>
           <FooterMark>
             <svg className="ft-mark" viewBox="0 4.5 48 39" aria-hidden="true" focusable="false">
               <defs>
@@ -341,6 +343,7 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
               </g>
             </svg>
           </FooterMark>
+          </Link>
           <p className="ft-claim">{t.tagline}</p>
           <Link href={`/${lang}/newsletter`} className="ft-cta">
             <Icon name="book" /> {t.newsletter.lede}
@@ -425,7 +428,9 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
           </p>
           <span className="ft-base-end">
             <LangSwitch current={lang} label={t.language} up />
-            <img src="/brand/paddock-notes-horizontal-sobre-negro.svg" alt={t.name} width="158" height="28" className="ft-lockup" />
+            <Link href={`/${lang}`} className="ft-lockup-link">
+              <img src="/brand/paddock-notes-horizontal-sobre-negro.svg" alt={t.name} width="158" height="28" className="ft-lockup" />
+            </Link>
           </span>
         </div>
       </div>

@@ -14,6 +14,7 @@ import {
   type ConstructorProfile,
   type ConstructorRef,
   type DriverComparison,
+  type DriverIndexEntry,
   type DriverProfile,
   type DriverRef,
   type HistoryEvent,
@@ -185,6 +186,26 @@ export function createHistoryReader(db: Db) {
   async function getSeasons(): Promise<number[]> {
     const rows = await all<{ season: number }>(sql`select distinct season from races order by season desc`);
     return rows.map((r) => r.season);
+  }
+
+  /**
+   * Todos los pilotos con al menos una carrera en los datos cargados, con su primera y última temporada y
+   * sus carreras (para elegir en el cara a cara). Los de la última temporada, primero.
+   */
+  async function listDrivers(): Promise<DriverIndexEntry[]> {
+    const rows = await all<{ id: string; code: string | null; given: string; family: string; first: number; last: number; races: number }>(sql`
+      select d.id as id, d.code as code, d.given_name as given, d.family_name as family,
+             min(r.season) as first, max(r.season) as last, count(*) as races
+      from results r join drivers d on d.id = r.driver_id
+      where r.kind = 'race'
+      group by d.id
+      order by last desc, family asc`);
+    return rows.map((x) => ({
+      driver: { id: x.id, code: x.code, givenName: x.given, familyName: x.family },
+      first: x.first,
+      last: x.last,
+      races: x.races,
+    }));
   }
 
   async function careerStats(where: SQL): Promise<CareerStats> {
@@ -721,6 +742,7 @@ export function createHistoryReader(db: Db) {
     getRecalculatedStandings,
     getSeasons,
     getDriver,
+    listDrivers,
     getConstructor,
     getCircuit,
     compareDrivers,

@@ -14,6 +14,7 @@ import { dict } from "@/lib/i18n";
 import { Icon, SESSION_ICON } from "./icons";
 import { VisitorTime } from "./visitor-time";
 import { localeOf } from "@/lib/format";
+import { RECORDS_PUBLIC } from "@/lib/records";
 
 const shortName = gpShortName;
 
@@ -187,11 +188,13 @@ export function RacesPanel({
             <Icon name="layers" /> {p.allSeasons}
           </Link>
         </li>
-        <li>
-          <Link href={`/${lang}/records`}>
-            <Icon name="trophy" /> {p.records}
-          </Link>
-        </li>
+        {RECORDS_PUBLIC ? (
+          <li>
+            <Link href={`/${lang}/records`}>
+              <Icon name="trophy" /> {p.records}
+            </Link>
+          </li>
+        ) : null}
         <li>
           <Link href={`/${lang}/compare`}>
             <Icon name="user" /> {p.compare}

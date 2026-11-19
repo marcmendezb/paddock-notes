@@ -186,6 +186,14 @@ export interface CareerStats {
   lastRace: { season: number; round: number; name: string } | null;
 }
 
+/** Entrada del índice de pilotos: su primera y última temporada en los datos cargados. */
+export interface DriverIndexEntry {
+  driver: DriverRef;
+  first: number;
+  last: number;
+  races: number;
+}
+
 export interface DriverProfile {
   driver: DriverRef & { number: number | null; nationality: string | null; dateOfBirth: string | null };
   stats: CareerStats;

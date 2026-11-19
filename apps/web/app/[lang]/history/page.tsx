@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RECORDS_PUBLIC } from "@/lib/records";
 import { FIRST_SEASON, gpName, type RecordType } from "@paddock/shared";
 import { Icon, type IconName } from "@/components/icons";
 import { api } from "@/lib/api";
@@ -48,8 +49,8 @@ export default async function HistoryPage({ params }: Props) {
   const decades = [...new Set(years.map((y) => Math.floor(y / 10) * 10))];
   const leaders = BIG.map((b, i) => ({ ...b, rows: records[i]?.data.slice(0, 3) ?? [] })).filter((b) => b.rows.length > 0);
   const tools: { href: string; icon: IconName; name: string; line: string; ink?: boolean }[] = [
-    { href: `/${lang}/records`, icon: "trophy", name: h.records, line: t.records.lede, ink: true },
-    { href: `/${lang}/compare`, icon: "user", name: h.compare, line: t.compare.lede },
+    ...(RECORDS_PUBLIC ? [{ href: `/${lang}/records`, icon: "trophy" as const, name: h.records, line: t.records.lede, ink: true }] : []),
+    { href: `/${lang}/compare`, icon: "user", name: h.compare, line: t.compare.lede, ink: !RECORDS_PUBLIC },
     { href: `/${lang}/simulator`, icon: "gauge", name: t.simulator.title, line: t.simulator.lede },
     { href: `/${lang}/predictions`, icon: "flag", name: t.predictions.title, line: t.predictions.lede },
     { href: `/${lang}/quiz`, icon: "eye", name: t.quiz.title, line: t.quiz.lede },
@@ -125,7 +126,7 @@ export default async function HistoryPage({ params }: Props) {
                 const [top, ...rest] = b.rows;
                 return (
                   <li key={b.type} className={i === 0 ? "is-feature" : undefined}>
-                    <Link href={`/${lang}/records/${b.type}`} className="hv-big-card" data-surface={i === 0 ? "ink" : undefined}>
+                    <MaybeLink href={RECORDS_PUBLIC ? `/${lang}/records/${b.type}` : null} className="hv-big-card" surface={i === 0 ? "ink" : undefined}>
                       <span className="hv-big-label">
                         <Icon name={b.icon} /> {t.records.types[b.type].name}
                       </span>
@@ -148,7 +149,7 @@ export default async function HistoryPage({ params }: Props) {
                           ))}
                         </span>
                       ) : null}
-                    </Link>
+                    </MaybeLink>
                   </li>
                 );
               })}
@@ -208,5 +209,18 @@ export default async function HistoryPage({ params }: Props) {
         </section>
       </div>
     </article>
+  );
+}
+
+/** Tarjeta que enlaza a su récord solo si las páginas de récords están publicadas (D-34). */
+function MaybeLink({ href, className, surface, children }: { href: string | null; className: string; surface?: string; children: React.ReactNode }) {
+  return href ? (
+    <Link href={href} className={className} data-surface={surface}>
+      {children}
+    </Link>
+  ) : (
+    <div className={className} data-surface={surface}>
+      {children}
+    </div>
   );
 }

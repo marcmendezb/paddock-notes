@@ -4,7 +4,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
-import { RECORD_ICON, RECORD_TYPES } from "@/lib/records";
+import { RECORD_ICON, RECORD_TYPES, RECORDS_PUBLIC } from "@/lib/records";
+import { notFound } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { PageHero } from "@/components/page-hero";
 import { formatPoints, fullName } from "@/lib/format";
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /** Récords (HIS-07): los cinco primeros de cada uno, con su definición exacta. */
 export default async function RecordsPage({ params }: Props) {
+  if (!RECORDS_PUBLIC) notFound();
   const lang = parseLang((await params).lang);
   const t = dict(lang);
   const all = await Promise.all(RECORD_TYPES.map(async (type) => ({ type, data: await api.records(type) })));

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nationalityCountry } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { PositionChart } from "@/components/charts/position-chart";
-import { PositionBadge, ProfileHero, SeasonPoints } from "@/components/profile-view";
+import { DataNote, PositionBadge, ProfileHero, RateRings, SeasonPoints, SeasonRibbon } from "@/components/profile-view";
+import { Icon } from "@/components/icons";
 import { api } from "@/lib/api";
 import { formatPoints, fullName } from "@/lib/format";
 import { dict } from "@/lib/i18n";
@@ -40,6 +40,11 @@ export default async function ConstructorPage({ params }: Params) {
   const c = profile.constructor;
 
   const topPoints = Math.max(1, ...profile.seasons.map((x) => x.points ?? 0));
+  const loaded = (await api.seasons().catch(() => null))?.data ?? [];
+  const from = loaded.length ? Math.min(...loaded) : (profile.seasons[0]?.season ?? null);
+  const to = loaded.length ? Math.max(...loaded) : (profile.seasons.at(-1)?.season ?? null);
+  const st = profile.stats;
+  const pct = (n: number) => (st.races ? `${Math.round((n / st.races) * 100)} %` : "—");
   const initials = c.name
     .split(/[\s-]+/)
     .filter((w) => /^[A-Za-zÀ-ÿ]/.test(w))
@@ -52,7 +57,7 @@ export default async function ConstructorPage({ params }: Params) {
       <ProfileHero
         icon="wrench"
         crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: c.name }]} />}
-        kicker={[t.driver.teamKicker, nationalityCountry(lang, c.nationality)].filter(Boolean).join(" · ")}
+        kicker={[t.driver.teamKicker, nationalityCountry(lang, c.nationality), from && to ? t.driver.dataSpan(from, to) : null].filter(Boolean).join(" · ")}
         family={c.name}
         mark={initials || null}
         titles={profile.titles}
@@ -67,6 +72,19 @@ export default async function ConstructorPage({ params }: Params) {
       />
 
       <div className="container stack-xl">
+        {from && to ? <DataNote lang={lang} from={from} to={to} /> : null}
+        <section aria-labelledby="pace" className="pf-pace">
+          <h2 id="pace" className="pf-mate-title">
+            <Icon name="gauge" /> {t.driver.pace}
+          </h2>
+          <RateRings
+            items={[
+              { label: t.driver.winRate, value: st.races ? st.wins / st.races : 0, text: pct(st.wins), accent: true },
+              { label: t.driver.podiumRate, value: st.races ? st.podiums / st.races : 0, text: pct(st.podiums) },
+              { label: t.driver.stats.poles, value: st.races ? st.poles / st.races : 0, text: pct(st.poles) },
+            ]}
+          />
+        </section>
         <dl className="pf-more">
           <div>
             <dt>{t.driver.stats.points}</dt>
@@ -108,13 +126,18 @@ export default async function ConstructorPage({ params }: Params) {
           <h2 id="seasons" className="rv-h2">
             {t.driver.seasons}
           </h2>
-          <div className="pf-chart">
-            <PositionChart
-              lang={lang}
-              seasons={profile.seasons.map((x) => ({ season: x.season, position: x.position }))}
-              title={t.driver.finalPositions}
-            />
-          </div>
+          <SeasonRibbon
+            lang={lang}
+            title={t.driver.ribbon}
+            winsLabel={t.standings2.winsShort}
+            seasons={[...profile.seasons].reverse().map((x) => ({
+              season: x.season,
+              who: x.drivers.map((d) => d.familyName).join(" · "),
+              position: x.position,
+              wins: x.wins,
+              points: x.points,
+            }))}
+          />
           <div className="timing" data-surface="ink">
             <div className="table-wrap" tabIndex={0} role="region" aria-label={t.driver.seasons}>
               <table className="timing-table">

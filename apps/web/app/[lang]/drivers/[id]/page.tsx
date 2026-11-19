@@ -3,12 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nationalityCountry } from "@paddock/shared";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { PositionChart } from "@/components/charts/position-chart";
 import { TeamLink } from "@/components/links";
 import { Icon } from "@/components/icons";
-import { PositionBadge, ProfileHero, SeasonPoints, TeammateBar } from "@/components/profile-view";
+import { DataNote, PositionBadge, ProfileHero, RateRings, SeasonPoints, SeasonRibbon, TeammateBar } from "@/components/profile-view";
 import { api } from "@/lib/api";
-import { formatDate, formatPoints, fullName } from "@/lib/format";
+import { formatDate, formatPoints, fullName, localeOf } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { parseLang } from "@/lib/params";
 
@@ -47,6 +46,10 @@ export default async function DriverPage({ params }: Params) {
   const country = nationalityCountry(lang, driver.nationality);
 
   const topPoints = Math.max(1, ...profile.seasons.map((x) => x.points));
+  // Temporadas cargadas: las cifras solo cuentan esas (el histórico se carga hacia atrás).
+  const loaded = (await api.seasons().catch(() => null))?.data ?? [];
+  const from = loaded.length ? Math.min(...loaded) : (profile.seasons[0]?.season ?? null);
+  const to = loaded.length ? Math.max(...loaded) : (profile.seasons.at(-1)?.season ?? null);
   const pct = (n: number) => (stats.races ? `${Math.round((n / stats.races) * 100)} %` : undefined);
 
   return (
@@ -54,7 +57,9 @@ export default async function DriverPage({ params }: Params) {
       <ProfileHero
         icon="user"
         crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: name }]} />}
-        kicker={[t.driver.kicker, country, driver.dateOfBirth ? t.driver.born(formatDate(lang, driver.dateOfBirth)) : null].filter(Boolean).join(" · ")}
+        kicker={[t.driver.kicker, country, driver.dateOfBirth ? t.driver.born(formatDate(lang, driver.dateOfBirth)) : null, from && to ? t.driver.dataSpan(from, to) : null]
+          .filter(Boolean)
+          .join(" · ")}
         given={driver.givenName}
         family={driver.familyName}
         mark={driver.number ? String(driver.number) : null}
@@ -70,6 +75,23 @@ export default async function DriverPage({ params }: Params) {
       />
 
       <div className="container stack-xl">
+        {from && to ? <DataNote lang={lang} from={from} to={to} /> : null}
+        <section aria-labelledby="pace" className="pf-pace">
+          <h2 id="pace" className="pf-mate-title">
+            <Icon name="gauge" /> {t.driver.pace}
+          </h2>
+          <RateRings
+            items={[
+              { label: t.driver.winRate, value: stats.races ? stats.wins / stats.races : 0, text: pct(stats.wins) ?? "—", accent: true },
+              { label: t.driver.podiumRate, value: stats.races ? stats.podiums / stats.races : 0, text: pct(stats.podiums) ?? "—" },
+              {
+                label: t.driver.pointsRate,
+                value: stats.races ? Math.min(1, stats.points / stats.races / 25) : 0,
+                text: stats.races ? new Intl.NumberFormat(localeOf(lang), { maximumFractionDigits: 1 }).format(stats.points / stats.races) : "—",
+              },
+            ]}
+          />
+        </section>
         <div className="pf-row">
           <dl className="pf-more">
             <div>
@@ -100,13 +122,18 @@ export default async function DriverPage({ params }: Params) {
           <h2 id="seasons" className="rv-h2">
             {t.driver.seasons}
           </h2>
-          <div className="pf-chart">
-            <PositionChart
-              lang={lang}
-              seasons={profile.seasons.map((x) => ({ season: x.season, position: x.position }))}
-              title={t.driver.finalPositions}
-            />
-          </div>
+          <SeasonRibbon
+            lang={lang}
+            title={t.driver.ribbon}
+            winsLabel={t.standings2.winsShort}
+            seasons={[...profile.seasons].reverse().map((x) => ({
+              season: x.season,
+              who: x.constructors.map((c) => c.name).join(" / "),
+              position: x.position,
+              wins: x.wins,
+              points: x.points,
+            }))}
+          />
           <div className="timing" data-surface="ink">
             <div className="table-wrap" tabIndex={0} role="region" aria-label={t.driver.seasons}>
               <table className="timing-table">
