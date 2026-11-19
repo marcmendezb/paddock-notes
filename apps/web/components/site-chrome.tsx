@@ -9,7 +9,7 @@ import { formatPoints, fullName } from "@/lib/format";
 import { CIRCUIT_GUIDES } from "@/content/circuit-guides";
 import { FooterMark } from "./footer-mark";
 import { Icon } from "./icons";
-import { AnalysisPanel, HistoryPanel, LearnPanel, StandingsPanel } from "./header-panels";
+import { AnalysisPanel, ComparePanel, LearnPanel, StandingsPanel } from "./header-panels";
 import { RacesPanel } from "./races-panel";
 import { MobileMenu, NavLinks, type NavItem } from "./nav-links";
 import { TimingStrip, type TickerItem, type TickerRace } from "./timing-strip";
@@ -110,10 +110,10 @@ export async function SiteHeader({ lang }: { lang: Lang }) {
       wide: true,
     },
     {
-      href: "/history",
-      label: t.nav.history,
-      teaser: h.teasers.history,
-      panel: <HistoryPanel lang={lang} events={thisWeek?.data ?? []} />,
+      href: "/compare",
+      label: t.nav.compare,
+      teaser: h.teasers.compare,
+      panel: standings ? <ComparePanel lang={lang} drivers={standings.data} /> : undefined,
       wide: true,
     },
     {
@@ -261,7 +261,7 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
     ["/races", t.nav.races],
     ["/standings", t.nav.standings],
     ["/analysis", t.nav.analysis],
-    ["/history", t.nav.history],
+    ["/compare", t.nav.compare],
     ["/learn", t.nav.learn],
   ];
 

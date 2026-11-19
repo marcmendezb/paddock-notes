@@ -184,7 +184,7 @@ export function RacesPanel({
           </li>
         ) : null}
         <li>
-          <Link href={`/${lang}/history`}>
+          <Link href={`/${lang}/races`}>
             <Icon name="layers" /> {p.allSeasons}
           </Link>
         </li>

@@ -1,6 +1,6 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { MDXContent } from "mdx/types";
-import { Icon } from "./icons";
+import { Icon, type IconName } from "./icons";
 
 /**
  * Cuerpo de un explicador (CON-01) compuesto como un artículo de revista. El MDX se parte por sus títulos de
@@ -41,8 +41,36 @@ export function explainerSections(Body: MDXContent): { lead: ReactElement<Props>
   return sections.length ? { lead, sections } : null;
 }
 
-export function ExplainerBody({ lead, sections }: { lead: ReactElement<Props>[]; sections: Section[] }) {
+/** Pictograma de cada capítulo de la guía de iniciación, en orden. */
+const CHAPTER_ICONS: IconName[] = ["calendar", "user", "trophy", "layers", "wrench", "flag", "stopwatch", "chart"];
+
+export function ExplainerBody({ lead, sections, chapters = false }: { lead: ReactElement<Props>[]; sections: Section[]; chapters?: boolean }) {
   let n = 0;
+  if (chapters) {
+    // La guía (CON-03): capítulos con el número gigante fijo a la izquierda y su pictograma.
+    return (
+      <div className="xp xp-guide">
+        <span className="xp-progress" aria-hidden="true" />
+        {lead.length ? <div className="xp-lead">{lead}</div> : null}
+        {sections.map((s, i) => (
+          <section key={s.id} id={s.id} className="xp-chapter" aria-labelledby={`${s.id}-t`}>
+            <div className="xp-chapter-side" aria-hidden="true">
+              <span className="xp-chapter-n tabular">{String(i + 1).padStart(2, "0")}</span>
+              <span className="xp-chapter-icon">
+                <Icon name={CHAPTER_ICONS[i] ?? "book"} />
+              </span>
+            </div>
+            <div className="xp-chapter-body">
+              <h2 id={`${s.id}-t`} className="xp-chapter-title">
+                {s.title}
+              </h2>
+              <div className="article xp-text">{s.nodes}</div>
+            </div>
+          </section>
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="xp">
       {lead.length ? <div className="xp-lead">{lead}</div> : null}

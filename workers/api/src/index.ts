@@ -371,6 +371,21 @@ get(
 get(
   {
     method: "get",
+    path: "/compare/drivers/{a}/{b}/{season}",
+    request: { params: z.object({ a: idParam("a"), b: idParam("b"), season: seasonParam }) },
+    responses: ok("Cara a cara entre dos pilotos en una temporada"),
+  },
+  async (c, params) => {
+    const r = reader(c);
+    const season = await resolveSeason(r, params.season!);
+    // La temporada en curso cambia tras cada carrera: 5 minutos, como sus resultados.
+    return cached(c, { ttl: season < currentYear() ? DAY : 300 }, async () => historyPayload(r, await r.compareDrivers(params.a!, params.b!, season)));
+  },
+);
+
+get(
+  {
+    method: "get",
     path: "/records/{type}",
     request: { params: z.object({ type: z.enum(recordTypes).openapi({ param: { name: "type", in: "path" } }) }) },
     responses: ok("Récord: los 20 primeros"),

@@ -8,15 +8,13 @@ import {
   titleContenders,
   type ConstructorStandingRow,
   type DriverStandingRow,
-  type HistoryEvent,
   type Lang,
   type RaceSummary,
   type Standings,
 } from "@paddock/shared";
-import { formatPoints, fullName, localeOf } from "@/lib/format";
+import { formatPoints, localeOf } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { TOOL_ICON, TOOL_ORDER } from "@/lib/tools";
-import { RECORDS_PUBLIC } from "@/lib/records";
 import { Icon, type IconName } from "./icons";
 
 /**
@@ -153,7 +151,7 @@ export function StandingsPanel({
         items={[
           { href: `/${lang}/standings`, icon: "chart", label: t.standings.title(season) },
           { href: `/${lang}/standings#constructors`, icon: "wrench", label: f.teams },
-          { href: `/${lang}/history`, icon: "calendar", label: t.history.seasons },
+          { href: `/${lang}/compare`, icon: "user", label: t.compare.title },
         ]}
       />
     </div>
@@ -242,61 +240,71 @@ export function AnalysisPanel({
   );
 }
 
-export function HistoryPanel({ lang, events }: { lang: Lang; events: HistoryEvent[] }) {
+/**
+ * Cara a cara (D-35): el duelo por el título (P1 frente a P2, con la diferencia) y los duelos entre
+ * compañeros de equipo de la temporada en curso, cada uno a un clic de su comparación.
+ */
+export function ComparePanel({ lang, drivers }: { lang: Lang; drivers: Standings<DriverStandingRow> }) {
   const t = dict(lang);
-  const m = t.header.mega;
-  const list = events.filter((e) => e.winner).slice(0, 5);
+  const c = t.compare;
+  const rows = drivers.rows;
+  const [p1, p2] = rows;
+  const href = (a: string, b: string) => `/${lang}/compare?a=${a}&b=${b}`;
+  const code = (r: DriverStandingRow) => r.driver.code ?? r.driver.familyName.slice(0, 3).toUpperCase();
+  const byTeam = new Map<string, { team: string; rows: DriverStandingRow[] }>();
+  for (const r of rows) {
+    const team = r.constructors.at(-1);
+    if (!team) continue;
+    const entry = byTeam.get(team.id) ?? { team: team.name, rows: [] };
+    if (entry.rows.length < 2) entry.rows.push(r);
+    byTeam.set(team.id, entry);
+  }
+  const pairs = [...byTeam.values()].filter((e) => e.rows.length === 2).slice(0, 8);
 
   return (
     <div className="mega">
-      <section className="mega-col" aria-label={t.history.thisWeek}>
-        <p className="panel-kicker">{t.history.thisWeek}</p>
-        {list.length ? (
-          <ol className="mega-events">
-            {list.map((e) => (
-              <li key={`${e.season}-${e.round}`}>
-                <Link href={`/${lang}/races/${e.season}/${e.round}`}>
-                  <span className="mega-event-year tabular">{e.season}</span>
-                  <span>
-                    <span className="mega-described-name">{fullName(e.winner!)}</span>
-                    <span className="mega-described-line">{gpName(lang, e.name)}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="panel-meta">{t.history.noEvents}</p>
-        )}
-      </section>
+      {p1 && p2 ? (
+        <section className="mega-col" aria-label={c.titleDuel}>
+          <p className="panel-kicker">
+            {c.titleDuel} · {drivers.season}
+          </p>
+          <Link href={href(p1.driver.id, p2.driver.id)} className="cmp-mega-duel">
+            <span className="cmp-mega-side is-a">
+              <span className="cmp-mega-code">{code(p1)}</span>
+              <span className="cmp-mega-pts tabular">{formatPoints(lang, p1.points)} pts</span>
+            </span>
+            <span className="cmp-mega-vs" aria-hidden="true">
+              VS
+            </span>
+            <span className="cmp-mega-side is-b">
+              <span className="cmp-mega-code">{code(p2)}</span>
+              <span className="cmp-mega-pts tabular">{formatPoints(lang, p2.points)} pts</span>
+            </span>
+            <span className="cmp-mega-gap">{c.gap(formatPoints(lang, p1.points - p2.points))}</span>
+          </Link>
+        </section>
+      ) : null}
 
-      <section className="mega-col" aria-label={m.history.explore}>
-        <p className="panel-kicker">{m.history.explore}</p>
-        <ul className="mega-list">
-          <Described href={`/${lang}/history`} icon="calendar" name={t.history.seasons} line={m.history.seasonsLine} />
-          {RECORDS_PUBLIC ? <Described href={`/${lang}/records`} icon="trophy" name={t.history.records} line={m.history.recordsLine} /> : null}
-          <Described href={`/${lang}/compare`} icon="user" name={t.history.compare} line={m.history.compareLine} />
-        </ul>
-      </section>
-
-      {RECORDS_PUBLIC ? (
-      <section className="mega-col" aria-label={t.records.title}>
-        <p className="panel-kicker">{t.records.title}</p>
-        <ul className="mega-links">
-          {(["wins", "poles", "win-streak", "comebacks", "starts"] as const).map((type) => (
-            <li key={type}>
-              <Link href={`/${lang}/records/${type}`}><span>{t.records.types[type].name}</span></Link>
+      <section className="mega-col" aria-label={c.teammates}>
+        <p className="panel-kicker">{c.teammates}</p>
+        <ul className="cmp-mega-pairs">
+          {pairs.map((p) => (
+            <li key={p.team}>
+              <Link href={href(p.rows[0]!.driver.id, p.rows[1]!.driver.id)}>
+                <span className="cmp-mega-pair tabular">
+                  {code(p.rows[0]!)} <span aria-hidden="true">·</span> {code(p.rows[1]!)}
+                </span>
+                <span className="cmp-mega-team">{p.team}</span>
+              </Link>
             </li>
           ))}
         </ul>
       </section>
-      ) : null}
 
       <Quick
         items={[
-          { href: `/${lang}/history`, icon: "calendar", label: t.history.seasons },
-          ...(RECORDS_PUBLIC ? [{ href: `/${lang}/records`, icon: "trophy" as const, label: t.history.records }] : []),
-          { href: `/${lang}/compare`, icon: "user", label: t.history.compare },
+          { href: `/${lang}/compare`, icon: "user", label: c.openFull },
+          { href: `/${lang}/predictions`, icon: "trophy", label: t.predictions.title },
         ]}
       />
     </div>

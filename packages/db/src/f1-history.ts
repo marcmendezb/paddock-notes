@@ -266,12 +266,15 @@ export function createHistoryReader(db: Db) {
     select f.* from (${FINAL_CONSTRUCTORS}) f
     where f.round = (select max(round) from races where races.season = f.season)`;
 
-  async function getDriver(id: string): Promise<DriverProfile | null> {
+  /** Ficha de un piloto; con `season`, solo esa temporada (cara a cara de la temporada en curso, D-35). */
+  async function getDriver(id: string, season?: number): Promise<DriverProfile | null> {
     const [d] = await all<DriverRow & { number: number | null; nationality: string | null; date_of_birth: string | null }>(
       sql`select * from drivers where id = ${id}`,
     );
     if (!d) return null;
-    const where = sql`r.driver_id = ${id}`;
+    const where = season ? sql`r.driver_id = ${id} and r.season = ${season}` : sql`r.driver_id = ${id}`;
+    const inSeason = season ? sql`and season = ${season}` : sql``;
+    const mateSeason = season ? sql`and a.season = ${season}` : sql``;
     const [stats, seasons, finals, teammates, titles] = await Promise.all([
       careerStats(where),
       all<{ season: number; constructor_id: string; constructor_name: string; points: number; wins: number; races: number }>(sql`
@@ -283,16 +286,16 @@ export function createHistoryReader(db: Db) {
         where ${where}
         group by r.season, c.id order by r.season, min(r.round)`),
       all<{ season: number; position: number | null; points: number }>(
-        sql`select season, position, points from (${FINAL_DRIVERS}) where driver_id = ${id}`,
+        sql`select season, position, points from (${FINAL_DRIVERS}) where driver_id = ${id} ${inSeason}`,
       ),
       all<{ races: number; ahead: number }>(sql`
         select count(*) as races, coalesce(sum(case when a.position < b.position then 1 else 0 end), 0) as ahead
         from results a
         join results b on b.season = a.season and b.round = a.round and b.kind = 'race'
           and b.constructor_id = a.constructor_id and b.driver_id != a.driver_id
-        where a.driver_id = ${id} and a.kind = 'race'
+        where a.driver_id = ${id} and a.kind = 'race' ${mateSeason}
           and ${FINISHED(sql.raw("a"))} and ${FINISHED(sql.raw("b"))}`),
-      all<{ season: number }>(sql`select season from (${COMPLETE_DRIVERS}) where driver_id = ${id} and position = 1`),
+      all<{ season: number }>(sql`select season from (${COMPLETE_DRIVERS}) where driver_id = ${id} and position = 1 ${inSeason}`),
     ]);
 
     const finalBySeason = new Map(finals.map((f) => [f.season, f]));
@@ -419,15 +422,15 @@ export function createHistoryReader(db: Db) {
     };
   }
 
-  async function compareDrivers(a: string, b: string): Promise<DriverComparison | null> {
-    const [pa, pb] = await Promise.all([getDriver(a), getDriver(b)]);
+  async function compareDrivers(a: string, b: string, season?: number): Promise<DriverComparison | null> {
+    const [pa, pb] = await Promise.all([getDriver(a, season), getDriver(b, season)]);
     if (!pa || !pb) return null;
     const races = await all<{ season: number; round: number; name: string; a: number; b: number }>(sql`
       select ra.season, ra.round, races.name, ra.position as a, rb.position as b
       from results ra
       join results rb on rb.season = ra.season and rb.round = ra.round and rb.kind = 'race' and rb.driver_id = ${b}
       join races on races.season = ra.season and races.round = ra.round
-      where ra.driver_id = ${a} and ra.kind = 'race'
+      where ra.driver_id = ${a} and ra.kind = 'race' ${season ? sql`and ra.season = ${season}` : sql``}
         and ${FINISHED(sql.raw("ra"))} and ${FINISHED(sql.raw("rb"))}
       order by ra.season, ra.round`);
     return {

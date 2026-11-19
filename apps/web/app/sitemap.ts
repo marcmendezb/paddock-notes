@@ -17,7 +17,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     `/races/${season}`,
     `/standings/${season}`,
-    "/history",
     ...(RECORDS_PUBLIC ? ["/records"] : []),
     "/compare",
     "/analysis",

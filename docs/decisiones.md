@@ -470,3 +470,24 @@ Una regla de lint (`no-restricted-imports`) y un test de arquitectura fallan si 
 - **URL limpias:** el desplazamiento a una sección no añade `#` a la dirección y, si se llega con uno, se quita tras desplazarse. Las fichas de circuito de «Aprende» tienen página propia (`/learn/circuits`).
 
 **Consecuencia:** cuando el histórico llegue a 1950, se revisan las tres piezas: el interruptor de récords, los textos de cobertura y la nota de las fichas.
+
+## D-35 · Sin sección Histórico: cara a cara de la temporada en curso
+
+**Contexto:** con el histórico a medio cargar, la sección Histórico no era histórica. El autor la quiere fuera y que su sitio lo ocupe un cara a cara claramente limitado a la temporada en curso.
+
+**Decisión:**
+
+- **Histórico retirado:**
+  - el menú y el pie enlazan a «Cara a cara»;
+  - `/history` redirige a `/compare`;
+  - las migas de las fichas apuntan a Clasificación (pilotos y equipos) o a Carreras (circuitos);
+  - sale del sitemap.
+- **Cara a cara de la temporada en curso:**
+  - la API compara dos pilotos en una sola temporada (`GET /compare/drivers/{a}/{b}/{season}`, con la ficha limitada a ese año);
+  - la página lo dice en la cabecera («Solo la temporada 2026: todas las carreras disputadas hasta la ronda N») y en el duelo;
+  - añade una cuadrícula carrera a carrera del color de quien acabó delante;
+  - sin elección, compara P1 y P2.
+- **Selector creativo:** cada piloto se elige en un desplegable con la parrilla del Mundial en tarjetas (posición, código, nombre y equipo). Son radios dentro del formulario, así que funciona sin JavaScript.
+- **Desplegable del menú:** el duelo por el título y los duelos entre compañeros de equipo, cada uno a un clic, más accesos a cara a cara y predicciones.
+
+**Consecuencia:** sustituye a la parte de D-34 sobre la cobertura del cara a cara (ya no mezcla temporadas). Los componentes del histórico se quedan en el repositorio por si vuelve con el histórico completo.

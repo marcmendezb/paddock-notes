@@ -56,7 +56,7 @@ export default async function ConstructorPage({ params }: Params) {
     <article>
       <ProfileHero
         icon="wrench"
-        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: c.name }]} />}
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/standings`, label: t.nav.standings }, { label: c.name }]} />}
         kicker={[t.driver.teamKicker, nationalityCountry(lang, c.nationality), from && to ? t.driver.dataSpan(from, to) : null].filter(Boolean).join(" · ")}
         family={c.name}
         mark={initials || null}

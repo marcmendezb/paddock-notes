@@ -121,7 +121,7 @@ export default async function CircuitPage({ params }: Params) {
       <section className="rv-hero cv-hero" data-surface="ink" aria-labelledby="circuit-title">
         <div className="container cv-hero-grid">
           <div className="rv-crumbs">
-            <Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: circuit.name }]} />
+            <Breadcrumbs lang={lang} items={[{ href: `/${lang}/races`, label: t.nav.races }, { label: circuit.name }]} />
           </div>
           <div className="rv-head">
             <p className="eyebrow rv-kicker">

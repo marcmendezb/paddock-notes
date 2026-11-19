@@ -56,7 +56,7 @@ export default async function DriverPage({ params }: Params) {
     <article>
       <ProfileHero
         icon="user"
-        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/history`, label: t.history.title }, { label: name }]} />}
+        crumbs={<Breadcrumbs lang={lang} items={[{ href: `/${lang}/standings`, label: t.nav.standings }, { label: name }]} />}
         kicker={[t.driver.kicker, country, driver.dateOfBirth ? t.driver.born(formatDate(lang, driver.dateOfBirth)) : null, from && to ? t.driver.dataSpan(from, to) : null]
           .filter(Boolean)
           .join(" · ")}

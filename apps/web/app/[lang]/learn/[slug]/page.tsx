@@ -6,7 +6,7 @@ import { PageHero } from "@/components/page-hero";
 import { ExplainerBody, ExplainerToc, explainerSections } from "@/components/explainer-body";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
-import { EXPLAINERS, explainerBody } from "@/content";
+import { EXPLAINERS, GUIDE_SLUG, explainerBody } from "@/content";
 import { dict } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 import { articleLd } from "@/lib/structured-data";
@@ -66,7 +66,7 @@ export default async function ExplainerPage({ params }: Props) {
       <div className="container reading">
         <div className="reading-main">
           {parts ? (
-            <ExplainerBody lead={lead} sections={parts.sections} />
+            <ExplainerBody lead={lead} sections={parts.sections} chapters={explainer.slug === GUIDE_SLUG} />
           ) : (
             <div className="article lede-first">
               <Body />

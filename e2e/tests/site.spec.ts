@@ -14,7 +14,7 @@ const PAGES = [
   "/es/about",
   "/en/accessibility",
   // Fase 2: histórico
-  "/es/history",
+  "/de/compare",
   "/es/learn/circuits",
   "/de/learn/circuits",
   "/es/drivers/russell",
@@ -313,6 +313,31 @@ test("la crónica de la portada reparte bien sus columnas (NUC-05)", async ({ pa
   test.skip((await points.count()) === 0, "Sin carrera con puntos en este entorno");
   const width = await points.evaluate((el) => el.getBoundingClientRect().width);
   expect(width).toBeGreaterThan(isMobile ? 250 : 300);
+});
+
+test("el histórico lleva al cara a cara de la temporada en curso (D-35)", async ({ page }) => {
+  await page.goto("/es/history");
+  await expect(page).toHaveURL(/\/es\/compare$/);
+  await expect(page.getByText(/Solo la temporada \d{4}/)).toBeVisible();
+  await expect(page.locator(".cmp-duel")).toBeVisible();
+});
+
+test("cara a cara: se elige en la parrilla y solo cuenta la temporada en curso (D-35)", async ({ browser, baseURL }) => {
+  // Sin JavaScript: los radios del desplegable van en el formulario.
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/es/compare");
+  const b = page.locator(".dp.is-b");
+  await b.locator("summary").click();
+  const option = b.locator(".dp-option").nth(3);
+  const id = await option.locator("input").getAttribute("value");
+  await option.click();
+  // Sin JavaScript el desplegable no se cierra solo: se cierra a mano, como haría cualquiera.
+  await b.locator("summary").click();
+  await page.getByRole("button", { name: "Comparar" }).click();
+  await expect(page).toHaveURL(new RegExp(`b=${id}`));
+  await expect(page.locator(".cmp-duel-kicker")).toContainText(String(new Date().getUTCFullYear()));
+  await context.close();
 });
 
 test("explicador sugerido para el próximo GP (NUC-09)", async ({ page }) => {

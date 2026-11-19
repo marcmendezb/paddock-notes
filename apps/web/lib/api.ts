@@ -144,6 +144,8 @@ export const api = {
     ),
   compare: (a: string, b: string) =>
     get<DriverComparison>(`/compare/drivers/${encodeURIComponent(a)}/${encodeURIComponent(b)}`),
+  compareSeason: (a: string, b: string, season: number | "current") =>
+    get<DriverComparison>(`/compare/drivers/${encodeURIComponent(a)}/${encodeURIComponent(b)}/${season}`),
   records: (type: RecordType) => get<RecordEntry[]>(`/records/${type}`),
   thisWeek: () => get<HistoryEvent[]>("/history/this-week"),
   search: (q: string) => get<SearchResult[]>(`/search?q=${encodeURIComponent(q)}`),
