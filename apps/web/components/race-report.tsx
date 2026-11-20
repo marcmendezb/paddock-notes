@@ -4,6 +4,7 @@ import { formatDate, formatPoints, fullName, localeOf } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { Icon, type IconName } from "./icons";
 import { smoothClosedPath } from "./race-recap";
+import { CHART_SIZES, type ChartSize } from "./charts/sizes";
 
 /**
  * "How … finished" (NUC-05): the report of the last race on the home page. It is always the same template
@@ -48,20 +49,37 @@ function Backdrop({ points }: { points: [number, number][] }) {
  * The winner in lime, the biggest comeback in lilac, the rest of the podium in white and everyone else in
  * grey; retirements dashed, at the end. Each line carries its title (start and finish position) on hover.
  */
-function SlopeChart({ lang, rows, winnerId, climberId, label }: { lang: Lang; rows: RaceResultRow[]; winnerId: string | null; climberId: string | null; label: string }) {
+/** Width and label margin of each geometry (D-37): the narrow one keeps the 12 px labels readable on a phone. */
+const SLOPE: Record<ChartSize, { W: number; inset: number }> = { wide: { W: 600, inset: 92 }, narrow: { W: 340, inset: 64 } };
+
+function SlopeChart({
+  lang,
+  rows,
+  winnerId,
+  climberId,
+  label,
+  size,
+}: {
+  lang: Lang;
+  rows: RaceResultRow[];
+  winnerId: string | null;
+  climberId: string | null;
+  label: string;
+  size: ChartSize;
+}) {
   const r = dict(lang).home.recap.report;
   const n = rows.length;
   const maxGrid = Math.max(n, ...rows.map((x) => x.grid ?? 0));
   const slots = maxGrid + 1;
-  const W = 600;
+  const { W, inset } = SLOPE[size];
   const top = 34;
   const row = 22;
   const H = top + slots * row;
-  const x0 = 92;
-  const x1 = W - 92;
+  const x0 = inset;
+  const x1 = W - inset;
   const y = (slot: number) => top + (slot - 0.5) * row;
   return (
-    <svg className="slope" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
+    <svg className={`slope chart-${size}`} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
       <text x={x0} y={14} textAnchor="middle" className="slope-axis">
         {r.start}
       </text>
@@ -202,11 +220,21 @@ export function RaceReport({ lang, race, hasAnalysis, circuit }: { lang: Lang; r
           ))}
         </dl>
 
-        <figure className="rr-slope" data-surface="ink">
+        <figure className="rr-slope chart-duo" data-surface="ink">
           <figcaption className="rr-card-title">
             <Icon name="chart" /> {r.slope}
           </figcaption>
-          <SlopeChart lang={lang} rows={rows} winnerId={p1.driver.id} climberId={climber?.driver.id ?? null} label={r.slopeLabel(gp, fullName(p1.driver))} />
+          {CHART_SIZES.map((size) => (
+            <SlopeChart
+              key={size}
+              lang={lang}
+              rows={rows}
+              winnerId={p1.driver.id}
+              climberId={climber?.driver.id ?? null}
+              label={r.slopeLabel(gp, fullName(p1.driver))}
+              size={size}
+            />
+          ))}
         </figure>
 
         <div className="rr-side">

@@ -3,6 +3,7 @@ import type { Lang, RaceDetail } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 import { Marker, SeriesSwatch, seriesClass } from "./charts/series";
 import { Icon } from "./icons";
+import { CHART_SIZES, CHART_W, sizeClass, type ChartSize } from "./charts/sizes";
 
 /**
  * A race's lap-by-lap positions chart (race page): the three on the podium highlighted, the rest of the
@@ -10,8 +11,7 @@ import { Icon } from "./icons";
  * race-report.tsx.
  */
 
-const W = 760;
-const H = 300;
+const H: Record<ChartSize, number> = { wide: 300, narrow: 250 };
 const M = { top: 34, right: 64, bottom: 44, left: 30 };
 /** The chart focuses on the fight at the front: from P1 to P10. Whatever falls further back is cropped. */
 const DEPTH = 10;
@@ -21,8 +21,51 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
   const podium = race.results.slice(0, 3).map((r) => r.driver.code);
   const top = podium.map((code) => replay.drivers.find((d) => d.code === code)).filter((d) => d !== undefined);
   if (top.length === 0) return null;
+  return (
+    <figure className="chart recap-chart chart-duo">
+      <figcaption className="recap-card-head">
+        <span className="recap-card-title">
+          <Icon name="chart" /> {t.story}
+        </span>
+        <ul className="recap-legend" aria-hidden="true">
+          {top.map((d, i) => (
+            <li key={d.code}>
+              <SeriesSwatch index={i} /> {d.code}
+            </li>
+          ))}
+          <li className="recap-legend-field">{t.field}</li>
+        </ul>
+      </figcaption>
+      {CHART_SIZES.map((size) => (
+        <PositionsPlot key={size} lang={lang} replay={replay} strategy={strategy} podium={podium} top={top} size={size} />
+      ))}
+      <p className="source">{t.chartCaption}</p>
+    </figure>
+  );
+}
+
+function PositionsPlot({
+  lang,
+  replay,
+  strategy,
+  podium,
+  top,
+  size,
+}: {
+  lang: Lang;
+  replay: ReplayData;
+  strategy: StrategyData | null;
+  podium: (string | null)[];
+  top: ReplayData["drivers"];
+  size: ChartSize;
+}) {
+  const t = dict(lang).home.recap;
+  const W = CHART_W[size];
+  const H_ = H[size];
   const x = (lap: number) => M.left + ((lap - 1) / Math.max(1, replay.laps - 1)) * (W - M.left - M.right);
-  const y = (pos: number) => M.top + ((pos - 1) / (DEPTH - 1)) * (H - M.top - M.bottom);
+  const y = (pos: number) => M.top + ((pos - 1) / (DEPTH - 1)) * (H_ - M.top - M.bottom);
+  const titleId = `recap-chart-title-${size}`;
+  const clipId = `recap-clip-${size}`;
   const path = (positions: (number | null)[]) => {
     let d = "";
     let pen = false;
@@ -44,28 +87,18 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
     if (winner.positions[i] === 1) leadFrom = i + 1;
     else break;
   }
-  const every = Math.max(1, Math.ceil(replay.laps / 7));
+  const every = Math.max(1, Math.ceil(replay.laps / (size === "wide" ? 7 : 4)));
+  // On the narrow geometry, a tick too close to the last one ("Lap 71") would collide with it.
+  const lapTicks = [1, ...Array.from({ length: 6 }, (_, k) => (k + 1) * every + 1), replay.laps].filter(
+    (l, k, a) => l <= replay.laps && a.indexOf(l) === k && (size === "wide" || l === replay.laps || x(replay.laps) - x(l) > 60),
+  );
 
   return (
-    <figure className="chart recap-chart">
-      <figcaption className="recap-card-head">
-        <span className="recap-card-title">
-          <Icon name="chart" /> {t.story}
-        </span>
-        <ul className="recap-legend" aria-hidden="true">
-          {top.map((d, i) => (
-            <li key={d.code}>
-              <SeriesSwatch index={i} /> {d.code}
-            </li>
-          ))}
-          <li className="recap-legend-field">{t.field}</li>
-        </ul>
-      </figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="recap-chart-title" className="chart-svg">
-        <title id="recap-chart-title">{t.chartTitle}</title>
+      <svg viewBox={`0 0 ${W} ${H_}`} role="img" aria-labelledby={titleId} className={sizeClass(size)}>
+        <title id={titleId}>{t.chartTitle}</title>
         <defs>
-          <clipPath id="recap-clip">
-            <rect x={M.left - 6} y={M.top - 10} width={W - M.left - M.right + 12} height={H - M.top - M.bottom + 20} />
+          <clipPath id={clipId}>
+            <rect x={M.left - 6} y={M.top - 10} width={W - M.left - M.right + 12} height={H_ - M.top - M.bottom + 20} />
           </clipPath>
         </defs>
         {(strategy?.neutralised ?? []).map((p, i, all) => {
@@ -73,8 +106,8 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
           const crowded = i > 0 && x(p.fromLap) - x(all[i - 1]!.fromLap) < 36;
           return (
             <g key={i} className={`neutralised neutralised-${p.kind}`}>
-              <rect x={x(p.fromLap) - 3} y={M.top - 10} width={Math.max(6, x(p.toLap) - x(p.fromLap) + 6)} height={H - M.top - M.bottom + 20} />
-              <text x={x(p.fromLap)} y={H - M.bottom + 22 + (crowded ? 12 : 0)} textAnchor="middle" className="recap-band-label">
+              <rect x={x(p.fromLap) - 3} y={M.top - 10} width={Math.max(6, x(p.toLap) - x(p.fromLap) + 6)} height={H_ - M.top - M.bottom + 20} />
+              <text x={x(p.fromLap)} y={H_ - M.bottom + 22 + (crowded ? 12 : 0)} textAnchor="middle" className="recap-band-label">
                 {p.kind === "RED" ? t.red : p.kind}
               </text>
             </g>
@@ -86,7 +119,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
           </text>
         ))}
         {/* The rest of the field, behind and without colour. */}
-        <g clipPath="url(#recap-clip)">
+        <g clipPath={`url(#${clipId})`}>
           {replay.drivers
             .filter((d) => !podium.includes(d.code))
             .map((d) => (
@@ -98,7 +131,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
           const last = d.positions.reduce<number>((acc, p, k) => (p !== null ? k : acc), 0);
           return (
             <g key={d.code} className={`${seriesClass(i)} recap-series`}>
-              <path d={path(d.positions)} className="series-line recap-line" pathLength={1} clipPath="url(#recap-clip)" />
+              <path d={path(d.positions)} className="series-line recap-line" pathLength={1} clipPath={`url(#${clipId})`} />
               {d.positions.map((p, k) =>
                 p !== null && p <= DEPTH && (k % every === 0 || k === last) ? <Marker key={k} index={i} cx={x(k + 1)} cy={y(p)} /> : null,
               )}
@@ -108,7 +141,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
             </g>
           );
         })}
-        <rect x={M.left - 6} y={M.top - 24} width={W - M.left + 6} height={H - M.top - M.bottom + 34} className="recap-wipe" />
+        <rect x={M.left - 6} y={M.top - 24} width={W - M.left + 6} height={H_ - M.top - M.bottom + 34} className="recap-wipe" />
         {leadFrom && leadFrom > 1 ? (
           <g className="chart-note">
             <circle cx={x(leadFrom)} cy={y(1)} r={4.5} />
@@ -117,16 +150,12 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
             </text>
           </g>
         ) : null}
-        {[1, ...Array.from({ length: 6 }, (_, k) => (k + 1) * every + 1), replay.laps]
-          .filter((l, k, a) => l <= replay.laps && a.indexOf(l) === k)
-          .map((l) => (
-            <text key={l} x={x(l)} y={H - M.bottom + 8} dy="0.9em" textAnchor="middle" className="chart-axis recap-lap-axis">
-              {l === replay.laps ? `${t.lap} ${l}` : l}
-            </text>
-          ))}
+        {lapTicks.map((l) => (
+          <text key={l} x={x(l)} y={H_ - M.bottom + 8} dy="0.9em" textAnchor="middle" className="chart-axis recap-lap-axis">
+            {l === replay.laps ? `${t.lap} ${l}` : l}
+          </text>
+        ))}
       </svg>
-      <p className="source">{t.chartCaption}</p>
-    </figure>
   );
 }
 

@@ -159,7 +159,10 @@ export default async function DriverPage({ params }: Params) {
                         {x.constructors.map((c, i) => (
                           <span key={c.id}>
                             {i > 0 ? " / " : ""}
-                            <TeamLink lang={lang} team={c} />
+                            {/* Each team on one line ("Red Bull" broke in two); two teams can still wrap at the slash. */}
+                            <span className="nowrap">
+                              <TeamLink lang={lang} team={c} />
+                            </span>
                           </span>
                         ))}
                       </td>

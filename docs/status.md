@@ -1,6 +1,6 @@
 # Paddock Notes: feature status
 
-> What is built and tested, by ID from [features.md](features.md). Last reviewed: 19 November 2026.
+> What is built and tested, by ID from [features.md](features.md). Last reviewed: 20 November 2026.
 > **Done:** implemented and covered by tests (unit, Workers or browser). **Partial:** works, with the limitations noted. **Pending:** not started.
 
 ## Summary
@@ -22,6 +22,7 @@
 - **Demo newsletter:** signing up stores and sends nothing and says so in a notice (D-33). The hero video cannot be paused, a conscious exception to WCAG 2.2.2 (D-33).
 - **Records hidden and History removed:** with the history half loaded, the records pages answer 404 and the History section became a head to head for the current season (D-34, D-35).
 - **Language by country** for unprefixed URLs, and the repository in English (D-36).
+- **Responsive pass** (20 November): charts drawn with a phone geometry, timing tables like a timing screen on phones, the footer and two race pages no longer wider than the screen, a compact header on a phone on its side, safe areas for notches and touch-only fixes (D-37).
 
 ## Phase 1 · MVP
 

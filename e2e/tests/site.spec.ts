@@ -188,7 +188,9 @@ test("standings progression chart has equivalent table and works without JS (NUC
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(`/es/standings/${season}`);
-  await expect(page.locator("figure.chart svg[role='img']")).toHaveCount(1);
+  // Two geometries are drawn (D-37); only the one that fits the column is shown, without JavaScript.
+  await expect(page.locator("figure.chart svg[role='img']")).toHaveCount(2);
+  await expect(page.locator("figure.chart svg[role='img']:visible")).toHaveCount(1);
   await expect(page.getByText("Tabla con los mismos datos del gráfico")).toBeVisible();
   await page.getByRole("checkbox").first().uncheck();
   await page.getByRole("button", { name: "Mostrar" }).click();
@@ -238,7 +240,7 @@ test("telemetry comparison can be navigated with keyboard (TEC-04)", async ({ pa
   test.skip((await race.count()) === 0, "No analyzed races available in this environment");
   const href = await race.getAttribute("href");
   await page.goto(`${href}/telemetry`);
-  const chart = page.locator("svg.telemetry-svg");
+  const chart = page.locator("svg.telemetry-svg:visible");
   await chart.focus();
   const before = await page.locator(".readout span").first().textContent();
   await page.keyboard.press("Shift+ArrowRight");
@@ -405,6 +407,29 @@ test("mobile navigation menu opens full-screen without JavaScript (TRA-01)", asy
   await page.goto("/es");
   await page.locator(".menu-toggle").click();
   await expect(page.locator(".menu-sheet").getByRole("link", { name: /Clasificación/ })).toBeVisible();
+  await context.close();
+});
+
+test("no page is wider than a 320 px phone and charts use their narrow geometry (D-37)", async ({ browser, baseURL, isMobile }) => {
+  test.skip(!isMobile, "Mobile project only: it opens its own 320 px context");
+  test.setTimeout(120_000);
+  const context = await browser.newContext({ baseURL, viewport: { width: 320, height: 640 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  // The latest analysed race and its tools carry the widest tables and every chart.
+  await page.goto("/es/analysis");
+  const race = await page.locator("main .an-latest-title a").first().getAttribute("href").catch(() => null);
+  const extra = race
+    ? [race.replace("/analysis/", "/races/"), ...["strategy", "pace", "telemetry", "replay"].map((tool) => `${race}/${tool}`)]
+    : [];
+  for (const path of [...PAGES, ...extra]) {
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow, `${path} is ${overflow} px wider than the screen`).toBe(0);
+    for (const chart of await page.locator(".chart-duo").all()) {
+      await expect(chart.locator(".chart-wide").first(), path).toBeHidden();
+      await expect(chart.locator(".chart-narrow").first(), path).toBeVisible();
+    }
+  }
   await context.close();
 });
 

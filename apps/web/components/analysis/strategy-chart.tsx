@@ -2,14 +2,17 @@ import { scaleLinear } from "d3-scale";
 import type { Compound, StrategyData } from "@paddock/analysis";
 import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
+import { CHART_SIZES, CHART_W, sizeClass, type ChartSize } from "../charts/sizes";
 
 /**
  * Tyre strategy (TEC-02): one row per driver and one stretch per stint. The compound is told apart by
  * pattern and letter, not just colour, and does not copy the tyres' official colours.
  */
 const ROW = 22;
-const M = { top: 40, right: 12, bottom: 28, left: 52 };
-const W = 760;
+const M: Record<ChartSize, { top: number; right: number; bottom: number; left: number }> = {
+  wide: { top: 40, right: 12, bottom: 28, left: 52 },
+  narrow: { top: 40, right: 8, bottom: 28, left: 40 },
+};
 
 export const COMPOUND_LETTER: Record<Compound, string> = {
   SOFT: "S",
@@ -37,62 +40,19 @@ export function CompoundPatterns() {
 
 export function StrategyChart({ lang, data }: { lang: Lang; data: StrategyData }) {
   const t = dict(lang).analysis;
-  const H = M.top + data.drivers.length * ROW + M.bottom;
-  const x = scaleLinear().domain([0, data.laps]).range([M.left, W - M.right]);
-  const ticks = x.ticks(8).filter((v) => v > 0);
-
   return (
-    <figure className="chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.tools.strategy.name} className="chart-svg">
+    <figure className="chart chart-duo">
+      {/* The patterns live in an SVG that is always rendered: one inside a display: none chart is not painted. */}
+      <svg className="chart-defs" width="0" height="0" aria-hidden="true" focusable="false">
         <CompoundPatterns />
-        {data.neutralised.map((p, i) => (
-          <g key={i} className={`neutralised neutralised-${p.kind}`}>
-            <rect x={x(p.fromLap - 1)} width={x(p.toLap) - x(p.fromLap - 1)} y={M.top - 6} height={H - M.top - M.bottom + 6} />
-            {/* If two periods come in a row (an SC that ends in a red flag), the label moves up a line. */}
-            <text
-              x={x(p.fromLap - 1) + 3}
-              y={M.top - 10 - (i > 0 && x(p.fromLap - 1) - x(data.neutralised[i - 1]!.fromLap - 1) < 40 ? 12 : 0)}
-              className="chart-axis"
-            >
-              {p.kind}
-            </text>
-          </g>
-        ))}
-        {ticks.map((tick) => (
-          <text key={tick} x={x(tick)} y={H - 8} textAnchor="middle" className="chart-axis">
-            {tick === ticks.at(-1) ? `${t.lap} ${tick}` : tick}
-          </text>
-        ))}
-        {data.drivers.map((d, i) => {
-          const y = M.top + i * ROW;
-          return (
-            <g key={d.number}>
-              <text x={M.left - 8} y={y + ROW / 2} dy="0.32em" textAnchor="end" className="chart-label">
-                {d.code}
-              </text>
-              {d.stints.map((s, k) => {
-                const x0 = x(s.fromLap - 1);
-                const w = Math.max(1, x(s.toLap) - x0 - 1);
-                return (
-                  <g key={k} className={`compound compound-${s.compound}`}>
-                    <rect x={x0} y={y + 3} width={w} height={ROW - 6} rx={2} />
-                    {w > 14 ? (
-                      <text x={x0 + w / 2} y={y + ROW / 2} dy="0.32em" textAnchor="middle" className="compound-letter">
-                        {COMPOUND_LETTER[s.compound]}
-                      </text>
-                    ) : null}
-                  </g>
-                );
-              })}
-            </g>
-          );
-        })}
       </svg>
+      {CHART_SIZES.map((size) => (
+        <StrategyPlot key={size} lang={lang} data={data} size={size} />
+      ))}
       <figcaption className="legend">
         {(["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"] as const).map((c) => (
           <span key={c} className="legend-item">
             <svg width="22" height="14" aria-hidden="true">
-              <CompoundPatterns />
               <g className={`compound compound-${c}`}>
                 <rect width="22" height="14" rx="2" />
                 <text x="11" y="7" dy="0.32em" textAnchor="middle" className="compound-letter">
@@ -105,6 +65,62 @@ export function StrategyChart({ lang, data }: { lang: Lang; data: StrategyData }
         ))}
       </figcaption>
     </figure>
+  );
+}
+
+function StrategyPlot({ lang, data, size }: { lang: Lang; data: StrategyData; size: ChartSize }) {
+  const t = dict(lang).analysis;
+  const W = CHART_W[size];
+  const m = M[size];
+  const H = m.top + data.drivers.length * ROW + m.bottom;
+  const x = scaleLinear().domain([0, data.laps]).range([m.left, W - m.right]);
+  const ticks = x.ticks(size === "wide" ? 8 : 4).filter((v) => v > 0);
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.tools.strategy.name} className={sizeClass(size)}>
+      {data.neutralised.map((p, i) => (
+        <g key={i} className={`neutralised neutralised-${p.kind}`}>
+          <rect x={x(p.fromLap - 1)} width={x(p.toLap) - x(p.fromLap - 1)} y={m.top - 6} height={H - m.top - m.bottom + 6} />
+          {/* If two periods come in a row (an SC that ends in a red flag), the label moves up a line. */}
+          <text
+            x={x(p.fromLap - 1) + 3}
+            y={m.top - 10 - (i > 0 && x(p.fromLap - 1) - x(data.neutralised[i - 1]!.fromLap - 1) < 40 ? 12 : 0)}
+            className="chart-axis"
+          >
+            {p.kind}
+          </text>
+        </g>
+      ))}
+      {ticks.map((tick) => (
+        <text key={tick} x={x(tick)} y={H - 8} textAnchor={tick === ticks.at(-1) ? "end" : "middle"} className="chart-axis">
+          {tick === ticks.at(-1) ? `${t.lap} ${tick}` : tick}
+        </text>
+      ))}
+      {data.drivers.map((d, i) => {
+        const y = m.top + i * ROW;
+        return (
+          <g key={d.number}>
+            <text x={m.left - 8} y={y + ROW / 2} dy="0.32em" textAnchor="end" className="chart-label">
+              {d.code}
+            </text>
+            {d.stints.map((s, k) => {
+              const x0 = x(s.fromLap - 1);
+              const w = Math.max(1, x(s.toLap) - x0 - 1);
+              return (
+                <g key={k} className={`compound compound-${s.compound}`}>
+                  <rect x={x0} y={y + 3} width={w} height={ROW - 6} rx={2} />
+                  {w > 14 ? (
+                    <text x={x0 + w / 2} y={y + ROW / 2} dy="0.32em" textAnchor="middle" className="compound-letter">
+                      {COMPOUND_LETTER[s.compound]}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+          </g>
+        );
+      })}
+    </svg>
   );
 }
 

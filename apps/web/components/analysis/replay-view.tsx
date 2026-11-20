@@ -4,6 +4,7 @@ import { scaleLinear } from "d3-scale";
 import { line } from "d3-shape";
 import { useEffect, useState } from "react";
 import type { ReplayData } from "@paddock/analysis";
+import { CHART_SIZES, CHART_W, sizeClass, type ChartSize } from "../charts/sizes";
 
 /**
  * Replay the race (TEC-07): lap-by-lap positions with play, pause and speed.
@@ -19,7 +20,6 @@ export interface ReplayLabels {
   title: string;
 }
 
-const W = 760;
 const ROW = 18;
 const M = { top: 16, right: 60, bottom: 24, left: 16 };
 
@@ -57,15 +57,6 @@ export function ReplayView({ data, labels }: { data: ReplayData; labels: ReplayL
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [playing, reduced, speed, data.laps]);
-
-  const field = data.drivers.length;
-  const H = M.top + field * ROW + M.bottom;
-  const x = scaleLinear().domain([1, data.laps]).range([M.left, W - M.right]);
-  const y = scaleLinear().domain([1, field]).range([M.top + ROW / 2, M.top + (field - 0.5) * ROW]);
-  const path = line<number | null>()
-    .defined((p) => p !== null)
-    .x((_, i) => x(i + 1))
-    .y((p) => y(p ?? 1));
 
   const start = () => {
     if (lap >= data.laps) setLap(1);
@@ -107,25 +98,10 @@ export function ReplayView({ data, labels }: { data: ReplayData; labels: ReplayL
           />
         </label>
       </div>
-      <figure className="chart">
-        <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label={labels.title}>
-          {data.drivers.map((d) => {
-            const shown = d.positions.slice(0, lap);
-            const current = [...shown].reverse().find((p) => p !== null) ?? null;
-            const lastIndex = shown.length - 1 - [...shown].reverse().findIndex((p) => p !== null);
-            const highlight = d.finish !== null && d.finish <= 3;
-            return (
-              <g key={d.number} className={highlight ? `series series-${d.finish}` : "series replay-other"}>
-                <path d={path(shown) ?? undefined} className="series-line" />
-                {current !== null ? (
-                  <text x={x(lastIndex + 1) + 6} y={y(current)} dy="0.32em" className="chart-label">
-                    {d.code}
-                  </text>
-                ) : null}
-              </g>
-            );
-          })}
-        </svg>
+      <figure className="chart chart-duo">
+        {CHART_SIZES.map((size) => (
+          <ReplayPlot key={size} data={data} lap={lap} title={labels.title} size={size} />
+        ))}
       </figure>
       <ol className="visually-hidden">
         {data.drivers
@@ -139,5 +115,39 @@ export function ReplayView({ data, labels }: { data: ReplayData; labels: ReplayL
           ))}
       </ol>
     </div>
+  );
+}
+
+/** One geometry of the chart (D-37): the container shows the wide or the narrow one. */
+function ReplayPlot({ data, lap, title, size }: { data: ReplayData; lap: number; title: string; size: ChartSize }) {
+  const W = CHART_W[size];
+  const field = data.drivers.length;
+  const H = M.top + field * ROW + M.bottom;
+  const x = scaleLinear().domain([1, data.laps]).range([M.left, W - M.right]);
+  const y = scaleLinear().domain([1, field]).range([M.top + ROW / 2, M.top + (field - 0.5) * ROW]);
+  const path = line<number | null>()
+    .defined((p) => p !== null)
+    .x((_, i) => x(i + 1))
+    .y((p) => y(p ?? 1));
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className={sizeClass(size)} role="img" aria-label={title}>
+      {data.drivers.map((d) => {
+        const shown = d.positions.slice(0, lap);
+        const current = [...shown].reverse().find((p) => p !== null) ?? null;
+        const lastIndex = shown.length - 1 - [...shown].reverse().findIndex((p) => p !== null);
+        const highlight = d.finish !== null && d.finish <= 3;
+        return (
+          <g key={d.number} className={highlight ? `series series-${d.finish}` : "series replay-other"}>
+            <path d={path(shown) ?? undefined} className="series-line" />
+            {current !== null ? (
+              <text x={x(lastIndex + 1) + 6} y={y(current)} dy="0.32em" className="chart-label">
+                {d.code}
+              </text>
+            ) : null}
+          </g>
+        );
+      })}
+    </svg>
   );
 }

@@ -149,7 +149,9 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 main { flex: 1; padding-block: 2rem 4rem; }
 main:focus { outline: none; }
 
-.container { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
+/* The gutter, or the notch's safe area when a phone on its side has one (viewport-fit=cover, layout.tsx). */
+:root { --gutter: clamp(16px, 4vw, 48px); --safe-l: env(safe-area-inset-left, 0px); --safe-r: env(safe-area-inset-right, 0px); --safe-b: env(safe-area-inset-bottom, 0px); }
+.container { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: max(var(--gutter), var(--safe-l)) max(var(--gutter), var(--safe-r)); }
 .stack > * + * { margin-block-start: 1rem; }
 .stack-s > * + * { margin-block-start: 0.5rem; }
 .stack-l > * + * { margin-block-start: 2rem; }
@@ -186,7 +188,7 @@ p { margin: 0; max-width: var(--measure); }
 .site-header a { text-decoration: none; }
 
 /* Cronometraje */
-.ticker { display: flex; align-items: stretch; block-size: 34px; background: var(--bg); border-block-end: 1px solid var(--line); font-size: 13px; }
+.ticker { display: flex; align-items: stretch; block-size: 34px; padding-inline-end: var(--safe-r); background: var(--bg); border-block-end: 1px solid var(--line); font-size: 13px; }
 .ticker-viewport { flex: 1; min-inline-size: 0; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent); }
 .ticker-track { display: flex; inline-size: max-content; block-size: 100%; animation: ticker 90s linear infinite; }
 /* It always moves, by the author's decision (still under "reduce motion": see below). */
@@ -201,7 +203,7 @@ p { margin: 0; max-width: var(--measure); }
 .ticker-label-data { color: var(--muted); font-weight: 500; }
 /* The fixed lead on the left: a solid colour block, no stroke, black text. Lilac (accent 2) if it is the
    next one; lime (accent 1) if it is live, with the square pulsing. */
-.ticker-lead { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 0.55rem; padding-inline: clamp(12px, 3vw, 24px) 1.25rem; margin-block-end: -1px; background: var(--accent-2); color: var(--accent-contrast); white-space: nowrap; }
+.ticker-lead { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 0.55rem; padding-inline: max(clamp(12px, 3vw, 24px), var(--safe-l)) 1.25rem; margin-block-end: -1px; background: var(--accent-2); color: var(--accent-contrast); white-space: nowrap; }
 .ticker-lead.is-live { background: var(--accent-fill); }
 .ticker-lead .ticker-label { font-weight: 700; }
 .ticker-lead :is(.ticker-label, .ticker-text, .ticker-when, .ticker-in) { color: var(--accent-contrast); }
@@ -214,7 +216,7 @@ p { margin: 0; max-width: var(--measure); }
 @keyframes ticker { to { transform: translateX(-50%); } }
 
 /* Navigation bar: the same space above and below, so the content sits centred in the black band. */
-.header-bar { position: relative; padding: 5px clamp(8px, 2vw, 24px); }
+.header-bar { position: relative; padding: 5px max(clamp(8px, 2vw, 24px), var(--safe-r)) 5px max(clamp(8px, 2vw, 24px), var(--safe-l)); }
 .header-bar .header-row {
   display: flex; align-items: center; gap: clamp(0.75rem, 2vw, 2rem); max-inline-size: 1240px; min-block-size: 68px;
   margin-inline: auto; padding: 0 0.75rem 0 0.9rem; background: var(--bg);
@@ -254,7 +256,12 @@ p { margin: 0; max-width: var(--measure); }
 .nav-panel::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: -15px; block-size: 15px; }
 /* Only the panel of the section being pointed at receives the mouse (pointer-events does not animate): one
    that is fading out cannot steal the hover and cause a loop between sections. */
-.nav-item:hover > .nav-panel, .nav-item:focus-within > .nav-panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; transition-delay: 0.1s, 0.1s, 0s; }
+.nav-item:focus-within > .nav-panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; transition-delay: 0.1s, 0.1s, 0s; }
+/* Hover only with a mouse: on a touch screen wide enough for this bar (an iPad in landscape), a :hover that
+   reveals a panel makes Safari spend the first tap on the hover, and the section link needed two taps. */
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:hover > .nav-panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; transition-delay: 0.1s, 0.1s, 0s; }
+}
 .nav-list.is-dismissed .nav-panel { opacity: 0; visibility: hidden; pointer-events: none; }
 
 /* The wide "Races" panel: centred under the whole navigation (its <li> stops being the reference). */
@@ -274,7 +281,7 @@ p { margin: 0; max-width: var(--measure); }
 .mega-sessions .is-next, .mega-sessions .is-next .mega-session-when, .mega-sessions .is-next .icon { color: var(--accent-2); }
 .mega-sessions .is-live, .mega-sessions .is-live .mega-session-when, .mega-sessions .is-live .icon { color: var(--accent); }
 .mega-sessions .is-live .mega-session-when::before { content: ""; display: inline-block; inline-size: 7px; block-size: 7px; margin-inline-end: 0.4rem; background: var(--accent); animation: live-blink 1.2s steps(2, jump-none) infinite; }
-.mega-hint { margin: 0; font-size: 11px; color: var(--muted); }
+.mega-hint { margin: 0; font-size: 12px; color: var(--muted); }
 .mega-links { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.1rem; }
 .mega-links a { display: flex; align-items: center; gap: 0.4rem; min-block-size: 32px; max-inline-size: 100%; font-size: var(--step--1); font-weight: 600; color: var(--text); white-space: nowrap; transition: color 0.2s ease-out, transform 0.35s var(--ease-out-expo); }
 .mega-links a > span { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; }
@@ -391,7 +398,7 @@ p { margin: 0; max-width: var(--measure); }
 .menu-sheet {
   position: fixed; inset: var(--header-h, 113px) 0 0 0; z-index: 49; overflow-y: auto; overscroll-behavior: contain;
   display: flex; flex-direction: column; justify-content: space-between; gap: 2rem;
-  padding: 1.5rem clamp(16px, 4vw, 48px) 2rem; background: var(--bg);
+  padding: 1.5rem max(var(--gutter), var(--safe-r)) calc(2rem + var(--safe-b)) max(var(--gutter), var(--safe-l)); background: var(--bg);
 }
 .menu-list { list-style: none; margin: 0; padding: 0; display: grid; }
 .menu-list li { border-block-end: 1px solid var(--line); animation: menu-in 0.6s var(--ease-out-expo) both; }
@@ -405,7 +412,7 @@ p { margin: 0; max-width: var(--measure); }
 .menu-link:hover .menu-name { color: var(--accent); }
 .menu-link[aria-current="page"] .menu-name { color: var(--accent); }
 /* Menu footer (search, account, language): fixed at the bottom, visible even when the list is long; the language opens upwards. */
-.menu-footer { position: sticky; inset-block-end: -2rem; z-index: 1; display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: -2rem; padding-block: 1rem 2rem; border-block-start: 1px solid var(--line); background: var(--bg); }
+.menu-footer { position: sticky; inset-block-end: calc(-2rem - var(--safe-b)); z-index: 1; display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: calc(-2rem - var(--safe-b)); padding-block: 1rem calc(2rem + var(--safe-b)); border-block-start: 1px solid var(--line); background: var(--bg); }
 .menu-footer .lang-menu { inset-block-start: auto; inset-block-end: calc(100% + 6px); }
 @keyframes menu-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
@@ -418,6 +425,21 @@ p { margin: 0; max-width: var(--measure); }
 @media (max-width: 480px) {
   .logo-mark { inline-size: 46px; block-size: 38px; }
   .header-bar .header-row { min-block-size: 60px; }
+}
+/*
+ * A phone on its side (about 390 px of height): the sticky header and the section bar covered 43 % of the
+ * screen. The header loses the timing strip and stays compact; the section bar scrolls with the page.
+ * --header-total follows the real height, since the hero and the anchors are measured with it.
+ */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root { --header-total: 62px; }
+  .ticker { display: none; }
+  .header-bar .header-row { min-block-size: 52px; }
+  .logo-mark { inline-size: 40px; block-size: 33px; }
+  .site-header, .site-header:has(.menu[open]) { --header-h: 62px; }
+  .menu-sheet { gap: 1rem; padding-block-start: 0.75rem; }
+  .menu-link { padding-block: 0.55rem; }
+  .menu-name { font-size: 2rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticker-track, .menu-list li, .ticker-lead.is-live .ticker-mark, .logo-mark,
@@ -685,11 +707,39 @@ select:hover, select:focus-visible { border-color: var(--text); }
 select option { font-weight: 500; }
 button { cursor: pointer; background: var(--text); color: var(--bg); border-color: var(--text); }
 
-.table-wrap { overflow-x: auto; }
+/* position: relative makes the scroller the containing block of visually hidden text in its cells: otherwise
+   that text sat at the table's far edge and widened the whole page on phones. */
+.table-wrap { position: relative; overflow-x: auto; }
+
+/*
+ * Horizontal scrollers say there is more: the edge with hidden content fades out, driven by the scroll
+ * position itself (CSS only). A strip that does not overflow has an inactive timeline and no fade.
+ * Without scroll timelines (Firefox) there is simply no fade.
+ */
+@property --fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@supports (animation-timeline: scroll()) {
+  :is(.table-wrap, .rsub-list, .ctrace-scroll, .pf-ribbon-wrap) {
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent);
+    animation: scroll-fade linear both;
+    animation-timeline: scroll(self inline);
+  }
+  @keyframes scroll-fade {
+    0% { --fade-start: 0px; --fade-end: 2.5rem; }
+    10%, 90% { --fade-start: 2.5rem; --fade-end: 2.5rem; }
+    100% { --fade-start: 2.5rem; --fade-end: 0px; }
+  }
+  /* Not motion but a state that follows the finger: it stays under "reduce motion". */
+  @media (prefers-reduced-motion: reduce) {
+    :is(.table-wrap, .rsub-list, .ctrace-scroll, .pf-ribbon-wrap) { animation: scroll-fade linear both !important; animation-timeline: scroll(self inline) !important; }
+  }
+}
 table { width: 100%; border-collapse: collapse; font-size: var(--step--1); line-height: var(--lh-ui); }
 th, td { text-align: start; padding: 0.5rem 0.75rem 0.5rem 0; border-block-end: 1px solid var(--line); vertical-align: top; }
 thead th { font-weight: 500; color: var(--muted); }
 tbody th { font-weight: 600; }
+/* A link heading a row gets a 24 px target (WCAG 2.5.8) without making the row taller. */
+tbody th > a { display: inline-block; padding-block: 0.25rem; margin-block: -0.25rem; }
 .num { text-align: end; }
 tr[data-status="next"] th { color: var(--accent-2); }
 .tag { display: inline-block; margin-inline-start: 0.5rem; padding: 0 0.375rem; border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: var(--step--2); font-weight: 500; }
@@ -714,6 +764,19 @@ tr.is-favorite > * { background: var(--surface); }
 
 .chart { margin: 0; }
 .chart-svg { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--font-sans); }
+/*
+ * Charts with a phone geometry (D-37, components/charts/sizes.ts): drawn wide (760 units) and narrow
+ * (380 units); the container decides which one shows, so labels stay between about 10 and 16 px at any
+ * width. The narrow one stops growing at 30rem, where the wide one is still too small to read.
+ */
+.chart-duo { container-type: inline-size; }
+.chart-duo .chart-narrow { display: none; }
+@container (max-width: 619px) {
+  .chart-duo .chart-wide { display: none; }
+  .chart-duo .chart-narrow { display: block; max-inline-size: 30rem; }
+}
+/* Pattern definitions shared by both geometries and the legend: rendered, but without a box. */
+.chart-defs { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
 .chart-grid line { stroke: var(--line); stroke-width: var(--stroke-ref); }
 .chart-baseline line { stroke: var(--muted); stroke-width: var(--stroke-ref); }
 .chart-axis { font-size: 13px; fill: var(--muted); font-variant-numeric: tabular-nums; }
@@ -806,7 +869,9 @@ input::placeholder { color: var(--muted); }
 .gap-3 { background: var(--div-loss-3); color: var(--bg); }
 
 .telemetry { display: grid; gap: 0.25rem; }
-.telemetry-svg { touch-action: none; }
+/* pan-y: a horizontal drag moves the cursor, a vertical one still scrolls the page (with "none", a phone
+   could not scroll past a chart taller than its screen). */
+.telemetry-svg { touch-action: pan-y; }
 .telemetry-svg:focus-visible { outline: none; background: var(--surface); }
 .crosshair { stroke: var(--muted); stroke-width: 1px; stroke-dasharray: 3 3; }
 .readout { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-size: var(--step--1); font-variant-numeric: tabular-nums; min-height: 1.5em; }
@@ -815,6 +880,9 @@ input::placeholder { color: var(--muted); }
 .track-path { fill: none; stroke-width: 6px; stroke-linecap: round; }
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 .controls input[type="range"] { flex: 1; min-width: 12rem; accent-color: var(--text); }
+/* The slider's box is its target: 24 px at least (WCAG 2.5.8), 44 px under a finger. The track stays thin. */
+input[type="range"] { min-block-size: 24px; margin: 0; }
+@media (pointer: coarse) { input[type="range"] { min-block-size: 44px; } }
 .neutralised-band { fill: var(--surface); }
 .chart-baseline-line { stroke: var(--muted); stroke-width: 1px; }
 .track-cursor { fill: var(--accent); stroke: var(--bg); stroke-width: 3px; }
@@ -941,13 +1009,20 @@ input::placeholder { color: var(--muted); }
 .rr-headline { margin: 0; max-inline-size: 36ch; font-family: var(--font-display); font-size: clamp(1.35rem, 2.6vw, 2.1rem); font-weight: 600; font-stretch: var(--display-width); line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; }
 .rr-prov { margin-inline-start: 0.35rem; padding: 0.1rem 0.5rem; border: 1px solid var(--accent-2); color: var(--accent-2); font-size: var(--step--2); font-weight: 700; }
 
-.rr-podium { grid-area: podium; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.rr-podium { container-type: inline-size; grid-area: podium; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
 .rr-step { display: grid; gap: 0.8rem; min-inline-size: 0; }
 .rr-who { display: grid; gap: 0.2rem; padding-inline: 0.15rem; }
 .rr-name { color: var(--text); font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; font-stretch: var(--display-width); line-height: 1.02; letter-spacing: -0.02em; overflow-wrap: anywhere; }
 .rr-name:hover { font-style: italic; }
 .rr-given { display: block; font-size: var(--step--1); font-weight: 600; letter-spacing: 0; color: var(--muted); }
 .rr-step-1 .rr-name { font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 0.95; letter-spacing: -0.035em; }
+/* A third of the podium per name: capped by its width (6.2cqi), so "Verstappen" fits on one line at 320 px. */
+.rr-name { font-size: min(var(--step-1), 6.2cqi); }
+.rr-step-1 .rr-name { font-size: min(clamp(1.6rem, 3vw, 2.6rem), 6.2cqi); }
+@container (max-width: 300px) {
+  .rr-block { padding-inline: 0.5rem; }
+  .rr-time { font-size: 12px; font-stretch: var(--display-width); }
+}
 .rr-team { font-size: var(--step--2); color: var(--muted); }
 .rr-block { display: grid; align-content: space-between; gap: 0.5rem; padding: 0.9rem 1rem 1rem; background: var(--text); color: var(--bg); overflow: hidden; }
 .rr-step-1 .rr-block { block-size: 15rem; background: var(--bg); color: var(--text); }
@@ -1006,10 +1081,12 @@ input::placeholder { color: var(--muted); }
   .rr-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "podium" "keys" "slope" "side"; }
 }
 @media (max-width: 520px) {
-  .rr-step-1 .rr-block { block-size: 11rem; }
-  .rr-step-2 .rr-block { block-size: 8rem; }
-  .rr-step-3 .rr-block { block-size: 6.5rem; }
+  /* Steps still descend, but the third one fits its position, gap and grid slot (it clipped "started 5th"). */
+  .rr-step-1 .rr-block { block-size: auto; min-block-size: 11.5rem; }
+  .rr-step-2 .rr-block { block-size: auto; min-block-size: 9.5rem; }
+  .rr-step-3 .rr-block { block-size: auto; min-block-size: 8rem; }
   .rr-block { padding: 0.7rem 0.75rem 0.8rem; }
+  .rr-time { font-size: var(--step--2); }
   .rr-keys { grid-template-columns: minmax(0, 1fr); }
   .rr-keys > div:nth-child(even) { padding-inline-start: 0; border-inline-start: 0; }
   .rr-keys > div:nth-child(n + 2) { border-block-start: 1px solid var(--line); }
@@ -1235,6 +1312,8 @@ input::placeholder { color: var(--muted); }
 @media (max-width: 520px) {
   .nl-contents { grid-template-columns: minmax(0, 1fr); }
   .nl-form .inline-form { flex-wrap: wrap; }
+  /* A full line for the field: with a 0 % basis it fitted, 0 px wide, on the button's line. */
+  .nl-form .inline-form label { flex-basis: 100%; }
   .nl-form .inline-form button { inline-size: 100%; justify-content: center; }
 }
 @supports (animation-timeline: view()) {
@@ -1260,7 +1339,7 @@ input::placeholder { color: var(--muted); }
 /* ── Footer (SiteFooter) ───────────────────────────────────────────────────────────────────────────────
    Always black. Left: the full mark, with the dot lapping the ligature (and tilting towards the cursor),
    the tagline and the newsletter. Right: the season and, below it, the navigation. Legal text, minimal. */
-.site-footer { background: var(--bg); color: var(--text); padding-block: clamp(3.5rem, 8vw, 6rem) 1.25rem; overflow: hidden; }
+.site-footer { background: var(--bg); color: var(--text); padding-block: clamp(3.5rem, 8vw, 6rem) calc(1.25rem + var(--safe-b)); overflow: hidden; }
 .site-footer a { text-decoration: none; }
 .ft { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "brand side" "base base"; gap: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 6vw, 6rem); }
 .ft-heading { display: flex; align-items: center; gap: 0.5rem; margin: 0; font-family: inherit; font-size: var(--step--2); font-weight: 600; letter-spacing: 0; color: var(--muted); }
@@ -1289,7 +1368,9 @@ input::placeholder { color: var(--muted); }
 .ft-list a:hover { color: var(--accent); transform: translateX(4px); }
 
 /* The season, race by race: discreet, in columns. */
-.ft-season { display: grid; gap: 0.75rem; min-inline-size: 0; }
+/* minmax(0, 1fr): an implicit auto track grew to the width of the unwrapped names and pushed the list
+   past the screen on phones. */
+.ft-season { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; min-inline-size: 0; }
 .ft-side > * { min-inline-size: 0; }
 .ft-round a { min-inline-size: 0; }
 .ft-season-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; }
@@ -1306,20 +1387,19 @@ input::placeholder { color: var(--muted); }
 .ft-round.is-live a { color: var(--accent); font-weight: 600; }
 .ft-round.is-live .ft-dot { background: var(--accent); border-color: var(--accent); animation: live-blink 1.2s steps(2, jump-none) infinite; }
 .ft-round.is-cancelled .ft-round-name { text-decoration: line-through; }
-.ft-round-state { flex: none; font-size: 11px; }
+.ft-round-state { flex: none; font-size: 12px; }
 /* The same hover as the footer navigation: lime and a step to the right. */
 .ft-rounds .ft-round a:hover { color: var(--accent); transform: translateX(4px); }
 @keyframes ft-pulse { 50% { opacity: 0.4; } }
 
 .ft-base { grid-area: base; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 2rem; padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
 /* Legal text, as dim as possible without going below WCAG AA's minimum contrast (4.5:1 on black). */
-.ft-legal { margin: 0; font-size: 11px; line-height: 1.5; color: color-mix(in srgb, var(--muted) 76%, var(--bg)); max-inline-size: 70ch; }
-.ft-base-end { display: inline-flex; align-items: center; gap: 1.5rem; margin-inline-start: auto; font-size: var(--step--2); }
+.ft-legal { margin: 0; font-size: 12px; line-height: 1.5; color: color-mix(in srgb, var(--muted) 76%, var(--bg)); max-inline-size: 70ch; }
+.ft-base-end { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-inline-start: auto; font-size: var(--step--2); }
 
 .ft-lockup { display: block; block-size: 28px; inline-size: auto; }
-/* "Back to the start" outside the grid, in the bottom corner of the footer. */
-.site-footer { position: relative; }
-.ft-top { position: absolute; inset-block-end: 1.25rem; inset-inline-end: clamp(16px, 4vw, 48px); display: inline-grid; place-items: center; inline-size: 44px; block-size: 44px; border: 1px solid var(--line); color: var(--text); font-size: 0; transition: border-color 0.2s ease-out; }
+/* "Back to the start": the last item of the bottom row, so it never covers the lockup. */
+.ft-top { display: inline-grid; place-items: center; inline-size: 44px; block-size: 44px; border: 1px solid var(--line); color: var(--text); font-size: 0; transition: border-color 0.2s ease-out; }
 .ft-top span { font-size: 18px; transition: transform 0.35s var(--ease-out-expo); }
 .ft-top:hover { border-color: var(--text); }
 .ft-top:hover span { transform: translateY(-4px); }
@@ -1331,6 +1411,9 @@ input::placeholder { color: var(--muted); }
 }
 @media (max-width: 520px) {
   .ft-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Language, lockup and "back to the start" on one line down to 320 px. */
+  .ft-base-end { gap: 0.75rem 1rem; }
+  .ft-lockup { block-size: 22px; }
 }
 @supports (animation-timeline: view()) {
   .ft-round { animation: ft-in linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
@@ -1430,15 +1513,18 @@ input::placeholder { color: var(--muted); }
 
 @media (max-width: 900px) {
   .sv-head { grid-template-columns: minmax(0, 1fr); }
-  .tl-label { display: none; }
+  /* Drawn 1200 units wide, below 900 px its text fell under 9 px and its marks under the 24 px target
+     size; the list below carries the same rounds. */
+  .tl { display: none; }
+  /* The month above its rounds, as on phones: as a side column it left the Grand Prix name 110 px. */
+  .sv-month { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+  .sv-month-name { position: static; }
+  .sv-row-link { grid-template-columns: 3.5rem minmax(0, 1fr) 8rem 11rem; }
 }
 @media (max-width: 600px) {
-  .tl { display: none; }
   .sv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sv-next { grid-template-columns: minmax(0, 1fr); }
   .sv-next-track { max-block-size: 12rem; }
-  .sv-month { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
-  .sv-month-name { position: static; }
   .sv-row-link { grid-template-columns: 2.5rem minmax(0, 1fr); row-gap: 0.4rem; }
   .sv-when, .sv-state { grid-column: 2; }
 }
@@ -1525,7 +1611,7 @@ body:has(.rv) main { padding-block-end: 0; }
 
 /* Sub-navigation: the header grows a second level, the same black and the same width as the navigation
    bar (.header-row). The section being read carries the lime block, which slides. */
-.rsub { position: sticky; inset-block-start: var(--header-total); z-index: 30; margin-block: -2.5rem 2.5rem; padding: 0 clamp(8px, 2vw, 24px) 6px; background: var(--bg); color: var(--text); }
+.rsub { position: sticky; inset-block-start: var(--header-total); z-index: 30; margin-block: -2.5rem 2.5rem; padding: 0 max(clamp(8px, 2vw, 24px), var(--safe-r)) 6px max(clamp(8px, 2vw, 24px), var(--safe-l)); background: var(--bg); color: var(--text); }
 .rsub-row { display: flex; align-items: center; gap: 0.75rem clamp(1rem, 2.5vw, 1.75rem); max-inline-size: 1240px; min-block-size: 54px; margin-inline: auto; padding: 0 0.75rem 0 0.9rem; border-block-start: 1px solid var(--line); }
 .rsub-id { flex: none; display: flex; align-items: baseline; gap: 0.55rem; margin: 0; }
 .rsub-round { font-size: var(--step--2); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -1546,6 +1632,8 @@ body:has(.rv) main { padding-block-end: 0; }
 .rsub-arrow:hover { border-color: var(--text); }
 .rsub-arrow:first-child:hover { transform: translateX(-2px); }
 .rsub-arrow:last-child:hover { transform: translateX(2px); }
+/* A phone on its side: the section bar scrolls with the page (see the header's landscape rules). */
+@media (orientation: landscape) and (max-height: 500px) { .rsub { position: relative; } }
 @media (max-width: 1280px) { .rsub-name { display: none; } }
 @media (max-width: 1100px) { .rsub-list a .icon { display: none; } }
 @media (max-width: 760px) {
@@ -1634,7 +1722,7 @@ body:has(.rv) main { padding-block-end: 0; }
 /* Circuit page: reuses the race template (rv-*); these pieces are its own. */
 .cv-track { grid-area: track; margin: 0; display: grid; gap: 0.5rem; justify-items: end; }
 .cv-track .rv-track { grid-area: auto; }
-.cv-track-source { font-size: 11px; color: var(--muted); }
+.cv-track-source { font-size: 12px; color: var(--muted); }
 .cv-next { display: grid; gap: 0.6rem; align-content: start; padding: clamp(1.25rem, 3vw, 2rem); background: var(--bg); color: var(--text); text-decoration: none; }
 .cv-next-kicker { display: inline-flex; align-items: center; gap: 0.45rem; font-size: var(--step--2); font-weight: 600; color: var(--accent-2); }
 .cv-next-name { font-size: var(--step-3); font-weight: 700; font-stretch: var(--display-width); line-height: 1; letter-spacing: -0.025em; }
@@ -1729,7 +1817,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .cv-hero-track { grid-area: track; align-self: center; min-inline-size: 0; }
 .cv-hero-facts { grid-area: facts; display: grid; gap: 0.9rem; }
 .cv-hero .cv-facts { grid-area: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cv-hero-note { margin: 0; max-inline-size: 62ch; font-size: 11px; line-height: 1.5; color: var(--muted); }
+.cv-hero-note { margin: 0; max-inline-size: 62ch; font-size: 12px; line-height: 1.5; color: var(--muted); }
 @media (max-width: 1000px) {
   .cv-hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "crumbs" "head" "track" "facts"; }
   .cv-hero .cv-facts { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
@@ -1826,7 +1914,8 @@ body:has(.rv) main { padding-block-end: 0; }
 
 .ctrace { padding: clamp(0.75rem, 2vw, 1.25rem); border: 1px solid var(--line); }
 .ctrace-scroll { overflow-x: auto; scrollbar-width: thin; }
-.ctrace-svg { display: block; inline-size: 100%; min-inline-size: 640px; block-size: auto; overflow: visible; }
+/* 1000 units wide: at 800 px its 13 px labels still read at 10 px; narrower screens scroll it. */
+.ctrace-svg { display: block; inline-size: 100%; min-inline-size: 800px; block-size: auto; overflow: visible; }
 .ctrace-grid line { stroke: var(--line); stroke-width: 1; }
 .ctrace-grid text, .ctrace-km { fill: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .ctrace-base { stroke: var(--muted); stroke-width: 1; }
@@ -1998,9 +2087,39 @@ body:has(.rv) main { padding-block-end: 0; }
 .timing-best { color: var(--accent-2); font-weight: 700; }
 .timing-table tr.is-favorite > * { background: var(--surface); }
 
+/*
+ * Narrow timing tables (phones, or a narrow column): the family name alone, as on a timing screen, on
+ * one line; the given name stays for screen readers. Tighter columns so the points column fits from
+ * 390 px; below that the table scrolls, with a visible scrollbar saying so.
+ */
+.timing { container-type: inline-size; }
+@container (max-width: 560px) {
+  .timing-table .dn-given { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .timing-who > a { white-space: nowrap; min-block-size: 24px; }
+  .timing-team { line-height: 1.3; }
+  .timing-table th, .timing-table td { padding-inline-end: 0.5rem; }
+  .timing-table :is(th, td):last-child { padding-inline-end: 0; }
+  .timing-pos { inline-size: 2rem; font-size: var(--step-0); }
+  .timing-gap-col, .timing-gap { min-inline-size: 5.25rem; }
+  .timing-delta { min-inline-size: 0; }
+  .timing-fastest { flex-wrap: wrap; }
+  /* When a table still has to scroll (qualifying at 360 px), position and driver stay put. The row rule is
+     a shadow on these cells: a collapsed border does not travel with a sticky cell. */
+  .timing-table tr > :nth-child(-n + 2) { position: sticky; z-index: 1; background: var(--bg); box-shadow: inset 0 -1px var(--line); }
+  .timing-table tr > :first-child { inset-inline-start: 0; }
+  .timing-table tr > :nth-child(2) { inset-inline-start: 2rem; }
+  .timing-table tr.is-favorite > :nth-child(-n + 2) { background: var(--surface); }
+}
+.timing .table-wrap { scrollbar-width: thin; scrollbar-color: var(--muted) transparent; }
+/* With sticky columns on the left, only the far edge fades. */
+@supports (animation-timeline: scroll()) {
+  .timing .table-wrap { mask-image: linear-gradient(to right, #000 calc(100% - var(--fade-end)), transparent); }
+}
+
 /* Pit stops: one row per driver, each stop on its lap. */
 .pits { display: grid; gap: 1rem; }
-.pits-fastest { inline-size: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0; padding-block: 0.5rem 0.75rem; border-block-end: 1px solid var(--line); font-size: var(--step--1); color: var(--muted); }
+.pits-fastest .icon { flex: none; margin-block-start: 0.15em; }
+.pits-fastest { inline-size: 100%; display: flex; align-items: flex-start; gap: 0.4rem; margin: 0; padding-block: 0.5rem 0.75rem; border-block-end: 1px solid var(--line); font-size: var(--step--1); color: var(--muted); }
 .pits-fastest .icon, .pits-fastest strong { color: var(--accent-2); }
 .pits-rows { list-style: none; margin: 0; padding: 0; display: grid; }
 .pits-rows li { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); align-items: center; block-size: 26px; }
@@ -2438,17 +2557,22 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .cmp-go:hover { font-style: italic; }
 @media (max-width: 760px) { .cmp-form { grid-template-columns: minmax(0, 1fr); } .cmp-vs { padding: 0; } }
 .cmp-duel { display: grid; gap: 1.75rem; padding: clamp(1.25rem, 4vw, 3rem); background: var(--bg); color: var(--text); }
-.cmp-names { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: 1rem; }
+.cmp-names { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: 1rem; }
 .cmp-name { display: grid; gap: 0.15rem; color: var(--text); text-decoration: none; }
 .cmp-name.is-b { text-align: end; }
 .cmp-name:hover .cmp-family { font-style: italic; }
 .cmp-given { font-size: var(--step-0); font-weight: 600; color: var(--muted); }
-.cmp-family { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; font-stretch: var(--display-width); line-height: 0.9; letter-spacing: -0.04em; overflow-wrap: anywhere; }
+/* Capped by the duel's own width (7.5cqi): on a phone "Verstappen" broke as "Verstapp-en". */
+.cmp-family { font-family: var(--font-display); font-size: min(clamp(2rem, 5vw, 4rem), 7.5cqi); font-weight: 800; font-stretch: var(--display-width); line-height: 0.9; letter-spacing: -0.04em; overflow-wrap: anywhere; }
 .cmp-name.is-a .cmp-family { color: var(--accent); }
 .cmp-name.is-b .cmp-family { color: var(--accent-2); }
 .cmp-team { font-size: var(--step--1); color: var(--muted); }
 .cmp-vs-big { align-self: center; font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 800; font-stretch: var(--display-width); color: transparent; -webkit-text-stroke: 1.25px var(--text); }
-.cmp-table { inline-size: 100%; border-collapse: collapse; }
+/* Fixed and symmetric: with automatic layout a long given name in the header ("Andrea Kimi Antonelli")
+   took the width, and the other driver's values broke as "3 · 15 / %". */
+.cmp-table { inline-size: 100%; border-collapse: collapse; table-layout: fixed; }
+.cmp-table :is(.cmp-a, .cmp-b) { inline-size: 40%; overflow-wrap: anywhere; }
+.cmp-table .cmp-val { white-space: nowrap; }
 .cmp-table thead th { padding-block-end: 0.5rem; font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 .cmp-table thead .cmp-a { text-align: end; }
 .cmp-table thead .cmp-b { text-align: start; }
@@ -2510,7 +2634,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .sim-table thead th { font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 .sim-table tbody th { font-weight: 600; }
 .sim-table select { min-inline-size: 5.5rem; min-block-size: 40px; font-size: var(--step--1); }
-.sim-submit { position: sticky; inset-block-end: 0; z-index: 2; padding-block: 0.85rem; border-block-start: 1px solid var(--line); background: var(--surface); }
+.sim-submit { position: sticky; inset-block-end: 0; z-index: 2; padding-block: 0.85rem calc(0.85rem + var(--safe-b)); border-block-start: 1px solid var(--line); background: var(--surface); }
 
 /* Predictions: the podium is picked in its visual order (2nd, 1st, 3rd) and the pole separately. */
 .pr { max-inline-size: 72rem; }
@@ -2921,7 +3045,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .gl-pager-link:hover .gl-pager-term { font-style: italic; }
 
 /* Quiz: a sticky progress bar and the result per question. */
-.qz-bar { position: sticky; inset-block-end: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-block-start: 0.5rem; padding: 0.85rem 1rem; border: 1px solid var(--line); background: var(--bg); }
+.qz-bar { position: sticky; inset-block-end: var(--safe-b); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-block-start: 0.5rem; padding: 0.85rem 1rem; border: 1px solid var(--line); background: var(--bg); }
 .qz-bar-dots { display: flex; gap: 5px; }
 .qz-bar-dots span { inline-size: 22px; block-size: 8px; background: var(--surface); transition: background-color 0.3s var(--ease-out-quart); }
 .qz-bar-dots .is-done { background: var(--text); }

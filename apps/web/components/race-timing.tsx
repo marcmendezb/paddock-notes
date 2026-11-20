@@ -180,8 +180,12 @@ export function PitTimeline({
     <div className="timing pits" data-surface="ink">
       {fastest ? (
         <p className="pits-fastest">
-          <Icon name="stopwatch" /> {v.fastestStop}: <strong>{fastest.driver.familyName}</strong>
-          {`, ${fastest.duration} s (${t.analysis.lap} ${fastest.lap})`}
+          <Icon name="stopwatch" />
+          {/* One text run, so it wraps as a sentence and the comma never starts a line on its own. */}
+          <span>
+            {v.fastestStop}: <strong>{fastest.driver.familyName}</strong>
+            {`, ${fastest.duration} s (${t.analysis.lap} ${fastest.lap})`}
+          </span>
         </p>
       ) : null}
       <ol className="pits-rows" aria-hidden="true">

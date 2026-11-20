@@ -10,7 +10,9 @@ let active: Lenis | null = null;
 export function anchorOffset(): number {
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-total")) || 112;
   const sub = document.querySelector<HTMLElement>(".rsub");
-  return header + (sub ? sub.offsetHeight : 0) + 20;
+  // On a phone on its side the sub-navigation scrolls with the page (globals.css) and covers nothing.
+  const covering = sub && getComputedStyle(sub).position === "sticky" ? sub.offsetHeight : 0;
+  return header + covering + 20;
 }
 
 /**

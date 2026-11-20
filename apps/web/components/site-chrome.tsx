@@ -431,13 +431,14 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
             <Link href={`/${lang}`} className="ft-lockup-link">
               <img src="/brand/paddock-notes-horizontal-sobre-negro.svg" alt={t.name} width="158" height="28" className="ft-lockup" />
             </Link>
+            {/* In the flow, last in the row: absolutely positioned it sat on top of the lockup. */}
+            <a href="#top" className="ft-top">
+              <span aria-hidden="true">↑</span>
+              <span className="visually-hidden">{f.top}</span>
+            </a>
           </span>
         </div>
       </div>
-      <a href="#top" className="ft-top">
-        <span aria-hidden="true">↑</span>
-        <span className="visually-hidden">{f.top}</span>
-      </a>
     </footer>
   );
 }

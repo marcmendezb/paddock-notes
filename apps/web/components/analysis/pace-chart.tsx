@@ -4,14 +4,17 @@ import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 import { Marker, seriesClass } from "../charts/series";
 import { localeOf } from "@/lib/format";
+import { CHART_SIZES, CHART_W, sizeClass, type ChartSize } from "../charts/sizes";
 
 /**
  * Race pace (TEC-03): lap times for up to four drivers and the trend of each stint.
  * Excluded laps (pits, start, neutralised) are hidden unless asked for.
  */
-const W = 760;
-const H = 360;
-const M = { top: 20, right: 120, bottom: 30, left: 56 };
+const H: Record<ChartSize, number> = { wide: 360, narrow: 300 };
+const M: Record<ChartSize, { top: number; right: number; bottom: number; left: number }> = {
+  wide: { top: 20, right: 120, bottom: 30, left: 56 },
+  narrow: { top: 20, right: 44, bottom: 30, left: 50 },
+};
 
 export function PaceChart({
   lang,
@@ -24,7 +27,6 @@ export function PaceChart({
   selected: number[];
   showAll: boolean;
 }) {
-  const t = dict(lang).analysis;
   const series = selected.map((n) => data.drivers.find((d) => d.number === n)).filter((d) => d !== undefined);
   const points = series.flatMap((s) => s.laps.filter((l) => showAll || l.excluded === null));
   if (points.length === 0) return null;
@@ -32,63 +34,92 @@ export function PaceChart({
   // A robust scale: from the minimum to the 98th percentile, so one slow lap does not flatten the rest.
   const lo = times[0]!;
   const hi = times[Math.floor(times.length * 0.98)] ?? times.at(-1)!;
-  const x = scaleLinear().domain([1, data.laps]).range([M.left, W - M.right]);
-  const y = scaleLinear().domain([lo - 0.3, hi + 0.3]).nice(5).range([H - M.bottom, M.top]);
+  return (
+    <figure className="chart chart-duo">
+      {CHART_SIZES.map((size) => (
+        <PacePlot key={size} lang={lang} data={data} series={series} showAll={showAll} lo={lo} hi={hi} size={size} />
+      ))}
+    </figure>
+  );
+}
+
+function PacePlot({
+  lang,
+  data,
+  series,
+  showAll,
+  lo,
+  hi,
+  size,
+}: {
+  lang: Lang;
+  data: PaceData;
+  series: PaceData["drivers"];
+  showAll: boolean;
+  lo: number;
+  hi: number;
+  size: ChartSize;
+}) {
+  const t = dict(lang).analysis;
+  const W = CHART_W[size];
+  const H_ = H[size];
+  const m = M[size];
+  const x = scaleLinear().domain([1, data.laps]).range([m.left, W - m.right]);
+  const y = scaleLinear().domain([lo - 0.3, hi + 0.3]).nice(5).range([H_ - m.bottom, m.top]);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, "0")}`;
-  const clipId = `pace-clip-${series.map((s) => s.number).join("-")}`;
+  const clipId = `pace-clip-${size}-${series.map((s) => s.number).join("-")}`;
+  const xTicks = x.ticks(size === "wide" ? 8 : 4);
 
   return (
-    <figure className="chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.tools.pace.name} className="chart-svg">
-        {/* Nothing is drawn outside the chart area, even if a data point is wrong. */}
-        <defs>
-          <clipPath id={clipId}>
-            <rect x={M.left} y={M.top} width={W - M.left - M.right} height={H - M.top - M.bottom} />
-          </clipPath>
-        </defs>
-        {data.neutralised.map((p, i) => (
-          <rect key={i} className={`neutralised-band neutralised-${p.kind}`} x={x(p.fromLap)} width={Math.max(2, x(p.toLap) - x(p.fromLap))} y={M.top} height={H - M.top - M.bottom} />
-        ))}
-        {y.ticks(5).map((tick) => (
-          <g key={tick} className="chart-grid">
-            <line x1={M.left} x2={W - M.right} y1={y(tick)} y2={y(tick)} />
-            <text x={M.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="chart-axis">
-              {fmt(tick)}
-            </text>
-          </g>
-        ))}
-        {x.ticks(8).map((tick, i, all) => (
-          <text key={tick} x={x(tick)} y={H - 8} textAnchor="middle" className="chart-axis">
-            {i === all.length - 1 ? `${t.lap} ${tick}` : tick}
+    <svg viewBox={`0 0 ${W} ${H_}`} role="img" aria-label={t.tools.pace.name} className={sizeClass(size)}>
+      {/* Nothing is drawn outside the chart area, even if a data point is wrong. */}
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={m.left} y={m.top} width={W - m.left - m.right} height={H_ - m.top - m.bottom} />
+        </clipPath>
+      </defs>
+      {data.neutralised.map((p, i) => (
+        <rect key={i} className={`neutralised-band neutralised-${p.kind}`} x={x(p.fromLap)} width={Math.max(2, x(p.toLap) - x(p.fromLap))} y={m.top} height={H_ - m.top - m.bottom} />
+      ))}
+      {y.ticks(5).map((tick) => (
+        <g key={tick} className="chart-grid">
+          <line x1={m.left} x2={W - m.right} y1={y(tick)} y2={y(tick)} />
+          <text x={m.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="chart-axis">
+            {fmt(tick)}
           </text>
-        ))}
-        {series.map((s, i) => (
-          <g key={s.number} className={seriesClass(i)}>
-            {s.laps
-              .filter((l) => (showAll || l.excluded === null) && l.time <= hi + 0.3)
-              .map((l) => (
-                <Marker key={l.lap} index={i} cx={x(l.lap)} cy={y(l.time)} />
-              ))}
-            {s.stints.map((st) =>
-              st.trend ? (
-                <line
-                  key={st.stint}
-                  className="series-line"
-                  clipPath={`url(#${clipId})`}
-                  x1={x(st.trend[0])}
-                  y1={y(st.trend[1])}
-                  x2={x(st.trend[2])}
-                  y2={y(st.trend[3])}
-                />
-              ) : null,
-            )}
-            <text x={W - M.right + 10} y={M.top + 16 + i * 18} className="chart-label">
-              {s.code}
-            </text>
-          </g>
-        ))}
-      </svg>
-    </figure>
+        </g>
+      ))}
+      {xTicks.map((tick, i, all) => (
+        <text key={tick} x={x(tick)} y={H_ - 8} textAnchor={i === all.length - 1 ? "end" : "middle"} className="chart-axis">
+          {i === all.length - 1 ? `${t.lap} ${tick}` : tick}
+        </text>
+      ))}
+      {series.map((s, i) => (
+        <g key={s.number} className={seriesClass(i)}>
+          {s.laps
+            .filter((l) => (showAll || l.excluded === null) && l.time <= hi + 0.3)
+            .map((l) => (
+              <Marker key={l.lap} index={i} cx={x(l.lap)} cy={y(l.time)} />
+            ))}
+          {s.stints.map((st) =>
+            st.trend ? (
+              <line
+                key={st.stint}
+                className="series-line"
+                clipPath={`url(#${clipId})`}
+                x1={x(st.trend[0])}
+                y1={y(st.trend[1])}
+                x2={x(st.trend[2])}
+                y2={y(st.trend[3])}
+              />
+            ) : null,
+          )}
+          <text x={W - m.right + (size === "wide" ? 10 : 6)} y={m.top + 16 + i * 18} className="chart-label">
+            {s.code}
+          </text>
+        </g>
+      ))}
+    </svg>
   );
 }
 

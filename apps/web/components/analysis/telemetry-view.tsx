@@ -4,6 +4,7 @@ import { scaleLinear } from "d3-scale";
 import { line } from "d3-shape";
 import { useEffect, useMemo, useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { TelemetryData } from "@paddock/analysis";
+import { CHART_SIZES, CHART_W, sizeClass, type ChartSize } from "../charts/sizes";
 
 /**
  * Telemetry comparison (TEC-04): speed, throttle, brake and cumulative delta of two drivers' fastest laps,
@@ -24,9 +25,14 @@ export interface TelemetryLabels {
   deltaEstimate: string;
 }
 
-const W = 760;
-const PANEL = { speed: 170, throttle: 70, brake: 40, delta: 110 };
-const M = { left: 56, right: 16, gap: 18 };
+const PANEL: Record<ChartSize, { speed: number; throttle: number; brake: number; delta: number }> = {
+  wide: { speed: 170, throttle: 70, brake: 40, delta: 110 },
+  narrow: { speed: 150, throttle: 64, brake: 36, delta: 100 },
+};
+const M: Record<ChartSize, { left: number; right: number; gap: number }> = {
+  wide: { left: 56, right: 16, gap: 18 },
+  narrow: { left: 40, right: 10, gap: 18 },
+};
 const SEGMENTS = 25;
 const UNITS_KEY = "paddock-units";
 
@@ -65,36 +71,8 @@ export function TelemetryView({
 
   const unit = mph ? "mph" : "km/h";
   const convert = (kmh: number) => (mph ? kmh * 0.621371 : kmh);
-  const x = scaleLinear().domain([0, a.distance[n - 1]!]).range([M.left, W - M.right]);
   const delta = useMemo(() => a.time.slice(0, n).map((t, i) => b.time[i]! - t), [a, b, n]);
 
-  let top = 0;
-  const panels = (["speed", "throttle", "brake", "delta"] as const).map((key) => {
-    const p = { key, top, height: PANEL[key] };
-    top += PANEL[key] + M.gap;
-    return p;
-  });
-  const H = top + 20;
-
-  const ySpeed = scaleLinear()
-    .domain([0, Math.max(...a.speed, ...b.speed) + 10])
-    .range([panels[0]!.top + PANEL.speed, panels[0]!.top]);
-  const yThrottle = scaleLinear().domain([0, 100]).range([panels[1]!.top + PANEL.throttle, panels[1]!.top]);
-  const yBrake = scaleLinear().domain([0, 1]).range([panels[2]!.top + PANEL.brake, panels[2]!.top + 4]);
-  const maxDelta = Math.max(0.1, ...delta.map(Math.abs));
-  const yDelta = scaleLinear().domain([-maxDelta, maxDelta]).range([panels[3]!.top + PANEL.delta, panels[3]!.top]);
-
-  const path = (values: number[], y: (v: number) => number) =>
-    line<number>()
-      .x((_, i) => x(a.distance[i]!))
-      .y((v) => y(v))(values.slice(0, n)) ?? undefined;
-
-  const onPointer = (e: PointerEvent<SVGSVGElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const px = ((e.clientX - rect.left) / rect.width) * W;
-    const d = x.invert(px);
-    setIndex(Math.max(0, Math.min(n - 1, Math.round(d / a.step))));
-  };
   const onKey = (e: KeyboardEvent<SVGSVGElement>) => {
     const stepBy = e.shiftKey ? 10 : 1;
     if (e.key === "ArrowRight") setIndex((i) => Math.min(n - 1, i + stepBy));
@@ -108,7 +86,6 @@ export function TelemetryView({
   const fmt1 = (v: number) => Math.round(v).toString();
   const seconds = new Intl.NumberFormat(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   const signed = (v: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${seconds.format(Math.abs(v))} s`;
-  const cx = x(a.distance[index]!);
 
   return (
     <div className="stack">
@@ -130,47 +107,129 @@ export function TelemetryView({
           {labels.delta} {b.driver.code}: {signed(delta[index]!)}
         </span>
       </div>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className="chart-svg telemetry-svg"
-        role="img"
-        aria-label={`${labels.speed}, ${labels.throttle}, ${labels.brake}, ${labels.delta}: ${a.driver.name} / ${b.driver.name}`}
-        tabIndex={0}
-        onPointerMove={onPointer}
-        onPointerDown={onPointer}
-        onKeyDown={onKey}
-      >
-        {panels.map((p) => (
-          <text key={p.key} x={M.left - 8} y={p.top + 10} textAnchor="end" className="chart-axis">
-            {p.key === "speed" ? unit : p.key === "throttle" ? "%" : p.key === "delta" ? "s" : ""}
-          </text>
+      <div className="chart-duo">
+        {CHART_SIZES.map((size) => (
+          <TelemetryPlot
+            key={size}
+            a={a}
+            b={b}
+            n={n}
+            delta={delta}
+            index={index}
+            unit={unit}
+            labels={labels}
+            size={size}
+            onIndex={setIndex}
+            onKey={onKey}
+          />
         ))}
-        {panels.map((p) => (
-          <text key={`l-${p.key}`} x={M.left} y={p.top - 4} className="chart-axis">
-            {labels[p.key]}
-          </text>
-        ))}
-        <line x1={M.left} x2={W - M.right} y1={yDelta(0)} y2={yDelta(0)} className="chart-baseline-line" />
-        <g className="series series-1">
-          <path d={path(a.speed, ySpeed)} className="series-line" />
-          <path d={path(a.throttle, yThrottle)} className="series-line" />
-          <path d={path(a.brake, yBrake)} className="series-line" />
-        </g>
-        <g className="series series-4">
-          <path d={path(b.speed, ySpeed)} className="series-line" />
-          <path d={path(b.throttle, yThrottle)} className="series-line" />
-          <path d={path(b.brake, yBrake)} className="series-line" />
-          <path d={path(delta, yDelta)} className="series-line" />
-        </g>
-        {[0, 1000, 2000, 3000, 4000, 5000, 6000, 7000].filter((d) => d < a.distance[n - 1]!).map((d) => (
-          <text key={d} x={x(d)} y={H - 4} textAnchor="middle" className="chart-axis">
-            {d === 0 ? "0" : `${d / 1000} km`}
-          </text>
-        ))}
-        <line x1={cx} x2={cx} y1={0} y2={H - 20} className="crosshair" />
-      </svg>
+      </div>
       <TrackMap a={a} b={b} labels={labels} index={index} locale={locale} />
     </div>
+  );
+}
+
+/** One geometry of the four stacked panels (D-37); the cursor index is shared by both. */
+function TelemetryPlot({
+  a,
+  b,
+  n,
+  delta,
+  index,
+  unit,
+  labels,
+  size,
+  onIndex,
+  onKey,
+}: {
+  a: TelemetryData;
+  b: TelemetryData;
+  n: number;
+  delta: number[];
+  index: number;
+  unit: string;
+  labels: TelemetryLabels;
+  size: ChartSize;
+  onIndex: (i: number) => void;
+  onKey: (e: KeyboardEvent<SVGSVGElement>) => void;
+}) {
+  const W = CHART_W[size];
+  const m = M[size];
+  const panel = PANEL[size];
+  const x = scaleLinear().domain([0, a.distance[n - 1]!]).range([m.left, W - m.right]);
+
+  // Room above the first panel for its name, which otherwise sat outside the drawing.
+  let top = 16;
+  const panels = (["speed", "throttle", "brake", "delta"] as const).map((key) => {
+    const p = { key, top, height: panel[key] };
+    top += panel[key] + m.gap;
+    return p;
+  });
+  const H = top + 20;
+
+  const ySpeed = scaleLinear()
+    .domain([0, Math.max(...a.speed, ...b.speed) + 10])
+    .range([panels[0]!.top + panel.speed, panels[0]!.top]);
+  const yThrottle = scaleLinear().domain([0, 100]).range([panels[1]!.top + panel.throttle, panels[1]!.top]);
+  const yBrake = scaleLinear().domain([0, 1]).range([panels[2]!.top + panel.brake, panels[2]!.top + 4]);
+  const maxDelta = Math.max(0.1, ...delta.map(Math.abs));
+  const yDelta = scaleLinear().domain([-maxDelta, maxDelta]).range([panels[3]!.top + panel.delta, panels[3]!.top]);
+
+  const path = (values: number[], y: (v: number) => number) =>
+    line<number>()
+      .x((_, i) => x(a.distance[i]!))
+      .y((v) => y(v))(values.slice(0, n)) ?? undefined;
+
+  const onPointer = (e: PointerEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = ((e.clientX - rect.left) / rect.width) * W;
+    const d = x.invert(px);
+    onIndex(Math.max(0, Math.min(n - 1, Math.round(d / a.step))));
+  };
+  const cx = x(a.distance[index]!);
+  // On the narrow geometry, every other kilometre: "1 km" labels 66 units apart would touch.
+  const km = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000].filter((d) => d < a.distance[n - 1]! && (size === "wide" || d % 2000 === 0));
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className={`${sizeClass(size)} telemetry-svg`}
+      role="img"
+      aria-label={`${labels.speed}, ${labels.throttle}, ${labels.brake}, ${labels.delta}: ${a.driver.name} / ${b.driver.name}`}
+      tabIndex={0}
+      onPointerMove={onPointer}
+      onPointerDown={onPointer}
+      onKeyDown={onKey}
+    >
+      {panels.map((p) => (
+        <text key={p.key} x={m.left - 8} y={p.top + 10} textAnchor="end" className="chart-axis">
+          {p.key === "speed" ? unit : p.key === "throttle" ? "%" : p.key === "delta" ? "s" : ""}
+        </text>
+      ))}
+      {panels.map((p) => (
+        <text key={`l-${p.key}`} x={m.left} y={p.top - 4} className="chart-axis">
+          {labels[p.key]}
+        </text>
+      ))}
+      <line x1={m.left} x2={W - m.right} y1={yDelta(0)} y2={yDelta(0)} className="chart-baseline-line" />
+      <g className="series series-1">
+        <path d={path(a.speed, ySpeed)} className="series-line" />
+        <path d={path(a.throttle, yThrottle)} className="series-line" />
+        <path d={path(a.brake, yBrake)} className="series-line" />
+      </g>
+      <g className="series series-4">
+        <path d={path(b.speed, ySpeed)} className="series-line" />
+        <path d={path(b.throttle, yThrottle)} className="series-line" />
+        <path d={path(b.brake, yBrake)} className="series-line" />
+        <path d={path(delta, yDelta)} className="series-line" />
+      </g>
+      {km.map((d) => (
+        <text key={d} x={x(d)} y={H - 4} textAnchor="middle" className="chart-axis">
+          {d === 0 ? "0" : `${d / 1000} km`}
+        </text>
+      ))}
+      <line x1={cx} x2={cx} y1={0} y2={H - 20} className="crosshair" />
+    </svg>
   );
 }
 

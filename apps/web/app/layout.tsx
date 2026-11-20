@@ -17,6 +17,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#0A0A0A",
   colorScheme: "light dark",
+  // Edge to edge on phones with a notch: the black bands reach the screen's edges and the content keeps
+  // clear of the notch and the home indicator through env(safe-area-inset-*) in globals.css.
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

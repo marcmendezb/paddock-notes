@@ -497,6 +497,21 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 
 **Consequence:** a German-speaking recruiter in Zürich lands on `/de` and anyone else on a language they read. Contributions follow the same rule: English in the repository, three languages in the product.
 
+## D-37 · Responsive pass: charts drawn for phones, timing tables like a timing screen
+
+**Context:** an audit with Playwright over 39 routes at ten widths (320 to 1920 px) and a phone on its side found the site readable on desktop but not on phones. Every chart was one SVG 760 units wide scaled to the screen, so at 360 px its 13 px labels rendered at 5 to 6 px. Timing tables broke names over three lines and hid the points column behind an unmarked scroll. The footer's season list ran off the screen on every page, two race pages could be panned sideways, the telemetry chart blocked vertical scrolling with a finger, and on a phone on its side the sticky header and section bar covered 43 % of the screen.
+
+**Decision:**
+
+- **Two geometries per chart.** Strategy, pace, replay, telemetry, points, positions and the home page's start-to-finish chart are drawn twice: wide (760 units) and narrow (380 units, fewer ticks, tighter margins, driver codes for end labels where names do not fit). A container query on `.chart-duo` shows the one that fits the space the chart actually has, below 620 px, so labels stay between about 10 and 16 px. It needs no JavaScript (TRA-34) and the hidden geometry is `display: none`, out of the accessibility tree. Shared SVG patterns live in an always-rendered definitions SVG, since browsers do not paint patterns from a hidden one. Rejected: horizontal scrolling of a wider chart (the labels on the left scroll away) and measuring with `ResizeObserver` (charts would need JavaScript).
+- **Timing tables like a timing screen.** In a narrow table (container query on `.timing`), the driver shows by family name, on one line, with the given name kept for screen readers; columns tighten so the points column fits from 390 px. Where a table still has to scroll (qualifying at 360 px), position and driver are sticky.
+- **Scrollers say there is more.** Horizontal scrollers (tables, the section bar) fade the edge that hides content, driven by the scroll position in CSS (`animation-timeline: scroll()`); without support there is no fade. It is a state, not motion, so it stays under "reduce motion".
+- **Phones on their side** (landscape, under 500 px high): the header drops the timing strip and shrinks to 62 px, and the section bar scrolls with the page.
+- **Edge to edge.** `viewport-fit=cover`, with `env(safe-area-inset-*)` in the gutters and in the bars stuck to the bottom, so the black bands reach the screen's edges and nothing sits under a notch or the home indicator.
+- **Touch.** The header's hover panels need a mouse (`hover: hover` and `pointer: fine`): on an iPad in landscape, Safari spent the first tap on the hover. The telemetry chart takes horizontal drags only (`touch-action: pan-y`). Sliders are 44 px high under a finger. No text below 12 px outside chart axes.
+
+**Consequence:** each chart's markup is doubled (a few kB of HTML per chart page). New charts take a `size` and are drawn with `CHART_SIZES` (`components/charts/sizes.ts`). The season map keeps small pins on phones: the calendar list above it carries the same links (the "equivalent" exception of WCAG 2.5.8).
+
 ---
 
 ## Sources (consulted on 5 November 2026)

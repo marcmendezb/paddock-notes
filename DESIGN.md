@@ -32,7 +32,9 @@ The scale runs from `--step--2` (13 px, chart axes) to `--step-count` (44 to 112
 
 ## Layout
 
-Dense where the data is (timing-screen tables, standings, telemetry), generous around the reading (explainers, notes, circuit guides). Grid items always get `minmax(0, 1fr)` or `min-inline-size: 0`, so long names never push the page wider than the screen.
+Dense where the data is (timing-screen tables, standings, telemetry), generous around the reading (explainers, notes, circuit guides). Grid items always get `minmax(0, 1fr)` or `min-inline-size: 0`, so long names never push the page wider than the screen; an implicit grid track counts too.
+
+Responsive from 320 px to 1920 px and on a phone on its side (D-37). Components adapt to the space they get, with container queries, not to the window: each chart has a narrow geometry, narrow timing tables keep the family name on one line and sticky position and driver columns, and horizontal scrollers fade the edge that hides content. Targets are 24 px at least and 44 px under a finger; hover only reveals things with a mouse.
 
 The dimension line from technical drawing is the recurring motif: the countdown, a stretch on a chart, an undercut in a strategy.
 

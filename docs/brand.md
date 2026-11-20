@@ -64,6 +64,7 @@ The tokens are copied verbatim from `brandboard/tokens/globals.css` to `apps/web
 | Weight | Series 2 px; the protagonist 3 px; references 1 px; 8 px markers every N points |
 | Notes | The brand's signature: Archivo 600 in `--accent`, anchored with a 9 px dot with a halo of the background colour; a stretch is marked with the dimension line (a 2 px line with end ticks). At most two notes per chart, twelve words at most, in the present tense |
 | Empty state | The chart's frame stays, dashed, and a one-sentence note says why there is no data and when there will be. No illustrations |
+| Phones | A narrow geometry (380 units) with fewer ticks and codes for end labels, never the wide one scaled down: labels stay at 10 px or more (D-37) |
 
 ## 6. Voice
 
