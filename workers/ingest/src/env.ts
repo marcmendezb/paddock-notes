@@ -37,4 +37,6 @@ export interface Env {
    * part of ingestion runs from GitHub Actions (runner/, D-40). Locally, wrangler dev reaches it directly.
    */
   JOLPICA_IN_WORKER?: string;
+  /** The longest wait for the limiter before deferring a job (30 s in the Worker; longer in the runner, D-40). */
+  OUTBOUND_MAX_WAIT_MS?: string;
 }

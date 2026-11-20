@@ -19,6 +19,8 @@ export function jolpicaContext(env: Env, options: { backfill?: boolean } = {}): 
       windowMs: 3_600_000,
     },
     counter: { requests: 0 },
+    // Outside Workers (the GitHub runner, D-40) a run can wait out Jolpica's one-minute pause after a 429.
+    ...(env.OUTBOUND_MAX_WAIT_MS ? { maxWaitMs: Number(env.OUTBOUND_MAX_WAIT_MS) } : {}),
   };
 }
 

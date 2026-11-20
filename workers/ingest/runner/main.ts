@@ -59,6 +59,8 @@ async function loadEnv(): Promise<Env> {
   if (!token || !accountId || !databaseId) throw new Error("CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and a D1 database are required");
   return {
     ...config.vars,
+    // A run has minutes to spare: it waits out Jolpica's one-minute pause after a 429 instead of deferring.
+    OUTBOUND_MAX_WAIT_MS: "90000",
     DB: d1OverHttp({ accountId, databaseId, token }),
     OUTBOUND_LIMITER: memoryLimiters(),
   } as unknown as Env;
@@ -115,7 +117,9 @@ async function main() {
     }
     const result = await runTask(env, task as TaskName);
     console.log(JSON.stringify({ event: "task", task, ...result }));
-    if (result.status === "error" || result.status === "quarantined") failed = true;
+    // A deferral (the source asked for a pause) is not a failure: the next run carries on.
+    const deferred = result.status === "error" && result.detail?.startsWith("deferred:");
+    if ((result.status === "error" && !deferred) || result.status === "quarantined") failed = true;
   }
   if (failed) process.exitCode = 1;
 }
