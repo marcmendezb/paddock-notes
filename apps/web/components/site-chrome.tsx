@@ -176,13 +176,12 @@ export async function SiteHeader({ lang }: { lang: Lang }) {
 
   const tools = (
     <>
-      <Link href={`/${lang}/search`} className="header-tool">
+      {/* A real search bar (TRA-03): it submits to /search?q=…, so it works without JavaScript. The "/"
+          shortcut still opens search, without a key hint on screen. */}
+      <form action={`/${lang}/search`} method="get" role="search" className="header-search">
         <Icon name="search" />
-        <span className="header-tool-label">{t.nav.search}</span>
-        <kbd className="header-kbd" aria-hidden="true">
-          /
-        </kbd>
-      </Link>
+        <input type="search" name="q" minLength={2} maxLength={50} placeholder={t.nav.searchPlaceholder} aria-label={t.nav.search} autoComplete="off" enterKeyHint="search" />
+      </form>
       <Link href={`/${lang}/account`} className="header-tool">
         <Icon name="user" />
         <span className="header-tool-label">{t.account.nav}</span>

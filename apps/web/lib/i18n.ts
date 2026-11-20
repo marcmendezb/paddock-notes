@@ -9,7 +9,7 @@ const es = {
   otherLang: "English",
   otherLangCode: "en" as Lang,
   language: "Idioma",
-  nav: { races: "Carreras", standings: "Clasificación", analysis: "Análisis", history: "Histórico", compare: "Cara a cara", learn: "Aprende", search: "Buscar" },
+  nav: { races: "Carreras", standings: "Clasificación", analysis: "Análisis", history: "Histórico", compare: "Cara a cara", learn: "Aprende", search: "Buscar", searchPlaceholder: "Buscar" },
   header: {
     main: "Principal",
     menu: "Menú",
@@ -912,7 +912,7 @@ const en: Dictionary = {
   otherLang: "Español",
   otherLangCode: "es",
   language: "Language",
-  nav: { races: "Races", standings: "Standings", analysis: "Analysis", history: "History", compare: "Head to head", learn: "Learn", search: "Search" },
+  nav: { races: "Races", standings: "Standings", analysis: "Analysis", history: "History", compare: "Head to head", learn: "Learn", search: "Search", searchPlaceholder: "Search" },
   header: {
     main: "Main",
     menu: "Menu",
@@ -1799,7 +1799,7 @@ const de: Dictionary = {
   otherLang: "English",
   otherLangCode: "en",
   language: "Sprache",
-  nav: { races: "Rennen", standings: "Wertung", analysis: "Analyse", history: "Historie", compare: "Direktvergleich", learn: "Lernen", search: "Suche" },
+  nav: { races: "Rennen", standings: "Wertung", analysis: "Analyse", history: "Historie", compare: "Direktvergleich", learn: "Lernen", search: "Suche", searchPlaceholder: "Suchen" },
   header: {
     main: "Hauptnavigation",
     menu: "Menü",

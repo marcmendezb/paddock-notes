@@ -205,7 +205,7 @@ test("forward slash shortcut opens search modal (TRA-03)", async ({ page, isMobi
   await page.waitForLoadState("networkidle");
   await page.keyboard.press("/");
   await expect(page).toHaveURL(/\/es\/search$/);
-  await expect(page.getByRole("searchbox")).toBeFocused();
+  await expect(page.locator("main").getByRole("searchbox")).toBeFocused();
 });
 
 test("invalid or non-existent IDs return 404", async ({ page }) => {
@@ -249,7 +249,7 @@ test("telemetry comparison can be navigated with keyboard (TEC-04)", async ({ pa
 
 test("glossary filters terms dynamically while typing (CON-02)", async ({ page }) => {
   await page.goto("/es/learn/glossary");
-  await page.getByRole("searchbox").fill("undercut");
+  await page.locator("main").getByRole("searchbox").fill("undercut");
   await expect(page.locator(".gx-grid dt")).toHaveCount(1);
   await expect(page.locator(".gx-grid dt")).toHaveText("Undercut");
 });
