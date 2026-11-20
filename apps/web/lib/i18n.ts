@@ -9,7 +9,7 @@ const es = {
   otherLang: "English",
   otherLangCode: "en" as Lang,
   language: "Idioma",
-  nav: { races: "Carreras", standings: "Clasificación", analysis: "Análisis", history: "Histórico", compare: "Cara a cara", learn: "Aprende", search: "Buscar", searchPlaceholder: "Buscar" },
+  nav: { races: "Carreras", standings: "Clasificación", analysis: "Análisis", history: "Histórico", compare: "Cara a cara", learn: "Aprende", search: "Buscar" },
   header: {
     main: "Principal",
     menu: "Menú",
@@ -596,6 +596,15 @@ const es = {
     empty: (q: string) => `Sin resultados para "${q}". Prueba con un apellido o un circuito.`,
     kinds: { driver: "Piloto", constructor: "Equipo", circuit: "Circuito" },
     shortcut: "Atajo: tecla /",
+    /** The header's search box with live suggestions (TRA-03). */
+    box: {
+      groups: { driver: "Pilotos", constructor: "Equipos", circuit: "Circuitos" },
+      loading: "Buscando…",
+      none: (q: string) => `Nada para «${q}». Prueba con un apellido o un circuito.`,
+      all: (q: string) => `Ver todos los resultados de «${q}»`,
+      clear: "Borrar la búsqueda",
+      count: (n: number) => (n === 1 ? "1 resultado" : `${n} resultados`),
+    },
   },
   analysis: {
     nav: "Análisis",
@@ -911,7 +920,7 @@ const en: Dictionary = {
   otherLang: "Español",
   otherLangCode: "es",
   language: "Language",
-  nav: { races: "Races", standings: "Standings", analysis: "Analysis", history: "History", compare: "Head to head", learn: "Learn", search: "Search", searchPlaceholder: "Search" },
+  nav: { races: "Races", standings: "Standings", analysis: "Analysis", history: "History", compare: "Head to head", learn: "Learn", search: "Search" },
   header: {
     main: "Main",
     menu: "Menu",
@@ -1484,6 +1493,14 @@ const en: Dictionary = {
     empty: (q) => `No results for "${q}". Try a surname or a circuit.`,
     kinds: { driver: "Driver", constructor: "Team", circuit: "Circuit" },
     shortcut: "Shortcut: / key",
+    box: {
+      groups: { driver: "Drivers", constructor: "Teams", circuit: "Circuits" },
+      loading: "Searching…",
+      none: (q) => `Nothing for "${q}". Try a surname or a circuit.`,
+      all: (q) => `See all results for "${q}"`,
+      clear: "Clear the search",
+      count: (n) => (n === 1 ? "1 result" : `${n} results`),
+    },
   },
   analysis: {
     nav: "Analysis",
@@ -1797,7 +1814,7 @@ const de: Dictionary = {
   otherLang: "English",
   otherLangCode: "en",
   language: "Sprache",
-  nav: { races: "Rennen", standings: "Wertung", analysis: "Analyse", history: "Historie", compare: "Direktvergleich", learn: "Lernen", search: "Suche", searchPlaceholder: "Suchen" },
+  nav: { races: "Rennen", standings: "Wertung", analysis: "Analyse", history: "Historie", compare: "Direktvergleich", learn: "Lernen", search: "Suche" },
   header: {
     main: "Hauptnavigation",
     menu: "Menü",
@@ -2370,6 +2387,14 @@ const de: Dictionary = {
     empty: (q) => `Keine Ergebnisse für „${q}“. Versuch es mit einem Nachnamen oder einer Strecke.`,
     kinds: { driver: "Fahrer", constructor: "Team", circuit: "Strecke" },
     shortcut: "Tastenkürzel: Taste /",
+    box: {
+      groups: { driver: "Fahrer", constructor: "Teams", circuit: "Strecken" },
+      loading: "Suche läuft…",
+      none: (q) => `Nichts zu „${q}“. Versuch es mit einem Nachnamen oder einer Strecke.`,
+      all: (q) => `Alle Ergebnisse für „${q}“`,
+      clear: "Suche löschen",
+      count: (n) => (n === 1 ? "1 Ergebnis" : `${n} Ergebnisse`),
+    },
   },
   analysis: {
     nav: "Analyse",

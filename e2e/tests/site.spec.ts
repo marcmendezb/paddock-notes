@@ -198,14 +198,35 @@ test("standings progression chart has equivalent table and works without JS (NUC
   await context.close();
 });
 
-test("forward slash shortcut opens search modal (TRA-03)", async ({ page, isMobile }) => {
+test("forward slash focuses the header search, which suggests as you type (TRA-03)", async ({ page, isMobile }) => {
   test.skip(isMobile, "No physical keyboard on mobile");
   await page.goto("/es");
   // Shortcut registers once React hydrates.
   await page.waitForLoadState("networkidle");
   await page.keyboard.press("/");
-  await expect(page).toHaveURL(/\/es\/search$/);
-  await expect(page.locator("main").getByRole("searchbox")).toBeFocused();
+  const box = page.getByRole("combobox", { name: "Buscar" });
+  await expect(box).toBeFocused();
+  await page.keyboard.type("ham");
+  const list = page.getByRole("listbox");
+  await expect(list.getByRole("option").first()).toBeVisible();
+  await expect(list.getByRole("group", { name: "Pilotos" })).toBeVisible();
+  // Arrows move the active option; Enter opens it, and the box empties for the next search.
+  await page.keyboard.press("ArrowDown");
+  await expect(box).toHaveAttribute("aria-activedescendant", /opt-0$/);
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/es\/(drivers|constructors|circuits)\//);
+  await expect(box).toHaveValue("");
+});
+
+test("without JavaScript, the header search is a plain form to the results page (TRA-03)", async ({ browser, baseURL, isMobile }) => {
+  test.skip(isMobile, "The header search is in the menu on phones");
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/es");
+  await page.locator(".header-tools .hsearch input").fill("hamilton");
+  await page.locator(".header-tools .hsearch input").press("Enter");
+  await expect(page).toHaveURL(/\/es\/search\?q=hamilton$/);
+  await context.close();
 });
 
 test("invalid or non-existent IDs return 404", async ({ page }) => {

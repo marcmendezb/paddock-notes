@@ -13,6 +13,7 @@ import { AnalysisPanel, ComparePanel, LearnPanel, StandingsPanel } from "./heade
 import { RacesPanel } from "./races-panel";
 import { MobileMenu, NavLinks, type NavItem } from "./nav-links";
 import { TimingStrip, type TickerItem, type TickerRace } from "./timing-strip";
+import { HeaderSearch } from "./header-search";
 import { SearchShortcut } from "./search-shortcut";
 
 /**
@@ -176,15 +177,21 @@ export async function SiteHeader({ lang }: { lang: Lang }) {
 
   const tools = (
     <>
-      {/* A real search bar (TRA-03): it submits to /search?q=…, so it works without JavaScript. The "/"
-          shortcut still opens search, without a key hint on screen. */}
-      <form action={`/${lang}/search`} method="get" role="search" className="header-search">
-        <Icon name="search" />
-        <input type="search" name="q" minLength={2} maxLength={50} placeholder={t.nav.searchPlaceholder} aria-label={t.nav.search} autoComplete="off" enterKeyHint="search" />
-        <button type="submit" className="header-search-go" aria-label={t.nav.search}>
-          <span aria-hidden="true">→</span>
-        </button>
-      </form>
+      {/* Live search (TRA-03): suggestions while typing; without JavaScript, a GET form to /search. */}
+      <HeaderSearch
+        lang={lang}
+        labels={{
+          search: t.nav.search,
+          placeholder: t.search.label,
+          groups: t.search.box.groups,
+          loading: t.search.box.loading,
+          none: t.search.box.none("{q}"),
+          all: t.search.box.all("{q}"),
+          clear: t.search.box.clear,
+          one: t.search.box.count(1),
+          many: t.search.box.count(2).replace("2", "{n}"),
+        }}
+      />
       <Link href={`/${lang}/account`} className="header-tool">
         <Icon name="user" />
         <span className="header-tool-label">{t.account.nav}</span>
