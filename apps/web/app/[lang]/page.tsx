@@ -88,6 +88,17 @@ export default async function HomePage({ params }: Params) {
         <div className="container">
           {next === "error" ? (
             <p className="notice">{t.error.data}</p>
+          ) : !next && !last && !drivers ? (
+            // Nothing loaded yet (TRA-31): a first deploy or a fresh database, not a finished season.
+            <div className="sheet">
+              <div className="sheet-head">
+                <p className="eyebrow">{t.home.loading.kicker}</p>
+              </div>
+              <h1 id="next-gp" className="sheet-title">
+                <span className="sheet-word sheet-word-m">{t.home.loading.title}</span>
+              </h1>
+              <p className="lede">{t.home.loading.text}</p>
+            </div>
           ) : next && !(last && last !== "error" && next.data.season > last.data.season) ? (
             <NextGrandPrix lang={lang} next={next} previous={last && last !== "error" ? last.data : null} />
           ) : (

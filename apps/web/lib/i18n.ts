@@ -236,6 +236,8 @@ const es = {
     nextSeason: (year: number, gp: string, date: string) => `La temporada ${year} arranca con el ${gp}, el ${date}.`,
     nextSeasonUnknown: (year: number) => `El calendario de ${year} todavía no se ha publicado.`,
     noData: "Todavía no hay datos de la temporada.",
+    /** No race, result or standings at all (TRA-31): the data is still loading, not a finished season. */
+    loading: { kicker: "Cargando datos", title: "La temporada está llegando", text: "Los datos se cargan desde Jolpica F1 poco a poco, respetando sus límites. Vuelve en unos minutos." },
   },
   sessions: {
     fp1: "Libres 1",
@@ -1136,6 +1138,7 @@ const en: Dictionary = {
     nextSeason: (year, gp, date) => `The ${year} season starts with the ${gp} on ${date}.`,
     nextSeasonUnknown: (year) => `The ${year} calendar hasn't been published yet.`,
     noData: "No data for this season yet.",
+    loading: { kicker: "Loading data", title: "The season is on its way", text: "The data is loading from Jolpica F1 bit by bit, within its limits. Come back in a few minutes." },
   },
   sessions: {
     fp1: "Practice 1",
@@ -2022,6 +2025,7 @@ const de: Dictionary = {
     nextSeason: (year, gp, date) => `Die Saison ${year} beginnt mit dem ${gp} am ${date}.`,
     nextSeasonUnknown: (year) => `Der Kalender ${year} ist noch nicht veröffentlicht.`,
     noData: "Für diese Saison gibt es noch keine Daten.",
+    loading: { kicker: "Daten werden geladen", title: "Die Saison ist unterwegs", text: "Die Daten kommen nach und nach von Jolpica F1, innerhalb ihrer Limits. Schau in ein paar Minuten wieder vorbei." },
   },
   sessions: {
     fp1: "1. Training",
