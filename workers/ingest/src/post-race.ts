@@ -23,7 +23,7 @@ import { notifyAnalysis } from "./mailing";
 import { createOpenF1, openf1Context } from "./openf1";
 
 /**
- * Analysis after each race (D-08): OpenF1 data, computation in TypeScript and JSON in R2.
+ * Analysis after each race (D-08): OpenF1 data, computation in TypeScript and JSON in KV (D-39).
  * One step for the session data and one per driver for telemetry, all idempotent.
  */
 /**
@@ -40,10 +40,9 @@ export interface PostRaceParams {
   round: number;
 }
 
-async function putJson(bucket: R2Bucket, key: string, value: unknown) {
-  await bucket.put(key, JSON.stringify(value), {
-    httpMetadata: { contentType: "application/json", cacheControl: "public, max-age=31536000, immutable" },
-  });
+/** One analysis file per key: about 25 writes per race, far under the free plan's 1,000 a day (D-39). */
+async function putJson(store: KVNamespace, key: string, value: unknown) {
+  await store.put(key, JSON.stringify(value));
 }
 
 interface TelemetryTarget {
@@ -90,12 +89,12 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
       const neutralised = neutralisedPeriods(rc, totalLaps);
       const strat = strategy(infos, stints, pits, totalLaps, neutralised);
       const pitLaps = new Map(strat.drivers.map((d) => [d.number, d.pitLaps]));
-      const bucket = this.env.ANALYSIS;
+      const store = this.env.ANALYSIS;
       await Promise.all([
-        putJson(bucket, analysisKey(season, round, "strategy"), strat),
-        putJson(bucket, analysisKey(season, round, "pace"), pace(infos, laps, stints, pitLaps, totalLaps, neutralised)),
-        putJson(bucket, analysisKey(season, round, "sectors"), sectors(infos, laps, pitLaps, neutralised)),
-        putJson(bucket, analysisKey(season, round, "replay"), replay(infos, laps, positions, totalLaps)),
+        putJson(store, analysisKey(season, round, "strategy"), strat),
+        putJson(store, analysisKey(season, round, "pace"), pace(infos, laps, stints, pitLaps, totalLaps, neutralised)),
+        putJson(store, analysisKey(season, round, "sectors"), sectors(infos, laps, pitLaps, neutralised)),
+        putJson(store, analysisKey(season, round, "replay"), replay(infos, laps, positions, totalLaps)),
       ]);
       // Each driver's fastest clean lap: the one compared in the telemetry (TEC-04).
       return infos.flatMap((d) => {

@@ -1,7 +1,8 @@
 export interface Env {
   DB: D1Database;
   CACHE: KVNamespace;
-  ANALYSIS: R2Bucket;
+  /** The post-race JSON (D-08), in KV to stay on the free plan (D-39). */
+  ANALYSIS: KVNamespace;
   RATE_LIMIT_READ: RateLimit;
   RATE_LIMIT_WRITE: RateLimit;
   SITE_URL: string;

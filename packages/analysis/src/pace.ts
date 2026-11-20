@@ -104,7 +104,7 @@ export function stintStats(laps: PaceLap[], stints: { stint: number; fromLap: nu
 
 /**
  * Recomputes the anomalous laps and the statistics of an already stored analysis: v1 ones did not exclude
- * slow laps. It lets what is in R2 render correctly while it is analysed again.
+ * slow laps. It lets what is stored render correctly while it is analysed again.
  */
 export function repairPace(data: PaceData): PaceData {
   return {

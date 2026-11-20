@@ -9,7 +9,8 @@ export interface Env {
   BACKFILL: Workflow<BackfillParams>;
   POST_RACE: Workflow<PostRaceParams>;
   MAILING: Workflow<MailingParams>;
-  ANALYSIS: R2Bucket;
+  /** The post-race JSON (D-08), in KV to stay on the free plan (D-39). */
+  ANALYSIS: KVNamespace;
   OPENF1_BASE_URL: string;
   OPENF1_MAX_PER_SECOND: string;
   OPENF1_MAX_PER_MINUTE: string;

@@ -28,7 +28,7 @@ A few places worth a direct look in the codebase:
 
 - **Three Workers, one platform:** web, API and ingestion are separate Cloudflare Workers. The web app talks to the API over a Service Binding, and only the ingestion Worker ever calls an external source (D-05).
 - **Read/write separation (D-14):** D1 has no read-only bindings, so the separation lives in code: a lint rule and an architecture test stop the API and the web app from importing the write module.
-- **Precomputed analysis (D-08):** after each race a Workflow pulls OpenF1 data, computes the five analyses in TypeScript and stores versioned JSON in R2. Telemetry is resampled by distance to stay under 300 kB per view (TEC-13); no page waits on an external API.
+- **Precomputed analysis (D-08):** after each race a Workflow pulls OpenF1 data, computes the five analyses in TypeScript and stores versioned JSON in Workers KV. Telemetry is resampled by distance to stay under 300 kB per view (TEC-13); no page waits on an external API.
 - **Security by default:** a per-request nonce CSP, Zod validation of every external response before it reaches D1, a closed list of outbound hosts, a shared outbound rate limiter in a Durable Object, passwordless magic-link sign-in and RFC 8058 one-click unsubscribe.
 - **Accessibility and progressive enhancement:** WCAG 2.2 AA as the target, checked with axe on every page in the browser tests, with two documented exceptions (D-27, D-33). The simulator, season picker, quiz and head to head all work with JavaScript turned off.
 - **Three languages (D-29, D-36):** every string and article is written separately in English, Spanish and German. `/` redirects by the visitor's country (`cf-ipcountry`), then by `Accept-Language`, with English as the fallback.
@@ -66,7 +66,7 @@ flowchart TD
         end
 
         D1[("D1 (SQLite, EU)")]
-        R2[("R2 (analysis JSON, EU)")]
+        KVA[("KV (analysis JSON)")]
     end
 
     External_APIs["External APIs (Jolpica F1 / OpenF1)"]
@@ -75,12 +75,11 @@ flowchart TD
     Router -->|Pages| Nonce
     Nonce --> SSR
     SSR -->|Service Binding| Hono
-    Router -->|"/api/* (email links, preview)"| Proxy
+    Router -->|"/api/*"| Proxy
     Proxy -->|Service Binding| Hono
-    Router -->|"/api/* in production"| Hono
     Hono --> Cache
     Cache --> D1
-    Cache --> R2
+    Cache --> KVA
 
     Cron -->|results and standings| Limiter
     Cron --> D1
@@ -91,7 +90,7 @@ flowchart TD
     Limiter -->|Rate-Limited Fetch| External_APIs
     Backfill --> D1
     Analytics --> D1
-    Analytics --> R2
+    Analytics --> KVA
 ```
 
 ---

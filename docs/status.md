@@ -24,6 +24,7 @@
 - **Language by country** for unprefixed URLs, and the repository in English (D-36).
 - **Responsive pass** (20 November): charts drawn with a phone geometry, timing tables like a timing screen on phones, the footer and two race pages no longer wider than the screen, a compact header on a phone on its side, safe areas for notches and touch-only fixes (D-37).
 - **Hosting** (20 November): the author's Cloudflare account, on workers.dev until `pn.marcmendezb.com`, deployed only from GitHub Actions. No email and no sign-ups: signing in is a portfolio demonstration like the newsletter, and the Workers have no Email Service binding (D-38).
+- **Free plan only** (20 November): analysis JSON in Workers KV instead of R2, D1 backups as GitHub artifacts, no lap-by-lap history, crons in production only and the API's KV copy written at most hourly. No payment method on the account (D-39).
 
 ## Phase 1 · MVP
 

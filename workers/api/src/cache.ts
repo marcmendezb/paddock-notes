@@ -27,6 +27,18 @@ export interface CacheOptions {
 
 const KV_PREFIX = "last-good:";
 const KV_TTL_SECONDS = 7 * 24 * 3600;
+/**
+ * The last-good copy is refreshed at most once an hour: every Cache API miss (one per minute and data
+ * centre on 60 s routes) would otherwise spend the free plan's 1,000 KV writes a day in a few hours (D-39).
+ */
+const KV_REFRESH_MS = 3600 * 1000;
+
+/** Writes the last-good copy unless the stored one is younger than KV_REFRESH_MS. */
+export async function saveLastGood(kv: KVNamespace, key: string, envelope: unknown): Promise<void> {
+  const { metadata } = await kv.getWithMetadata<{ savedAt?: number }>(key, "text");
+  if (metadata?.savedAt && Date.now() - metadata.savedAt < KV_REFRESH_MS) return;
+  await kv.put(key, JSON.stringify(envelope), { expirationTtl: KV_TTL_SECONDS, metadata: { savedAt: Date.now() } });
+}
 
 /** A normalised cache key: the path only, no query (read routes accept no parameters). */
 function cacheKey(c: Context<AppEnv>, variant?: string): Request {
@@ -82,9 +94,7 @@ export async function cached<T>(
   c.executionCtx.waitUntil(
     Promise.all([
       cache.put(key, response.clone()),
-      options.kvFallback
-        ? c.env.CACHE.put(KV_PREFIX + key.url, JSON.stringify(envelope), { expirationTtl: KV_TTL_SECONDS })
-        : null,
+      options.kvFallback ? saveLastGood(c.env.CACHE, KV_PREFIX + key.url, envelope) : null,
     ]),
   );
   return response;

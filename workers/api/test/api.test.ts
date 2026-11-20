@@ -262,7 +262,7 @@ describe("phase 2: historical archive", () => {
 });
 
 describe("phase 3: technical analysis", () => {
-  it("serves analysis artifacts stored in R2 with OpenF1 attribution", async () => {
+  it("serves analysis artifacts stored in KV with OpenF1 attribution", async () => {
     const writer = createF1Writer(env.DB);
     await env.ANALYSIS.put("analysis/2026/1/v1/strategy.json", JSON.stringify({ laps: 58, drivers: [] }));
     await env.ANALYSIS.put("analysis/2026/1/v1/telemetry/63.json", JSON.stringify({ lap: 40 }));

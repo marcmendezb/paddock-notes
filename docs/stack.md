@@ -14,7 +14,7 @@
 | Public API | Hono + Zod + OpenAPI | `paddock-api` Worker |
 | Database | SQLite with Drizzle ORM | D1, EU jurisdiction (D-13) |
 | Data cache | JSON responses with a TTL | Cache API + KV |
-| Precomputed analyses | JSON per race and tool | R2, EU jurisdiction |
+| Precomputed analyses | JSON per race and tool | Workers KV (D-39) |
 | Scheduled ingestion | TypeScript | `paddock-ingest` Worker with Cron Triggers |
 | Long loads and analyses | Steps with retries and pauses | `BACKFILL`, `POST_RACE` and `MAILING` Workflows |
 | Analysis computation | TypeScript (`packages/analysis`) | Inside the `POST_RACE` Workflow (D-08) |
@@ -27,7 +27,7 @@
 | Domain | `paddocknotes.dev` (proposed, D-20) | Registrar + DNS |
 | CI/CD | Tests, migrations, deploys, backups | GitHub Actions + Wrangler |
 
-**Plan required:** Workers Paid (USD 5/month). See §14.
+**Plan:** the free plans of Cloudflare and GitHub, with no payment method (D-39). See §14.
 
 **One language:** the whole project is TypeScript. No Python and no Containers (D-08).
 
@@ -37,7 +37,7 @@
 |---|---|---|
 | Starting point | Built from scratch, pnpm monorepo | D-01 |
 | Rendering | HTML per request with a nonce-based CSP; caching lives in the data layer | D-04 |
-| External sources | Only `paddock-ingest` calls them; the API always reads from D1 and R2 | D-05 |
+| External sources | Only `paddock-ingest` calls them; the API always reads from D1 and KV | D-05 |
 | Technical zone | OpenF1 + our own computation in TypeScript; no FastF1 | D-08 |
 | Licence | Data CC BY-NC-SA 4.0; code MIT; non-commercial project | D-12 |
 | Languages | Product in ES, EN and DE; repository in English | D-29, D-36 |
@@ -56,14 +56,14 @@ flowchart TB
         ING["Worker paddock-ingest<br/>Cron Triggers"]
         WF["Workflows<br/>BACKFILL · POST_RACE · MAILING"]
         D1[(D1<br/>paddock-db · EU)]
-        R2[(R2<br/>paddock-analysis · EU)]
+        AKV[(KV<br/>ANALYSIS)]
         KV[(KV + Cache API)]
         API["Worker paddock-api<br/>Hono + OpenAPI<br/>/api/v1"]
         WEB["Worker paddock-web<br/>Next.js 16 + React 19<br/>ES/EN/DE"]
     end
 
     GHA["GitHub Actions<br/>weekly backup"]
-    BK[(R2<br/>paddock-backups · EU)]
+    BK[(Artifact<br/>D1 backup · 90 days)]
     U[Browser]
 
     ING --> WF
@@ -73,9 +73,9 @@ flowchart TB
     LIM -.-> O
     ING --> D1
     WF --> D1
-    WF --> R2
+    WF --> AKV
     D1 --> API
-    R2 --> API
+    AKV --> API
     KV <--> API
     WEB -- "Service Binding" --> API
     WEB --> U
@@ -88,8 +88,8 @@ flowchart TB
 
 1. No Worker that serves visitors calls an external source. Only `paddock-ingest` and its Workflows talk to Jolpica and OpenF1, always through the limiter.
 2. The web app calls the API over a **Service Binding**: without going out to the internet and at no extra cost per request.
-3. Analyses are computed once per race and served as JSON files from R2.
-4. No Worker has access to the backup bucket.
+3. Analyses are computed once per race and served as JSON from KV (D-39).
+4. No Worker has access to the backups: they are GitHub Actions artifacts.
 
 ## 4. Web: Next.js 16 + React 19
 
@@ -134,7 +134,7 @@ Every HTML page is rendered on each request, because the strict CSP needs a fres
 | Current season data (calendar, standings, next Grand Prix) | 60 s in the Cache API |
 | Past seasons, profiles, history | 24 h |
 | A race result | 5 min for the first 48 h, then 24 h |
-| Analysis JSON (R2) | Immutable: the URL carries the version |
+| Analysis JSON (KV) | Immutable: the key carries the version |
 | JS, CSS, fonts, SVG | Immutable (hashed file names) |
 | Explainers, glossary, guide | MDX compiled at build time; HTML rendered per request |
 | HTML | `Cache-Control: private, no-store` (it carries a nonce) |
@@ -171,7 +171,7 @@ The Worker has no public routes: it only runs from Cron Triggers and starts Work
 | Workflow | What it does |
 |---|---|
 | `BACKFILL` | Loads the history since 1950: one step per season, pausing to respect the hourly limit. About 13,000 requests, ~33 hours, once (D-11) |
-| `POST_RACE` | After each race since 2023: downloads from OpenF1, computes the five analyses, writes the JSON to R2 and records the version in `analysis_artifacts` |
+| `POST_RACE` | After each race since 2023: downloads from OpenF1, computes the five analyses, writes the JSON to KV and records the version in `analysis_artifacts` |
 | `MAILING` | Newsletter (CON-06) and account notifications (COM-11): composes the content from D1 and sends batches of 40 recipients per step (D-16, D-24) |
 
 ### 6.3 Outbound request limiter (D-10)
@@ -194,7 +194,7 @@ The computations live in `packages/analysis` (pure TypeScript, no runtime depend
 | Sectors | `laps` (sectors and mini-sectors) | Driver × sector matrix; gap to the best |
 | Replay the race | `position`, `laps` | Each driver's position at the end of each lap |
 
-Output: `analysis/{season}/{round}/v{n}/{tool}.json` in R2. Telemetry: one file per driver (`telemetry/{driver}.json`); the delta between two drivers is computed in the browser.
+Output: `analysis/{season}/{round}/v{n}/{tool}.json`, a key in KV (D-39). Telemetry: one file per driver (`telemetry/{driver}.json`); the delta between two drivers is computed in the browser.
 
 ## 8. Data
 
@@ -205,31 +205,27 @@ Output: `analysis/{season}/{round}/v{n}/{tool}.json` in R2. Telemetry: one file 
 | Engine | Managed SQLite (D1), `eu` jurisdiction (cannot be changed later) |
 | ORM and migrations | Drizzle ORM + `drizzle-kit` to generate SQL; applied with `wrangler d1 migrations apply` |
 | Databases | `paddock-db` (production) and `paddock-db-preview` (previews) |
-| Size | 5 GB included in the plan; at most 10 GB per database |
-| Backups | Time Travel (30 days) + a weekly export to R2 (D-15) |
+| Size | 500 MB per database on the free plan (D-39) |
+| Backups | Time Travel (7 days on the free plan) + a weekly export kept as a GitHub Actions artifact for 90 days (D-15, D-39) |
 | Limits to keep in mind | 100 parameters per query; 2 MB per row; 30 s per query; bulk writes in batches with `db.batch()` |
 
 **Tables:** `seasons`, `circuits`, `drivers`, `constructors`, `races`, `sessions`, `results`, `provisional_results`, `qualifying`, `sprint_results`, `standings_drivers`, `standings_constructors`, `laps`, `pit_stops`, `analysis_artifacts`, `ingest_runs`, `ingest_state`; from phase 4, `users`, `accounts`, `auth_sessions`, `predictions`, `leagues`, `league_members`, `quiz_answers`; from phase 5, `subscribers`.
 
-**Size estimate:** `laps` is the largest table. Jolpica has laps since 1996: about 600 races × 20 drivers × 55 laps ≈ 660,000 rows, some 60 to 80 MB. The whole history fits comfortably under 1 GB. Telemetry does not go to D1: it goes to R2.
+**Size estimate:** `laps` would be the largest table (laps since 1996, about 660,000 rows), but production does not load it (D-39): nothing reads it, and the free plan writes 100,000 rows a day. Without it the whole history is a few tens of MB. Telemetry does not go to D1: it goes to KV.
 
-### 8.2 R2 (files)
+### 8.2 Analysis files (KV)
+
+Keys in the `ANALYSIS` namespace (D-39; R2 until then):
 
 ```
-paddock-analysis/                     (EU jurisdiction)
-├── analysis/{season}/{round}/v{n}/strategy.json
-├── analysis/{season}/{round}/v{n}/pace.json
-├── analysis/{season}/{round}/v{n}/telemetry/{driver}.json
-├── analysis/{season}/{round}/v{n}/sectors.json
-├── analysis/{season}/{round}/v{n}/replay.json
-├── og/{season}/{round}/{tool}.png    (only if D-03's plan B is used)
-└── circuits/{circuitId}.svg
-
-paddock-backups/                      (EU jurisdiction, no access from Workers)
-└── d1/{date}.sql                     (deleted automatically after 90 days)
+analysis/{season}/{round}/v{n}/strategy.json
+analysis/{season}/{round}/v{n}/pace.json
+analysis/{season}/{round}/v{n}/telemetry/{driver}.json
+analysis/{season}/{round}/v{n}/sectors.json
+analysis/{season}/{round}/v{n}/replay.json
 ```
 
-No egress cost. The R2 free tier includes 10 GB of storage per month.
+About 25 keys of at most ~85 kB per race, written once. Backups are not in Cloudflare: the weekly D1 export is a private GitHub Actions artifact, deleted after 90 days.
 
 ### 8.3 KV and the Cache API
 
@@ -272,7 +268,7 @@ Summary; the details are in [security.md](security.md).
 
 | Environment | Web | API | Data |
 |---|---|---|---|
-| Local | `scripts/local-stack.sh` (`wrangler dev` for the three Workers) | `wrangler dev` | Local D1 and R2 (Miniflare) |
+| Local | `scripts/local-stack.sh` (`wrangler dev` for the three Workers) | `wrangler dev` | Local D1 and KV (Miniflare) |
 | Preview | `paddock-web-preview` (behind Access) | `paddock-api-preview` | `paddock-db-preview`, preview buckets |
 | Production | `paddocknotes.dev` | `paddocknotes.dev/api/v1` | `paddock-db` |
 
@@ -292,7 +288,7 @@ Everything that touches Cloudflare (preview, `deploy.yml` and `backup.yml`) wait
 | Level | Tool |
 |---|---|
 | Unit (normalisation, computations, formats) | Vitest |
-| Workers (API, ingestion, D1, KV, R2, Durable Objects) | Vitest with `@cloudflare/vitest-plugin` (the real runtime) |
+| Workers (API, ingestion, D1, KV, Durable Objects) | Vitest with `@cloudflare/vitest-plugin` (the real runtime) |
 | Architecture | A test that fails if the API imports the write module (D-14) |
 | End to end | Playwright against the local stack and the preview |
 | Accessibility | axe with Playwright |
@@ -302,16 +298,18 @@ Tests never call Jolpica or OpenF1: they use real responses stored in `fixtures/
 
 ## 14. Estimated costs
 
-| Item | Cost | Note |
+Everything runs on free plans, with no payment method on the account (D-39).
+
+| Item | Free allowance | Paddock Notes |
 |---|---|---|
-| Workers Paid | USD 5/month | 10 million requests and 30 million CPU ms a month; static assets do not count |
-| D1 | Included | 25 billion rows read and 50 million written a month; 5 GB |
-| R2 | USD 0 | Within the free 10 GB |
-| KV, Durable Objects, Workflows | Included | Far below the quotas |
-| Email Service | Included | 3,000 emails a month; then USD 0.35 per 1,000 |
-| Workers Logs | Included | 50 GB of ingestion a month |
-| `.dev` domain | Registry price | Cloudflare Registrar sells at cost |
-| **Expected total** | **~USD 5/month + domain** | For the traffic expected of a portfolio project |
+| Workers Free | 100,000 requests a day; 10 ms of CPU per request; static assets do not count | A page is one web request plus a few API calls over the Service Binding |
+| D1 | 5 million rows read and 100,000 written a day; 500 MB per database | No lap-by-lap history (D-39); the rest of the history loads over a few days |
+| Workers KV | 100,000 reads and 1,000 writes a day; 1 GB | About 25 analysis writes per race; the API's last-good copy at most once an hour |
+| Durable Objects, Workflows, Cron Triggers | SQLite-backed objects; five crons per account | Four crons, production only |
+| Workers Logs | Included in the free plan | |
+| GitHub Actions (private repository) | 2,000 minutes a month; 500 MB of artifacts | CI on every push, deploys and the weekly D1 backup |
+| Domain | `pn.marcmendezb.com`, a subdomain of the author's own | No new domain to buy |
+| **Expected total** | **USD 0** | Paid plans stay a configuration change if the site outgrows these limits |
 
 ## 15. Repository layout
 
@@ -436,7 +434,7 @@ Step by step, with commands and every value to replace: [setup.md](setup.md).
 |---|---|
 | OpenNext requires recent Next.js versions within its `peerDependencies` range | Update both together with Renovate, respecting D-19 |
 | Rendering everything per request costs CPU and can raise LCP | Aggressive data caching; Lighthouse CI with a threshold; revisit D-04 if mobile LCP goes above 2.5 s |
-| OpenF1 loses access to F1's data | Analyses stored in R2 are permanent; a notice in the technical zone if there is no new data (D-08) |
+| OpenF1 loses access to F1's data | Analyses stored in KV are permanent; a notice in the technical zone if there is no new data (D-08) |
 | Jolpica lowers its limits (it has announced it will) | Configurable limits and respect for `Retry-After`; the history is loaded once |
 | D1 is SQLite: some record queries can be slow | Indexes, tables precomputed after each Grand Prix and `EXPLAIN QUERY PLAN` |
 | Email Service is in beta | Plan B with Resend (D-16) |

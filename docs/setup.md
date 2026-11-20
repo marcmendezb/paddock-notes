@@ -2,14 +2,13 @@
 
 > A checklist to go from the repository to the published site, on the author's account (`marcmendezb`, D-38). Follow the order: each step leaves what the next one needs. It summarises and makes concrete [stack.md §17](stack.md#17-setup-recommended-order).
 > Until step 7, GitHub only runs the checks (lint, types, tests, build and gitleaks). Preview, deploy and backup wait for the `CLOUDFLARE_READY` variable.
-> Paddock Notes sends no email and has no sign-ups (D-38): there is no Email Service step.
+> Paddock Notes sends no email and has no sign-ups (D-38), and everything runs on free plans with no payment method (D-39): no Email Service, no R2, no Workers Paid.
 
 ## 1. Accounts
 
 - [x] The Cloudflare account `marcmendezb` (`d93e035c09bdc00f3104ad84bc2649a0`), workers.dev subdomain `marcmendezb`.
 - [ ] 2FA on the Cloudflare account (security key or passkey).
-- [ ] The **Workers Paid** plan: the API's CPU limit (`limits.cpu_ms`) requires it, and server-rendered pages need more than the free plan's 10 ms of CPU (stack.md §14).
-- [ ] **R2** turned on (R2 Object Storage in the dashboard; Cloudflare asks for a payment method even for the free tier). Every Worker binds a bucket, so nothing deploys without it.
+- [x] The **Workers Free** plan, with no payment method (D-39).
 - [ ] On GitHub: 2FA, secret scanning with push protection and Dependabot alerts turned on (Settings → Code security).
 - [ ] Later, the custom domain `pn.marcmendezb.com` (D-38): `marcmendezb.com` on Cloudflare, a `custom_domain` route on `paddock-web`, `SITE_URL`, `AUTH_BASE_URL` and `TRUSTED_ORIGINS`, the Turnstile widget's domains and `security.txt`.
 
@@ -18,17 +17,9 @@
 From the repository root. The account is not the default `wrangler` login on the author's machine: use the isolated one, `HOME="$HOME/.paddock-cloudflare" pnpm exec wrangler …`.
 
 - [x] D1 `paddock-db` and `paddock-db-preview` (EU), with their ids in `workers/api` and `workers/ingest`. Each keeps `preview_database_id` at the old zeros, so `wrangler dev` finds the local data.
-- [x] KV `CACHE` and `CACHE_PREVIEW`, with their ids in `workers/api`.
+- [x] KV `CACHE` and `CACHE_PREVIEW` (API cache) and `ANALYSIS` and `ANALYSIS_PREVIEW` (post-race JSON, D-39), with their ids in `workers/api` and `workers/ingest`.
 - [x] Migrations applied to both databases (`wrangler d1 migrations apply … --remote`).
-- [ ] R2, once turned on:
-
-```sh
-pnpm exec wrangler r2 bucket create paddock-analysis --jurisdiction eu
-pnpm exec wrangler r2 bucket create paddock-analysis-preview --jurisdiction eu
-pnpm exec wrangler r2 bucket create paddock-backups --jurisdiction eu
-```
-
-- [ ] On `paddock-backups`, a lifecycle rule that deletes objects after 90 days (D-15).
+- Backups are a GitHub Actions artifact kept 90 days (`backup.yml`, D-39): no bucket to create.
 
 ## 3. Worker secrets
 
@@ -73,9 +64,9 @@ In the repository, **Settings → Secrets and variables → Actions**:
 | Type | Name | Value | State |
 |---|---|---|---|
 | Secret | `CLOUDFLARE_ACCOUNT_ID` | The account ID | Set |
-| Secret (`production` environment) | `CLOUDFLARE_API_TOKEN` | A custom token limited to this account: *Workers Scripts*, *D1*, *Workers KV Storage*, *Workers R2 Storage* (Edit) and *Account Settings* (Read) | Pending |
+| Secret (`production` environment) | `CLOUDFLARE_API_TOKEN` | A custom token limited to this account: *Workers Scripts*, *D1* and *Workers KV Storage* (Edit) and *Account Settings* (Read) | Pending |
 | Secret | `CLOUDFLARE_API_TOKEN_PREVIEW` | The same token, or one for the preview resources only | Pending |
-| Secret (`backup` environment) | `CLOUDFLARE_API_TOKEN_BACKUP` | Production D1 (read and export) and `paddock-backups` (write) | Pending |
+| Secret (`backup` environment) | `CLOUDFLARE_API_TOKEN_BACKUP` | Production D1 only (read and export) | Pending |
 | Secret | `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET` | The Access service token from step 4 | Pending |
 | Variable | `SITE_URL` | `https://paddock-web.marcmendezb.workers.dev` | Set |
 | Variable | `PREVIEW_URL` | `https://paddock-web-preview.marcmendezb.workers.dev` | Set |

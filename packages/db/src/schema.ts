@@ -204,7 +204,7 @@ export const standingsConstructors = sqliteTable(
   (t) => [primaryKey({ columns: [t.season, t.round, t.constructorId] })],
 );
 
-/** Technical zone analyses computed after each race (phase 3). The JSON lives in R2. */
+/** Technical zone analyses computed after each race (phase 3). The JSON lives in KV (D-39). */
 export const analysisArtifacts = sqliteTable(
   "analysis_artifacts",
   {

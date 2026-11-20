@@ -1,5 +1,6 @@
-# Weekly backup of D1 to R2 (D-15). Wednesday at 03:00 UTC: database export blocks queries
-# during execution, when no live F1 sessions occur. R2 lifecycle purges backups after 90 days.
+# Weekly backup of D1 (D-15) as a private GitHub Actions artifact, kept 90 days: the free plan has no R2
+# bucket for it (D-39). Wednesday at 03:00 UTC: a database export blocks queries while it runs, and no F1
+# session is live then.
 name: backup
 
 on:
@@ -24,13 +25,16 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Export and upload backup
+      - name: Export the database
         working-directory: workers/api
-        run: |
-          file="d1-$(date -u +%Y-%m-%d).sql"
-          pnpm exec wrangler d1 export paddock-db --remote --output "$file"
-          pnpm exec wrangler r2 object put "paddock-backups/d1/$file" --file "$file" --jurisdiction eu --remote
+        run: pnpm exec wrangler d1 export paddock-db --remote --output "d1-$(date -u +%Y-%m-%d).sql"
         env:
-          # Dedicated backup token scoped to production D1 and paddock-backups R2 bucket (security.md §13).
+          # Dedicated backup token: production D1 only, read and export (security.md §13).
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_BACKUP }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: d1-backup
+          path: workers/api/d1-*.sql
+          retention-days: 90
+          if-no-files-found: error

@@ -9,9 +9,8 @@
 |---|---|---|---|---|---|---|
 | Jolpica F1 | F1 data (REST) | Calendar, results, standings, history since 1950 | `paddock-ingest` | None (a custom `User-Agent` is required) | Free, non-commercial | 1 |
 | OpenF1 | F1 data (REST) | Sessions, weather, stints, laps, positions, telemetry (since 2023) | `paddock-ingest` | None (history) | Free, non-commercial | 2–3 |
-| Cloudflare D1 | Binding | Main database | API, ingestion | Binding | Workers Paid plan | 1 |
-| Cloudflare R2 | Binding | Analysis JSON and layouts | API, ingestion | Binding | R2 free tier | 3 |
-| Cloudflare KV | Binding | Last-resort copy of the most-read data | API | Binding | Included | 1 |
+| Cloudflare D1 | Binding | Main database | API, ingestion | Binding | Free plan (D-39) | 1 |
+| Cloudflare KV | Binding | Last-resort copy of the most-read data; analysis JSON (D-39) | API, ingestion | Binding | Free plan | 1 |
 | Cache API | Runtime | Cache for API responses | API | n/a | Included | 1 |
 | Cloudflare Workflows | Binding | History backfill, post-race analysis, newsletter | Ingestion | Binding | Included | 2 |
 | Durable Objects | Binding | The outbound limiter's global counter | Ingestion | Binding | Included | 1 |
@@ -116,7 +115,7 @@ All of them are used from the Workers through **bindings** declared in Wrangler:
 | API | Binding | Concrete use | Who |
 |---|---|---|---|
 | **D1** | `DB` | Every table. Queries with Drizzle | API (the `f1-read` module; from phase 4, the community tables), ingestion (the `f1-write` module) |
-| **R2** | `ANALYSIS` | Analysis JSON and SVG layouts | API (read), ingestion (write) |
+| **KV** | `ANALYSIS` | Analysis JSON (D-39) | API (read), ingestion (write) |
 | **KV** | `CACHE` | Last-resort copy of the next Grand Prix and the current standings | API |
 | **Cache API** | n/a | Cache for every public response | API |
 | **Workflows** | `BACKFILL`, `POST_RACE`, `MAILING` | History, post-race analysis, newsletter and email notifications | Ingestion |
@@ -127,7 +126,7 @@ All of them are used from the Workers through **bindings** declared in Wrangler:
 | **Email Service** | `EMAIL` | Transactional email and newsletter | API (magic links), ingestion (notifications, newsletter) |
 | **Static Assets** | `ASSETS` | Static JavaScript, CSS, fonts and SVG | Web |
 
-**Email Service:** in beta. Workers Paid only. At most 50 recipients per email; with the binding, 50 ms of CPU and 50 subrequests per invocation, hence the batches of 40 in the Workflow. In `wrangler dev` sending is simulated and stored in local files.
+**Email Service:** not used (D-38). For reference: in beta, Workers Paid only. At most 50 recipients per email; with the binding, 50 ms of CPU and 50 subrequests per invocation, hence the batches of 40 in the Workflow. In `wrangler dev` sending is simulated and stored in local files.
 
 ### 3.1 Cloudflare services outside the Workers
 
@@ -217,16 +216,16 @@ Shape of a response:
 
 ## 7. Feature → API matrix
 
-| Area | Jolpica | OpenF1 | D1 | R2 | KV/Cache | Others |
+| Area | Jolpica | OpenF1 | D1 | KV (analysis) | KV/Cache | Others |
 |---|---|---|---|---|---|---|
 | Home and calendar | ✓ | ✓ (provisional result) | ✓ | n/a | ✓ | `Intl` |
 | Grand Prix page | ✓ | ✓ (weather, pit stops since 2023) | ✓ | n/a | ✓ | n/a |
 | Standings | ✓ | n/a | ✓ | n/a | ✓ | n/a |
-| Profiles | ✓ | ✓ (layout) | ✓ | ✓ (SVG) | ✓ | `bacinger/f1-circuits` |
+| Profiles | ✓ | ✓ (layout) | ✓ | ✓ (layout) | ✓ | `bacinger/f1-circuits` |
 | Technical zone | n/a | ✓ | ✓ (index) | ✓ (JSON) | ✓ | Workflows |
 | History | ✓ | n/a | ✓ | n/a | ✓ | Workflows (backfill) |
-| Community | ✓ (official result) | n/a | ✓ | n/a | n/a | Email Service, OAuth, Turnstile |
-| Content and SEO | n/a | n/a | n/a | n/a | n/a | Email Service (newsletter) |
+| Community | ✓ (official result) | n/a | ✓ | n/a | n/a | A demonstration today: no email, no sign-ups (D-38) |
+| Content and SEO | n/a | n/a | n/a | n/a | n/a | Newsletter as a demonstration (D-33) |
 
 ## 8. Common rules for integrating any external API
 

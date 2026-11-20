@@ -1,5 +1,5 @@
 /**
- * Format of the analysis JSON stored in R2 (stack.md §7) and served by the API.
+ * Format of the analysis JSON stored in KV (stack.md §7, D-39) and served by the API.
  * No copy here: the web app writes the automatic notes from `facts` (TEC-08), in each language.
  */
 
@@ -9,7 +9,7 @@
  */
 export const ANALYSIS_VERSION = 2;
 
-/** Path of an analysis JSON in R2: analysis/{season}/{round}/v{n}/{file}.json (stack.md §8.2). */
+/** Path (KV key) of an analysis JSON: analysis/{season}/{round}/v{n}/{file}.json (stack.md §8.2). */
 export const analysisKey = (season: number, round: number, file: string, version = ANALYSIS_VERSION) =>
   `analysis/${season}/${round}/v${version}/${file}.json`;
 

@@ -28,7 +28,8 @@
     { "name": "paddock-post-race", "binding": "POST_RACE", "class_name": "PostRaceWorkflow" },
     { "name": "paddock-mailing", "binding": "MAILING", "class_name": "MailingWorkflow" }
   ],
-  "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis", "jurisdiction": "eu" }],
+  // The post-race JSON in KV, not R2, to stay on the free plan (D-39).
+  "kv_namespaces": [{ "binding": "ANALYSIS", "id": "8433eb186ecd4f1d82f0f4161bb104f4", "preview_id": "paddock-analysis-local" }],
   "vars": {
     "SITE_URL": "https://paddock-web.marcmendezb.workers.dev",
     "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
@@ -40,11 +41,16 @@
     "JOLPICA_BACKFILL_MAX_PER_HOUR": "300",
     "OPENF1_BASE_URL": "https://api.openf1.org/v1",
     "OPENF1_MAX_PER_SECOND": "2",
-    "OPENF1_MAX_PER_MINUTE": "25"
+    "OPENF1_MAX_PER_MINUTE": "25",
+    // No lap-by-lap history: nothing reads it, and ~700,000 rows exceed the free plan's D1 writes (D-39).
+    "BACKFILL_LAPS": "false"
   },
   "env": {
     "preview": {
       "name": "paddock-ingest-preview",
+      // No crons: the free plan allows five per account and production uses four (D-39). Preview data is
+      // loaded by hand from the dashboard when a pull request needs it.
+      "triggers": { "crons": [] },
       "workers_dev": false,
       "preview_urls": false,
       "d1_databases": [
@@ -65,7 +71,7 @@
         { "name": "paddock-post-race-preview", "binding": "POST_RACE", "class_name": "PostRaceWorkflow" },
         { "name": "paddock-mailing-preview", "binding": "MAILING", "class_name": "MailingWorkflow" }
       ],
-      "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis-preview", "jurisdiction": "eu" }],
+      "kv_namespaces": [{ "binding": "ANALYSIS", "id": "84abdf293f7143689b80e6bffaad1207", "preview_id": "paddock-analysis-local" }],
       "vars": {
         "SITE_URL": "https://paddock-web-preview.marcmendezb.workers.dev",
         "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
@@ -76,7 +82,8 @@
         "JOLPICA_BACKFILL_MAX_PER_HOUR": "300",
         "OPENF1_BASE_URL": "https://api.openf1.org/v1",
         "OPENF1_MAX_PER_SECOND": "2",
-        "OPENF1_MAX_PER_MINUTE": "25"
+        "OPENF1_MAX_PER_MINUTE": "25",
+        "BACKFILL_LAPS": "false"
       }
     }
   }

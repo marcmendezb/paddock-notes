@@ -423,18 +423,18 @@ const TOOLS = ["strategy", "pace", "sectors", "replay"] as const;
 app.use("/analysis", noQueryParams, rateLimit);
 app.use("/analysis/*", noQueryParams, rateLimit);
 
-/** Analysis JSON stored in R2 by the POST_RACE Workflow (D-08). */
+/** Analysis JSON stored in KV by the POST_RACE Workflow (D-08, D-39). */
 /**
- * An analysis file in R2, cached with the analysis version and date in the key: if ingestion redoes it
+ * An analysis file in KV, cached with the analysis version and date in the key: if ingestion redoes it
  * (another version of the computations), the new response is served at once.
  */
 async function analysisFile(c: Context<AppEnv>, season: number, round: number, file: string) {
   const index = await reader(c).getAnalysis(season, round);
   if (!index) throw new HttpError("not_found", "No analysis available for this race yet.");
   return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant: `${index.version}-${index.createdAt}` }, async () => {
-    const object = await c.env.ANALYSIS.get(analysisKey(season, round, file, index.version));
-    if (!object) return null;
-    return { data: await object.json<unknown>(), updatedAt: index.createdAt };
+    const data = await c.env.ANALYSIS.get<unknown>(analysisKey(season, round, file, index.version), "json");
+    if (data === null) return null;
+    return { data, updatedAt: index.createdAt };
   });
 }
 
@@ -517,11 +517,12 @@ get(
     return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant }, async () => {
       const driver = latest?.telemetryDrivers[0];
       if (!latest || driver === undefined) return null;
-      const object = await c.env.ANALYSIS.get(
+      const telemetry = await c.env.ANALYSIS.get<TelemetryData>(
         analysisKey(latest.season, latest.round, `telemetry/${driver}`, latest.version),
+        "json",
       );
-      if (!object) return null;
-      const layout = circuitLayout(await object.json<TelemetryData>());
+      if (!telemetry) return null;
+      const layout = circuitLayout(telemetry);
       return { data: { ...layout, season: latest.season, round: latest.round }, updatedAt: null };
     });
   },

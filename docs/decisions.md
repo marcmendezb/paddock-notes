@@ -530,6 +530,21 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 **Pending until the domain:** `security.txt` (its contact and canonical URL) and the custom-domain route. Moving to `pn.marcmendezb.com` means adding `marcmendezb.com` to Cloudflare, a `custom_domain` route on `paddock-web` and the URLs above.
 
 **Consequence:** it supersedes D-20, and extends D-33 to sign-in. The custom domain is a configuration change, not a code change.
+
+## D-39 · Free plan only
+
+**Context:** the author wants the site to cost nothing, with no payment method on the account. The design assumed Workers Paid (stack.md §14): R2 for the analysis JSON and the backups (R2 asks for a card even on its free tier), a CPU limit on the API, lap-by-lap history and crons for preview as well as production.
+
+**Decision:** everything runs on Cloudflare's and GitHub's free plans.
+
+- **Analysis JSON in Workers KV, not R2.** About 25 files of at most ~85 kB per race, written once by the post-race Workflow and read through the API's Cache API: a few writes a day against the 1,000 allowed. `preview_id` keeps the local `wrangler dev` data under a stable id.
+- **The API's last-good copy in KV is refreshed at most once an hour per key.** It was rewritten on every Cache API miss, once a minute per data centre on the 60-second routes, which alone would spend the daily KV writes.
+- **No lap-by-lap history** (`BACKFILL_LAPS=false`): no page or API route reads it, and its ~700,000 rows exceed the free plan's 100,000 D1 rows written a day. The rest of the history (results, qualifying, standings, pit stops) still loads, one season at a time.
+- **No CPU limit setting** on the API (`limits.cpu_ms` is a paid-plan option). The free plan's own 10 ms of CPU per request applies; it is measured after the first deploy, and server rendering is the part at risk.
+- **Crons only in production:** four of the five allowed per account. The preview ingestion Worker has none; its data is loaded by hand when a pull request needs it.
+- **Backups as a private GitHub Actions artifact**, kept 90 days, instead of an R2 bucket (D-15 keeps its weekly schedule).
+
+**Consequence:** it amends stack.md §14 and D-15. If the site outgrows the free limits (100,000 requests a day, 10 ms of CPU), the paid plan is a configuration change: an R2 bucket again, `limits.cpu_ms` and laps.
 ---
 
 ## Sources (consulted on 5 November 2026)

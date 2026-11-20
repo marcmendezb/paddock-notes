@@ -7,7 +7,6 @@
   "workers_dev": false,
   "preview_urls": false,
   "observability": { "enabled": true },
-  "limits": { "cpu_ms": 50 },
   // No public host until the custom domain (D-38): the web app reaches it over the Service Binding and
   // proxies /api/* for browsers and email links (D-26).
   "d1_databases": [
@@ -20,8 +19,12 @@
       "migrations_dir": "../../packages/db/migrations"
     }
   ],
-  "kv_namespaces": [{ "binding": "CACHE", "id": "3706284051af40d8aae5e0eb93bc316c" }],
-  "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis", "jurisdiction": "eu" }],
+  // ANALYSIS: the post-race JSON in KV, not R2, to stay on the free plan (D-39). Locally, wrangler dev keeps
+  // it under preview_id.
+  "kv_namespaces": [
+    { "binding": "CACHE", "id": "3706284051af40d8aae5e0eb93bc316c" },
+    { "binding": "ANALYSIS", "id": "8433eb186ecd4f1d82f0f4161bb104f4", "preview_id": "paddock-analysis-local" }
+  ],
   "ratelimits": [
     { "name": "RATE_LIMIT_READ", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
     { "name": "RATE_LIMIT_WRITE", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }
@@ -50,8 +53,10 @@
           "migrations_dir": "../../packages/db/migrations"
         }
       ],
-      "kv_namespaces": [{ "binding": "CACHE", "id": "ed9e1f4c70a3403881feb00b5409a8e6" }],
-      "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis-preview", "jurisdiction": "eu" }],
+      "kv_namespaces": [
+        { "binding": "CACHE", "id": "ed9e1f4c70a3403881feb00b5409a8e6" },
+        { "binding": "ANALYSIS", "id": "84abdf293f7143689b80e6bffaad1207", "preview_id": "paddock-analysis-local" }
+      ],
       "ratelimits": [
         { "name": "RATE_LIMIT_READ", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
         { "name": "RATE_LIMIT_WRITE", "namespace_id": "1004", "simple": { "limit": 10, "period": 60 } }
