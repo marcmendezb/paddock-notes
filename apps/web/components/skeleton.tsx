@@ -1,4 +1,4 @@
-/** Esqueleto de carga con la forma del contenido: nunca una pantalla en blanco (TRA-30). */
+/** A loading skeleton shaped like the content: never a blank screen (TRA-30). */
 export function PageSkeleton({ rows = 8 }: { rows?: number }) {
   return (
     <div className="container stack-l" aria-busy="true">

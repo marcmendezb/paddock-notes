@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Entrada de glosario (contenido.md §5.3): definición, ejemplo, ver también y explicador. */
+/** A glossary entry (content.md §5.3): definition, example, see also and explainer. */
 export default async function GlossaryTermPage({ params }: Props) {
   const { lang, term } = await load(params);
   const t = dict(lang);

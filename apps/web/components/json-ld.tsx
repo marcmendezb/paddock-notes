@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 
 /**
- * Datos estructurados (CON-08). Única excepción revisada a la regla contra dangerouslySetInnerHTML
- * (seguridad.md §5): el contenido es JSON generado por nosotros, y se escapan "<", ">" y "&" para que
- * ningún dato pueda cerrar la etiqueta <script>. Lleva el nonce de la CSP.
+ * Structured data (CON-08). The only reviewed exception to the rule against dangerouslySetInnerHTML
+ * (security.md §5): the content is JSON we generate, and "<", ">" and "&" are escaped so no data can close
+ * the <script> tag. It carries the CSP nonce.
  */
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
@@ -15,7 +15,7 @@ export async function JsonLd({ data }: { data: Record<string, unknown> }) {
     <script
       type="application/ld+json"
       nonce={nonce}
-      // eslint-disable-next-line no-restricted-syntax -- Excepción revisada: JSON escapado (seguridad.md §5).
+      // eslint-disable-next-line no-restricted-syntax -- Reviewed exception: escaped JSON (security.md §5).
       dangerouslySetInnerHTML={{ __html: serializeJsonLd({ "@context": "https://schema.org", ...data }) }}
     />
   );

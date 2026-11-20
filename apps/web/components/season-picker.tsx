@@ -1,7 +1,7 @@
 import { FIRST_SEASON, type Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 
-/** Selector de temporada desde 1950 (NUC-15). Formulario GET: no necesita JavaScript. */
+/** Season picker back to 1950 (NUC-15). A GET form: it needs no JavaScript. */
 export function SeasonPicker({ lang, season, base }: { lang: Lang; season: number; base: "races" | "standings" }) {
   const t = dict(lang).calendar;
   const last = new Date().getUTCFullYear();

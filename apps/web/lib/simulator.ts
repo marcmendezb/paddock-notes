@@ -1,8 +1,8 @@
 import { racePoints, sprintPoints } from "@paddock/shared";
 
 /**
- * Simulador de campeonato "¿y si...?" (COM-09): suma a la clasificación actual los puntos de las
- * posiciones que elige el visitante en las rondas que faltan. Todo cabe en la URL (formulario GET).
+ * The "what if...?" championship simulator (COM-09): adds to the current standings the points of the
+ * positions the visitor picks in the remaining rounds. It all fits in the URL (a GET form).
  */
 
 export interface SimDriver {
@@ -19,7 +19,7 @@ export interface SimRound {
 
 export type Choices = Record<string, string | string[] | undefined>;
 
-/** Nombre del campo del formulario: r{ronda}_{piloto} (carrera) o s{ronda}_{piloto} (sprint). */
+/** The form field's name: r{round}_{driver} (race) or s{round}_{driver} (sprint). */
 export const field = (kind: "r" | "s", round: number, driver: string) => `${kind}${round}_${driver}`;
 
 export function parsePosition(value: string | string[] | undefined): number | null {

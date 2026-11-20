@@ -3,7 +3,7 @@ import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 import { localeOf } from "@/lib/format";
 
-/** Sectores (TEC-06): diferencia con el mejor de cada sector; el signo siempre acompaña al color. */
+/** Sectors (TEC-06): the gap to the best in each sector; the sign always goes with the colour. */
 export function SectorsTable({ lang, data, mode }: { lang: Lang; data: SectorsData; mode: "best" | "average" }) {
   const t = dict(lang).analysis;
   const fmt = new Intl.NumberFormat(localeOf(lang), { minimumFractionDigits: 3, maximumFractionDigits: 3 });

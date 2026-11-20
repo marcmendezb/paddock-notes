@@ -6,21 +6,21 @@ import { IconPaths, SESSION_ICON } from "./icons";
 import { localeOf } from "@/lib/format";
 
 /**
- * El fin de semana como un calendario (NUC-03, NUC-04): una columna por día y las horas en vertical, en la
- * zona del visitante. Cada sesión es un bloque en su hora y con su duración real, con su pictograma; la
- * siguiente se marca en lima, la que está en directo late y la carrera va en blanco. Una línea marca
- * «ahora» en la columna de hoy.
+ * The weekend as a calendar (NUC-03, NUC-04): one column per day and the hours running down, in the
+ * visitor's time zone. Each session is a block at its time and with its real duration, with its pictogram;
+ * the next one is marked in lime, the live one pulses and the race is in white. A line marks "now" in
+ * today's column.
  *
- * SVG con atributos (posición y alto por hora): sin estilos en línea (CSP, D-04). Se pinta en el servidor
- * con la hora del circuito y al montar pasa a la del visitante. Decorativo para lectores de pantalla:
- * la lista de horarios accesible va justo después.
+ * SVG with attributes (position and height per hour): no inline styles (CSP, D-04). It is painted on the
+ * server in the circuit's time and switches to the visitor's on mount. Decorative for screen readers:
+ * the accessible list of times comes right after it.
  */
 
 type State = "done" | "live" | "next" | "upcoming";
 
 export interface CalendarLabels {
   sessions: Record<SessionKind, string>;
-  /** Nombres cortos para columnas estrechas (móvil). */
+  /** Short names for narrow columns (mobile). */
   short: Record<SessionKind, string>;
   circuitTime: string;
   now: string;
@@ -29,7 +29,7 @@ export interface CalendarLabels {
 }
 
 const locale = localeOf;
-const AXIS = 9; // % de ancho para la columna de horas
+const AXIS = 9; // % of the width for the hours column
 const HEADER = 64;
 const MIN_BLOCK = 86;
 
@@ -122,15 +122,15 @@ export function WeekendCalendar({
 
   return (
     <svg className="cal" width="100%" height={height} aria-hidden="true" focusable="false">
-      {/* Hoy: la columna lleva un fondo apenas marcado. */}
+      {/* Today: the column gets a barely marked background. */}
       {today >= 0 ? (
         <rect className="cal-today-bg" x={pct(colX(today))} y="0" width={pct(colW)} height={height} />
       ) : null}
-      {/* Medias horas, en punteado. */}
+      {/* Half hours, dotted. */}
       {Array.from({ length: hours }, (_, i) => firstHour + i).map((h) => (
         <line key={`half-${h}`} className="cal-half" x1={pct(AXIS)} x2="100%" y1={y(h * 60 + 30)} y2={y(h * 60 + 30)} />
       ))}
-      {/* Horas: una línea por hora y su rótulo en la columna izquierda. */}
+      {/* Hours: one line per hour and its label in the left column. */}
       {Array.from({ length: hours + 1 }, (_, i) => firstHour + i).map((h) => (
         <g key={h} className="cal-hour">
           <line x1={pct(AXIS)} x2="100%" y1={y(h * 60)} y2={y(h * 60)} />

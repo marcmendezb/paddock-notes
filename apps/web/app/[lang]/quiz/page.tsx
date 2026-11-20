@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Quiz semanal (COM-08): jugable sin cuenta y sin JavaScript (formulario GET con las respuestas). */
+/** Weekly quiz (COM-08): playable without an account and without JavaScript (a GET form with the answers). */
 export default async function QuizPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const query = await searchParams;
@@ -33,7 +33,7 @@ export default async function QuizPage({ params, searchParams }: Props) {
   const answered = questions.some((q) => query[q.id] !== undefined);
   const score = questions.filter((q) => query[q.id] === q.answer).length;
 
-  // El quiz cambia cada lunes: el siguiente lunes en UTC.
+  // The quiz changes every Monday: the next Monday in UTC.
   const monday = new Date();
   monday.setUTCDate(monday.getUTCDate() + (((8 - monday.getUTCDay()) % 7) || 7));
   const KIND_ICON: Record<QuizQuestion["kind"], IconName> = { "race-winner": "flag", champion: "trophy", "constructor-champion": "wrench", "season-wins": "bolt", pole: "stopwatch" };

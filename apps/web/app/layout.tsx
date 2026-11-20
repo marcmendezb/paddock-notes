@@ -6,7 +6,7 @@ import { INTRO_SCRIPT, IntroLoader } from "@/components/intro-loader";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-// Todo el HTML se renderiza por petición: la CSP lleva un nonce nuevo cada vez (D-04).
+// All HTML is rendered per request: the CSP carries a fresh nonce each time (D-04).
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -25,10 +25,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const nonce = h.get("x-nonce") ?? undefined;
   const lang = isLang(requested) ? requested : DEFAULT_LANG;
   return (
-    // suppressHydrationWarning: el script de la entrada puede marcar <html data-intro> antes de hidratar.
+    // suppressHydrationWarning: the entrance script may mark <html data-intro> before hydration.
     <html lang={lang} suppressHydrationWarning>
       <head>
-        {/* La fuente del titular y la cuenta atrás: precargarla evita que el LCP espere a descubrirla en el CSS. */}
+        {/* The headline and countdown typeface: preloading it saves the LCP from waiting to discover it in the CSS. */}
         <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body>

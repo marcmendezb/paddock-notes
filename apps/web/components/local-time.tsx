@@ -7,18 +7,18 @@ import { formatDateTime, formatTime } from "@/lib/format";
 interface Props {
   iso: string;
   lang: Lang;
-  /** Zona horaria del circuito, si se conoce (NUC-03). */
+  /** The circuit's time zone, if known (NUC-03). */
   circuitTimeZone: string | null;
   circuitLabel: string;
-  /** Las dos horas en líneas separadas (cajetín y columnas del hero), sin el separador «·». */
+  /** Both times on separate lines (title block and the hero's columns), without the "·" separator. */
   stacked?: boolean;
 }
 
 /**
- * Hora de una sesión: la del visitante en primer plano y la del circuito en segundo (NUC-03).
- * En el servidor no se conoce la zona del visitante, así que la primera se pinta con la del circuito
- * (o UTC) y se sustituye al montar. Las dos partes existen desde el HTML: al hidratar solo cambia el
- * texto, nunca el número de líneas (sin desplazamientos de diseño).
+ * A session's time: the visitor's in the foreground and the circuit's second (NUC-03).
+ * On the server the visitor's time zone is unknown, so the first is painted with the circuit's (or UTC)
+ * and replaced on mount. Both parts exist from the HTML: on hydration only the text changes, never the
+ * number of lines (no layout shift).
  */
 export function LocalTime({ iso, lang, circuitTimeZone, circuitLabel, stacked = false }: Props) {
   const [visitorZone, setVisitorZone] = useState<string | null>(null);

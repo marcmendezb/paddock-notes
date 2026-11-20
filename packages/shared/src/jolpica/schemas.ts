@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 /**
- * Esquemas de las respuestas de Jolpica F1 (compatibles con Ergast).
- * Todo lo externo es hostil (seguridad.md §8): una respuesta que no cumple el esquema no se escribe.
- * Jolpica devuelve los números como texto; se convierten aquí.
+ * Schemas for Jolpica F1's responses (Ergast-compatible).
+ * Everything external is hostile (security.md §8): a response that does not match the schema is not written.
+ * Jolpica returns numbers as text; they are converted here.
  */
 
 const numeric = z

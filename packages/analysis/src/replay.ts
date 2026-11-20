@@ -2,8 +2,8 @@ import type { OpenF1Lap, OpenF1Position } from "@paddock/shared/openf1";
 import type { DriverInfo, ReplayData } from "./types";
 
 /**
- * Posiciones vuelta a vuelta (TEC-07): la posición de cada piloto al cerrar cada vuelta del líder.
- * Se toma la última posición registrada antes del final de esa vuelta.
+ * Lap-by-lap positions (TEC-07): each driver's position as each of the leader's laps closes.
+ * The last position recorded before the end of that lap is taken.
  */
 export function replay(drivers: DriverInfo[], laps: OpenF1Lap[], positions: OpenF1Position[], totalLaps: number): ReplayData {
   const leaderLapEnds: number[] = [];
@@ -24,7 +24,7 @@ export function replay(drivers: DriverInfo[], laps: OpenF1Lap[], positions: Open
       return {
         ...d,
         positions: leaderLapEnds.map((end, i) => {
-          // Tras abandonar, sin posición.
+          // After retiring, no position.
           if (Number.isNaN(end) || i + 1 > (lastLap.get(d.number) ?? 0)) return null;
           let pos: number | null = null;
           for (const e of own) {

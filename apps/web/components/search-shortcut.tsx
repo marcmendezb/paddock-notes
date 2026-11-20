@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { Lang } from "@paddock/shared";
 
-/** Atajo de teclado "/" para abrir la búsqueda (TRA-03), salvo cuando se escribe en un campo. */
+/** The "/" keyboard shortcut to open search (TRA-03), except while typing in a field. */
 export function SearchShortcut({ lang }: { lang: Lang }) {
   const router = useRouter();
   useEffect(() => {

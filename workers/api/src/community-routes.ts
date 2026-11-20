@@ -15,8 +15,8 @@ import type { AppEnv } from "./env";
 import { HttpError } from "./errors";
 
 /**
- * Rutas de comunidad (fase 4). Todas exigen sesión salvo el ranking global. La autorización se resuelve
- * en la consulta (seguridad.md §10): nadie puede leer ni tocar recursos de otro usuario.
+ * Community routes (phase 4). All require a session except the global ranking. Authorisation is resolved
+ * in the query (security.md §10): nobody can read or touch another user's resources.
  */
 
 const id = z.string().regex(/^[a-z0-9_-]{1,64}$/);
@@ -39,7 +39,7 @@ async function requireUser(c: Context<AppEnv>) {
 
 async function body<T extends z.ZodType>(c: Context<AppEnv>, schema: T): Promise<z.output<T>> {
   const text = await c.req.text();
-  // Cuerpo máximo de 16 kB en rutas POST (seguridad.md §6).
+  // A 16 kB maximum body on POST routes (security.md §6).
   if (text.length > 16_384) throw new HttpError("invalid_parameter", "Request payload too large.");
   let json: unknown;
   try {
@@ -65,8 +65,8 @@ const roundOf = (raw: string) => {
 
 export function mountCommunity(app: Hono<AppEnv>) {
   app.on(["GET", "POST"], "/auth/*", (c) => {
-    // Better Auth comprueba el Origin por su cuenta. En peticiones internas (Service Binding) se lo
-    // reconstruimos a partir de x-paddock-origin, ya validado por el middleware.
+    // Better Auth checks the Origin on its own. On internal requests (Service Binding) we rebuild it from
+    // x-paddock-origin, already validated by the middleware.
     const internal = !c.req.header("cf-connecting-ip");
     const forwarded = c.req.header("x-paddock-origin");
     if (c.req.method === "POST" && internal && forwarded && !c.req.header("origin")) {
@@ -110,7 +110,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     });
   });
 
-  /** Borrado efectivo e inmediato (COM-03): usuario, sesiones, predicciones, ligas propias y quiz. */
+  /** Effective and immediate deletion (COM-03): user, sessions, predictions, own leagues and quiz. */
   app.delete("/me", async (c) => {
     const user = await requireUser(c);
     await createCommunity(c.env.DB).deleteUser(user.id);
@@ -120,7 +120,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     });
   });
 
-  /** Mis predicciones de la temporada con su puntuación, recalculada con el resultado oficial (COM-05). */
+  /** My predictions for the season with their score, recalculated with the official result (COM-05). */
   app.get("/predictions/:season/me", async (c) => {
     const user = await requireUser(c);
     const season = seasonOf(c.req.param("season"));
@@ -135,7 +135,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     return c.json({ data: rows }, 200, noStore);
   });
 
-  /** Formulario de predicción de una ronda: plazo, pilotos válidos y lo que ya envió el usuario. */
+  /** A round's prediction form: deadline, valid drivers and what the user already submitted. */
   app.get("/predictions/:season/:round", async (c) => {
     const user = await requireUser(c);
     const season = seasonOf(c.req.param("season"));
@@ -162,7 +162,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     );
   });
 
-  /** Guarda o cambia la predicción hasta el cierre (COM-04). */
+  /** Saves or changes the prediction until it closes (COM-04). */
   app.post("/predictions/:season/:round", async (c) => {
     const user = await requireUser(c);
     const season = seasonOf(c.req.param("season"));
@@ -223,7 +223,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     return c.json({ data: { ok: true } }, 200, noStore);
   });
 
-  /** Puntuación del quiz con cuenta (COM-08): el servidor corrige; nunca se fía de la nota del cliente. */
+  /** Quiz score with an account (COM-08): the server marks it; the client's score is never trusted. */
   app.post("/quiz-scores", async (c) => {
     const user = await requireUser(c);
     const { week, answers } = await body(
@@ -237,7 +237,7 @@ export function mountCommunity(app: Hono<AppEnv>) {
     return c.json({ data: { score, total: quiz.questions.length, streak: await community.quizStreak(user.id) } }, 200, noStore);
   });
 
-  /** Denuncia de un alias o un nombre de liga (COM-13). */
+  /** Report of a display name or a league name (COM-13). */
   app.post("/reports", async (c) => {
     const user = await requireUser(c);
     const { kind, targetId } = await body(

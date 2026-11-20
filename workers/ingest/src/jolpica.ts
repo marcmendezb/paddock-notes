@@ -8,13 +8,13 @@ import {
 import type { Env } from "./env";
 import { fetchJson, type FetchContext } from "./http";
 
-/** Cliente de Jolpica F1. Todas las peticiones pasan por el limitador global (D-10). */
+/** Jolpica F1 client. Every request goes through the global limiter (D-10). */
 export function jolpicaContext(env: Env, options: { backfill?: boolean } = {}): FetchContext {
   return {
     env,
     policy: {
       perSecond: Number(env.JOLPICA_MAX_PER_SECOND),
-      // La carga del histórico deja margen para la ingesta en directo, que comparte el mismo contador.
+      // The history backfill leaves room for live ingestion, which shares the same counter.
       perWindow: Number(options.backfill ? env.JOLPICA_BACKFILL_MAX_PER_HOUR : env.JOLPICA_MAX_PER_HOUR),
       windowMs: 3_600_000,
     },
@@ -22,7 +22,7 @@ export function jolpicaContext(env: Env, options: { backfill?: boolean } = {}): 
   };
 }
 
-/** Jolpica pagina como máximo 100 filas por petición. */
+/** Jolpica pages at most 100 rows per request. */
 const PAGE = 100;
 
 function url(env: Env, path: string, offset = 0): string {
@@ -54,7 +54,7 @@ export function createJolpica(ctx: FetchContext) {
           constructorStandingsResponseSchema,
         )
       ).MRData.StandingsTable.StandingsLists,
-    /** Todas las vueltas de una carrera, página a página (como recomienda Jolpica). */
+    /** All of a race's laps, page by page (as Jolpica recommends). */
     laps: async (season: number, round: number): Promise<JolpicaLap[]> => {
       const all: JolpicaLap[] = [];
       for (let offset = 0; ; offset += PAGE) {

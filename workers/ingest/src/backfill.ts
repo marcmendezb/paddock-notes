@@ -7,9 +7,9 @@ import { createJolpica, jolpicaContext } from "./jolpica";
 import { ingestLaps, ingestRound, ingestSchedule, type RoundContext, type RoundRef } from "./rounds";
 
 /**
- * Carga del histórico (D-11): una instancia por temporada, un paso por ronda y otro por sus vueltas.
- * Si el limitador pide esperar más de 30 s, el paso falla con DeferredError y el Workflow lo reintenta
- * más tarde. Todos los pasos son idempotentes.
+ * History backfill (D-11): one instance per season, one step per round and another for its laps.
+ * If the limiter asks to wait more than 30 s, the step fails with DeferredError and the Workflow retries it
+ * later. Every step is idempotent.
  */
 const STEP = {
   retries: { limit: 30, delay: "10 minutes", backoff: "constant" },
@@ -31,7 +31,7 @@ export class BackfillWorkflow extends WorkflowEntrypoint<Env, BackfillParams> {
 
     const rounds: RoundRef[] = await step.do("schedule", STEP, async () => {
       const all = await ingestSchedule(context(), season);
-      // Solo las rondas ya disputadas.
+      // Only the rounds already run.
       return all.filter((r) => Date.parse(`${r.date}T23:59:59Z`) < Date.now());
     });
 
@@ -51,18 +51,18 @@ export class BackfillWorkflow extends WorkflowEntrypoint<Env, BackfillParams> {
 const CURSOR = "backfill:cursor";
 const INSTANCE = "backfill:instance";
 const ACTIVE = new Set(["queued", "running", "waiting", "paused", "waitingForPause"]);
-/** Una temporada tarda en torno a 1,5 h. Si una instancia sigue activa tras 12 h, se da por atascada. */
+/** A season takes around 1.5 h. If an instance is still active after 12 h, it is considered stuck. */
 const STUCK_AFTER_MS = 12 * 3_600_000;
 
-/** El ID de instancia lleva la temporada y el instante de creación: backfill-{season}-{ms}. */
+/** The instance ID carries the season and the creation instant: backfill-{season}-{ms}. */
 function parseInstance(id: string): { season: number; createdAt: number } {
   const [, season, createdAt] = id.split("-");
   return { season: Number(season), createdAt: Number(createdAt) };
 }
 
 /**
- * Avanza la carga del histórico desde la temporada en curso hacia 1950, de una temporada en una.
- * Se llama en cada cron de 15 minutos y no hace nada mientras haya una instancia activa.
+ * Advances the history backfill from the current season back to 1950, one season at a time.
+ * It is called on every 15-minute cron and does nothing while an instance is active.
  */
 export async function advanceBackfill(env: Env, now = Date.now()): Promise<string> {
   const writer = createF1Writer(env.DB);

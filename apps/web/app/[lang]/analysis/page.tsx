@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Portada de análisis (TEC-01): las últimas carreras analizadas, con enlace a cada herramienta. */
+/** The analysis landing page (TEC-01): the latest analysed races, with a link to each tool. */
 export default async function AnalysisIndexPage({ params }: Props) {
   const lang = parseLang((await params).lang);
   const t = dict(lang);

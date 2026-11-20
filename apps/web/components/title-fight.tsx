@@ -12,12 +12,12 @@ import { dict } from "@/lib/i18n";
 import { Icon } from "./icons";
 
 /**
- * La clasificación de la home contada como la pelea por el título (NUC-04, NUC-36), sobre negro. Cada
- * piloto es un carril: la barra son sus puntos, la trama lo que aún puede sumar si lo gana todo, la línea
- * lila los puntos del líder y la bandera a cuadros, al final, el máximo que alguien puede alcanzar. Quien
- * no llega a la línea lila ya no puede ser campeón. El titular sale de esa cuenta.
+ * The home page standings told as the title fight (NUC-04, NUC-36), on black. Each driver is a lane: the bar
+ * is their points, the hatching what they can still score if they win everything, the lilac line the
+ * leader's points and the chequered flag at the end the maximum anyone can reach. Whoever does not reach
+ * the lilac line can no longer be champion. The headline comes from that calculation.
  *
- * Las barras van en porcentajes como atributos SVG (la CSP no admite estilos en línea, D-04).
+ * The bars use percentages as SVG attributes (the CSP does not allow inline styles, D-04).
  */
 
 interface Lane {
@@ -30,7 +30,7 @@ interface Lane {
   favorite: boolean;
 }
 
-/** Puntos máximos de un equipo por ronda: sus dos coches primero y segundo. */
+/** A team's maximum points per round: its two cars first and second. */
 function teamMaxPerRound(season: number, isSprintWeekend: boolean): number | null {
   if (season < 2022) return null;
   const fastestLap = season <= 2024 ? 1 : 0;
@@ -48,7 +48,7 @@ function Lanes({
 }: {
   lang: Lang;
   lanes: Lane[];
-  /** Puntos que aún puede sumar cada uno; null si no se puede calcular. */
+  /** Points each one can still score; null if it cannot be computed. */
   remaining: number | null;
   champion: boolean;
   outLabel: string;
@@ -132,7 +132,7 @@ export function TitleFight({
   lang: Lang;
   drivers: Standings<DriverStandingRow> | null;
   constructors: Standings<ConstructorStandingRow> | null;
-  /** Rondas por disputar de la temporada (null si no hay calendario). */
+  /** Rounds left in the season (null if there is no calendar). */
   remainingRounds: { isSprintWeekend: boolean }[] | null;
   favorites: Set<string>;
   updatedAt: string | null;
@@ -177,7 +177,7 @@ export function TitleFight({
             ? f.open(names.length)
             : f.title;
 
-  // La ventaja del líder sobre el segundo, en grande junto al titular.
+  // The leader's margin over second place, large beside the headline.
   const leaderRow = drivers?.rows[0]?.driver.familyName ?? null;
   const runnerUp = drivers?.rows[1];
   const second =
@@ -210,7 +210,7 @@ export function TitleFight({
 
   return (
     <section className="tf" data-surface="ink" aria-labelledby="standings-summary">
-      {/* Trama de «lo que aún puede sumar» y cuadros de meta, compartidos por todos los carriles. */}
+      {/* The hatching for "what they can still score" and the finish squares, shared by every lane. */}
       <svg className="tf-defs" aria-hidden="true" focusable="false">
         <defs>
           <pattern id="tf-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">

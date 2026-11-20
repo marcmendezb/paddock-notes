@@ -1,14 +1,14 @@
 import type { Lang } from "./constants";
 
 /**
- * Explicadores y guía (CON-01, CON-03). Índice explícito, sin importaciones dinámicas: cada pieza
- * tiene su versión en ES y en EN, escritas por separado (contenido.md §1.5).
- * `regulated`: depende del reglamento; se revisa al inicio de cada temporada (contenido.md §6).
+ * Explainers and the guide (CON-01, CON-03). An explicit index, no dynamic imports: each piece has its
+ * version in every language, written separately (content.md §1.5).
+ * `regulated`: depends on the regulations; reviewed at the start of each season (content.md §6).
  */
 export interface Explainer {
   slug: string;
   title: Record<Lang, string>;
-  /** Meta descripción: la primera frase del texto, que responde a la pregunta del título (contenido.md §5.2). */
+  /** Meta description: the text's first sentence, which answers the title's question (content.md §5.2). */
   description: Record<Lang, string>;
   regulated: boolean;
 }
@@ -31,11 +31,11 @@ export const EXPLAINERS: Explainer[] = [
   { slug: "overtake-mode", title: { es: "Del DRS al modo adelantamiento", en: "From DRS to overtake mode", de: "Vom DRS zum Überholmodus" }, description: { es: "Desde 2026 el DRS ya no existe: el coche que está a menos de un segundo del de delante recibe energía eléctrica extra para adelantar, en cualquier punto del circuito.", en: "Since 2026 DRS no longer exists: a car within one second of the car ahead gets extra electrical energy to overtake, anywhere on the track.", de: "Seit 2026 gibt es kein DRS mehr: Ein Auto, das weniger als eine Sekunde hinter dem Vordermann liegt, erhält zusätzliche elektrische Energie zum Überholen, überall auf der Strecke." }, regulated: true },
 ];
 
-/** Por qué un explicador encaja con un circuito (NUC-09): el tipo de carrera que suele salir. */
+/** Why an explainer fits a circuit (NUC-09): the kind of race it tends to produce. */
 type Trait = "sprint" | "street" | "qualifying" | "tyres" | "strategy" | "straights";
 
 const TRAITS: Record<string, Exclude<Trait, "sprint">> = {
-  // Callejeros o semipermanentes: muros cerca, más coches de seguridad.
+  // Street or semi-permanent circuits: walls close by, more safety cars.
   baku: "street",
   marina_bay: "street",
   jeddah: "street",
@@ -43,13 +43,13 @@ const TRAITS: Record<string, Exclude<Trait, "sprint">> = {
   albert_park: "street",
   madring: "street",
   miami: "street",
-  // Adelantar es difícil: la clasificación decide buena parte de la carrera.
+  // Overtaking is hard: qualifying decides much of the race.
   monaco: "qualifying",
   hungaroring: "qualifying",
   zandvoort: "qualifying",
   catalunya: "qualifying",
   imola: "qualifying",
-  // Asfalto abrasivo o curvas rápidas largas: la degradación manda.
+  // Abrasive asphalt or long fast corners: degradation rules.
   bahrain: "tyres",
   silverstone: "tyres",
   suzuka: "tyres",
@@ -58,12 +58,12 @@ const TRAITS: Record<string, Exclude<Trait, "sprint">> = {
   shanghai: "tyres",
   americas: "tyres",
   interlagos: "tyres",
-  // Paradas en el filo: undercut y overcut.
+  // Stops on a knife edge: undercut and overcut.
   red_bull_ring: "strategy",
   rodriguez: "strategy",
   yas_marina: "strategy",
   villeneuve: "strategy",
-  // Rectas largas y poca carga: los adelantamientos dependen de la energía extra.
+  // Long straights and low downforce: overtaking depends on the extra energy.
   monza: "straights",
   spa: "straights",
 };
@@ -87,7 +87,7 @@ const REASONS: Record<Trait | "default", Record<Lang, string>> = {
   default: { es: "Para llegar con lo básico claro.", en: "To get the basics straight first.", de: "Damit die Grundlagen sitzen." },
 };
 
-/** Explicador sugerido para el próximo GP (NUC-09), con una frase que dice por qué. */
+/** The explainer suggested for the next Grand Prix (NUC-09), with a sentence saying why. */
 export function suggestedExplainer(circuitId: string, isSprintWeekend: boolean, lang: Lang): { explainer: Explainer; reason: string } {
   const trait: Trait | undefined = isSprintWeekend ? "sprint" : TRAITS[circuitId];
   const slug = trait ? BY_TRAIT[trait] : GUIDE_SLUG;

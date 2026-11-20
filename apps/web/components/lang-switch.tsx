@@ -4,12 +4,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { LANGS, type Lang } from "@paddock/shared";
 
-/** Nombre de cada idioma en su propio idioma: así lo reconoce quien lo habla. */
+/** Each language's name in its own language: that is how its speakers recognise it. */
 export const LANG_NAMES: Record<Lang, string> = { es: "Español", en: "English", de: "Deutsch" };
 
 /**
- * Banderas en SVG (no emoji: en Windows los emoji de bandera salen como letras). Colores como atributos,
- * permitidos por la CSP (D-04). Decorativas: el nombre del idioma va siempre en texto.
+ * Flags in SVG (not emoji: on Windows, flag emoji render as letters). Colours as attributes, allowed by the
+ * CSP (D-04). Decorative: the language name is always in text.
  */
 function Flag({ lang }: { lang: Lang }) {
   if (lang === "es") {
@@ -41,12 +41,12 @@ function Flag({ lang }: { lang: Lang }) {
 }
 
 /**
- * Selector de idioma (TRA-12): un desplegable con la bandera y el código del idioma actual; al abrirlo,
- * los tres idiomas con su bandera y su nombre. Cada enlace cambia solo el prefijo y conserva la página;
- * es una carga completa, para que cambie también el idioma del documento.
- * Es un <details>: funciona sin JavaScript. Con JavaScript, además se cierra al pulsar fuera, con Escape
- * y al cambiar de página, y con ratón se abre al pasar por encima, como los desplegables de la cabecera
- * (con un margen al salir para cruzar el hueco hasta el menú). `up` lo abre hacia arriba (pie de página).
+ * Language switcher (TRA-12): a dropdown with the flag and code of the current language; opened, the three
+ * languages with their flag and name. Each link changes only the prefix and keeps the page; it is a full
+ * load, so the document's language changes too.
+ * It is a <details>: it works without JavaScript. With JavaScript it also closes on an outside click, with
+ * Escape and on a page change, and with a mouse it opens on hover, like the header's dropdowns (with a
+ * grace period on leave to cross the gap to the menu). `up` opens it upwards (footer).
  */
 export function LangSwitch({ current, label, up = false }: { current: Lang; label: string; up?: boolean }) {
   const pathname = usePathname() ?? "/";
@@ -95,7 +95,7 @@ export function LangSwitch({ current, label, up = false }: { current: Lang; labe
     <details ref={ref} className={up ? "lang-switch is-up" : "lang-switch"} onMouseEnter={enter} onMouseLeave={leave}>
       <summary
         aria-label={`${label}: ${LANG_NAMES[current]}`}
-        // Con ratón, el clic no lo cierra: ya se abrió al pasar por encima y se cierra al salir.
+        // With a mouse, a click does not close it: it already opened on hover and closes on leave.
         onClick={(event) => {
           if (hoverable() && ref.current?.open) event.preventDefault();
         }}
@@ -109,7 +109,7 @@ export function LangSwitch({ current, label, up = false }: { current: Lang; labe
       <ul className="lang-menu" aria-label={label}>
         {LANGS.map((lang) => (
           <li key={lang}>
-            {/* Enlace normal, no de Next: cambiar de idioma recarga la página entera (cambia <html lang>). */}
+            {/* A plain link, not Next's: changing the language reloads the whole page (it changes <html lang>). */}
             <a href={`/${lang}${rest}`} hrefLang={lang} lang={lang} aria-current={lang === current ? "true" : undefined}>
               <Flag lang={lang} />
               <span>{LANG_NAMES[lang]}</span>

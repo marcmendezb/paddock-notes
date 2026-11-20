@@ -15,7 +15,7 @@ import type {
   JolpicaScheduleRace,
 } from "./schemas";
 
-/** Filas normalizadas, listas para escribir en D1 (packages/db). */
+/** Normalised rows, ready to write to D1 (packages/db). */
 
 export interface CircuitRow {
   id: string;
@@ -103,7 +103,7 @@ export interface ConstructorStandingRow {
   wins: number;
 }
 
-/** Datos que no superan las comprobaciones de coherencia (seguridad.md §8). No se escriben. */
+/** Data that fails the consistency checks (security.md §8). It is not written. */
 export class IncoherentDataError extends Error {
   override name = "IncoherentDataError";
 }
@@ -116,7 +116,7 @@ function checkSeason(season: number, now = new Date()): void {
   check(season >= FIRST_SEASON && season <= now.getUTCFullYear() + 1, `temporada fuera de rango: ${season}`);
 }
 
-/** Máximo de puntos posible en una carrera (doble puntuación de 2014 + vuelta rápida, con margen). */
+/** The maximum possible points in a race (2014's double points + fastest lap, with a margin). */
 const MAX_POINTS_PER_RACE = 60;
 
 export function normalizeCircuit(c: JolpicaCircuit): CircuitRow {
@@ -213,7 +213,7 @@ function normalizeResultRows(
   drivers: Map<string, DriverRow>,
   constructors: Map<string, ConstructorRow>,
 ): void {
-  // Posición → número de coche. Hasta 1957 dos pilotos que compartían coche comparten posición.
+  // Position → car number. Until 1957 two drivers sharing a car share a position.
   const seenPositions = new Map<number, number | undefined>();
   const seenDrivers = new Set<string>();
   for (const r of rows) {
@@ -225,7 +225,7 @@ function normalizeResultRows(
       );
       seenPositions.set(r.position, r.number);
     }
-    // Hasta 1957 un coche podía ser compartido: el mismo piloto puede aparecer dos veces.
+    // Until 1957 a car could be shared: the same driver can appear twice.
     const resultKey = `${r.Driver.driverId}/${r.number ?? ""}/${r.Constructor.constructorId}`;
     check(!seenDrivers.has(resultKey), `resultado duplicado: ${season}/${round} ${resultKey}`);
     seenDrivers.add(resultKey);
@@ -331,7 +331,7 @@ export function normalizeConstructorStandings(
   return { constructors: [...constructors.values()], standings };
 }
 
-/** "1:22.167" o "22.167" o "40:55.302" → milisegundos. Null si el texto no es un tiempo. */
+/** "1:22.167" or "22.167" or "40:55.302" → milliseconds. Null if the text is not a time. */
 export function parseLapTime(text: string | undefined): number | null {
   if (!text) return null;
   const m = /^(?:(\d+):)?(\d{1,2})\.(\d{1,3})$/.exec(text.trim());

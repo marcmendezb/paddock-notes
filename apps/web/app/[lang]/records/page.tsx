@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Récords (HIS-07): los cinco primeros de cada uno, con su definición exacta. */
+/** Records (HIS-07): the top five of each, with its exact definition. */
 export default async function RecordsPage({ params }: Props) {
   if (!RECORDS_PUBLIC) notFound();
   const lang = parseLang((await params).lang);

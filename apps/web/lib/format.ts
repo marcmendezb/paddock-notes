@@ -1,8 +1,8 @@
 import type { Lang } from "@paddock/shared";
 
-/** Formatos localizados con Intl (TRA-13, contenido.md §2). */
+/** Localised formats with Intl (TRA-13, content.md §2). */
 
-/** Configuración regional de cada idioma para Intl (fechas, números). */
+/** Each language's locale for Intl (dates, numbers). */
 export const localeOf = (lang: Lang): string => ({ es: "es-ES", en: "en-GB", de: "de-DE" })[lang];
 const locale = localeOf;
 
@@ -34,12 +34,12 @@ export function formatTime(lang: Lang, iso: string, timeZone?: string): string {
   return new Intl.DateTimeFormat(locale(lang), { hour: "2-digit", minute: "2-digit", timeZone }).format(new Date(iso));
 }
 
-/** Puntos con decimales cuando los hay (2,5 en ES; 2.5 en EN). */
+/** Points with decimals when there are any (2,5 in ES; 2.5 in EN). */
 export function formatPoints(lang: Lang, points: number): string {
   return new Intl.NumberFormat(locale(lang), { maximumFractionDigits: 1 }).format(points);
 }
 
-/** Diferencia con signo: "+3" / "−2" (signo menos tipográfico). */
+/** A signed difference: "+3" / "−2" (typographic minus sign). */
 export function formatSigned(lang: Lang, value: number): string {
   if (value === 0) return "0";
   const abs = new Intl.NumberFormat(locale(lang)).format(Math.abs(value));

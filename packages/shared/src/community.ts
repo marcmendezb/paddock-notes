@@ -1,6 +1,6 @@
 import type { ScheduleSession } from "./api";
 
-/** Reglas de la comunidad (fase 4). Puras y con tests: la API y la web usan las mismas. */
+/** Community rules (phase 4). Pure and tested: the API and the web app use the same ones. */
 
 export const SCORING = { exact: 5, podium: 2, pole: 3 } as const;
 
@@ -19,9 +19,9 @@ export interface PredictionScore {
 }
 
 /**
- * Puntuación de una predicción (COM-05) con el resultado oficial: 5 puntos por piloto en su posición
- * exacta del podio, 2 si está en el podio pero en otra posición y 3 por la pole. Se calcula al leer,
- * así que se actualiza sola si una sanción cambia el resultado.
+ * A prediction's score (COM-05) against the official result: 5 points per driver in their exact podium
+ * position, 2 if they are on the podium but in another position and 3 for the pole. Computed on read, so it
+ * updates itself if a penalty changes the result.
  */
 export function scorePrediction(picks: PredictionPicks, podium: string[], pole: string | null): PredictionScore {
   const guesses = [picks.p1, picks.p2, picks.p3];
@@ -40,7 +40,7 @@ export function scorePrediction(picks: PredictionPicks, podium: string[], pole: 
   };
 }
 
-/** Las predicciones se cierran al empezar la primera sesión competitiva: clasificación o clasificación sprint. */
+/** Predictions close when the first competitive session starts: qualifying or sprint qualifying. */
 export function predictionDeadline(sessions: ScheduleSession[]): string | null {
   const starts = sessions
     .filter((s) => (s.kind === "qualifying" || s.kind === "sprint_qualifying") && s.startsAt)
@@ -55,8 +55,8 @@ export function validPicks(p: PredictionPicks, allowed: Set<string>): boolean {
 }
 
 /**
- * Orden del ranking (COM-06), criterio publicado: más puntos; si empatan, más podios exactos; si siguen
- * empatados, más poles acertadas; y si no, comparten posición.
+ * Ranking order (COM-06), a published rule: more points; if tied, more exact podiums; if still tied, more
+ * correct poles; otherwise they share the position.
  */
 export function rankUsers<T extends { points: number; exact: number; poles: number }>(rows: T[]): (T & { rank: number })[] {
   const sorted = [...rows].sort((a, b) => b.points - a.points || b.exact - a.exact || b.poles - a.poles);
@@ -68,7 +68,7 @@ export function rankUsers<T extends { points: number; exact: number; poles: numb
   });
 }
 
-/** Palabras bloqueadas en alias y nombres de liga (COM-13). Lista corta; las denuncias cubren el resto. */
+/** Blocked words in display names and league names (COM-13). A short list; reports cover the rest. */
 const BLOCKED = [
   "admin", "moderador", "moderator", "paddocknotes", "oficial", "official", "fia",
   "puta", "puto", "mierda", "joder", "cabron", "gilipollas", "maricon", "nazi", "hitler",
@@ -88,7 +88,7 @@ const normalizeName = (s: string) =>
 
 export type NameProblem = "length" | "characters" | "blocked";
 
-/** Alias y nombres de liga: 3–24 caracteres, letras, números, espacios, guiones y guiones bajos. */
+/** Display names and league names: 3 to 24 characters, letters, numbers, spaces, hyphens and underscores. */
 export function validateName(name: string): NameProblem | null {
   const trimmed = name.trim();
   if (trimmed.length < 3 || trimmed.length > 24) return "length";

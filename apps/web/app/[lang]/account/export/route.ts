@@ -1,6 +1,6 @@
 import { userFetch } from "@/lib/api";
 
-/** Exportación de datos (COM-03): la API la genera y la web la entrega como descarga. */
+/** Data export (COM-03): the API generates it and the web app delivers it as a download. */
 export async function GET(request: Request) {
   const res = await userFetch("/me/export", { cookie: request.headers.get("cookie") ?? "" });
   if (!res.ok) return new Response(null, { status: res.status === 401 ? 401 : 404 });

@@ -1,7 +1,7 @@
 import type { OpenF1Driver, OpenF1Position } from "@paddock/shared/openf1";
 import type { DriverInfo } from "./types";
 
-/** Pilotos de la sesión con su posición final (última posición registrada). */
+/** The session's drivers with their final position (the last position recorded). */
 export function driverInfos(drivers: OpenF1Driver[], positions: OpenF1Position[]): DriverInfo[] {
   const final = new Map<number, number>();
   for (const p of [...positions].sort((a, b) => a.date.localeCompare(b.date))) final.set(p.driver_number, p.position);

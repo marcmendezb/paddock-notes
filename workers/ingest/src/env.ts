@@ -17,15 +17,15 @@ export interface Env {
   JOLPICA_BASE_URL: string;
   JOLPICA_MAX_PER_SECOND: string;
   JOLPICA_MAX_PER_HOUR: string;
-  /** Límite por hora de la carga del histórico: deja margen a la ingesta en directo (D-10). */
+  /** The history backfill's hourly limit: leaves room for live ingestion (D-10). */
   JOLPICA_BACKFILL_MAX_PER_HOUR: string;
-  /** Email Service (D-16): newsletter, avisos (COM-11) y avisos de retención. */
+  /** Email Service (D-16): newsletter, notifications (COM-11) and retention notices. */
   EMAIL: {
     send: (message: { from: string; to: string; subject: string; text: string; headers?: Record<string, string> }) => Promise<unknown>;
   };
   EMAIL_FROM: string;
-  /** Dirección postal del responsable para el pie de los envíos (contenido.md §5.5). Vacía: no se muestra. */
+  /** The controller's postal address for the mailings' footer (content.md §5.5). Empty: not shown. */
   MAIL_POSTAL_ADDRESS?: string;
-  /** "false" en desarrollo local: no carga las vueltas (unas 14 peticiones por carrera). */
+  /** "false" in local development: laps are not loaded (some 14 requests per race). */
   BACKFILL_LAPS?: string;
 }

@@ -1,20 +1,20 @@
 import type { Lang } from "./constants";
 
 /**
- * Notas post-carrera (CON-04): índice de lo publicado. El texto vive en MDX en `apps/web/content/notes/`,
- * en ES y EN escritos por separado (contenido.md §5.1 y §13). Está aquí, y no en la web, porque la
- * newsletter (ingesta) también enlaza la nota de cada carrera.
+ * Post-race notes (CON-04): the index of what is published. The text lives in MDX in
+ * `apps/web/content/notes/`, written separately per language (content.md §5.1 and §13). It lives here, not
+ * in the web app, because the newsletter (ingestion) also links each race's note.
  */
 export interface RaceNote {
   slug: string;
   season: number;
   round: number;
-  /** Fecha de publicación (AAAA-MM-DD). */
+  /** Publication date (YYYY-MM-DD). */
   date: string;
   title: Record<Lang, string>;
-  /** Entradilla: qué pasó y por qué importa para el campeonato. También es la meta descripción. */
+  /** Lede: what happened and why it matters for the championship. Also the meta description. */
   description: Record<Lang, string>;
-  /** Explicador relacionado (sección «Para entenderlo mejor»). */
+  /** Related explainer (the "To understand it better" section). */
   explainer: string;
 }
 

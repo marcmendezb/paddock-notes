@@ -8,7 +8,8 @@ Unofficial web app that explains F1 with data. pnpm monorepo, entirely TypeScrip
 - If you change a decision, do not delete it: mark it as superseded and add a new one.
 - Features by ID in `docs/features.md` (e.g. `NUC-03`). Use them in commits and tests.
 - What is done and what is pending: `docs/status.md`. Update it when finishing each feature.
-- Visual rules in `docs/brand.md`; tokens in `apps/web/app/globals.css`, copied from the brandboard without changes.
+- Visual rules in `docs/brand.md` and `DESIGN.md`; tokens in `apps/web/app/globals.css`, copied from the brandboard without changes. Product, users and voice in `PRODUCT.md`.
+- The repository is in English (code, comments, docs, tests, commits); the product stays trilingual (D-36).
 
 ## Non-negotiable rules
 
@@ -22,7 +23,7 @@ Unofficial web app that explains F1 with data. pnpm monorepo, entirely TypeScrip
 ## Commands
 
 ```sh
-pnpm lint && pnpm typecheck && pnpm test
+pnpm check                              # lint + typecheck + unit tests, what CI runs
 pnpm db:generate                        # after changing packages/db/src/schema.ts
 pnpm --filter @paddock/web build:worker # OpenNext build
 scripts/local-stack.sh [--seed]         # full local stack on :8787, :8788 and :8789, with ingest crons

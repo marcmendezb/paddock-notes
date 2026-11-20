@@ -1,26 +1,26 @@
 /**
- * Quién puede ganar todavía el título (NUC-36). Cálculo matemático con los puntos en juego que quedan:
- * un piloto sigue en la pelea si, ganando todo lo que falta, alcanza al líder (el empate cuenta como
- * posible, porque lo resuelve el desempate por victorias). Solo para el sistema de puntos desde 2010.
+ * Who can still win the title (NUC-36). A mathematical calculation with the points still in play: a driver
+ * is still in the fight if, by winning everything left, they reach the leader (a tie counts as possible,
+ * because the tie-break on wins decides it). Only for the points system since 2010.
  */
 
 const RACE_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 const SPRINT_POINTS_2022 = [8, 7, 6, 5, 4, 3, 2, 1];
 const SPRINT_POINTS_2021 = [3, 2, 1];
 
-/** Puntos de carrera por posición con el sistema desde 2010; null antes de 2010. */
+/** Race points per position under the system since 2010; null before 2010. */
 export function racePoints(season: number, position: number | null): number | null {
   if (season < 2010) return null;
   return position === null ? 0 : (RACE_POINTS[position - 1] ?? 0);
 }
 
-/** Puntos del sprint por posición (8 a 1 desde 2022; 3 a 1 en 2021). */
+/** Sprint points per position (8 to 1 since 2022; 3 to 1 in 2021). */
 export function sprintPoints(season: number, position: number | null): number {
   const table = season >= 2022 ? SPRINT_POINTS_2022 : season === 2021 ? SPRINT_POINTS_2021 : [];
   return position === null ? 0 : (table[position - 1] ?? 0);
 }
 
-/** Puntos máximos que un piloto puede sumar en una ronda, según la temporada. */
+/** The maximum points a driver can score in a round, depending on the season. */
 export function maxPointsPerRound(season: number, isSprintWeekend: boolean): number | null {
   if (season < 2010) return null;
   const fastestLap = season >= 2019 && season <= 2024 ? 1 : 0;
@@ -45,9 +45,9 @@ export function titleContenders(
 }
 
 /**
- * Puntos recalculados con el sistema actual (HIS-06): 25-18-15-12-10-8-6-4-2-1 en carrera, 8 a 1 en el
- * sprint y sin punto por vuelta rápida; cuentan todas las carreras (sin descartes). Empates por la regla de
- * la FIA: más victorias, luego más segundos puestos, y así sucesivamente. Siempre se rotula como recálculo.
+ * Points recalculated under today's system (HIS-06): 25-18-15-12-10-8-6-4-2-1 in the race, 8 to 1 in the
+ * sprint and no point for the fastest lap; every race counts (no dropped scores). Ties by the FIA rule: more
+ * wins, then more second places, and so on. Always labelled as a recalculation.
  */
 export interface RecalcResult {
   driverId: string;
@@ -58,7 +58,7 @@ export interface RecalcResult {
 export interface RecalcRow {
   driverId: string;
   points: number;
-  /** Número de carreras terminadas en cada posición (índice 0 = victorias), para el desempate. */
+  /** Number of races finished in each position (index 0 = wins), for the tie-break. */
   finishes: number[];
 }
 

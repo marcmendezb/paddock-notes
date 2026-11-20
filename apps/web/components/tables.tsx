@@ -15,10 +15,10 @@ import { dict } from "@/lib/i18n";
 import { CircuitLink, DriverLink, TeamLink } from "./links";
 
 /**
- * Tablas de datos: HTML semántico, cifras tabulares y estado en texto, nunca solo color (TRA-20, TRA-22).
- * El contenedor es una región enfocable: en pantallas estrechas la tabla tiene scroll horizontal y debe
- * poder recorrerse con el teclado (WCAG 2.1.1).
- * Favoritos (COM-10): la fila se destaca y además lleva la etiqueta «Favorito» en texto.
+ * Data tables: semantic HTML, tabular figures and state in text, never colour alone (TRA-20, TRA-22).
+ * The container is a focusable region: on narrow screens the table scrolls horizontally and must be
+ * navigable with the keyboard (WCAG 2.1.1).
+ * Favourites (COM-10): the row is highlighted and also carries the "Favourite" label in text.
  */
 
 const EMPTY = new Set<string>();

@@ -7,18 +7,18 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     rules: {
-      // seguridad.md §5: prohibido salvo excepción revisada.
+      // security.md §5: banned except for a reviewed exception.
       "no-restricted-syntax": [
         "error",
         {
           selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
-          message: "dangerouslySetInnerHTML está prohibido (seguridad.md §5).",
+          message: "dangerouslySetInnerHTML is banned (security.md §5).",
         },
       ],
     },
   },
   {
-    // D-14: la API y la web solo leen datos de F1; la escritura es exclusiva de la ingesta.
+    // D-14: the API and the web app only read F1 data; writing belongs to ingestion alone.
     files: ["workers/api/src/**", "apps/web/**"],
     rules: {
       "no-restricted-imports": [

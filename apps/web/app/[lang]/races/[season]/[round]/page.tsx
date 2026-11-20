@@ -72,11 +72,11 @@ export default async function RacePage({ params }: Params) {
     favoriteSet(),
     api.circuitLayout(race.circuit.id).catch(() => null),
   ]);
-  // Con análisis, el gráfico de posiciones vuelta a vuelta (el mismo de la home).
+  // With an analysis, the lap-by-lap positions chart (the same as on the home page).
   const [replay, strategy] = analysis
     ? await Promise.all([api.replay(season, round).catch(() => null), api.strategy(season, round).catch(() => null)])
     : [null, null];
-  // Ganadores de este GP en los últimos años (en la previa de las carreras por llegar, y al final de todas).
+  // Winners of this Grand Prix in recent years (in the preview of upcoming races, and at the end of all of them).
   const recent = nav
     ? (
         await Promise.all(
@@ -88,7 +88,7 @@ export default async function RacePage({ params }: Params) {
     : [];
   const guide = CIRCUIT_GUIDES[race.circuit.id];
   const suggested = suggestedExplainer(race.circuit.id, race.isSprintWeekend, lang);
-  // Sin telemetría, el trazado del GeoJSON de bacinger/f1-circuits (D-09).
+  // Without telemetry, the layout from bacinger/f1-circuits' GeoJSON (D-09).
   const outline = layout?.data.points ?? CIRCUIT_OUTLINES[race.circuit.id] ?? null;
   const [p1, p2, p3] = race.results;
   const fastest = race.results.find((r) => r.fastestLap?.rank === 1);

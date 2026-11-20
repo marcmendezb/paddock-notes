@@ -6,23 +6,23 @@ import { Icon, type IconName } from "./icons";
 import { smoothClosedPath } from "./race-recap";
 
 /**
- * «Así acabó…» (NUC-05): la crónica de la última carrera en la portada. Es siempre la misma plantilla y
- * se rellena solo con el resultado, que está desde el primer momento (también el provisional, D-31): no
- * espera al análisis técnico. Un titular escrito con los datos, el podio escalonado, seis claves, el
- * gráfico de salida a meta de toda la parrilla y los puntos del 4.º al 10.º.
+ * "How … finished" (NUC-05): the report of the last race on the home page. It is always the same template
+ * and is filled in from the result alone, available from the first moment (the provisional one too, D-31):
+ * it does not wait for the technical analysis. A headline written from the data, the stepped podium, six key
+ * facts, the start-to-finish chart of the whole grid and the points from 4th to 10th.
  */
 
 const FINISHED = /^(Finished|Lapped|\+\d+ Laps?)$/;
 const LAPPED = /^(Lapped|\+\d+ Laps?)$/;
 
-/** «+14.602» → 14.602; «+1:02.345» → 62.345. Vueltas o estados → null. */
+/** "+14.602" → 14.602; "+1:02.345" → 62.345. Laps or statuses → null. */
 function gapSeconds(time: string | null): number | null {
   if (!time || !time.startsWith("+")) return null;
   const parts = time.slice(1).split(":").map(Number);
   return parts.some((n) => Number.isNaN(n)) ? null : parts.reduce((acc, n) => acc * 60 + n, 0);
 }
 
-/** El circuito de la carrera, enorme y tenue detrás de todo, con un círculo lila que lo recorre sin parar. */
+/** The race's circuit, huge and faint behind everything, with a lilac circle lapping it non-stop. */
 function Backdrop({ points }: { points: [number, number][] }) {
   const xs = points.map((p) => p[0]);
   const ys = points.map((p) => p[1]);
@@ -44,9 +44,9 @@ function Backdrop({ points }: { points: [number, number][] }) {
 }
 
 /**
- * Salida → meta de toda la parrilla: una línea por piloto de su puesto de salida al de llegada. El ganador
- * en lima, la mayor remontada en lila, el resto del podio en blanco y los demás en gris; los abandonos,
- * discontinuos, al final. Cada línea lleva su título (posición de salida y de llegada) al señalarla.
+ * Start → finish for the whole grid: one line per driver from their starting place to their finishing one.
+ * The winner in lime, the biggest comeback in lilac, the rest of the podium in white and everyone else in
+ * grey; retirements dashed, at the end. Each line carries its title (start and finish position) on hover.
  */
 function SlopeChart({ lang, rows, winnerId, climberId, label }: { lang: Lang; rows: RaceResultRow[]; winnerId: string | null; climberId: string | null; label: string }) {
   const r = dict(lang).home.recap.report;
@@ -108,7 +108,7 @@ export function RaceReport({ lang, race, hasAnalysis, circuit }: { lang: Lang; r
   const raceHref = `/${lang}/races/${race.season}/${race.round}`;
   const note = noteFor(race.season, race.round);
 
-  // Las claves, calculadas con el resultado.
+  // The key facts, computed from the result.
   const margin = gapSeconds(p2?.time ?? null);
   const climber = [...rows].filter((x) => (x.positionsGained ?? 0) > 0).sort((a, b) => b.positionsGained! - a.positionsGained!)[0] ?? null;
   const fastest = rows.find((x) => x.fastestLap?.rank === 1) ?? null;

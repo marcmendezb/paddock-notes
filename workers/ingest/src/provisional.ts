@@ -7,10 +7,10 @@ import type { Env } from "./env";
 import { createOpenF1, openf1Context } from "./openf1";
 
 /**
- * Resultado provisional de la carrera (D-31). OpenF1 publica la clasificación de la sesión minutos después
- * de la bandera a cuadros; Jolpica, horas después (y a veces se cae justo entonces). Mientras no hay
- * resultado oficial, se guarda el de OpenF1 en `provisional_results`, que la API sirve marcado como
- * provisional y que no cuenta para clasificaciones ni récords. En cuanto está el oficial, se borra.
+ * The race's provisional result (D-31). OpenF1 publishes the session classification minutes after the
+ * chequered flag; Jolpica, hours later (and sometimes goes down right then). While there is no official
+ * result, OpenF1's is stored in `provisional_results`, which the API serves marked as provisional and which
+ * does not count towards standings or records. As soon as the official one exists, it is deleted.
  */
 
 type SessionResult = z.infer<typeof sessionResultSchema>;
@@ -32,10 +32,10 @@ export interface ProvisionalRow {
 }
 
 const HOUR = 3_600_000;
-/** Debutantes que se pueden omitir sin descartar el resultado entero. */
+/** Rookies that can be skipped without discarding the whole result. */
 const MAX_UNMATCHED = 2;
 
-/** 5723.504 s → «1:35:23.504», como el tiempo del ganador en Jolpica. */
+/** 5723.504 s → "1:35:23.504", like the winner's time in Jolpica. */
 function raceTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
@@ -43,7 +43,7 @@ function raceTime(seconds: number): string {
   return `${h}:${String(m).padStart(2, "0")}:${s}`;
 }
 
-/** 0.799 → «+0.799»; 62.345 → «+1:02.345», como las diferencias de Jolpica. */
+/** 0.799 → "+0.799"; 62.345 → "+1:02.345", like Jolpica's gaps. */
 function gapText(seconds: number): string {
   if (seconds < 60) return `+${seconds.toFixed(3)}`;
   const m = Math.floor(seconds / 60);
@@ -51,11 +51,11 @@ function gapText(seconds: number): string {
 }
 
 /**
- * Convierte la clasificación de OpenF1 en filas nuestras. Cada piloto se casa por su código de tres letras
- * con la parrilla de la temporada. Un debutante aún no está en ella (no tiene identificador de Jolpica y no
- * se inventa): hasta dos se omiten, salvo que estén en el podio. Devuelve null, y no se escribe nada, si algo
- * más no cuadra: posiciones repetidas, sin ganador o un número de coches imposible. Mejor nada que un
- * resultado mal.
+ * Turns OpenF1's classification into our rows. Each driver is matched by their three-letter code to the
+ * season's grid. A rookie is not on it yet (has no Jolpica identifier, and none is invented): up to two are
+ * skipped, unless they are on the podium. Returns null, and nothing is written, if anything else does not
+ * add up: repeated positions, no winner or an impossible number of cars. Better nothing than a wrong
+ * result.
  */
 export function toProvisional(results: SessionResult[], drivers: OpenF1Driver[], lineup: LineupEntry[]): ProvisionalRow[] | null {
   if (results.length < 10 || results.length > 30) return null;
@@ -96,7 +96,7 @@ export function toProvisional(results: SessionResult[], drivers: OpenF1Driver[],
   return rows;
 }
 
-/** La sesión de carrera de OpenF1 que corresponde a una ronda: la que empieza a menos de 6 h de nuestra hora. */
+/** OpenF1's race session for a round: the one starting within 6 h of our time. */
 export function matchSession<T extends { date_start: string }>(sessions: T[], race: RaceSummary): T | null {
   const start = raceStart(race);
   let best: T | null = null;
@@ -107,7 +107,7 @@ export function matchSession<T extends { date_start: string }>(sessions: T[], ra
   return best;
 }
 
-/** Escribe (o borra, si ya está el oficial) el resultado provisional de una carrera terminada. */
+/** Writes (or deletes, if the official one exists) the provisional result of a finished race. */
 export async function ingestProvisional(env: Env, race: RaceSummary, now: number): Promise<number> {
   const reader = createF1Reader(env.DB);
   const writer = createF1Writer(env.DB);
@@ -118,7 +118,7 @@ export async function ingestProvisional(env: Env, race: RaceSummary, now: number
   const openf1 = createOpenF1({ ...openf1Context(env), maxWaitMs: 20_000 });
   const session = matchSession(await openf1.raceSessions(race.season), race);
   if (!session) return 0;
-  // Todavía en pista: la clasificación de OpenF1 aún no es la final.
+  // Still on track: OpenF1's classification is not final yet.
   if (!session.date_end || Date.parse(session.date_end) > now) return 0;
   const [results, drivers, lineup] = await Promise.all([
     openf1.sessionResult(session.session_key),

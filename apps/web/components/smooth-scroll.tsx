@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 
 let active: Lenis | null = null;
 
-/** Lo que tapan las barras fijas: la cabecera y, en carrera y circuito, el subencabezado; más aire. */
+/** What the sticky bars cover: the header and, on race and circuit pages, the sub-navigation; plus breathing room. */
 export function anchorOffset(): number {
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-total")) || 112;
   const sub = document.querySelector<HTMLElement>(".rsub");
@@ -14,8 +14,8 @@ export function anchorOffset(): number {
 }
 
 /**
- * Posición absoluta en el documento sumando offsetTop: no getBoundingClientRect, que incluye las
- * transformaciones de las animaciones de entrada y da otra posición mientras la sección aún no ha entrado.
+ * Absolute position in the document by summing offsetTop: not getBoundingClientRect, which includes the
+ * entrance animations' transforms and gives another position while the section has not come in yet.
  */
 export function documentTop(el: HTMLElement): number {
   let y = 0;
@@ -23,7 +23,7 @@ export function documentTop(el: HTMLElement): number {
   return y;
 }
 
-/** Lleva una sección justo por debajo de las barras fijas, con Lenis si está activo. */
+/** Brings a section just below the sticky bars, with Lenis if it is active. */
 export function scrollToAnchor(el: HTMLElement) {
   const top = Math.max(0, documentTop(el) - anchorOffset());
   if (active) active.scrollTo(top, { duration: 1.1, easing: (t) => 1 - Math.pow(1 - t, 4) });
@@ -31,13 +31,13 @@ export function scrollToAnchor(el: HTMLElement) {
 }
 
 /**
- * Desplazamiento suave con Lenis en toda la web. No se activa con movimiento reducido (el scroll sigue
- * siendo el del sistema) y deja en paz las zonas con scroll propio: tablas anchas y el menú de móvil.
- * Al cambiar de página, vuelve arriba sin animación, como haría el navegador. Un enlace a la página en la
- * que ya se está (el logo en la home, «Volver a la salida» en el pie) sube hasta arriba deslizándose.
- * La URL no guarda el «#»: se desplaza a la sección y la dirección sigue limpia.
- * Las anclas (#seccion) las lleva este componente y no Lenis: Lenis no cancela el salto nativo, resta dos
- * veces el margen y mide con las transformaciones de las animaciones; acababa en otra sección.
+ * Smooth scrolling with Lenis across the site. It is not turned on with reduced motion (scrolling stays
+ * the system's) and it leaves areas with their own scroll alone: wide tables and the mobile menu.
+ * On a page change it goes back to the top without animation, as the browser would. A link to the current
+ * page (the logo on the home page, "Back to the start" in the footer) glides up to the top.
+ * The URL keeps no "#": it scrolls to the section and the address stays clean.
+ * Anchors (#section) are handled by this component, not by Lenis: Lenis does not cancel the native jump,
+ * subtracts the margin twice and measures with the animations' transforms; it ended up on another section.
  */
 export function SmoothScroll() {
   const pathname = usePathname();
@@ -47,7 +47,7 @@ export function SmoothScroll() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const instance = new Lenis({
       autoRaf: true,
-      // Más inercia que el valor por defecto: el scroll se desliza y se posa, sin frenazos.
+      // More inertia than the default: the scroll glides and settles, without sudden stops.
       lerp: 0.075,
       wheelMultiplier: 0.9,
       touchMultiplier: 1.4,
@@ -63,8 +63,8 @@ export function SmoothScroll() {
     };
   }, []);
 
-  // Al cambiar de página, arriba; si se llega con un ancla (/circuits/x#guide), a esa sección, y la URL se
-  // queda limpia, sin «#»: el ancla solo sirve para llegar.
+  // On a page change, to the top; if it arrives with an anchor (/circuits/x#guide), to that section, and the
+  // URL stays clean, without "#": the anchor only serves to get there.
   useEffect(() => {
     const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
     const target = id && id !== "top" ? document.getElementById(id) : null;
@@ -82,11 +82,11 @@ export function SmoothScroll() {
       const link = (event.target as Element | null)?.closest?.("a[href]");
       if (!(link instanceof HTMLAnchorElement)) return;
       const url = new URL(link.href);
-      // Ancla en la misma página: se cancela el salto nativo y se desliza hasta debajo de las barras.
+      // An anchor on the same page: the native jump is cancelled and it glides to just below the bars.
       if (url.origin === location.origin && url.pathname === location.pathname && url.hash && url.hash !== "#top") {
         const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
         if (!target) return;
-        // Sin stopPropagation: la pestaña del subencabezado escucha el mismo clic.
+        // No stopPropagation: the sub-navigation tab listens to the same click.
         event.preventDefault();
         scrollToAnchor(target);
         target.focus({ preventScroll: true });
@@ -94,7 +94,7 @@ export function SmoothScroll() {
       }
       const toTop = url.hash === "#top" || (url.origin === location.origin && url.pathname === location.pathname && !url.hash);
       if (!toTop || url.pathname !== location.pathname) return;
-      // Antes que el enlace de Next (fase de captura): no navega, solo sube.
+      // Before Next's link (capture phase): it does not navigate, it only scrolls up.
       event.preventDefault();
       event.stopPropagation();
       if (lenis.current) lenis.current.scrollTo(0, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });

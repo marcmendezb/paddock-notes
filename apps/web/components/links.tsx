@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ConstructorRef, DriverRef, Lang } from "@paddock/shared";
 import { fullName } from "@/lib/format";
 
-/** Enlaces cruzados automáticos a las fichas (TRA-04). */
+/** Automatic cross-links to profiles (TRA-04). */
 
 export function DriverLink({ lang, driver }: { lang: Lang; driver: DriverRef }) {
   return <Link href={`/${lang}/drivers/${driver.id}`}>{fullName(driver)}</Link>;

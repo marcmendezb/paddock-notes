@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { env, exports } from "cloudflare:workers";
-// En los tests sí se puede escribir: la regla D-14 solo afecta al código de src/.
+// Tests may write: the D-14 rule only applies to the code in src/.
 import { createF1Writer } from "@paddock/db/f1-write";
 import {
   constructorStandingsResponseSchema,
@@ -43,7 +43,7 @@ beforeAll(async () => {
     },
     new Date("2026-11-01T04:00:00Z"),
   );
-  // Q1–Q3 y paradas reales de la ronda 19, guardadas como ronda 1 para tener una ronda completa.
+  // Real Q1 to Q3 and pit stops from round 19, stored as round 1 to have a complete round.
   const q = normalizeQualifying(2026, 1, resultsResponseSchema.parse(quali).MRData.RaceTable.Races[0]!.QualifyingResults!);
   const p = normalizePitStops(2026, 1, resultsResponseSchema.parse(pits).MRData.RaceTable.Races[0]!.PitStops!);
   await writer.write({ drivers: q.drivers, constructors: q.constructors, qualifying: q.qualifying, pitStops: p });

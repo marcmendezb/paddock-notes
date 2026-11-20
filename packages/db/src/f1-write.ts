@@ -1,7 +1,7 @@
 /**
- * Escritura de datos de F1. Solo puede importarlo `paddock-ingest` (D-14):
- * la regla `no-restricted-imports` y el test de arquitectura lo hacen cumplir.
- * Todas las escrituras son idempotentes (INSERT ... ON CONFLICT DO UPDATE).
+ * F1 data writes. Only `paddock-ingest` may import it (D-14):
+ * the `no-restricted-imports` rule and the architecture test enforce it.
+ * Every write is idempotent (INSERT ... ON CONFLICT DO UPDATE).
  */
 import { drizzle } from "drizzle-orm/d1";
 import { and, eq, getTableColumns, sql, type SQL } from "drizzle-orm";
@@ -21,7 +21,7 @@ import type {
 } from "@paddock/shared/jolpica";
 import * as schema from "./schema";
 
-/** D1 admite como máximo 100 parámetros por consulta. */
+/** D1 allows at most 100 parameters per query. */
 const MAX_PARAMS = 100;
 
 type Db = ReturnType<typeof drizzle<typeof schema>>;
@@ -70,7 +70,7 @@ export interface WriteBatch {
   qualifying?: QualifyingRow[];
   pitStops?: PitStopRow[];
   laps?: LapRow[];
-  /** Recursos que esta escritura deja actualizados (`ingest_state`). */
+  /** Resources this write leaves updated (`ingest_state`). */
   resources?: string[];
 }
 
@@ -78,7 +78,7 @@ export function createF1Writer(d1: D1Database) {
   const db = drizzle(d1, { schema });
 
   return {
-    /** Escribe todo en una sola transacción de D1 (db.batch) y devuelve las filas escritas. */
+    /** Writes everything in a single D1 transaction (db.batch) and returns the rows written. */
     async write(batch: WriteBatch, now = new Date()): Promise<number> {
       const updatedAt = now.toISOString();
       const queries = [
@@ -129,8 +129,8 @@ export function createF1Writer(d1: D1Database) {
     },
 
     /**
-     * Sustituye el resultado provisional de una carrera (D-31): borra el anterior y escribe el nuevo en la
-     * misma transacción. Sin filas, solo borra (por ejemplo, cuando ya está el oficial).
+     * Replaces a race's provisional result (D-31): deletes the previous one and writes the new one in the
+     * same transaction. Without rows, it only deletes (for example, once the official one exists).
      */
     async replaceProvisional(season: number, round: number, rows: Omit<typeof schema.provisionalResults.$inferInsert, "season" | "round">[]) {
       const where = and(eq(schema.provisionalResults.season, season), eq(schema.provisionalResults.round, round));
@@ -144,7 +144,7 @@ export function createF1Writer(d1: D1Database) {
       return rows.length;
     },
 
-    /** Resultados ya guardados de una carrera, para la cuarentena (seguridad.md §8). */
+    /** Results already stored for a race, for the quarantine (security.md §8). */
     async existingResults(season: number, round: number) {
       return db.query.results.findMany({
         where: (r, { and, eq }) => and(eq(r.season, season), eq(r.round, round)),
@@ -161,7 +161,7 @@ export function createF1Writer(d1: D1Database) {
         });
     },
 
-    /** Estado guardado en `ingest_state` (por ejemplo, el avance de la carga del histórico). */
+    /** State stored in `ingest_state` (for example, the history backfill's progress). */
     async getState(resource: string): Promise<string | null> {
       const row = await db.query.ingestState.findFirst({ where: (s, { eq }) => eq(s.resource, resource) });
       return row?.updatedAt ?? null;
@@ -194,8 +194,8 @@ export function createF1Writer(d1: D1Database) {
 export type F1Writer = ReturnType<typeof createF1Writer>;
 
 /**
- * Cuenta las filas de un resultado consolidado que cambiarían. Si superan el umbral,
- * la ingesta se detiene en lugar de sobrescribir (cuarentena, seguridad.md §8).
+ * Counts the rows of a settled result that would change. If they exceed the threshold, ingestion stops
+ * instead of overwriting (quarantine, security.md §8).
  */
 export function changedResultRows(
   existing: { driverId: string; kind: string; position: number | null; points: number; status: string }[],

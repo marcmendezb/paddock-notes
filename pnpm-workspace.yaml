@@ -4,18 +4,18 @@ packages:
   - packages/*
   - e2e
 
-# D-19: no se instala ninguna versión publicada hace menos de 14 días (en minutos).
-# Un parche de seguridad urgente se añade a minimumReleaseAgeExclude y se revisa en el PR.
+# D-19: no version published less than 14 days ago is installed (in minutes).
+# An urgent security patch is added to minimumReleaseAgeExclude and reviewed in the PR.
 minimumReleaseAge: 20160
 
-# Scripts de instalación desactivados salvo en esta lista (seguridad.md §12).
+# Install scripts are off except for this list (security.md §12).
 onlyBuiltDependencies:
   - esbuild
   - workerd
   - sharp
 
-# Parches de seguridad en dependencias transitivas de herramientas (pnpm audit, 5 nov 2026).
-# Todas las versiones corregidas cumplen ya los 14 días de D-19.
+# Security patches for tools' transitive dependencies (pnpm audit, 5 Nov 2026).
+# Every fixed version already meets D-19's 14 days.
 overrides:
   undici@>=7.0.0 <7.30.1: ^7.30.1
   zod@>=4.0.0 <4.6.6: ^4.6.6

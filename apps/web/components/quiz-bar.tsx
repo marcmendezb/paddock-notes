@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Barra fija al pie del quiz: una casilla por pregunta, que se rellena al contestarla, y el botón de
- * comprobar. Cuenta las respuestas escuchando el formulario; sin JavaScript, la barra sale vacía y el
- * botón funciona igual.
+ * A sticky bar at the foot of the quiz: one box per question, filled in when answered, and the check
+ * button. It counts the answers by listening to the form; without JavaScript, the bar shows empty and the
+ * button works the same.
  */
-/** `template` lleva «{n}» y «{total}»: una función no puede pasar del servidor al cliente. */
+/** `template` carries "{n}" and "{total}": a function cannot be passed from the server to the client. */
 export function QuizBar({ total, template, button }: { total: number; template: string; button: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [done, setDone] = useState<Set<string>>(new Set());

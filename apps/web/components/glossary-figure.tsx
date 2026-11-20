@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
 /**
- * Ejemplo gráfico de cada término del glosario (CON-02). Un lenguaje común de pocas piezas —línea de
- * vueltas con stints, curva de tiempos, trazado, silueta del coche, neumático, parrilla y barras— que cada
- * término combina a su manera. Lima y lila sobre negro; los rótulos, neutros respecto al idioma (P1, V12,
- * +5 s, S/M/H). Decorativo: la definición y el ejemplo van en el texto de la página. SVG estático (D-04).
+ * A graphic example for each glossary term (CON-02). A shared language of a few pieces (a lap line with
+ * stints, a lap time curve, a layout, the car's silhouette, a tyre, a grid and bars) that each term
+ * combines in its own way. Lime and lilac on black; labels that work in any language (P1, L12, +5 s,
+ * S/M/H). Decorative: the definition and the example are in the page text. Static SVG (D-04).
  */
 
 const W = 400;
@@ -19,7 +19,7 @@ const T = ({ x, y, children, anchor = "middle", cls = "gf-t" }: { x: number; y: 
   </text>
 );
 
-/** Eje de vueltas (de 1 a `laps`) a la altura `y`. */
+/** Lap axis (from 1 to `laps`) at height `y`. */
 const LapAxis = ({ y = 170, laps = 50 }: { y?: number; laps?: number }) => (
   <g>
     <line x1={30} x2={370} y1={y} y2={y} className="gf-axis" />
@@ -32,7 +32,7 @@ const LapAxis = ({ y = 170, laps = 50 }: { y?: number; laps?: number }) => (
 );
 const lapX = (l: number, laps = 50) => 30 + ((l - 1) / (laps - 1)) * 340;
 
-/** Fila de stints: compuestos (S, M, H, I, W) entre las vueltas de parada. */
+/** A row of stints: compounds (S, M, H, I, W) between the pit laps. */
 function Stints({ y, stops, comps, label, laps = 50, hl }: { y: number; stops: number[]; comps: string[]; label?: string; laps?: number; hl?: number }) {
   const edges = [1, ...stops, laps];
   return (
@@ -61,17 +61,17 @@ function Stints({ y, stops, comps, label, laps = 50, hl }: { y: number; stops: n
   );
 }
 
-/** Curva por vueltas: `pts` son valores 0–1 (arriba = más lento). */
+/** A curve over laps: `pts` are values from 0 to 1 (up = slower). */
 function Curve({ pts, cls = "gf-a", y0 = 30, y1 = 150 }: { pts: number[]; cls?: string; y0?: number; y1?: number }) {
   const d = pts.map((v, i) => `${i ? "L" : "M"}${(30 + (i / (pts.length - 1)) * 340).toFixed(1)},${(y0 + v * (y1 - y0)).toFixed(1)}`).join("");
   return <path d={d} className={`gf-curve ${cls}`} />;
 }
 
-/** Trazado esquemático (un óvalo con chicane) y su recorrido. */
+/** A schematic layout (an oval with a chicane) and its path. */
 const TRACK = "M70,150 C40,150 30,120 40,95 C55,55 95,40 150,45 L250,45 C300,45 340,60 355,90 C368,118 350,150 310,150 L230,150 C215,150 210,135 195,135 C180,135 175,150 160,150 Z";
 const Track = ({ cls = "gf-track" }: { cls?: string }) => <path d={TRACK} className={cls} />;
 
-/** Coche de perfil, mirando a la derecha, con su caja en (x, y). */
+/** The car in profile, facing right, with its box at (x, y). */
 const Car = ({ x = 120, y = 110, s = 1, cls = "gf-car" }: { x?: number; y?: number; s?: number; cls?: string }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`} className={cls}>
     <path d="M0,0 L18,-4 L40,-6 L60,-14 L85,-14 L95,-6 L150,-4 L160,0 L160,6 L0,6 Z" className="gf-car-body" />
@@ -83,7 +83,7 @@ const Car = ({ x = 120, y = 110, s = 1, cls = "gf-car" }: { x?: number; y?: numb
   </g>
 );
 
-/** Coche visto desde arriba, pequeño, para trazados y parrillas. */
+/** The car seen from above, small, for layouts and grids. */
 const Dot = ({ x, y, cls = "gf-dot", label }: { x: number; y: number; cls?: string; label?: string }) => (
   <g>
     <rect x={x - 9} y={y - 5} width={18} height={10} className={cls} />
@@ -109,7 +109,7 @@ const Arrow = ({ x1, y1, x2, y2, cls = "gf-arrow" }: { x1: number; y1: number; x
   );
 };
 
-/** Neumático visto de lado con su banda de color y letra. */
+/** A tyre seen from the side with its colour band and letter. */
 const Tyre = ({ x, y, r = 34, c, cls }: { x: number; y: number; r?: number; c: string; cls?: string }) => (
   <g className={cls}>
     <circle cx={x} cy={y} r={r} className="gf-tyre" />
@@ -121,7 +121,7 @@ const Tyre = ({ x, y, r = 34, c, cls }: { x: number; y: number; r?: number; c: s
   </g>
 );
 
-/** Barras horizontales con valor (de 0 a 1) y rótulo. */
+/** Horizontal bars with a value (from 0 to 1) and a label. */
 const Bars = ({ rows, y = 40, gap = 30 }: { rows: { label: string; v: number; cls?: string; text?: string }[]; y?: number; gap?: number }) => (
   <g>
     {rows.map((r, i) => (
@@ -154,12 +154,12 @@ const Grid = ({ n = 10, hl = {} as Record<number, string>, x0 = 70 }: { n?: numb
   </g>
 );
 
-// ---- Figuras por término -----------------------------------------------------------------------------
+// ---- Figures per term --------------------------------------------------------------------------------
 
 const wave = (n: number, f: (i: number) => number) => Array.from({ length: n }, (_, i) => f(i / (n - 1)));
 
 const FIGURES: Record<string, Fig> = {
-  // Carrera y estrategia
+  // Race and strategy
   undercut: () => (
     <>
       <Stints y={70} stops={[18]} comps={["M", "H"]} label="A" hl={1} />
@@ -272,7 +272,7 @@ const FIGURES: Record<string, Fig> = {
     </>
   ),
 
-  // Neumáticos
+  // Tyres
   compound: () => (
     <>
       <Tyre x={95} y={100} c="S" />
@@ -353,7 +353,7 @@ const FIGURES: Record<string, Fig> = {
     </>
   ),
 
-  // Aerodinámica y coche
+  // Aerodynamics and the car
   downforce: () => (
     <>
       <Car />
@@ -523,7 +523,7 @@ const FIGURES: Record<string, Fig> = {
     </>
   ),
 
-  // Timing y datos
+  // Timing and data
   delta: () => (
     <>
       <line x1={30} x2={370} y1={100} y2={100} className="gf-axis gf-dash" />
@@ -620,7 +620,7 @@ const FIGURES: Record<string, Fig> = {
     </>
   ),
 
-  // Paddock y fin de semana
+  // Paddock and the weekend
   paddock: () => (
     <>
       {[0, 1, 2, 3, 4].map((i) => (

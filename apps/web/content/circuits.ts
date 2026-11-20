@@ -1,10 +1,10 @@
 import type { Lang } from "@paddock/shared";
 
 /**
- * Notas editoriales de las frenadas (NUC-44, CON-05). Cada nota se sitúa en la vuelta con `at` (0 = línea de
- * meta, 1 = vuelta completa) y se casa con la frenada detectada más cercana, a menos de `TOLERANCE`.
- * Así no depende del número de frenadas que detecte cada año. `turn` es el número oficial de la curva.
- * Solo se escriben notas comprobadas contra la telemetría del circuito (contenido.md §5.4).
+ * Editorial notes for the braking zones (NUC-44, CON-05). Each note is placed on the lap with `at` (0 =
+ * finish line, 1 = full lap) and matched to the closest detected braking zone, within `TOLERANCE`.
+ * That way it does not depend on how many braking zones are detected each year. `turn` is the official
+ * corner number. Only notes checked against the circuit's telemetry are written (content.md §5.4).
  */
 export interface CornerNote {
   at: number;
@@ -15,7 +15,7 @@ export interface CornerNote {
 export const TOLERANCE = 0.03;
 
 export const CIRCUIT_NOTES: Record<string, CornerNote[]> = {
-  // Autódromo Hermanos Rodríguez. Comprobado con la telemetría de 2026 (vuelta de 4,15 km medida).
+  // Autódromo Hermanos Rodríguez. Checked against the 2026 telemetry (a measured 4.15 km lap).
   rodriguez: [
     {
       at: 0.277,
@@ -45,7 +45,7 @@ export const CIRCUIT_NOTES: Record<string, CornerNote[]> = {
       },
     },
   ],
-  // Circuito de las Américas (Austin). Comprobado con la telemetría de 2026 (vuelta de 5,39 km medida).
+  // Circuit of the Americas (Austin). Checked against the 2026 telemetry (a measured 5.39 km lap).
   americas: [
     {
       at: 0.115,
@@ -77,7 +77,7 @@ export const CIRCUIT_NOTES: Record<string, CornerNote[]> = {
   ],
 };
 
-/** La nota de cada frenada, si la hay: la más cercana dentro de la tolerancia, y cada nota una sola vez. */
+/** Each braking zone's note, if there is one: the closest within the tolerance, each note used once. */
 export function notesFor(circuitId: string, corners: { n: number; at: number }[]): Map<number, CornerNote> {
   const out = new Map<number, CornerNote>();
   for (const note of CIRCUIT_NOTES[circuitId] ?? []) {

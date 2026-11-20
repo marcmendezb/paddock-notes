@@ -2,13 +2,13 @@ import type { OpenF1RaceControl } from "@paddock/shared/openf1";
 import type { NeutralisedPeriod } from "./types";
 
 /**
- * Periodos de coche de seguridad, VSC y bandera roja a partir de los mensajes de dirección de carrera.
- * - Empieza con "DEPLOYED" (SC o VSC) o con "RED FLAG".
- * - Termina con "IN THIS LAP", "ENDING" o "RESUME", o cuando empieza otro periodo (un SC que acaba en
- *   bandera roja, por ejemplo).
- * - Si nunca se cierra, dura una vuelta.
- * Se ignoran los mensajes de luces del coche de seguridad y de los comisarios, y todo lo posterior a la
- * bandera a cuadros (México 2026: un comunicado de la vuelta 71 citaba la bandera roja de la 45).
+ * Safety car, VSC and red flag periods from the race control messages.
+ * - It starts with "DEPLOYED" (SC or VSC) or with "RED FLAG".
+ * - It ends with "IN THIS LAP", "ENDING" or "RESUME", or when another period starts (an SC that ends in a
+ *   red flag, for example).
+ * - If it never closes, it lasts one lap.
+ * Messages about the safety car lights and from the stewards are ignored, and so is everything after the
+ * chequered flag (Mexico 2026: a notice on lap 71 cited the red flag from lap 45).
  */
 export function neutralisedPeriods(messages: OpenF1RaceControl[], totalLaps: number): NeutralisedPeriod[] {
   const periods: NeutralisedPeriod[] = [];
@@ -18,9 +18,9 @@ export function neutralisedPeriods(messages: OpenF1RaceControl[], totalLaps: num
   for (const m of sorted) {
     const lap = m.lap_number!;
     const msg = m.message.toUpperCase();
-    // Tras la bandera a cuadros solo quedan mensajes de comisarios, que pueden citar periodos anteriores.
+    // After the chequered flag only stewards' messages remain, and they may cite earlier periods.
     if (m.flag === "CHEQUERED") break;
-    // Mensajes de los comisarios y de las luces del coche de seguridad: no abren ni cierran periodos.
+    // Stewards' and safety car light messages: they neither open nor close periods.
     if (msg.includes("LIGHTS") || msg.startsWith("FIA STEWARDS")) continue;
     const kind: NeutralisedPeriod["kind"] | null =
       msg.includes("VIRTUAL SAFETY CAR") || /\bVSC\b/.test(msg)

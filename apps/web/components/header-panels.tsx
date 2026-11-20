@@ -18,8 +18,8 @@ import { TOOL_ICON, TOOL_ORDER } from "@/lib/tools";
 import { Icon, type IconName } from "./icons";
 
 /**
- * Paneles anchos de la cabecera (TRA-01), con la misma forma que el de «Carreras»: tres columnas con datos
- * reales y una fila de accesos rápidos. Cada sección enseña lo que hay dentro y deja ir directo a ello.
+ * The header's wide panels (TRA-01), with the same shape as the "Races" one: three columns with real data
+ * and a row of shortcuts. Each section shows what is inside and lets you go straight to it.
  */
 
 const short = gpShortName;
@@ -29,7 +29,7 @@ const dayMonth = (lang: Lang, iso: string) =>
     .format(new Date(`${iso.slice(0, 10)}T12:00:00Z`))
     .replace(/\./g, "");
 
-/** Barra de puntos en porcentaje del líder (atributo SVG: sin estilos en línea, D-04). */
+/** A points bar as a percentage of the leader (SVG attribute: no inline styles, D-04). */
 function Bar({ value, max, lead }: { value: number; max: number; lead: boolean }) {
   return (
     <svg className={lead ? "mega-bar is-lead" : "mega-bar"} viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -39,7 +39,7 @@ function Bar({ value, max, lead }: { value: number; max: number; lead: boolean }
   );
 }
 
-/** Enlace con título y una línea que dice qué hay dentro. */
+/** A link with a title and a line saying what is inside. */
 function Described({ href, icon, name, line }: { href: string; icon: IconName; name: string; line: string }) {
   return (
     <li>
@@ -167,7 +167,7 @@ export function AnalysisPanel({
 }: {
   lang: Lang;
   analyses: { season: number; round: number; name: string; date: string; tools: string[] }[];
-  /** El próximo Gran Premio: su análisis es el siguiente que se publicará. */
+  /** The next Grand Prix: its analysis is the next one to be published. */
   next: RaceSummary | null;
 }) {
   const t = dict(lang);
@@ -241,8 +241,8 @@ export function AnalysisPanel({
 }
 
 /**
- * Cara a cara (D-35): el duelo por el título (P1 frente a P2, con la diferencia) y los duelos entre
- * compañeros de equipo de la temporada en curso, cada uno a un clic de su comparación.
+ * Head to head (D-35): the title fight (P1 against P2, with the gap) and the duels between teammates in the
+ * current season, each one a click away from its comparison.
  */
 export function ComparePanel({ lang, drivers }: { lang: Lang; drivers: Standings<DriverStandingRow> }) {
   const t = dict(lang);

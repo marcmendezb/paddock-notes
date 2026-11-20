@@ -308,7 +308,7 @@ describe("post-race analysis workflow (D-08)", () => {
     expect(await advanceAnalysis(testEnv, now)).toMatch(/^creada: postrace-2026-1-/);
     expect(await advanceAnalysis(testEnv, now + 1)).toMatch(/^activa:/);
     statuses[created[0]!.id] = "errored";
-    expect(await advanceAnalysis(testEnv, now + 2)).toBe("al día");
+    expect(await advanceAnalysis(testEnv, now + 2)).toBe("up to date");
     expect(created).toHaveLength(1);
   });
 
@@ -318,7 +318,7 @@ describe("post-race analysis workflow (D-08)", () => {
     const writer = createF1Writer(env.DB);
     const row = { season: 2026, round: 1, sessionKey: 1, tools: ["strategy"], telemetryDrivers: [], weather: null, createdAt: "2026-03-08T10:00:00Z" };
     await writer.saveAnalysis({ ...row, version: ANALYSIS_VERSION });
-    expect(await advanceAnalysis(fakePostRace().testEnv, Date.parse("2026-03-10T12:00:00Z"))).toBe("al día");
+    expect(await advanceAnalysis(fakePostRace().testEnv, Date.parse("2026-03-10T12:00:00Z"))).toBe("up to date");
     await writer.saveAnalysis({ ...row, version: ANALYSIS_VERSION - 1 });
     expect(await advanceAnalysis(fakePostRace().testEnv, Date.parse("2026-03-10T12:00:00Z"))).toMatch(/^creada: postrace-2026-1-/);
   });
@@ -328,9 +328,9 @@ describe("post-race analysis workflow (D-08)", () => {
     await runTask(env, "schedule", Date.parse("2026-03-10T12:00:00Z"));
     const { created, testEnv } = fakePostRace();
     // Chinese GP FP1: March 13 at 03:30 UTC.
-    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T04:00:00Z"))).toBe("aplazada: sesión en directo");
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T04:00:00Z"))).toBe("deferred: live session");
     // Defers in preceding window: OpenF1 closes 30 minutes before session start.
-    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T03:00:00Z"))).toBe("aplazada: sesión en directo");
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T03:00:00Z"))).toBe("deferred: live session");
     expect(created).toHaveLength(0);
     expect(await advanceAnalysis(testEnv, Date.parse("2026-03-13T12:00:00Z"))).toMatch(/^creada:/);
   });
@@ -339,7 +339,7 @@ describe("post-race analysis workflow (D-08)", () => {
     mockJolpica();
     await runTask(env, "schedule", Date.parse("2026-03-08T07:00:00Z"));
     const { created, testEnv } = fakePostRace();
-    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-08T07:00:00Z"))).toBe("al día");
+    expect(await advanceAnalysis(testEnv, Date.parse("2026-03-08T07:00:00Z"))).toBe("up to date");
     expect(created).toHaveLength(0);
   });
 });

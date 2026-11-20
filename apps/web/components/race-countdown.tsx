@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 /**
- * Cuenta atrás de la cabecera de carrera: días, horas y minutos hasta la salida, viva (cada 30 s). En
- * cuanto empieza, «En directo»; dos horas después, nada. En el servidor se pinta con la hora de la petición.
+ * The race header's countdown: days, hours and minutes to the start, live (every 30 s). As soon as it
+ * starts, "Live"; two hours later, nothing. On the server it is painted with the request's time.
  */
 export function RaceCountdown({
   startsAt,

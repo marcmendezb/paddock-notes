@@ -7,8 +7,8 @@ import { dict } from "@/lib/i18n";
 import { LocalTime } from "./local-time";
 
 /**
- * Horarios del fin de semana (NUC-03) con la sesión en curso destacada (NUC-04).
- * El estado "en curso" se calcula en el cliente, al montar, para no provocar errores de hidratación.
+ * The weekend's times (NUC-03) with the live session highlighted (NUC-04).
+ * The "live" state is computed on the client, on mount, to avoid hydration errors.
  */
 export function SessionList({
   lang,

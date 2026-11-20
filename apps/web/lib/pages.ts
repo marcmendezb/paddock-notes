@@ -1,8 +1,8 @@
 import type { Lang } from "@paddock/shared";
 
 /**
- * Páginas de texto (contenido.md §3.9 y §10). Contenido mínimo para la fase 1; no sustituye el
- * asesoramiento de un profesional del derecho.
+ * Text pages (content.md §3.9 and §10). Minimum content for phase 1; no substitute for advice from a legal
+ * professional.
  */
 export interface TextPage {
   title: string;
@@ -199,7 +199,8 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         {
           paragraphs: [
             "Objetivo: WCAG 2.2 nivel AA. Cada página se revisa con teclado y con axe en cada cambio.",
-            "Problemas conocidos: los gráficos interactivos todavía no existen; cuando lleguen, cada uno tendrá una tabla equivalente.",
+            "Cada gráfico tiene una tabla equivalente con los mismos datos, y los interactivos se recorren con el teclado.",
+            "Problemas conocidos: la tira de horarios de la cabecera y el vídeo del inicio se mueven y no se pueden pausar (criterio 2.2.2). Con «reducir movimiento» activado en tu sistema, los dos se quedan quietos.",
             "Si encuentras una barrera, escríbenos y la corregiremos.",
           ],
         },
@@ -212,7 +213,8 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         {
           paragraphs: [
             "Target: WCAG 2.2 level AA. Every page is checked with a keyboard and with axe on every change.",
-            "Known issues: interactive charts don't exist yet; when they arrive, each one will have an equivalent table.",
+            "Every chart has an equivalent table with the same data, and interactive charts can be explored with the keyboard.",
+            "Known issues: the timing strip in the header and the home page video move and can't be paused (criterion 2.2.2). With \"reduce motion\" turned on in your system, both stay still.",
             "If you find a barrier, tell us and we'll fix it.",
           ],
         },
@@ -225,7 +227,8 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
         {
           paragraphs: [
             "Ziel: WCAG 2.2 Stufe AA. Jede Seite wird bei jeder Änderung mit der Tastatur und mit axe geprüft.",
-            "Bekannte Probleme: Interaktive Grafiken gibt es noch nicht; wenn sie kommen, bekommt jede eine gleichwertige Tabelle.",
+            "Jede Grafik hat eine gleichwertige Tabelle mit denselben Daten, und interaktive Grafiken lassen sich mit der Tastatur bedienen.",
+            "Bekannte Probleme: Das Zeitband in der Kopfzeile und das Video auf der Startseite bewegen sich und lassen sich nicht anhalten (Kriterium 2.2.2). Mit „Bewegung reduzieren“ in deinem System bleiben beide still.",
             "Wenn du auf eine Barriere stößt, sag es uns, und wir beheben sie.",
           ],
         },

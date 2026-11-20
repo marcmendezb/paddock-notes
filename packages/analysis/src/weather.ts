@@ -1,7 +1,7 @@
 import type { OpenF1Weather } from "@paddock/shared/openf1";
 import type { WeatherSummary } from "./types";
 
-/** Clima de la sesión (NUC-27): mínimo y máximo de aire y pista, y si llovió en algún momento. */
+/** Session weather (NUC-27): minimum and maximum air and track temperature, and whether it rained at any point. */
 export function weatherSummary(samples: OpenF1Weather[]): WeatherSummary | null {
   if (samples.length === 0) return null;
   const range = (values: (number | null | undefined)[]): [number, number] | null => {

@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { ERROR_STATUS, type ApiError, type ErrorCode } from "@paddock/shared";
 
-/** Error del contrato de la API (D-06). El mensaje es público: nunca lleva detalles internos. */
+/** An API contract error (D-06). The message is public: it never carries internal details. */
 export class HttpError extends Error {
   constructor(
     readonly code: ErrorCode,

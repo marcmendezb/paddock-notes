@@ -1,9 +1,9 @@
 import { DurableObject } from "cloudflare:workers";
 
 /**
- * Limitador global de peticiones salientes (D-10): una instancia por host.
- * El cron y los Workflows comparten la cuenta aunque se ejecuten a la vez.
- * Guarda los instantes de las peticiones de la última ventana en el almacenamiento del Durable Object.
+ * Global outbound request limiter (D-10): one instance per host.
+ * The cron and the Workflows share the count even when they run at the same time.
+ * It keeps the instants of the requests in the last window in the Durable Object's storage.
  */
 export interface LimitPolicy {
   perSecond: number;
@@ -12,7 +12,7 @@ export interface LimitPolicy {
 }
 
 export interface Permit {
-  /** 0 si se concede el permiso; si no, milisegundos que hay que esperar antes de volver a pedirlo. */
+  /** 0 if permission is granted; otherwise, the milliseconds to wait before asking again. */
   waitMs: number;
 }
 
@@ -50,7 +50,7 @@ export class OutboundLimiter extends DurableObject {
     return { waitMs: 0 };
   }
 
-  /** La fuente respondió 429: no se le vuelve a llamar hasta que pase `Retry-After`. */
+  /** The source answered 429: it is not called again until `Retry-After` has passed. */
   async penalize(retryAfterMs: number, now = Date.now()): Promise<void> {
     const state = await this.load();
     state.blockedUntil = Math.max(state.blockedUntil, now + retryAfterMs);

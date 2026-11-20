@@ -1,9 +1,9 @@
 import type { Lang, RoundStatus, SessionKind } from "@paddock/shared";
 
-/** Textos de la interfaz (contenido.md §3 y §9). ES y EN se escriben por separado. */
+/** Interface copy (content.md §3 and §9). Each language is written separately (D-29). */
 const es = {
   name: "Paddock Notes",
-  /** El eslogan de Paddock Notes (marca.md §1). */
+  /** Paddock Notes' tagline (brand.md §1). */
   tagline: "La Fórmula 1, explicada con datos.",
   skip: "Saltar al contenido",
   otherLang: "English",
@@ -196,7 +196,7 @@ const es = {
     board: {
       done: "Terminada",
       live: "En directo",
-      /** «{in}» se sustituye por lo que falta: se pasa como texto a un componente de cliente. */
+      /** "{in}" is replaced with the time left: passed as text to a client component. */
       next: "Siguiente · en {in}",
       nextShort: "Siguiente",
       short: { fp1: "L1", fp2: "L2", fp3: "L3", sprint_qualifying: "Clas. sprint", sprint: "Sprint", qualifying: "Clasif.", race: "Carrera" },

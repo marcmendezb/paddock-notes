@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const HREF: Record<SearchResult["kind"], string> = { driver: "drivers", constructor: "constructors", circuit: "circuits" };
 
-/** Búsqueda global (TRA-03). Formulario GET: funciona sin JavaScript; el atajo "/" lo abre. */
+/** Global search (TRA-03). A GET form: it works without JavaScript; the "/" shortcut opens it. */
 export default async function SearchPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const q = ((await searchParams).q ?? "").trim().slice(0, 50);

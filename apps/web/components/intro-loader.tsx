@@ -1,12 +1,12 @@
 /**
- * Entrada de la web: pantalla negra, el símbolo se dibuja de un trazo, cae el punto lima, una línea de carga
- * se completa y la pantalla sube como una cortina. Dura 1,4 s, una vez por sesión. Todo es CSS: sin
- * JavaScript también termina sola; el script del layout solo la salta si ya se vio en esta sesión. Con
- * «reducir movimiento» no aparece. Decorativa: no recibe foco ni lectores de pantalla.
+ * The site's entrance: a black screen, the mark draws itself in one stroke, the lime dot drops, a loading
+ * line completes and the screen rises like a curtain. It lasts 1.4 s, once per session. It is all CSS:
+ * without JavaScript it also finishes on its own; the layout script only skips it if it was already seen
+ * this session. With "reduce motion" it does not appear. Decorative: it takes no focus and is hidden from screen readers.
  */
 const LOGO_PATH = "M6 41V17A7 7 0 0 1 20 17V33M20 23A7 7 0 0 1 6 23M20 17A7 7 0 0 1 34 17V33";
 
-/** Marca la sesión: si ya se vio, <html data-intro="seen"> y la entrada no se pinta. Sin <, > ni &. */
+/** Marks the session: if already seen, <html data-intro="seen"> and the entrance is not painted. No <, > or &. */
 export const INTRO_SCRIPT =
   'try{if(sessionStorage.getItem("pn-intro")){document.documentElement.dataset.intro="seen"}else{sessionStorage.setItem("pn-intro","1")}}catch(e){document.documentElement.dataset.intro="seen"}';
 

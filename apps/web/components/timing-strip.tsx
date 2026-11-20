@@ -9,10 +9,10 @@ import { localeOf } from "@/lib/format";
 export interface StripLabels {
   next: string;
   live: string;
-  /** Los eventos que vienen después del siguiente. */
+  /** The events after the next one. */
   later: string;
   sessions: Record<SessionKind, string>;
-  /** Con «{in}» donde va lo que falta. */
+  /** With "{in}" where the time left goes. */
   inText: string;
   units: { d: string; h: string; m: string };
 }
@@ -24,7 +24,7 @@ export interface TickerItem {
   href: string;
 }
 
-/** Un Gran Premio por venir: sus sesiones, si las conocemos, o solo su salida. */
+/** An upcoming Grand Prix: its sessions, if we know them, or just its start. */
 export interface TickerRace {
   href: string;
   gp: string;
@@ -54,12 +54,12 @@ interface Event {
 }
 
 /**
- * El cronometraje de lo alto de cada página, como el de una retransmisión. A la izquierda, fijo, lo que
- * está en directo (con el cuadrado del logo latiendo) o, si no hay nada, el próximo evento; a su lado pasa
- * el resto, alternando dato y evento: dato, evento, dato, evento… Los eventos son las sesiones que quedan del próximo GP y
- * los Grandes Premios siguientes. Se recalcula solo cada 30 s y vuelve a pedir los datos cada 10 minutos.
+ * The timing strip at the top of every page, like a broadcast's. On the left, fixed, what is live (with the
+ * logo's square pulsing) or, if nothing is, the next event; beside it the rest scrolls past, alternating
+ * fact and event: fact, event, fact, event… The events are the remaining sessions of the next Grand Prix and
+ * the following Grands Prix. It recomputes itself every 30 s and fetches the data again every 10 minutes.
  *
- * Se desplaza siempre, por decisión del autor; con «reducir movimiento» en el sistema, queda quieto.
+ * It always scrolls, by the author's decision; with "reduce motion" in the system, it stays still.
  */
 export function TimingStrip({
   races,
@@ -76,7 +76,7 @@ export function TimingStrip({
 }) {
   const router = useRouter();
   const [now, setNow] = useState(serverNow);
-  // Zona del visitante: en el servidor no se conoce; hasta montar, las horas salen en UTC.
+  // The visitor's time zone: unknown on the server; until mounting, times show in UTC.
   const [zone, setZone] = useState("UTC");
   useEffect(() => {
     setZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -101,7 +101,7 @@ export function TimingStrip({
       .format(new Date(iso))
       .replace(/\./g, "");
 
-  // Eventos: cada sesión que no ha terminado (en directo o por venir) y, de los GP sin sesiones, la salida.
+  // Events: every session that has not finished (live or upcoming) and, for Grands Prix without sessions, the start.
   const events: Event[] = [];
   for (const race of races) {
     const timed = race.sessions.filter((s): s is ScheduleSession & { startsAt: string } => s.startsAt !== null);
@@ -131,8 +131,8 @@ export function TimingStrip({
       });
     }
   }
-  // Lo que está en directo va siempre primero. Solo el primer evento por venir es «Siguiente»; los demás,
-  // «Después».
+  // Whatever is live always goes first. Only the first upcoming event is "Next"; the others,
+  // "Later".
   events.sort((a, b) => Number(b.live) - Number(a.live));
   let firstUpcoming = true;
   for (const e of events) {
@@ -141,8 +141,8 @@ export function TimingStrip({
     firstUpcoming = false;
   }
 
-  // El primero (en directo o el siguiente) va fijo a la izquierda y no se desplaza; el resto pasa al lado:
-  // dato, evento, dato, evento… hasta agotar los dos.
+  // The first one (live or next) is fixed on the left and does not scroll; the rest pass beside it:
+  // fact, event, fact, event… until both run out.
   const [lead, ...rest] = events;
   type Entry = { kind: "event"; event: Event } | { kind: "data"; item: TickerItem };
   const sequence: Entry[] = [];

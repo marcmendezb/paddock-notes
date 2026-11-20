@@ -3,8 +3,8 @@ import { isNeutralised } from "./neutralised";
 import type { DriverInfo, NeutralisedPeriod, PaceData } from "./types";
 
 /**
- * Ritmo de carrera (TEC-03): tiempo de cada vuelta, con las vueltas que distorsionan la comparación
- * marcadas (salida, entrada y salida de boxes, coche de seguridad), y media y pendiente por stint.
+ * Race pace (TEC-03): each lap's time, with the laps that distort the comparison marked (the start, pit
+ * entry and exit, safety car), and the mean and slope per stint.
  */
 export function pace(
   drivers: DriverInfo[],
@@ -50,7 +50,7 @@ export function pace(
   };
 }
 
-/** Recta de mínimos cuadrados; null con menos de 3 puntos. */
+/** A least-squares line; null with fewer than 3 points. */
 export function linearFit(points: [number, number][]): { slope: number; intercept: number } | null {
   if (points.length < 3) return null;
   const n = points.length;
@@ -72,10 +72,10 @@ const round3 = (v: number) => Math.round(v * 1000) / 1000;
 type PaceLap = PaceData["drivers"][number]["laps"][number];
 type PaceStint = PaceData["drivers"][number]["stints"][number];
 
-/** Margen sobre la mediana del piloto a partir del cual una vuelta es anómala y no cuenta para el ritmo. */
+/** Margin over the driver's median beyond which a lap is anomalous and does not count for pace. */
 const SLOW_FACTOR = 1.07;
 
-/** Marca como `slow` las vueltas limpias mucho más lentas que la mediana del piloto. */
+/** Marks as `slow` the clean laps that are much slower than the driver's median. */
 export function markSlowLaps(laps: PaceLap[]): PaceLap[] {
   const clean = laps.filter((l) => l.excluded === null).map((l) => l.time).sort((a, b) => a - b);
   if (clean.length === 0) return laps;
@@ -83,7 +83,7 @@ export function markSlowLaps(laps: PaceLap[]): PaceLap[] {
   return laps.map((l) => (l.excluded === null && l.time > median * SLOW_FACTOR ? { ...l, excluded: "slow" as const } : l));
 }
 
-/** Media, pendiente y recta de tendencia de cada stint con sus vueltas limpias. */
+/** Mean, slope and trend line of each stint with its clean laps. */
 export function stintStats(laps: PaceLap[], stints: { stint: number; fromLap: number; toLap: number }[]): PaceStint[] {
   return stints.map((s) => {
     const clean = laps.filter((r) => r.stint === s.stint && r.excluded === null);
@@ -103,8 +103,8 @@ export function stintStats(laps: PaceLap[], stints: { stint: number; fromLap: nu
 }
 
 /**
- * Recalcula las vueltas anómalas y las estadísticas de un análisis ya guardado: los de la v1 no excluían
- * las vueltas lentas. Sirve para pintar bien lo que hay en R2 mientras se vuelve a analizar.
+ * Recomputes the anomalous laps and the statistics of an already stored analysis: v1 ones did not exclude
+ * slow laps. It lets what is in R2 render correctly while it is analysed again.
  */
 export function repairPace(data: PaceData): PaceData {
   return {

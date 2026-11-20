@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Puntos recalculados con el sistema actual (HIS-06), siempre rotulados como recálculo. */
+/** Points recalculated under today's system (HIS-06), always labelled as a recalculation. */
 export default async function CurrentPointsPage({ params }: Props) {
   const p = await params;
   const lang = parseLang(p.lang);

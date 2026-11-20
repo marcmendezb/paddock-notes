@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-/** Un bloque que falla no tumba la página: muestra el aviso de error de datos (TRA-31, TRA-32). */
+/** A block that fails does not bring the page down: it shows the data error notice (TRA-31, TRA-32). */
 async function settle<T>(promise: Promise<Fetched<T> | null>): Promise<Fetched<T> | null | "error"> {
   try {
     return await promise;
@@ -65,14 +65,14 @@ export default async function HomePage({ params }: Params) {
     favoriteSet(),
     settle(api.schedule("current")),
   ]);
-  // Solo se enlaza el análisis de la última carrera si ya está calculado (NUC-08).
+  // The last race's analysis is only linked if it has been computed (NUC-08).
   const lastAnalysed =
     last && last !== "error" && last.data.season >= 2023
       ? await api.analysisIndex(last.data.season, last.data.round).catch(() => null)
       : null;
 
-  // Posiciones vuelta a vuelta del ganador (para el hero) y el trazado del circuito de la última carrera,
-  // para el fondo de la crónica.
+  // The winner's lap-by-lap positions (for the hero) and the layout of the last race's circuit,
+  // for the report's background.
   const [recapReplay, recapCircuit] =
     last && last !== "error"
       ? await Promise.all([
@@ -91,7 +91,7 @@ export default async function HomePage({ params }: Params) {
           ) : next && !(last && last !== "error" && next.data.season > last.data.season) ? (
             <NextGrandPrix lang={lang} next={next} previous={last && last !== "error" ? last.data : null} />
           ) : (
-            // Sin carreras por disputar en la temporada: campeón y arranque de la siguiente (NUC-07).
+            // No races left in the season: the champion and the start of the next one (NUC-07).
             <SeasonOver
               lang={lang}
               drivers={drivers}
@@ -158,7 +158,7 @@ export default async function HomePage({ params }: Params) {
   );
 }
 
-/** 79.328 → "1:19.328", la notación de la F1 (contenido.md §2). */
+/** 79.328 → "1:19.328", F1 notation (content.md §2). */
 function lapTimeText(seconds: number): string {
   const m = Math.floor(seconds / 60);
   return `${m}:${(seconds - m * 60).toFixed(3).padStart(6, "0")}`;
@@ -172,9 +172,9 @@ function coordinates(lang: Lang, lat: number, lng: number): string {
 }
 
 /**
- * Hero (NUC-01 a NUC-03) como una hoja de plano: el nombre del GP a toda escala, la cuenta atrás como una
- * cota que mide el hueco desde el GP anterior hasta la salida, el cajetín con los datos del circuito y el
- * fin de semana como una regla. El titular no se anima: es el LCP.
+ * Hero (NUC-01 to NUC-03) as a drawing sheet: the Grand Prix name at full scale, the countdown as a
+ * dimension line measuring the gap from the previous Grand Prix to the start, the title block with the
+ * circuit's details and the weekend as a ruler. The headline is not animated: it is the LCP.
  */
 async function NextGrandPrix({ lang, next, previous }: { lang: Lang; next: Fetched<RaceDetail>; previous: RaceDetail | null }) {
   const t = dict(lang);
@@ -322,7 +322,7 @@ async function NextGrandPrix({ lang, next, previous }: { lang: Lang; next: Fetch
               next: t.home.board.nextShort,
             }}
           />
-          {/* Los mismos horarios en texto, para lectores de pantalla: el calendario es un dibujo. */}
+          {/* The same times as text, for screen readers: the calendar is a drawing. */}
           <div className="visually-hidden">
             <SessionList lang={lang} sessions={race.sessions} circuitTimeZone={tz} />
           </div>
@@ -332,7 +332,7 @@ async function NextGrandPrix({ lang, next, previous }: { lang: Lang; next: Fetch
   );
 }
 
-/** Fin de temporada (NUC-07): la misma hoja, con el campeón a toda escala y la cota hasta la temporada siguiente. */
+/** End of season (NUC-07): the same sheet, with the champion at full scale and the dimension line to the next season. */
 function SeasonOver({
   lang,
   drivers,
@@ -341,7 +341,7 @@ function SeasonOver({
 }: {
   lang: Lang;
   drivers: Fetched<Standings<DriverStandingRow>> | null | "error";
-  /** Primer GP de la temporada siguiente, si su calendario ya está publicado. */
+  /** First Grand Prix of the next season, if its calendar is already published. */
   nextSeason: RaceDetail | null;
   previous: RaceDetail | null;
 }) {

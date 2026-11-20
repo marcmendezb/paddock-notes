@@ -3,7 +3,7 @@ import { createMailing } from "@paddock/db/mailing";
 import type { Env } from "./env";
 
 const DAY = 86_400_000;
-/** Cuentas inactivas durante 24 meses: aviso y, 30 días después, borrado (seguridad.md §17). */
+/** Accounts inactive for 24 months: a warning and, 30 days later, deletion (security.md §17). */
 export const INACTIVE_AFTER_MS = 730 * DAY;
 export const GRACE_MS = 30 * DAY;
 
@@ -26,8 +26,8 @@ function warning(lang: string, url: string) {
 }
 
 /**
- * Retención (seguridad.md §17): avisa a las cuentas inactivas y borra las que, avisadas hace más de 30 días,
- * siguen sin actividad. Un aviso solo vale si es posterior a la última actividad.
+ * Retention (security.md §17): warns inactive accounts and deletes those that, warned more than 30 days ago,
+ * are still inactive. A warning only counts if it is later than the last activity.
  */
 export async function purgeInactiveAccounts(env: Env, now = Date.now()) {
   const community = createCommunity(env.DB);
@@ -45,7 +45,7 @@ export async function purgeInactiveAccounts(env: Env, now = Date.now()) {
       warned++;
     }
   }
-  // Altas de la newsletter sin confirmar en 48 h: se borran.
+  // Newsletter sign-ups unconfirmed after 48 h: deleted.
   const pending = await createMailing(env.DB).purgePending(now);
   console.log(JSON.stringify({ event: "retention", warned, deleted, pending }));
   return { warned, deleted };

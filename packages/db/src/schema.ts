@@ -1,6 +1,6 @@
 import { index, integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-/** Tablas de datos de F1 (fase 1). Solo `paddock-ingest` escribe en ellas (D-14). */
+/** F1 data tables (phase 1). Only `paddock-ingest` writes to them (D-14). */
 
 export const circuits = sqliteTable("circuits", {
   id: text("id").primaryKey(),
@@ -39,7 +39,7 @@ export const races = sqliteTable(
     date: text("date").notNull(),
     startsAt: text("starts_at"),
     isSprintWeekend: integer("is_sprint_weekend", { mode: "boolean" }).notNull().default(false),
-    /** Marca manual: Jolpica no informa de cancelaciones (NUC-12). */
+    /** A manual flag: Jolpica does not report cancellations (NUC-12). */
     cancelled: integer("cancelled", { mode: "boolean" }).notNull().default(false),
   },
   (t) => [primaryKey({ columns: [t.season, t.round] }), index("races_date_idx").on(t.date)],
@@ -71,7 +71,7 @@ export const results = sqliteTable(
     constructorId: text("constructor_id")
       .notNull()
       .references(() => constructors.id),
-    /** Hasta 1957 un piloto podía compartir coche; el número distingue las entradas. */
+    /** Until 1957 a driver could share a car; the number tells the entries apart. */
     carNumber: integer("car_number").notNull().default(0),
     position: integer("position"),
     positionText: text("position_text").notNull(),
@@ -93,8 +93,8 @@ export const results = sqliteTable(
 );
 
 /**
- * Resultado provisional de una carrera, leído de OpenF1 minutos después de la bandera a cuadros (D-31).
- * Solo se sirve mientras Jolpica no publica el oficial y no cuenta para clasificaciones ni récords.
+ * A race's provisional result, read from OpenF1 minutes after the chequered flag (D-31).
+ * Only served while Jolpica has not published the official one, and it does not count for standings or records.
  */
 export const provisionalResults = sqliteTable(
   "provisional_results",
@@ -149,14 +149,14 @@ export const pitStops = sqliteTable(
     stop: integer("stop").notNull(),
     lap: integer("lap").notNull(),
     timeOfDay: text("time_of_day").notNull(),
-    /** Tiempo en el pit lane (entrada, parada y salida), no solo el tiempo parado. */
+    /** Time in the pit lane (entry, stop and exit), not just the stationary time. */
     duration: text("duration").notNull(),
     durationMs: integer("duration_ms"),
   },
   (t) => [primaryKey({ columns: [t.season, t.round, t.driverId, t.stop] })],
 );
 
-/** Una fila por piloto y vuelta (desde 1996). La tabla más grande: ~660.000 filas para todo el histórico. */
+/** One row per driver and lap (since 1996). The largest table: ~660,000 rows for the whole history. */
 export const laps = sqliteTable(
   "laps",
   {
@@ -182,7 +182,7 @@ export const standingsDrivers = sqliteTable(
     positionText: text("position_text").notNull(),
     points: real("points").notNull(),
     wins: integer("wins").notNull(),
-    /** JSON con los ID de constructores de la temporada. */
+    /** JSON with the season's constructor IDs. */
     constructorIds: text("constructor_ids", { mode: "json" }).$type<string[]>().notNull(),
   },
   (t) => [primaryKey({ columns: [t.season, t.round, t.driverId] })],
@@ -204,7 +204,7 @@ export const standingsConstructors = sqliteTable(
   (t) => [primaryKey({ columns: [t.season, t.round, t.constructorId] })],
 );
 
-/** Análisis de la zona técnica calculados tras cada carrera (fase 3). Los JSON viven en R2. */
+/** Technical zone analyses computed after each race (phase 3). The JSON lives in R2. */
 export const analysisArtifacts = sqliteTable(
   "analysis_artifacts",
   {
@@ -214,20 +214,20 @@ export const analysisArtifacts = sqliteTable(
     sessionKey: integer("session_key").notNull(),
     tools: text("tools", { mode: "json" }).$type<string[]>().notNull(),
     telemetryDrivers: text("telemetry_drivers", { mode: "json" }).$type<number[]>().notNull(),
-    /** Resumen del clima de la carrera (NUC-27). */
+    /** Summary of the race weather (NUC-27). */
     weather: text("weather", { mode: "json" }).$type<{ air: [number, number] | null; track: [number, number] | null; rain: boolean } | null>(),
     createdAt: text("created_at").notNull(),
   },
   (t) => [primaryKey({ columns: [t.season, t.round] })],
 );
 
-/** Última ingesta correcta de cada recurso, para `updated_at` y `X-Data-Stale` (D-06). */
+/** Each resource's last successful ingestion, for `updated_at` and `X-Data-Stale` (D-06). */
 export const ingestState = sqliteTable("ingest_state", {
   resource: text("resource").primaryKey(),
   updatedAt: text("updated_at").notNull(),
 });
 
-/** Registro de cada ejecución de la ingesta (página interna /status). */
+/** A record of each ingestion run (internal /status page). */
 export const ingestRuns = sqliteTable(
   "ingest_runs",
   {

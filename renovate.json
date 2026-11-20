@@ -7,12 +7,12 @@
   "timezone": "Europe/Madrid",
   "packageRules": [
     {
-      "description": "OpenNext fija el rango de Next.js que admite: se actualizan juntos (stack.md §18).",
+      "description": "OpenNext pins the Next.js range it supports: they are updated together (stack.md §18).",
       "matchPackageNames": ["next", "@opennextjs/cloudflare"],
       "groupName": "next + opennext"
     },
     {
-      "description": "Wrangler, workers-types y el plugin de tests de Workers van de la mano.",
+      "description": "Wrangler, workers-types and the Workers test plugin go hand in hand.",
       "matchPackageNames": ["wrangler", "@cloudflare/workers-types", "@cloudflare/vitest-plugin"],
       "groupName": "cloudflare tooling"
     }

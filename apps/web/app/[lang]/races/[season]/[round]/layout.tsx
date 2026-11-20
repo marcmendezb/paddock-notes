@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { api } from "@/lib/api";
 import { parseRound, parseSeason } from "@/lib/params";
 
-/** Comprueba que la carrera existe antes del Suspense de loading.tsx, para responder 404 real. */
+/** Checks the race exists in the layout, outside any Suspense boundary, to answer a real 404 (D-22). */
 export default async function RaceLayout({
   children,
   params,

@@ -1,8 +1,8 @@
 import type { Env } from "./env";
 
 /**
- * Envío de email con Cloudflare Email Service (D-16). En `wrangler dev` el binding se simula y el mensaje
- * se escribe en el log. Nunca se registra el email completo (seguridad.md §16).
+ * Sending email with Cloudflare Email Service (D-16). In `wrangler dev` the binding is simulated and the
+ * message is written to the log. The full email address is never logged (security.md §16).
  */
 export interface OutgoingEmail {
   to: string;

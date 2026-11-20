@@ -2,8 +2,8 @@ import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 
 /**
- * Componentes de los explicadores en MDX. Los enlaces internos usan next/link; los externos llevan
- * rel="noopener noreferrer" (seguridad.md §5). Las tablas se envuelven en una región enfocable.
+ * Components for the MDX explainers. Internal links use next/link; external ones carry
+ * rel="noopener noreferrer" (security.md §5). Tables are wrapped in a focusable region.
  */
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {

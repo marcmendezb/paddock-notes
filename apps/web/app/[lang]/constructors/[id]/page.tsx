@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-/** Ficha de equipo (NUC-42): sin logos, solo datos y tipografía. */
+/** Team profile (NUC-42): no logos, only data and typography. */
 export default async function ConstructorPage({ params }: Params) {
   const { lang, profile } = await load(params);
   const t = dict(lang);

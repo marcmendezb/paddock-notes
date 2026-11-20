@@ -5,19 +5,19 @@ import { dict } from "@/lib/i18n";
 import { Icon, type IconName } from "./icons";
 
 /**
- * Newsletter de la home (NUC-10): en vez de prometerla, se enseña. A la izquierda, qué trae y el
- * formulario; a la derecha, un número de muestra hecho con la última carrera de verdad (la nota, el top 5,
- * el gráfico de posición del ganador y la próxima cita en hora de Madrid o de Londres), en hojas apiladas
- * que se enderezan al bajar.
+ * The home page newsletter (NUC-10): instead of promising it, it is shown. On the left, what it brings and
+ * the form; on the right, a sample issue made with the real last race (the note, the top 5, the winner's
+ * position chart and the next race in Madrid or London time), on stacked sheets
+ * that straighten as you scroll.
  */
 
 const ICONS: IconName[] = ["flag", "chart", "book", "calendar"];
 
-/** Posición del ganador vuelta a vuelta, como una línea de 240 × 64 (P1 arriba, P10 abajo). */
+/** The winner's position lap by lap, as a 240 × 64 line (P1 at the top, P10 at the bottom). */
 function WinnerLine({ positions }: { positions: (number | null)[] }) {
   const W = 240;
   const H = 64;
-  // La escala llega hasta la peor posición del ganador (mínimo P4), para que la línea llene el alto.
+  // The scale reaches the winner's worst position (P4 at least), so the line fills the height.
   const depth = Math.max(4, ...positions.filter((p): p is number => p !== null));
   const n = Math.max(2, positions.length);
   let d = "";
@@ -51,7 +51,7 @@ export function NewsletterBand({
   race: RaceDetail | null;
   winnerPositions: (number | null)[] | null;
   next: RaceSummary | null;
-  /** El formulario (componente de servidor con Turnstile). */
+  /** The form (a server component). */
   form: ReactNode;
 }) {
   const t = dict(lang).newsletter;

@@ -3,10 +3,10 @@ import type { MDXContent } from "mdx/types";
 import { Icon, type IconName } from "./icons";
 
 /**
- * Cuerpo de un explicador (CON-01) compuesto como un artículo de revista. El MDX se parte por sus títulos de
- * segundo nivel: lo que va antes es la entradilla; cada sección lleva su número; la de «Cómo verlo en
- * nuestros gráficos» va en un bloque negro y la de «Términos relacionados», como fichas. Las secciones se
- * reconocen por su título en los tres idiomas; si no encajan, se pintan como una sección normal.
+ * An explainer's body (CON-01) laid out as a magazine article. The MDX is split by its second-level
+ * headings: what comes before is the lede; each section carries its number; the "How to see it in our
+ * charts" one goes in a black block and the "Related terms" one as chips. Sections are recognised by their
+ * title in all three languages; if they do not match, they render as a normal section.
  */
 
 type Props = { children?: ReactNode };
@@ -41,13 +41,13 @@ export function explainerSections(Body: MDXContent): { lead: ReactElement<Props>
   return sections.length ? { lead, sections } : null;
 }
 
-/** Pictograma de cada capítulo de la guía de iniciación, en orden. */
+/** The pictogram for each chapter of the beginner's guide, in order. */
 const CHAPTER_ICONS: IconName[] = ["calendar", "user", "trophy", "layers", "wrench", "flag", "stopwatch", "chart"];
 
 export function ExplainerBody({ lead, sections, chapters = false }: { lead: ReactElement<Props>[]; sections: Section[]; chapters?: boolean }) {
   let n = 0;
   if (chapters) {
-    // La guía (CON-03): capítulos con el número gigante fijo a la izquierda y su pictograma.
+    // The guide (CON-03): chapters with the giant number fixed on the left and its pictogram.
     return (
       <div className="xp xp-guide">
         <span className="xp-progress" aria-hidden="true" />
@@ -107,7 +107,7 @@ export function ExplainerBody({ lead, sections, chapters = false }: { lead: Reac
   );
 }
 
-/** Índice de las secciones, fijo al lado del texto. */
+/** The index of the sections, fixed beside the text. */
 export function ExplainerToc({ sections, label }: { sections: Section[]; label: string }) {
   let n = 0;
   return (

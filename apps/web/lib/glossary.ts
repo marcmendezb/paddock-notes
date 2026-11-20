@@ -1,8 +1,8 @@
 import type { Lang } from "@paddock/shared";
 
 /**
- * Glosario (CON-02, contenido.md §7): 60 términos en ES, EN y DE, escritos por separado.
- * `regulated`: depende del reglamento vigente; se revisa al inicio de cada temporada (contenido.md §6).
+ * Glossary (CON-02, content.md §7): 60 terms in ES, EN and DE, written separately.
+ * `regulated`: depends on the regulations in force; reviewed at the start of each season (content.md §6).
  */
 
 interface Entry {
@@ -34,7 +34,7 @@ export const GROUPS: Record<GroupKey, Record<Lang, string>> = {
 };
 
 export const GLOSSARY: GlossaryTerm[] = [
-  // ---- Carrera y estrategia -----------------------------------------------------------------
+  // ---- Race and strategy ---------------------------------------------------------------------
   {
     slug: "undercut",
     group: "race",
@@ -126,7 +126,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     en: { term: "Formation lap", def: "The lap before the start, used to warm tyres and brakes and line up on the grid." },
     de: { term: "Einführungsrunde", def: "Die Runde vor dem Start, um Reifen und Bremsen aufzuwärmen und sich in der Startaufstellung aufzustellen." },
   },
-  // ---- Neumáticos ------------------------------------------------------------------------------
+  // ---- Tyres ----------------------------------------------------------------------------------
   {
     slug: "compound",
     group: "tyres",
@@ -213,7 +213,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     en: { term: "Two-compound rule", def: "In a dry race, drivers must use at least two different dry compounds, unless wet-weather tyres are used." },
     de: { term: "Zwei-Mischungen-Regel", def: "Im Trockenrennen muss jeder Fahrer mindestens zwei verschiedene Trockenmischungen nutzen, außer es kommen Regenreifen zum Einsatz." },
   },
-  // ---- Aerodinámica y coche --------------------------------------------------------------------
+  // ---- Aerodynamics and the car ----------------------------------------------------------------
   {
     slug: "downforce",
     group: "aero",
@@ -381,7 +381,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     en: { term: "107% rule", def: "To start the race, a driver's Q1 time must be within 107% of the fastest, unless the stewards allow otherwise." },
     de: { term: "107-Prozent-Regel", def: "Um am Rennen teilzunehmen, muss die Q1-Zeit eines Fahrers innerhalb von 107 % der schnellsten liegen, außer die Kommissare erlauben es." },
   },
-  // ---- Timing y datos ---------------------------------------------------------------------------
+  // ---- Timing and data ---------------------------------------------------------------------------
   {
     slug: "delta",
     group: "timing",
@@ -463,7 +463,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     en: { term: "Out-lap and in-lap", def: "The lap leaving the pits and the lap entering them. Both are slower and don't reflect pace." },
     de: { term: "Out-Lap und In-Lap", def: "Die Runde nach dem Verlassen der Box und die Runde vor der Einfahrt. Beide sind langsamer und zeigen nicht die Pace." },
   },
-  // ---- Paddock y fin de semana ------------------------------------------------------------------
+  // ---- Paddock and the weekend ------------------------------------------------------------------
   {
     slug: "paddock",
     group: "paddock",

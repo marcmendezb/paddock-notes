@@ -6,10 +6,10 @@ import { Icon } from "./icons";
 import { DriverLink, TeamLink } from "./links";
 
 /**
- * Página de clasificación (NUC-30 a NUC-35): el hero con el líder y la temporada como barra de progreso, las
- * dos clasificaciones como pantallas de cronometraje con barras de puntos y la posición en cada GP como mapa
- * de calor. Todo son tablas o texto: las barras y los colores acompañan al dato, nunca lo sustituyen (TRA-22).
- * Barras en porcentaje como atributos SVG (D-04).
+ * Standings page (NUC-30 to NUC-35): the hero with the leader and the season as a progress bar, both
+ * standings as timing screens with points bars and the position at each Grand Prix as a heat map. All of it
+ * is tables or text: bars and colours go with the figure, never replace it (TRA-22).
+ * Bars in percentages as SVG attributes (D-04).
  */
 
 const pct = (v: number) => `${Math.max(0, Math.min(100, v)).toFixed(2)}%`;
@@ -31,9 +31,9 @@ export function StandingsHero({
   total: number;
   leader: DriverStandingRow | null;
   second: DriverStandingRow | null;
-  /** Temporada terminada: el líder es el campeón. */
+  /** Season finished: the leader is the champion. */
   isFinal: boolean;
-  /** Frase de estado del título (quién puede ganarlo, puntos en juego…). */
+  /** A sentence on the state of the title (who can win it, points in play…). */
   status: ReactNode;
   pickers: ReactNode;
 }) {
@@ -85,7 +85,7 @@ export function StandingsHero({
   );
 }
 
-/** Clasificación de pilotos como pantalla de cronometraje: puntos con barra proporcional al líder. */
+/** Drivers' standings as a timing screen: points with a bar proportional to the leader. */
 export function DriverTower({ lang, rows, favorites }: { lang: Lang; rows: DriverStandingRow[]; favorites: Set<string> }) {
   const t = dict(lang);
   const c = t.standings.columns;
@@ -113,7 +113,7 @@ export function DriverTower({ lang, rows, favorites }: { lang: Lang; rows: Drive
                   <th scope="row" className="timing-driver">
                     <span className="timing-who">
                       <DriverLink lang={lang} driver={r.driver} />
-                      {/* El equipo en texto: dos enlaces pequeños por fila no cumplen el tamaño mínimo (WCAG 2.5.8). */}
+                      {/* The team as text: two small links per row would not meet the minimum target size (WCAG 2.5.8). */}
                       <span className="timing-team">{r.constructors.map((k) => k.name).join(" / ")}</span>
                       {fav ? <span className="tag tag-fav">{t.favorite}</span> : null}
                     </span>
@@ -188,7 +188,7 @@ function PointsBar({ lang, points, top, first }: { lang: Lang; points: number; t
   );
 }
 
-/** Posición de cada piloto en cada GP (NUC-34) como mapa de calor: el número va siempre en la celda. */
+/** Each driver's position at each Grand Prix (NUC-34) as a heat map: the number is always in the cell. */
 export function ResultsHeatmap({ lang, history }: { lang: Lang; history: StandingsHistory }) {
   const t = dict(lang);
   const h = t.standings2.heat;

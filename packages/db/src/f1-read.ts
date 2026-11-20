@@ -1,6 +1,6 @@
 /**
- * Lectura de datos de F1: solo consultas `select`. Es el único módulo de datos que puede importar
- * `paddock-api` (D-14). Devuelve directamente los tipos del contrato de la API.
+ * F1 data reads: `select` queries only. The only data module `paddock-api` may import (D-14). It returns
+ * the API contract's types directly.
  */
 import { drizzle } from "drizzle-orm/d1";
 import { and, asc, desc, eq, inArray, lte, max, sql } from "drizzle-orm";
@@ -27,7 +27,7 @@ const { races, circuits, sessions, results, drivers, constructors, standingsDriv
 
 const SESSION_ORDER: SessionKind[] = ["fp1", "fp2", "fp3", "sprint_qualifying", "sprint", "qualifying", "race"];
 
-/** Instante de salida en SQL: hora de la carrera o, si no la hay, final del día. */
+/** Start time in SQL: the race time or, failing that, the end of the day. */
 const raceInstant = sql<string>`coalesce(${races.startsAt}, ${races.date} || 'T23:59:59.000Z')`;
 
 function driverRef(d: typeof drivers.$inferSelect): DriverRef {
@@ -155,7 +155,7 @@ export function createF1Reader(d1: D1Database) {
     const resultsOut = resultRows.map(({ result: r, driver, team }) => toResultRow(r, driver, team));
     if (resultsOut.length) return { ...summary, results: resultsOut };
 
-    // Sin resultado oficial todavía: el provisional de OpenF1, marcado como tal (D-31).
+    // No official result yet: OpenF1's provisional one, marked as such (D-31).
     const provisional = await provisionalRows(season, round);
     return provisional.length ? { ...summary, results: provisional, provisional: true } : { ...summary, results: [] };
   }
@@ -185,8 +185,8 @@ export function createF1Reader(d1: D1Database) {
   }
 
   /**
-   * Parrilla de la temporada para casar a los pilotos de OpenF1 (por su código de tres letras) con los de
-   * Jolpica: cada piloto con código y su equipo en la última carrera que corrió (D-31).
+   * The season's grid, to match OpenF1's drivers (by their three-letter code) with Jolpica's: each driver
+   * with a code and their team in the last race they ran (D-31).
    */
   async function seasonLineup(season: number): Promise<{ driverId: string; code: string; constructorId: string }[]> {
     const rows = await db
@@ -200,7 +200,7 @@ export function createF1Reader(d1: D1Database) {
     return [...latest.values()];
   }
 
-  /** ¿Tiene ya la carrera su resultado oficial? */
+  /** Does the race have its official result yet? */
   async function hasRaceResult(season: number, round: number): Promise<boolean> {
     const [row] = await db
       .select({ n: sql<number>`count(*)` })
@@ -209,7 +209,7 @@ export function createF1Reader(d1: D1Database) {
     return (row?.n ?? 0) > 0;
   }
 
-  /** Resultado del sprint de una ronda (NUC-25). */
+  /** A round's sprint result (NUC-25). */
   async function getSprintResults(season: number, round: number): Promise<RaceResultRow[]> {
     const rows = await db
       .select({ result: results, driver: drivers, team: constructors })
@@ -221,7 +221,7 @@ export function createF1Reader(d1: D1Database) {
     return rows.map(({ result: r, driver, team }) => toResultRow(r, driver, team));
   }
 
-  /** Primer GP no cancelado cuya carrera no ha empezado (NUC-01). */
+  /** The first non-cancelled Grand Prix whose race has not started (NUC-01). */
   async function getNextRace(now = Date.now()): Promise<RaceDetail | null> {
     const [next] = await db
       .select({ season: races.season, round: races.round })
@@ -232,7 +232,7 @@ export function createF1Reader(d1: D1Database) {
     return next ? getRace(next.season, next.round, now) : null;
   }
 
-  /** Última carrera con resultado guardado (NUC-05); si la última solo tiene el provisional, esa (D-31). */
+  /** The last race with a stored result (NUC-05); if the latest only has the provisional one, that one (D-31). */
   async function getLastRace(now = Date.now()): Promise<RaceDetail | null> {
     const p = schema.provisionalResults;
     const [[last], [prov]] = await Promise.all([
@@ -254,7 +254,7 @@ export function createF1Reader(d1: D1Database) {
     return pick ? getRace(pick.season, pick.round, now) : null;
   }
 
-  /** Última ronda con clasificación; con `upTo`, la última hasta esa ronda (NUC-35). */
+  /** The last round with standings; with `upTo`, the last up to that round (NUC-35). */
   async function latestStandingsRound(
     table: typeof standingsDrivers | typeof standingsConstructors,
     season: number,
@@ -338,13 +338,13 @@ export function createF1Reader(d1: D1Database) {
     };
   }
 
-  /** Temporada más reciente con calendario cargado. */
+  /** The most recent season with a calendar loaded. */
   async function latestSeason(): Promise<number | null> {
     const [row] = await db.select({ season: max(races.season) }).from(races);
     return row?.season ?? null;
   }
 
-  /** La más reciente de las fechas de actualización de esos recursos (D-06). */
+  /** The most recent of those resources' update dates (D-06). */
   async function updatedAt(resources: string[]): Promise<string | null> {
     if (resources.length === 0) return null;
     const [row] = await db

@@ -1,11 +1,11 @@
-// Bindings del Worker paddock-web (wrangler.jsonc).
+// Bindings of the paddock-web Worker (wrangler.jsonc).
 declare global {
   interface CloudflareEnv {
     API: Fetcher;
     ASSETS: Fetcher;
     SITE_URL: string;
     CSP_REPORT_ONLY: string;
-    /** Clave pública de Turnstile. En local, la de pruebas que siempre aprueba. */
+    /** Turnstile site key. Locally, the test key that always passes. */
     TURNSTILE_SITE_KEY: string;
   }
 }

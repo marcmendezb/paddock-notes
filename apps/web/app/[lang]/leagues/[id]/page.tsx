@@ -22,7 +22,7 @@ interface League {
 
 export const metadata: Metadata = { robots: { index: false } };
 
-/** Liga privada (COM-07): solo la ven sus miembros; el enlace de invitación, solo quien la creó. */
+/** A private league (COM-07): only its members see it; the invitation link, only its creator. */
 export default async function LeaguePage({ params, searchParams }: Props) {
   const p = await params;
   const lang = parseLang(p.lang);

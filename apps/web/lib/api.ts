@@ -27,8 +27,8 @@ import type {
 } from "@paddock/shared";
 
 /**
- * Cliente de la API propia. En Cloudflare va por Service Binding, sin salir a internet (D-05).
- * La web nunca llama a Jolpica ni a OpenF1.
+ * Client for our own API. On Cloudflare it goes over the Service Binding, without going out to the
+ * internet (D-05). The web app never calls Jolpica or OpenF1.
  */
 
 export interface Fetched<T> {
@@ -47,14 +47,14 @@ async function apiFetch(path: string, init: RequestInit = {}): Promise<Response>
   headers.set("accept", "application/json");
   const url = `https://paddock-api.internal/api/v1${path}`;
   if (env.API) return env.API.fetch(new Request(url, { ...init, headers, redirect: "manual" }));
-  // Solo en desarrollo, si la API no está enlazada: `wrangler dev` de workers/api.
+  // Development only, if the API is not bound: `wrangler dev` in workers/api.
   const origin = process.env.PADDOCK_API_ORIGIN ?? "http://localhost:8787";
   return fetch(`${origin}/api/v1${path}`, { ...init, headers, redirect: "manual" });
 }
 
 /**
- * Petición a la API en nombre del visitante (fase 4): reenvía solo las cookies de sesión propias y,
- * en las escrituras, el origen del sitio y la IP del visitante para el límite de escritura.
+ * A request to the API on the visitor's behalf (phase 4): it forwards only our own session cookies and,
+ * on writes, the site's origin and the visitor's IP for the write limit.
  */
 export async function userFetch(
   path: string,
@@ -97,7 +97,7 @@ async function get<T>(path: string): Promise<Fetched<T> | null> {
   } catch (error) {
     throw new ApiUnavailableError(String(error));
   }
-  // 404: no existe. 400: el identificador no es válido, así que tampoco existe.
+  // 404: it does not exist. 400: the identifier is not valid, so it does not exist either.
   if (response.status === 404 || response.status === 400) return null;
   if (!response.ok) throw new ApiUnavailableError(`API ${response.status} en ${path}`);
   const body = (await response.json()) as ApiEnvelope<T>;
@@ -156,7 +156,7 @@ export const api = {
     get<{ season: number; round: number; name: string; date: string; tools: string[] }[]>("/analysis"),
   analysisIndex: (season: number, round: number) => get<AnalysisIndex>(`/analysis/${season}/${round}`),
   strategy: (season: number, round: number) => get<StrategyData>(`/analysis/${season}/${round}/strategy`),
-  // Los análisis v1 no excluían las vueltas anómalas: se reparan al leer (repairPace).
+  // v1 analyses did not exclude anomalous laps: they are repaired on read (repairPace).
   pace: async (season: number, round: number) => {
     const res = await get<PaceData>(`/analysis/${season}/${round}/pace`);
     return res && { ...res, data: repairPace(res.data) };

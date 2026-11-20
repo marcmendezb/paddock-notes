@@ -1,13 +1,13 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
- * `/api/*` servido por la web (D-26). En producción no se usa: la ruta `paddocknotes.dev/api/*` del dominio
- * lleva directamente al Worker de la API. En la preview y en local, la web y la API viven en hosts distintos
- * y los enlaces de los emails (enlace mágico, baja en un clic) apuntan a la web: este proxy los lleva a la API
- * por Service Binding, con la cookie en el host de la web, como en producción.
+ * `/api/*` served by the web app (D-26). Not used in production: the domain's `paddocknotes.dev/api/*` route
+ * goes straight to the API Worker. In preview and locally, the web app and the API live on different hosts
+ * and the links in emails (magic link, one-click unsubscribe) point to the web app: this proxy takes them to
+ * the API over the Service Binding, with the cookie on the web app's host, as in production.
  *
- * El navegador no puede colar cabeceras internas: se descartan todas las `x-paddock-*` y `cf-*` que lleguen y
- * solo se fijan aquí el origen real (para la comprobación CSRF de la API) y la IP del visitante (límites).
+ * The browser cannot smuggle in internal headers: every incoming `x-paddock-*` and `cf-*` header is dropped,
+ * and only the real origin (for the API's CSRF check) and the visitor's IP (limits) are set here.
  */
 async function proxy(request: Request): Promise<Response> {
   const { env } = await getCloudflareContext({ async: true });

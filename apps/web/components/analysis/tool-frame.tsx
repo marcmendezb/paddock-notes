@@ -4,8 +4,8 @@ import { formatDate } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 
 /**
- * Marco común de las herramientas: pregunta, nota automática (TEC-08), "Cómo leer este gráfico" (TEC-09)
- * y fuente con fecha.
+ * The tools' shared frame: the question, the automatic note (TEC-08), "How to read this chart" (TEC-09)
+ * and the source with a date.
  */
 export function ToolFrame({
   lang,

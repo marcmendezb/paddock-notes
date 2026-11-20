@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import { Icon, IconPaths, type IconName } from "./icons";
 
 /**
- * Cabecera de las páginas de sección (aprende, análisis, récords, fichas…): la misma banda negra que las de
- * carrera, circuito e histórico, pegada a la barra de navegación. Antetítulo con su pictograma, título
- * grande, entradilla y, a la derecha, un hueco para datos o acciones. Detrás, el pictograma de la sección
- * en gigante y en trazo tenue, que gira despacio al bajar (solo decoración).
+ * Header for section pages (learn, analysis, records, profiles…): the same black band as the race and
+ * circuit pages, attached to the navigation bar. A kicker with its pictogram, a large title, a lede and, on
+ * the right, a slot for figures or actions. Behind it, the section's pictogram, giant and in a faint
+ * stroke, turning slowly as you scroll (decoration only).
  */
 export function PageHero({
   icon,
@@ -23,9 +23,9 @@ export function PageHero({
   title: ReactNode;
   lede?: ReactNode;
   crumbs?: ReactNode;
-  /** Columna derecha: cifras, una tarjeta, un formulario. */
+  /** Right column: figures, a card, a form. */
   aside?: ReactNode;
-  /** Debajo del título, a todo el ancho (filtros, índices). */
+  /** Below the title, full width (filters, indexes). */
   children?: ReactNode;
   size?: "m" | "l";
   labelledBy?: string;
@@ -53,7 +53,7 @@ export function PageHero({
   );
 }
 
-/** Cifras grandes para el hueco derecho de la cabecera. */
+/** Large figures for the header's right-hand slot. */
 export function HeroStats({ items }: { items: { label: string; value: ReactNode; sub?: ReactNode; accent?: boolean }[] }) {
   return (
     <dl className="ph-stats">

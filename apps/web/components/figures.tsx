@@ -6,9 +6,9 @@ import { api } from "@/lib/api";
 import { dict } from "@/lib/i18n";
 
 /**
- * Gráficos que las notas post-carrera insertan en el MDX (CON-04): los mismos de la zona técnica, con los
- * datos reales de esa carrera, una frase de pie, la tabla equivalente (contenido.md §13) y el enlace a la
- * herramienta interactiva. Si el análisis no existe, no se pinta nada: nunca un gráfico vacío.
+ * Charts that post-race notes insert into the MDX (CON-04): the same as the technical zone's, with that
+ * race's real data, a caption, the equivalent table (content.md §13) and the link to the interactive
+ * tool. If the analysis does not exist, nothing is painted: never an empty chart.
  */
 
 function Figure({ lang, caption, tool, season, round, children }: { lang: Lang; caption: string; tool: string; season: number; round: number; children: React.ReactNode }) {

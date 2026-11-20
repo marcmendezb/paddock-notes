@@ -11,7 +11,7 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 export const alt = "Paddock Notes";
 
-/** Imagen para redes de cada herramienta (TEC-11): el hallazgo de la nota automática como titular. */
+/** Each tool's social image (TEC-11): the automatic note's finding as the headline. */
 export default async function Image({ params }: { params: Promise<{ lang: string; season: string; round: string; tool: string }> }) {
   const p = await params;
   const lang = parseLang(p.lang);
@@ -26,7 +26,7 @@ export default async function Image({ params }: { params: Promise<{ lang: string
   let updatedAt: string | null = null;
   if (tool === "strategy") {
     const d = await api.strategy(season, round);
-    // En la imagen solo cabe la última frase: la estrategia del ganador.
+    // Only the last sentence fits in the image: the winner's strategy.
     note = d ? (strategyNote(lang, d.data)?.split(". ").at(-1) ?? null) : null;
     updatedAt = d?.updatedAt ?? null;
   } else if (tool === "pace") {

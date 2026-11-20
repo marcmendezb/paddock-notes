@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/** Minutos de diferencia con UTC de una zona horaria en un instante («GMT-06:00» → -360). */
+/** A time zone's offset from UTC in minutes at an instant ("GMT-06:00" → -360). */
 function zoneOffset(timeZone: string, at: Date): number {
   const name = new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "longOffset" })
     .formatToParts(at)
@@ -13,9 +13,9 @@ function zoneOffset(timeZone: string, at: Date): number {
 }
 
 /**
- * Diferencia entre la hora del circuito y la de quien lo mira («+7 h respecto a tu hora»). Solo se sabe en
- * el navegador: en el servidor se pinta una raya y se completa al montar. `template` lleva «{h}» donde va la
- * diferencia (una función no puede pasar del servidor al cliente).
+ * The difference between the circuit's time and the viewer's ("+7 h from your time"). Only known in the
+ * browser: the server paints a dash and it is completed on mount. `template` carries "{h}" where the
+ * difference goes (a function cannot be passed from the server to the client).
  */
 export function TimeOffset({ timeZone, same, template }: { timeZone: string; same: string; template: string }) {
   const [diff, setDiff] = useState<number | null>(null);

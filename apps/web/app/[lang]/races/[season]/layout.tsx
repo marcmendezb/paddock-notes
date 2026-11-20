@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { parseSeason } from "@/lib/params";
 
 /**
- * Valida la temporada fuera del Suspense de loading.tsx: así una URL inválida responde 404 de verdad
- * y no un 200 con la página de error.
+ * Validates the season in the layout, outside any Suspense boundary: an invalid URL answers a real 404
+ * and not a 200 with the error page (D-22).
  */
 export default async function SeasonLayout({ children, params }: { children: ReactNode; params: Promise<{ season: string }> }) {
   parseSeason((await params).season);

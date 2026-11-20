@@ -3,11 +3,11 @@ import { ALLOWED_OUTBOUND_HOSTS, userAgent } from "@paddock/shared";
 import type { Env } from "./env";
 import type { LimitPolicy } from "./limiter";
 
-/** Reglas comunes para cualquier API externa (apis.md §8). */
+/** Common rules for any external API (apis.md §8). */
 const TIMEOUT_MS = 10_000;
 const MAX_BYTES = 5 * 1024 * 1024;
 const MAX_RETRIES = 3;
-/** Espera máxima dentro de una invocación; si el limitador pide más, la tarea se aplaza. */
+/** Maximum wait within one invocation; if the limiter asks for more, the job is deferred. */
 const MAX_WAIT_MS = 30_000;
 
 export class OutboundError extends Error {
@@ -20,21 +20,21 @@ export class OutboundError extends Error {
   }
 }
 
-/** El limitador pide esperar más de lo razonable en esta invocación: se reintenta en el siguiente cron. */
+/** The limiter asks for a longer wait than is reasonable in this invocation: retried on the next cron. */
 export class DeferredError extends OutboundError {
   override name = "DeferredError";
 }
 
 /**
- * OpenF1 cierra el acceso sin clave, incluido el histórico, mientras hay una sesión de F1 en directo
- * (respuesta 401 con «Live F1 session in progress», observada el 6 de noviembre de 2026). No es un error
- * nuestro ni de los datos: hay que volver a intentarlo cuando termine la sesión (D-25).
+ * OpenF1 closes keyless access, the history included, while an F1 session is live (a 401 with "Live F1
+ * session in progress", observed on 6 November 2026). It is not our error or the data's: try again once
+ * the session ends (D-25).
  */
 export class LiveSessionError extends DeferredError {
   override name = "LiveSessionError";
 }
 
-/** Pausa del limitador tras un 401 por sesión en directo: ninguna otra petición lo intenta antes. */
+/** The limiter's pause after a live-session 401: no other request tries before it ends. */
 const LIVE_SESSION_PAUSE_MS = 15 * 60_000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -50,9 +50,9 @@ function retryAfterMs(header: string | null, fallback: number): number {
 export interface FetchContext {
   env: Env;
   policy: LimitPolicy;
-  /** Contador de peticiones hechas en esta ejecución (para `ingest_runs`). */
+  /** Count of requests made in this run (for `ingest_runs`). */
   counter: { requests: number };
-  /** Espera máxima por un permiso del limitador antes de aplazar la tarea (por defecto, 30 s). */
+  /** Maximum wait for the limiter's permission before deferring the job (30 s by default). */
   maxWaitMs?: number;
 }
 
@@ -60,10 +60,10 @@ async function waitForPermit(ctx: FetchContext, host: string): Promise<void> {
   const limiter = ctx.env.OUTBOUND_LIMITER.get(ctx.env.OUTBOUND_LIMITER.idFromName(host));
   let waited = 0;
   for (;;) {
-    // Si el Durable Object no responde, la llamada lanza y la petición no se hace (falla cerrado).
+    // If the Durable Object does not answer, the call throws and the request is not made (fails closed).
     const { waitMs } = await limiter.acquire(ctx.policy);
     if (waitMs === 0) return;
-    if (waited + waitMs > (ctx.maxWaitMs ?? MAX_WAIT_MS)) throw new DeferredError(`límite de ${host} alcanzado; espera de ${waitMs} ms`);
+    if (waited + waitMs > (ctx.maxWaitMs ?? MAX_WAIT_MS)) throw new DeferredError(`${host} limit reached; wait of ${waitMs} ms`);
     waited += waitMs;
     await sleep(waitMs);
   }
@@ -78,8 +78,8 @@ async function readLimited(response: Response): Promise<string> {
 }
 
 /**
- * GET a una API externa: lista cerrada de hosts, limitador global, tiempo máximo, reintentos con espera
- * exponencial solo en 429/5xx/red, respeto de `Retry-After` y validación Zod de la respuesta.
+ * GET to an external API: a closed list of hosts, a global limiter, a timeout, retries with exponential
+ * backoff only on 429/5xx/network, respect for `Retry-After` and Zod validation of the response.
  */
 export async function fetchJson<S extends z.ZodType>(ctx: FetchContext, url: string, schema: S): Promise<z.output<S>> {
   const { hostname, protocol } = new URL(url);
@@ -122,7 +122,7 @@ export async function fetchJson<S extends z.ZodType>(ctx: FetchContext, url: str
       const detail = await readLimited(response).catch(() => "");
       if (/live f1 session/i.test(detail)) {
         await limiter.penalize(LIVE_SESSION_PAUSE_MS);
-        throw new LiveSessionError("OpenF1 restringido durante una sesión en directo", 401);
+        throw new LiveSessionError("OpenF1 restricted during a live session", 401);
       }
     }
     if (!response.ok) throw new OutboundError(`error ${response.status} de la fuente`, response.status);
@@ -132,9 +132,9 @@ export async function fetchJson<S extends z.ZodType>(ctx: FetchContext, url: str
       body = JSON.parse(await readLimited(response));
     } catch (error) {
       if (error instanceof OutboundError) throw error;
-      throw new OutboundError("la respuesta no es JSON válido");
+      throw new OutboundError("the response is not valid JSON");
     }
-    // Una respuesta que no cumple el esquema no se escribe (seguridad.md §8).
+    // A response that does not match the schema is not written (security.md §8).
     return schema.parse(body);
   }
   throw lastError instanceof Error ? lastError : new OutboundError("la fuente no responde");

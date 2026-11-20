@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /**
- * Esquemas de OpenF1 (apis.md §2.2). Solo los campos que usamos; el resto se ignora.
- * Todo lo externo es hostil (seguridad.md §8): lo que no cumple el esquema no se procesa.
+ * OpenF1 schemas (apis.md §2.2). Only the fields we use; the rest is ignored.
+ * Everything external is hostile (security.md §8): whatever does not match the schema is not processed.
  */
 
 const isoDate = z.string().min(10).max(40);
@@ -18,8 +18,8 @@ export const sessionSchema = z.object({
   date_end: isoDate.nullish(),
 });
 
-/** Clasificación final de una sesión (`session_result`). En carrera, duración y diferencia son un número;
- *  la diferencia de un doblado llega como texto («+1 LAP»). */
+/** A session's final classification (`session_result`). In a race, duration and gap are numbers;
+ *  a lapped driver's gap arrives as text ("+1 LAP"). */
 export const sessionResultSchema = z.object({
   driver_number: int,
   position: int.min(1).max(40).nullish(),

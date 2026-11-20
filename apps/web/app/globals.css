@@ -1,8 +1,8 @@
-/* Paddock Notes · estilos globales.
-   1. Fuente Archivo (SIL OFL, apps/web/public/fonts/OFL.txt), alojada en el sitio: la CSP no permite
-      Google Fonts (seguridad.md §4.1).
-   2. Tokens del brandboard v3, copiados sin cambios de docs/brandboard/tokens/globals.css (marca.md).
-   3. Maquetación mínima. El diseño de cada componente llegará sobre estos tokens. */
+/* Paddock Notes · global styles.
+   1. The Archivo typeface (SIL OFL, apps/web/public/fonts/OFL.txt), self-hosted: the CSP does not allow
+      Google Fonts (security.md §4.1).
+   2. Brandboard v3 tokens, copied unchanged from docs/brandboard/tokens/globals.css (brand.md).
+   3. Base layout. Each component's design builds on these tokens. */
 
 @font-face {
   font-family: "Archivo";
@@ -32,55 +32,55 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* ---- Tokens del brandboard v3 ------------------------------------------------------------- */
+/* ---- Brandboard v3 tokens ----------------------------------------------------------------- */
 
 
 :root {
   color-scheme: light;
 
-  /* Base (modo claro) */
-  --bg: #FFFFFF;              /* Blanco */
-  --surface: #F5F5F5;         /* Gris claro */
-  --text: #0A0A0A;            /* Negro */
-  --muted: #5A5A5A;           /* Grafito */
-  --line: #DADADA;            /* Trazo (bordes, rejillas; nunca texto) */
-  --accent: #0A0A0A;          /* Negro: sobre blanco no hay lima */
-  --accent-fill: #0A0A0A;     /* Superficies de acento (en negro: lima) */
-  --accent-contrast: #FFFFFF; /* Texto sobre el relleno de acento */
-  --accent-2: #6A3FC8;        /* Lila oscura: acento secundario sobre blanco */
+  /* Base (light mode) */
+  --bg: #FFFFFF;              /* White */
+  --surface: #F5F5F5;         /* Light grey */
+  --text: #0A0A0A;            /* Black */
+  --muted: #5A5A5A;           /* Graphite */
+  --line: #DADADA;            /* Stroke (borders, grids; never text) */
+  --accent: #0A0A0A;          /* Black: no lime on white */
+  --accent-fill: #0A0A0A;     /* Accent surfaces (on black: lime) */
+  --accent-contrast: #FFFFFF; /* Text on the accent fill */
+  --accent-2: #6A3FC8;        /* Dark lilac: secondary accent on white */
   --focus: #0A0A0A;
 
-  /* Datos: categórica (6 series, cada una con marcador y trazo propios) */
-  --data-1: #0A0A0A;  /* Negro (lima sobre negro) · círculo   · continuo      */
-  --data-2: #1F6FB2;  /* Cielo   · cuadrado  · guion largo   */
-  --data-3: #B36B00;  /* Ámbar   · triángulo · punteado      */
-  --data-4: #7B4FD6;  /* Lila    · rombo     · guion-punto   */
-  --data-5: #2F3A4A;  /* Pizarra · aspa      · guion corto   */
-  --data-6: #6B6B6B;  /* Gris    · anillo    · continuo fino */
+  /* Data: categorical (6 series, each with its own marker and stroke) */
+  --data-1: #0A0A0A;  /* Black (lime on black) · circle   · solid       */
+  --data-2: #1F6FB2;  /* Sky     · square    · long dash   */
+  --data-3: #B36B00;  /* Amber   · triangle  · dotted      */
+  --data-4: #7B4FD6;  /* Lilac   · diamond   · dash-dot    */
+  --data-5: #2F3A4A;  /* Slate   · cross     · short dash  */
+  --data-6: #6B6B6B;  /* Grey    · ring      · thin solid  */
 
-  /* Datos: secuencial (grises a negro sobre blanco; lima sobre negro) */
+  /* Data: sequential (greys to black on white; lime on black) */
   --seq-1: #F2F2F2; --seq-2: #D9D9D9; --seq-3: #B3B3B3; --seq-4: #8C8C8C;
   --seq-5: #5E5E5E; --seq-6: #333333; --seq-7: #0A0A0A;
 
-  /* Datos: divergente (pierde tiempo ← neutro → gana tiempo) */
+  /* Data: diverging (losing time ← neutral → gaining time) */
   --div-loss-3: #6A3FC8; --div-loss-2: #9C7FE0; --div-loss-1: #DCD0F7;
   --div-mid: #EDEDED;
   --div-gain-1: #D4D4D4; --div-gain-2: #7A7A7A; --div-gain-3: #0A0A0A;
 
-  /* Tipografía: una familia, dos anchos */
+  /* Typography: one family, two widths */
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --display-width: 87.5%;     /* semicondensada para titulares y cifras */
+  --display-width: 87.5%;     /* semi-condensed for headlines and figures */
 
-  --step--2: 0.8125rem;                                  /* 13 · ejes, pies de gráfico */
-  --step--1: 0.9375rem;                                  /* 15 · UI, tablas */
-  --step-0: 1.0625rem;                                   /* 17 · texto */
-  --step-1: 1.3125rem;                                   /* 21 · entradilla */
-  --step-2: 1.625rem;                                    /* 26 · h3 / sección de home */
+  --step--2: 0.8125rem;                                  /* 13 · axes, chart captions */
+  --step--1: 0.9375rem;                                  /* 15 · UI, tables */
+  --step-0: 1.0625rem;                                   /* 17 · body */
+  --step-1: 1.3125rem;                                   /* 21 · lede */
+  --step-2: 1.625rem;                                    /* 26 · h3 / home section */
   --step-3: clamp(1.75rem, 1.45rem + 1.3vw, 2.25rem);    /* 28–36 · h2 */
-  --step-4: clamp(2.25rem, 1.6rem + 2.8vw, 3.5rem);      /* 36–56 · h1 de artículo */
-  --step-5: clamp(2.5rem, 1.4rem + 4.8vw, 5rem);         /* 40–80 · nombre del GP */
-  --step-count: clamp(2.75rem, 1.2rem + 7vw, 7rem);      /* 44–112 · cuenta atrás */
+  --step-4: clamp(2.25rem, 1.6rem + 2.8vw, 3.5rem);      /* 36–56 · article h1 */
+  --step-5: clamp(2.5rem, 1.4rem + 4.8vw, 5rem);         /* 40–80 · Grand Prix name */
+  --step-count: clamp(2.75rem, 1.2rem + 7vw, 7rem);      /* 44–112 · countdown */
 
   --lh-tight: 0.98;
   --lh-heading: 1.12;
@@ -88,7 +88,7 @@
   --lh-body: 1.6;
   --measure: 68ch;
 
-  /* Forma */
+  /* Shape */
   --radius: 6px;
   --radius-sm: 3px;
   --stroke-series: 2px;
@@ -108,7 +108,7 @@
   }
 }
 
-/* Negro forzado: tema oscuro manual y bloques "tinta" (cabecera + hero) en ambos modos */
+/* Forced black: manual dark theme and "ink" blocks (header + hero) in both modes */
 :root[data-theme="dark"],
 [data-surface="ink"] {
   color-scheme: dark;
@@ -134,14 +134,14 @@ body {
 }
 a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
 a:hover { text-decoration-thickness: 2px; }
-/* Sin anillo de foco: con el teclado se ve igual (WCAG 2.4.7), pero como subrayado o fondo (al final del archivo). */
+/* No focus ring: with the keyboard focus still shows (WCAG 2.4.7), as an underline or a background (end of file). */
 :focus-visible { outline: none; }
 ::selection { background: var(--accent-fill); color: var(--accent-contrast); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-/* ---- Maquetación ---------------------------------------------------------------------------- */
+/* ---- Layout --------------------------------------------------------------------------------- */
 
 *, *::before, *::after { box-sizing: border-box; }
 img, svg { max-width: 100%; height: auto; }
@@ -174,22 +174,22 @@ p { margin: 0; max-width: var(--measure); }
 .skip-link { position: absolute; inset-inline-start: 1rem; top: -100px; z-index: 10; padding: 0.5rem 1rem; background: var(--accent-fill); color: var(--accent-contrast); }
 .skip-link:focus { top: 1rem; }
 
-/* Cabecera y hero: siempre en negro (data-surface="ink"). */
+/* Header and hero: always black (data-surface="ink"). */
 /*
- * Cabecera de muro de boxes: el cronometraje desplazándose arriba y, debajo, una barra flotante con el
- * símbolo a buen tamaño, las secciones en Archivo semicondensada y un bloque lima que se desliza bajo la
- * que se señala. Lima solo para lo que hay que mirar: la sección, lo que falta y lo que está en directo.
+ * Pit-wall header: the timing strip scrolling at the top and, below it, a floating bar with the mark at a
+ * generous size, the sections in semi-condensed Archivo and a lime block that slides under the one being
+ * pointed at. Lime only for what deserves attention: the section, what is left and what is live.
  */
 :root { --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1); --header-total: 112px; }
 .site-header { position: sticky; inset-block-start: 0; z-index: 50; color: var(--text); background: var(--bg); }
-/* También en la home, la cabecera es negra a todo el ancho (el hero sube por detrás de ella). */
+/* On the home page too, the header is black and full width (the hero rises behind it). */
 .site-header a { text-decoration: none; }
 
 /* Cronometraje */
 .ticker { display: flex; align-items: stretch; block-size: 34px; background: var(--bg); border-block-end: 1px solid var(--line); font-size: 13px; }
 .ticker-viewport { flex: 1; min-inline-size: 0; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent); }
 .ticker-track { display: flex; inline-size: max-content; block-size: 100%; animation: ticker 90s linear infinite; }
-/* Se mueve siempre, por decisión del autor (con «reducir movimiento», quieto: ver más abajo). */
+/* It always moves, by the author's decision (still under "reduce motion": see below). */
 .ticker-group { display: flex; list-style: none; margin: 0; padding: 0; }
 .ticker-item a { display: inline-flex; align-items: center; gap: 0.55rem; block-size: 100%; padding-inline: 1.5rem; white-space: nowrap; color: var(--muted); }
 .ticker-item a::after { content: ""; inline-size: 4px; block-size: 4px; margin-inline-start: 1.5rem; background: var(--line); }
@@ -199,21 +199,21 @@ p { margin: 0; max-width: var(--measure); }
 .ticker-when { color: var(--text); font-variant-numeric: tabular-nums; }
 .ticker-in { font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
 .ticker-label-data { color: var(--muted); font-weight: 500; }
-/* Lo fijo de la izquierda: un bloque de color entero, sin trazo, con texto negro. Lila (acento 2) si es el
-   siguiente; lima (acento 1) si está en directo, con el cuadrado latiendo. */
+/* The fixed lead on the left: a solid colour block, no stroke, black text. Lilac (accent 2) if it is the
+   next one; lime (accent 1) if it is live, with the square pulsing. */
 .ticker-lead { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 0.55rem; padding-inline: clamp(12px, 3vw, 24px) 1.25rem; margin-block-end: -1px; background: var(--accent-2); color: var(--accent-contrast); white-space: nowrap; }
 .ticker-lead.is-live { background: var(--accent-fill); }
 .ticker-lead .ticker-label { font-weight: 700; }
 .ticker-lead :is(.ticker-label, .ticker-text, .ticker-when, .ticker-in) { color: var(--accent-contrast); }
 .ticker-lead .ticker-mark { background: var(--accent-contrast); }
 .ticker-lead.is-live .ticker-mark { animation: live-blink 1.2s steps(2, jump-none) infinite; }
-/* En la cinta: los eventos por venir cuentan en lila; uno en directo, en lima. */
+/* On the strip: upcoming events count down in lilac; a live one, in lime. */
 .ticker-event .ticker-in { color: var(--accent-2); }
 .ticker-event.is-live .ticker-label { color: var(--accent); }
 @media (max-width: 600px) { .ticker-lead .ticker-when, .ticker-lead .ticker-text { display: none; } }
 @keyframes ticker { to { transform: translateX(-50%); } }
 
-/* Barra de navegación: el mismo aire arriba y abajo, para que el contenido quede centrado en la franja negra. */
+/* Navigation bar: the same space above and below, so the content sits centred in the black band. */
 .header-bar { position: relative; padding: 5px clamp(8px, 2vw, 24px); }
 .header-bar .header-row {
   display: flex; align-items: center; gap: clamp(0.75rem, 2vw, 2rem); max-inline-size: 1240px; min-block-size: 68px;
@@ -223,28 +223,28 @@ p { margin: 0; max-width: var(--measure); }
 .logo-mark { display: block; overflow: visible; }
 .logo-stroke { fill: none; stroke: var(--text); stroke-width: 6; }
 .logo-dot { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
-/* Al pasar por encima (o al enfocar): el cuadrado da la vuelta a la «pn» como a un circuito. Un tramo
-   lima recorre el trazo entero y el cuadrado desaparece al salir y vuelve a su sitio al acabar la vuelta.
-   Sin deformar el símbolo (marca.md §2). */
+/* On hover (or focus): the square laps the "pn" like a circuit. A lime stretch runs the whole stroke, and
+   the square disappears as it leaves and returns to its place when the lap ends.
+   Without deforming the mark (brand.md §2). */
 .logo-trace { fill: none; stroke: var(--accent-2); stroke-width: 6.6; stroke-dasharray: 0.14 2; stroke-dashoffset: 0.14; opacity: 0; }
 .logo:hover .logo-trace, .logo:focus-visible .logo-trace, .logo.is-lapping .logo-trace { animation: logo-lap 1s cubic-bezier(0.65, 0, 0.35, 1) both; }
 .logo:hover .logo-dot, .logo:focus-visible .logo-dot, .logo.is-lapping .logo-dot { animation: logo-dot 1s cubic-bezier(0.65, 0, 0.35, 1) both; }
 @keyframes logo-lap { 0% { opacity: 1; stroke-dashoffset: 0.14; } 92% { opacity: 1; stroke-dashoffset: -1; } 100% { opacity: 0; stroke-dashoffset: -1; } }
-/* El punto vuelve a media vuelta, sin esperar a que el trazo acabe. */
+/* The dot comes back halfway through the lap, without waiting for the stroke to finish. */
 @keyframes logo-dot { 0% { transform: none; } 10% { transform: scale(0); } 45% { transform: scale(0); } 62%, 100% { transform: none; } }
 .header-nav { flex: 1; min-inline-size: 0; display: flex; justify-content: center; }
 .nav-list { position: relative; list-style: none; display: flex; gap: 0.15rem; margin: 0; padding: 0; }
 .nav-item { position: relative; }
 .nav-link { position: relative; z-index: 1; display: inline-flex; align-items: center; min-block-size: 44px; padding-inline: 1rem; font-size: 1.0625rem; font-weight: 700; font-stretch: var(--display-width); letter-spacing: -0.005em; color: var(--text); transition: color 0.25s var(--ease-out-quart); }
-/* Sin JavaScript (o antes de colocarse el bloque): la sección actual, en lima. */
+/* Without JavaScript (or before the block is placed): the current section, in lime. */
 .nav-link[aria-current="page"] { color: var(--accent); }
-/* Al pasar por encima (o enfocar), además, en cursiva: la Archivo itálica de verdad, no inclinada a mano. */
+/* On hover (or focus), also in italics: Archivo's true italic, not a hand-made slant. */
 .nav-link:hover, .nav-link:focus-visible, .nav-link[aria-current="page"], .menu-link[aria-current="page"] .menu-name, .header-tool:hover, .header-tool:focus-visible, .menu-link:hover .menu-name { font-style: italic; }
-/* El bloque lima: se coloca con transform (translateX + scaleX), siempre sobre 100 px de ancho base. */
+/* The lime block: positioned with transform (translateX + scaleX), always over a 100 px base width. */
 .nav-puck { position: absolute; z-index: 0; inset-block-start: 50%; inset-inline-start: 0; inline-size: 100px; block-size: 44px; margin-block-start: -22px; background: var(--accent); transform-origin: left center; opacity: 0; transition: transform 0.5s var(--ease-out-expo), opacity 0.25s ease-out; pointer-events: none; }
 .nav-list[data-ready] .nav-item.is-target .nav-link { color: var(--accent-contrast); font-style: italic; }
 
-/* Paneles con datos: un puente invisible cubre el hueco entre la barra y el panel. */
+/* Panels with data: an invisible bridge covers the gap between the bar and the panel. */
 .nav-panel {
   position: absolute; inset-block-start: calc(100% + 13px); inset-inline-start: 50%; z-index: 2; min-inline-size: 20rem;
   padding: 1.25rem 1.25rem 1rem; background: var(--bg); border: 1px solid var(--line);
@@ -252,12 +252,12 @@ p { margin: 0; max-width: var(--measure); }
   transition: opacity 0.2s ease-out, transform 0.35s var(--ease-out-expo), visibility 0s linear 0.2s;
 }
 .nav-panel::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: -15px; block-size: 15px; }
-/* Solo el panel de la sección señalada recibe el ratón (pointer-events no se anima): uno que se está
-   desvaneciendo no puede robar el hover y provocar un bucle entre secciones. */
+/* Only the panel of the section being pointed at receives the mouse (pointer-events does not animate): one
+   that is fading out cannot steal the hover and cause a loop between sections. */
 .nav-item:hover > .nav-panel, .nav-item:focus-within > .nav-panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; transition-delay: 0.1s, 0.1s, 0s; }
 .nav-list.is-dismissed .nav-panel { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* Panel ancho de «Carreras»: centrado bajo toda la navegación (su <li> deja de ser la referencia). */
+/* The wide "Races" panel: centred under the whole navigation (its <li> stops being the reference). */
 .nav-item.has-mega { position: static; }
 .nav-panel-mega { inline-size: min(920px, calc(100vw - 32px)); padding: 0; }
 .mega { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); }
@@ -298,7 +298,7 @@ p { margin: 0; max-width: var(--measure); }
 .mega-quick a:hover .icon { color: var(--accent); }
 .mega-sub { margin-block-start: 0.75rem; }
 .mega-lede { font-size: var(--step--1); line-height: 1.45; display: block; }
-/* Tablas de clasificación: posición, nombre, puntos y una barra fina respecto al líder (lima solo el líder). */
+/* Standings tables: position, name, points and a thin bar relative to the leader (lime for the leader only). */
 .mega-table { list-style: none; margin: 0.35rem 0 0; padding: 0; display: grid; }
 .mega-table a { display: grid; grid-template-columns: 1.3rem minmax(0, 1fr) auto; grid-template-rows: auto 4px; column-gap: 0.5rem; row-gap: 0.3rem; align-items: baseline; padding-block: 0.45rem; border-block-start: 1px solid var(--line); color: var(--text); font-size: var(--step--1); transition: transform 0.35s var(--ease-out-expo); }
 .mega-table a:hover { transform: translateX(3px); }
@@ -311,7 +311,7 @@ p { margin: 0; max-width: var(--measure); }
 .mega-bar-rail { fill: var(--surface); }
 .mega-bar-fill { fill: var(--muted); }
 .mega-bar.is-lead .mega-bar-fill { fill: var(--accent); }
-/* Enlace con una línea que dice qué hay dentro. */
+/* A link with a line saying what is inside. */
 .mega-list { list-style: none; margin: 0.35rem 0 0; padding: 0; display: grid; }
 .mega-described { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr); gap: 0.6rem; align-items: start; padding-block: 0.55rem; border-block-start: 1px solid var(--line); color: var(--text); transition: transform 0.35s var(--ease-out-expo); }
 .mega-described .icon { margin-block-start: 0.15em; color: var(--muted); transition: color 0.2s ease-out; }
@@ -319,7 +319,7 @@ p { margin: 0; max-width: var(--measure); }
 .mega-described:hover .icon, .mega-described:hover .mega-described-name { color: var(--accent); }
 .mega-described-name { display: block; font-size: var(--step--1); font-weight: 600; transition: color 0.2s ease-out; }
 .mega-described-line { display: block; font-size: var(--step--2); color: var(--muted); line-height: 1.4; }
-/* Esta semana en la historia: el año grande, el ganador y el GP. */
+/* This week in history: the year in large type, the winner and the Grand Prix. */
 .mega-events { list-style: none; margin: 0.35rem 0 0; padding: 0; display: grid; }
 .mega-events a { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: 0.6rem; align-items: baseline; padding-block: 0.5rem; border-block-start: 1px solid var(--line); color: var(--text); transition: transform 0.35s var(--ease-out-expo); }
 .mega-events a:hover { transform: translateX(3px); }
@@ -345,13 +345,13 @@ p { margin: 0; max-width: var(--measure); }
 .panel-tools { list-style: none; margin: 0.25rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-size: var(--step--1); }
 .panel-tools a { color: var(--text); }
 
-/* Herramientas: búsqueda con su atajo, cuenta e idioma. */
+/* Tools: search with its shortcut, account and language. */
 .header-tools { display: flex; align-items: center; gap: 0.25rem; }
 .header-tool { display: inline-flex; align-items: center; gap: 0.45rem; min-block-size: 44px; padding-inline: 0.65rem; font-size: var(--step--1); font-weight: 600; color: var(--muted); transition: color 0.2s ease-out; }
 .header-tool:hover { color: var(--text); }
 .header-tool .icon { inline-size: 18px; block-size: 18px; }
 .header-kbd { display: inline-grid; place-items: center; min-inline-size: 1.4rem; block-size: 1.4rem; border: 1px solid var(--line); font: inherit; font-size: 12px; color: var(--muted); }
-/* Selector de idioma: desplegable con banderas (un <details>). */
+/* Language switcher: a dropdown with flags (a <details>). */
 .lang-switch { position: relative; }
 .lang-switch summary { display: inline-flex; align-items: center; gap: 0.45rem; min-block-size: 36px; padding-inline: 0.55rem; border: 1px solid var(--line); font-size: var(--step--1); font-weight: 600; letter-spacing: 0.02em; color: var(--text); cursor: pointer; list-style: none; transition: border-color 0.2s ease-out; }
 .lang-switch summary::-webkit-details-marker { display: none; }
@@ -361,7 +361,7 @@ p { margin: 0; max-width: var(--measure); }
 .lang-switch[open] .lang-chevron { transform: rotate(180deg); }
 .lang-menu { position: absolute; inset-block-start: calc(100% + 6px); inset-inline-end: 0; z-index: 60; min-inline-size: 11rem; list-style: none; margin: 0; padding: 0.35rem; background: var(--bg); border: 1px solid var(--line); box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.6); animation: lang-in 0.25s var(--ease-out-expo) both; }
 .lang-switch.is-up .lang-menu { inset-block-start: auto; inset-block-end: calc(100% + 6px); }
-/* Puente invisible sobre el hueco de 6 px: el ratón no «sale» del selector al bajar hasta el menú. */
+/* An invisible bridge over the 6 px gap: the mouse does not "leave" the switcher on its way down to the menu. */
 .lang-menu::before { content: ""; position: absolute; inset-inline: 0; inset-block-start: -8px; block-size: 8px; }
 .lang-switch.is-up .lang-menu::before { inset-block-start: auto; inset-block-end: -8px; }
 @keyframes lang-in { from { opacity: 0; transform: translateY(-4px); } }
@@ -372,13 +372,13 @@ p { margin: 0; max-width: var(--measure); }
 .header-tools .lang-switch { margin-inline-start: 0.35rem; }
 @media (prefers-reduced-motion: reduce) { .lang-menu { animation: none; } }
 
-/* Ligado al scroll (solo CSS): el símbolo se reduce un poco al bajar. */
+/* Scroll-linked (CSS only): the mark shrinks a little as you scroll down. */
 @supports (animation-timeline: scroll()) {
   .logo-mark { animation: logo-shrink linear both; animation-timeline: scroll(root); animation-range: 0 200px; }
   @keyframes logo-shrink { to { transform: scale(0.82); } }
 }
 
-/* Menú de móvil a pantalla completa (un <details>: funciona sin JavaScript). */
+/* Full-screen mobile menu (a <details>: works without JavaScript). */
 .menu { display: none; }
 .menu-toggle { display: inline-flex; align-items: center; gap: 0.6rem; min-block-size: 44px; padding-inline: 0.85rem; border: 1px solid var(--line); font-size: var(--step--1); font-weight: 700; cursor: pointer; list-style: none; }
 .menu-toggle::-webkit-details-marker { display: none; }
@@ -404,7 +404,7 @@ p { margin: 0; max-width: var(--measure); }
 .menu-teaser { margin-block-start: 0.4rem; font-size: var(--step--1); color: var(--muted); }
 .menu-link:hover .menu-name { color: var(--accent); }
 .menu-link[aria-current="page"] .menu-name { color: var(--accent); }
-/* Pie del menú (buscar, cuenta, idioma): fijo abajo, visible aunque la lista sea larga; el idioma se abre hacia arriba. */
+/* Menu footer (search, account, language): fixed at the bottom, visible even when the list is long; the language opens upwards. */
 .menu-footer { position: sticky; inset-block-end: -2rem; z-index: 1; display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: -2rem; padding-block: 1rem 2rem; border-block-start: 1px solid var(--line); background: var(--bg); }
 .menu-footer .lang-menu { inset-block-start: auto; inset-block-end: calc(100% + 6px); }
 @keyframes menu-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
@@ -428,21 +428,21 @@ p { margin: 0; max-width: var(--measure); }
 .hero { background: var(--bg); color: var(--text); margin-block: calc(-2rem - var(--header-total, 115px)) 3rem; padding-block-start: var(--header-total, 115px); position: relative; overflow: hidden; isolation: isolate; }
 @media (max-width: 480px) { :root { --header-total: 104px; } }
 /*
- * Vídeo de fondo: ocupa la primera pantalla y se funde con el negro hacia abajo. El velo mantiene el contraste
- * AA del texto y de la lima encima. Con movimiento reducido, el fotograma fijo en su lugar.
+ * Background video: fills the first screen and fades into black towards the bottom. The overlay keeps the AA
+ * contrast of the text and the lime on top. With reduced motion, the still frame in its place.
  */
 .hero-media { position: absolute; inset: 0 0 auto 0; z-index: -2; block-size: min(100svh, 1100px); overflow: hidden; background: var(--bg); pointer-events: none; }
 .hero-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(10 10 10 / 0.74) 0%, rgb(10 10 10 / 0.82) 55%, rgb(10 10 10 / 1) 100%); }
 .hero-video { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center 40%; opacity: 0; transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-/* Aparece con un fundido solo cuando puede reproducirse sin cortes; hasta entonces, negro. */
+/* It fades in only once it can play without stalling; until then, black. */
 .hero-video.is-ready { opacity: 1; }
 
 .gp-name { font-size: var(--step-5); line-height: var(--lh-tight); letter-spacing: -0.03em; }
 
 /*
- * Hero como hoja de plano sobre negro limpio (marca.md §1): el nombre del GP a escala de cartel, la cuenta
- * atrás como cota real, los datos del circuito en columnas y el fin de semana como una regla.
- * Una sola coreografía de entrada, en CSS: la cota se dibuja y las marcas aparecen en orden.
+ * The hero as a drawing sheet on clean black (brand.md §1): the Grand Prix name at poster scale, the
+ * countdown as a real dimension line, the circuit's details in columns and the weekend as a ruler.
+ * A single entrance choreography, in CSS: the dimension line draws itself and the ticks appear in order.
  */
 .sheet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem); }
 .sheet > * { position: relative; z-index: 1; }
@@ -463,13 +463,13 @@ p { margin: 0; max-width: var(--measure); }
 
 .sheet-caption { margin: 0; font-size: var(--step--1); font-weight: 500; color: var(--muted); }
 
-/* La cota: los números escritos sobre la medida, alineados con la salida. */
+/* The dimension line: the numbers written above the measurement, aligned with the start. */
 .sheet-cota { margin-block-start: clamp(2rem, 5vw, 3.5rem); }
 .sheet-lap .sheet-cota { margin-block-start: clamp(1rem, 2.5vw, 2rem); }
 .countdown { position: relative; }
 .countdown-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem 1rem; }
 .countdown-values { display: flex; justify-content: flex-end; gap: clamp(0.75rem, 2.5vw, 2.25rem); margin: 0 0 0 auto; }
-/* El rótulo ocupa el hueco a la izquierda de las cifras, alineado con las unidades. */
+/* The label fills the space to the left of the figures, aligned with the units. */
 .countdown-caption { margin: 0 auto 0 0; padding-block-end: 0.15rem; font-size: var(--step-1); font-weight: 600; font-stretch: var(--display-width); color: var(--text); }
 .countdown-part { display: flex; flex-direction: column-reverse; align-items: flex-end; }
 .countdown-value { margin: 0; font-size: clamp(3.25rem, 9.5vw, 8.75rem); font-stretch: var(--display-width); font-weight: 600; line-height: 0.82; letter-spacing: -0.04em; color: var(--accent); font-variant-numeric: tabular-nums; }
@@ -489,13 +489,13 @@ p { margin: 0; max-width: var(--measure); }
 .cota-label-now { fill: var(--text); font-weight: 600; }
 .cota-label-to { fill: var(--accent); font-weight: 600; }
 
-/* Cajetín: la tabla de datos de un plano, con su retícula de 1 px. */
-/* Datos del circuito en columnas: sin cajas, un filete encima de cada dato. */
+/* Title block: a drawing's data table, with its 1 px grid. */
+/* The circuit's details in columns: no boxes, a rule above each item. */
 .cajetin { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.75rem clamp(1.25rem, 3vw, 2.5rem); margin: clamp(2.25rem, 5vw, 3.5rem) 0 0; }
 .cajetin-cell { padding-block-start: 0.75rem; border-block-start: 1px solid var(--line); animation: cell-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .cajetin-wide { grid-column: span 2; }
 .cajetin dt { display: flex; align-items: center; gap: 0.4rem; font-size: var(--step--2); font-weight: 500; color: var(--muted); margin-block-end: 0.375rem; }
-/* Pictogramas: 1em, trazo de 2 con remates cuadrados, en el color del texto. */
+/* Pictograms: 1em, a 2-unit stroke with square caps, in the text colour. */
 .icon { inline-size: 1.15em; block-size: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: square; stroke-linejoin: miter; }
 .icon .icon-fill { fill: currentColor; stroke: none; }
 .cajetin .icon { color: var(--text); }
@@ -515,8 +515,8 @@ p { margin: 0; max-width: var(--measure); }
 }
 
 /*
- * El fin de semana como calendario: columnas por día, horas en vertical, bloques con su duración real.
- * La siguiente sesión en lima, la carrera en blanco, lo terminado se apaga. Todo en el SVG, con clases.
+ * The weekend as a calendar: columns per day, hours running down, blocks with their real duration.
+ * The next session in lime, the race in white, finished ones dimmed. All in the SVG, with classes.
  */
 .sheet-sessions { margin-block-start: clamp(2.5rem, 6vw, 4rem); }
 .cal { display: block; margin-block-start: 0.75rem; overflow: visible; font-family: var(--font-sans); }
@@ -544,19 +544,19 @@ p { margin: 0; max-width: var(--measure); }
 .cal-icon-small { stroke: var(--muted); }
 .cal-block-name-short { display: none; }
 .cal-block-state { font-size: 11px; font-weight: 600; }
-/* Terminada: se apaga, sin perder contraste de lectura. */
+/* Finished: dimmed, without losing reading contrast. */
 .cal-done .cal-block-bg { fill: var(--bg); stroke-dasharray: 3 4; }
 .cal-done .cal-block-name, .cal-done .cal-block-time { fill: var(--muted); }
 .cal-done .cal-icon { stroke: var(--muted); }
 .cal-done .cal-icon .icon-fill { fill: var(--muted); }
-/* La carrera: el bloque en blanco, lo más fuerte del calendario. */
+/* The race: the block in white, the strongest thing in the calendar. */
 .cal-race .cal-block-bg { fill: var(--text); stroke: var(--text); }
 .cal-race .cal-block-name, .cal-race .cal-block-time { fill: var(--bg); }
 .cal-race .cal-block-track { fill: #3a3a3a; }
 .cal-race .cal-icon-small { stroke: #3a3a3a; }
 .cal-race .cal-icon { stroke: var(--bg); }
 .cal-race .cal-icon .icon-fill { fill: var(--bg); }
-/* La siguiente: contorno lima que respira; en directo, el bloque entero en lima y el cuadrado latiendo. */
+/* The next one: a breathing lime outline; when live, the whole block in lime with the square pulsing. */
 .cal-next .cal-block-bg { stroke: var(--accent-2); stroke-width: 2; animation: cal-breathe 2.4s ease-in-out infinite; }
 .cal-next .cal-block-time, .cal-next .cal-block-state { fill: var(--accent-2); }
 .cal-live .cal-block-bg { fill: var(--accent); stroke: var(--accent); }
@@ -566,7 +566,7 @@ p { margin: 0; max-width: var(--measure); }
 .cal-live .cal-block-track, .cal-live .cal-block-end { fill: var(--accent-contrast); }
 .cal-live .cal-icon-small { stroke: var(--accent-contrast); }
 .cal-live-mark { fill: var(--accent-contrast); animation: live-blink 1.2s steps(2, jump-none) infinite; }
-/* «Ahora», siempre en lila (acento secundario): se ve también encima del bloque lima en directo. */
+/* "Now", always in lilac (secondary accent): it also shows on top of the live lime block. */
 .cal-now line { stroke: var(--accent-2); stroke-width: 2; }
 .cal-now rect { fill: var(--accent-2); }
 .cal-now text { fill: var(--accent-2); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
@@ -584,18 +584,18 @@ p { margin: 0; max-width: var(--measure); }
   .cal-block, .cal-next .cal-block-bg, .cal-live-mark { animation: none; }
 }
 
-/* Una vuelta real: el trazado coloreado por velocidad, por encima del nombre, y el cuadrado lima recorriéndolo. */
+/* A real lap: the layout coloured by speed, above the name, and the lime square running it. */
 .lap-stage { display: grid; margin-block-start: clamp(0.5rem, 2vw, 1.5rem); }
 .lap-stage > * { grid-area: 1 / 1; }
 .lap-visual { position: relative; z-index: 1; align-self: center; display: grid; gap: 0.75rem; }
 .lap-figure { display: block; width: 100%; height: auto; max-height: 56vh; overflow: visible; }
-/* El nombre, centrado en la figura: la pista lo cruza y su halo corta las letras. */
-/* Sin z-index propio: así la entradilla puede quedar por encima de la pista y la palabra grande, por debajo. */
+/* The name, centred in the figure: the track crosses it and its halo cuts the letters. */
+/* No z-index of its own: that way the lede can sit above the track and the large word below it. */
 .lap-stage .sheet-title { align-self: center; margin: 0; }
-/* Solo la palabra grande se deja cortar: el texto pequeño va por encima de la pista, sobre negro. */
+/* Only the large word may be cut: the small text sits above the track, on black. */
 .lap-stage .sheet-lead { position: relative; z-index: 2; display: table; padding-inline-end: 0.3em; background: var(--bg); }
 .lap-halo { fill: none; stroke: var(--bg); stroke-width: 34px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-/* Velocidad sobre el mapa (marca.md §5): de la lima más oscura (frenada) a la más clara (punta). */
+/* Speed on the map (brand.md §5): from the darkest lime (braking) to the lightest (top speed). */
 .lap-seg { stroke-width: 8px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .lap-seg-1 { stroke: var(--seq-4); }
 .lap-seg-2 { stroke: var(--seq-5); }
@@ -621,7 +621,7 @@ p { margin: 0; max-width: var(--measure); }
 .lap-trail-3 { opacity: 0.2; }
 .lap-trail-4 { opacity: 0.1; }
 .lap-car-static { display: none; fill: var(--accent); }
-/* Velocímetro: barra lima sincronizada con el cuadrado. */
+/* Speedometer: a lime bar synchronised with the square. */
 .lap-speed { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; max-width: 34rem; justify-self: end; inline-size: 100%; font-size: var(--step--2); color: var(--muted); }
 .lap-speed-label { font-weight: 600; color: var(--text); }
 .lap-speed-bar { display: block; }
@@ -661,7 +661,7 @@ p { margin: 0; max-width: var(--measure); }
 .podium-name { font-weight: 600; }
 
 .page-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
-/* Selector (temporada, ronda): la etiqueta encima y el desplegable y el botón unidos en un solo control. */
+/* Picker (season, round): the label above, and the dropdown and button joined in a single control. */
 .season-picker { display: inline-grid; grid-template-columns: auto auto; grid-template-areas: "label label" "select go"; row-gap: 0.35rem; align-items: stretch; }
 .season-picker label { grid-area: label; font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 .season-picker select { grid-area: select; min-inline-size: 7rem; min-block-size: 48px; font-size: var(--step-1); border-color: var(--text); border-inline-end: 0; }
@@ -670,8 +670,8 @@ p { margin: 0; max-width: var(--measure); }
 .season-picker button:hover::after { transform: translateX(4px); }
 .season-picker button:hover { font-style: italic; }
 select, button { font: inherit; min-height: 44px; padding: 0 0.75rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); }
-/* Desplegables de la marca: esquinas rectas, flecha propia dibujada con degradados en currentColor (se
-   adapta sola al modo claro, al oscuro y a las zonas negras) y el valor en la tipografía de las cifras. */
+/* Brand dropdowns: square corners, a custom arrow drawn with gradients in currentColor (it adapts to light
+   mode, dark mode and the black zones on its own) and the value in the figures' typeface. */
 select {
   appearance: none; -webkit-appearance: none; min-block-size: 44px; padding: 0 2.5rem 0 0.9rem; border-radius: 0; cursor: pointer;
   font-weight: 700; font-stretch: var(--display-width); font-variant-numeric: tabular-nums;
@@ -695,14 +695,14 @@ tr[data-status="next"] th { color: var(--accent-2); }
 .tag { display: inline-block; margin-inline-start: 0.5rem; padding: 0 0.375rem; border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: var(--step--2); font-weight: 500; }
 .tag-quiet { color: var(--muted); }
 .tag-accent { border-color: var(--accent); }
-/* Favoritos (COM-10): fondo de superficie y filete lila a la izquierda; la etiqueta lo dice en texto. */
+/* Favourites (COM-10): a surface background, and a label with a lilac border says so in text. */
 tr.is-favorite > * { background: var(--surface); }
 .tag-fav { border-color: var(--accent-2); }
 
 .prose { max-width: calc(var(--measure) + 96px); }
 
 
-/* Esqueletos de carga (TRA-30). La animación se anula con prefers-reduced-motion (regla global). */
+/* Loading skeletons (TRA-30). The animation is cancelled by prefers-reduced-motion (global rule). */
 .skeleton { background: var(--surface); border-radius: var(--radius-sm); animation: pulse 1.6s ease-in-out infinite; }
 .skeleton-title { height: 3rem; max-width: 28rem; }
 .skeleton-line { height: 1.25rem; max-width: 20rem; }
@@ -710,7 +710,7 @@ tr.is-favorite > * { background: var(--surface); }
 @keyframes pulse { 50% { opacity: 0.55; } }
 .sessions li[data-live] .session-name { color: var(--accent); }
 
-/* ---- Gráficos (marca.md §5) ----------------------------------------------------------------- */
+/* ---- Charts (brand.md §5) ------------------------------------------------------------------- */
 
 .chart { margin: 0; }
 .chart-svg { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--font-sans); }
@@ -745,7 +745,7 @@ tr.is-favorite > * { background: var(--surface); }
 .picker label { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; font-size: var(--step--1); }
 .picker input { width: 1.1rem; height: 1.1rem; accent-color: var(--text); }
 
-/* Matriz piloto × carrera (NUC-34): el texto manda; el peso solo refuerza. */
+/* Driver × race matrix (NUC-34): the text leads; weight only reinforces it. */
 .matrix td, .matrix th { padding-inline: 0.375rem; text-align: center; }
 .matrix tbody th { text-align: start; white-space: nowrap; }
 .matrix .podium-cell { font-weight: 700; }
@@ -774,13 +774,13 @@ input::placeholder { color: var(--muted); }
 .split { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); }
 
 
-/* ---- Zona técnica ---------------------------------------------------------------------------- */
+/* ---- Technical zone -------------------------------------------------------------------------- */
 
 .auto-note { font-weight: 600; color: var(--text); padding: 0.5rem 0.75rem; background: var(--surface); }
 .legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: var(--step--2); color: var(--muted); margin-block-start: 0.5rem; }
 .legend-item { display: inline-flex; align-items: center; gap: 0.375rem; }
 
-/* Compuestos: escala neutra de la marca + trama + letra. Nunca los colores oficiales de los neumáticos. */
+/* Compounds: the brand's neutral scale + pattern + letter. Never the tyres' official colours. */
 .compound rect { stroke: var(--text); stroke-width: 1px; }
 .compound-SOFT rect { fill: var(--text); }
 .compound-SOFT .compound-letter { fill: var(--bg); }
@@ -797,10 +797,10 @@ input::placeholder { color: var(--muted); }
 .neutralised rect { fill: var(--surface); }
 .neutralised-RED rect { fill: var(--div-loss-1); }
 
-/* Sectores: divergente de la marca; el signo acompaña siempre al color (marca.md §5). */
+/* Sectors: the brand's diverging scale; the sign always goes with the colour (brand.md §5). */
 .gap-0 { background: var(--div-mid); font-weight: 700; }
 .gap-1 { background: var(--div-loss-1); }
-.gap-2 { background: var(--div-loss-2); color: #0A0A0A; } /* 6,15:1 en claro */
+.gap-2 { background: var(--div-loss-2); color: #0A0A0A; } /* 6.15:1 in light mode */
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gap-2 { color: #F5F5F5; } } /* 4,61:1 */
 :root[data-theme="dark"] .gap-2 { color: #F5F5F5; }
 .gap-3 { background: var(--div-loss-3); color: var(--bg); }
@@ -841,9 +841,9 @@ input::placeholder { color: var(--muted); }
 .circuit-path { fill: none; stroke: var(--text); stroke-width: 14px; stroke-linejoin: round; stroke-linecap: round; }
 .invite-link { word-break: break-all; background: var(--surface); padding: 0.5rem 0.75rem; }
 
-/* Mapa de la temporada (NUC-17) */
-/* Mapa de la temporada: dónde se corre cada carrera. El mundo y Europa con la misma altura (columnas en
-   proporción a sus viewBox: 960/409 y 480/363) y una leyenda mínima debajo. */
+/* Season map (NUC-17) */
+/* Season map: where each race is held. The world and Europe at the same height (columns in proportion to
+   their viewBox: 960/409 and 480/363) and a minimal legend below. */
 .season-map { display: grid; grid-template-columns: minmax(0, 2.35fr) minmax(0, 1.32fr); gap: 1rem clamp(1rem, 2vw, 1.5rem); padding: clamp(1rem, 2.5vw, 1.75rem); background: var(--surface); border: 1px solid var(--line); }
 .season-map figure { margin: 0; display: grid; gap: 0.4rem; align-content: start; }
 .map-svg { inline-size: 100%; block-size: auto; display: block; overflow: hidden; background: var(--surface); }
@@ -855,7 +855,7 @@ input::placeholder { color: var(--muted); }
 .map-pin.is-done .map-label { fill: var(--bg); }
 .map-pin.is-next .map-mark { fill: var(--accent-2); stroke: var(--accent-2); }
 .map-pin.is-next .map-label { fill: var(--accent-contrast); }
-/* La zona ampliada: un marco en el mundo y el mismo marco alrededor de la ampliación. */
+/* The enlarged area: a frame on the world and the same frame around the enlargement. */
 .map-zoom rect { fill: none; stroke: var(--text); stroke-width: 1.25; vector-effect: non-scaling-stroke; }
 .map-zoom text { font-size: 12px; font-weight: 700; fill: var(--text); }
 .map-zoomed .map-svg { outline: 1.5px solid var(--text); outline-offset: -1px; }
@@ -875,15 +875,15 @@ input::placeholder { color: var(--muted); }
 }
 @media (prefers-reduced-motion: reduce) { .map-halo { animation: none; } }
 
-/* Frenadas sobre el trazado (NUC-44) */
+/* Braking zones on the layout (NUC-44) */
 .corner-mark circle { fill: var(--text); stroke: var(--bg); stroke-width: 4; }
 .corner-mark text { fill: var(--bg); font-size: 22px; font-weight: 700; }
 
 /*
- * Coreografía del hero (una sola entrada, ease-out exponencial, solo transform/opacity/clip-path):
- * cabecera de la hoja → entradilla que sube desde una máscara → la palabra grande se asienta (sin tocar su
- * opacidad: es el LCP) → pista → cuenta atrás y cota → datos. Y, ligado al scroll, la profundidad: el vídeo
- * se queda atrás, el titular se aleja al salir y cada sección entra al aparecer.
+ * Hero choreography (a single entrance, exponential ease-out, only transform/opacity/clip-path):
+ * sheet header → lede rising from a mask → the large word settles (its opacity untouched: it is the LCP)
+ * → track → countdown and dimension line → details. And, scroll-linked, depth: the video stays behind,
+ * the headline recedes as it leaves and each section enters as it appears.
  */
 .sheet-head { animation: rise 0.8s var(--ease-out-expo) 0.05s both; }
 .sheet-lead { animation: lead-in 0.9s var(--ease-out-expo) 0.12s both; }
@@ -914,11 +914,11 @@ input::placeholder { color: var(--muted); }
 }
 
 /*
- * Así acabó la última carrera: banda negra a todo el ancho que cuenta la carrera. El podio a escala
- * tipográfica, el gráfico de posiciones que se dibuja al llegar con el scroll, cuatro cifras y la nota.
+ * How the last race finished: a full-width band that tells the race. The podium at typographic scale, the
+ * positions chart drawing itself as it scrolls in, four figures and the note.
  */
-/* Fondo claro (sigue el tema de la página), gris de la marca para que las tarjetas blancas destaquen. Abre
-   la banda a cuadros de meta; detrás, el circuito de la carrera. El ganador y la nota van en negro. */
+/* Light background (follows the page theme), the brand grey so the white cards stand out. A chequered
+   finish strip opens the band; behind it, the race's circuit. The winner and the note are on black. */
 .hero + .recap { margin-block-start: -3rem; }
 .recap { position: relative; isolation: isolate; overflow: hidden; background: var(--surface); color: var(--text); padding-block: 0 clamp(3rem, 7vw, 5.5rem); margin-block-end: 1rem; }
 .recap + .tf { margin-block-start: -1rem; }
@@ -935,7 +935,7 @@ input::placeholder { color: var(--muted); }
   grid-template-areas: "head head" "podium story" "actions story";
 }
 .recap-head { grid-area: head; display: grid; gap: 0.75rem; }
-/* Crónica de la última carrera (race-report.tsx): siempre la misma plantilla, rellena con el resultado. */
+/* Report of the last race (race-report.tsx): always the same template, filled in with the result. */
 .rr-grid { position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "head head" "podium keys" "slope side"; align-items: start; gap: clamp(2rem, 4.5vw, 3.25rem) clamp(1.5rem, 4vw, 3.5rem); }
 .rr-head { grid-area: head; display: grid; gap: 0.85rem; }
 .rr-headline { margin: 0; max-inline-size: 36ch; font-family: var(--font-display); font-size: clamp(1.35rem, 2.6vw, 2.1rem); font-weight: 600; font-stretch: var(--display-width); line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; }
@@ -1030,7 +1030,7 @@ input::placeholder { color: var(--muted); }
 .recap-loss { color: var(--text); }
 .recap-time { font-size: var(--step--1); color: var(--text); }
 
-/* El ganador: bloque negro, el único sitio con lima. Un trofeo cuyo cuadrado brilla al entrar. */
+/* The winner: a black block, the only place with lime. A trophy whose square glows on entry. */
 .recap-place-1 { grid-template-columns: minmax(0, 1fr); padding: clamp(1.25rem, 2.5vw, 1.75rem); background: var(--bg); color: var(--text); border: 0; margin-block-end: 0.25rem; }
 .recap-place-1 .recap-pos { grid-row: auto; display: flex; align-items: center; gap: 0.6rem; color: var(--accent); font-size: var(--step-1); }
 .recap-trophy { inline-size: 1.4em; block-size: 1.4em; }
@@ -1038,7 +1038,7 @@ input::placeholder { color: var(--muted); }
 .recap-place-1 .recap-name:hover { color: var(--accent); }
 .recap-place-1 .recap-gain { color: var(--accent); }
 
-/* La historia: una tarjeta con cabecera y leyenda, el gráfico y las cuatro cifras al pie. */
+/* The story: a card with a header and a legend, the chart and the four figures underneath. */
 .recap-story { grid-area: story; align-self: start; display: grid; gap: 1.5rem; align-content: start; padding: clamp(1rem, 2.5vw, 1.75rem); background: var(--bg); border: 1px solid var(--line); box-shadow: 0 1px 0 var(--line), 0 24px 48px -32px rgb(10 10 10 / 0.25); }
 .recap-chart { margin: 0; display: grid; gap: 0.75rem; }
 .recap-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1.5rem; padding-block-end: 0.75rem; border-block-end: 1px solid var(--line); }
@@ -1092,9 +1092,9 @@ input::placeholder { color: var(--muted); }
   .recap-car { display: none; }
 }
 
-/* ── La pelea por el título (title-fight.tsx) ─────────────────────────────────────────────────────────
-   Banda negra a todo el ancho. Cada piloto, un carril: barra (puntos), trama (lo que aún puede sumar), línea
-   lila (el líder) y bandera a cuadros (el máximo posible). Lima solo para el líder. */
+/* ── The title fight (title-fight.tsx) ─────────────────────────────────────────────────────────────────
+   A full-width black band. Each driver, a lane: bar (points), hatching (what they can still score), a lilac
+   line (the leader) and a chequered flag (the maximum possible). Lime for the leader only. */
 .tf { background: var(--bg); color: var(--text); padding-block: clamp(3.5rem, 8vw, 6.5rem); }
 .tf a { text-decoration: none; }
 .tf-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "head head" "drivers teams" "foot foot"; gap: clamp(2rem, 4vw, 3rem) clamp(2rem, 5vw, 4.5rem); }
@@ -1139,13 +1139,13 @@ input::placeholder { color: var(--muted); }
 .tf-hatch-line { stroke: var(--muted); stroke-width: 2; }
 .tf-check-a { fill: var(--text); }
 
-/* El líder: lima en número, barra y coche. */
+/* The leader: lime in the number, bar and car. */
 .tf-lane.is-leader .tf-pos, .tf-lane.is-leader .tf-state { color: var(--accent); }
 .tf-lane.is-leader .tf-bar, .tf-lane.is-leader .tf-car { fill: var(--accent); }
 .tf-lane.is-leader .tf-mark { display: none; }
 .tf-drivers .tf-lane.is-leader .tf-name { font-size: var(--step-3); }
 .tf-drivers .tf-lane.is-leader .tf-pts-value { font-size: var(--step-4); }
-/* Fuera de la pelea: apagado. */
+/* Out of the fight: dimmed. */
 .tf-lane.is-out .tf-bar, .tf-lane.is-out .tf-car { fill: var(--muted); }
 .tf-lane.is-out .tf-reach { opacity: 0.45; }
 .tf-lane.is-out .tf-state { color: var(--muted); font-weight: 500; }
@@ -1180,8 +1180,8 @@ input::placeholder { color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .tf-bar, .tf-car, .tf-mark { animation: none; } }
 
 /* ── Newsletter (newsletter-band.tsx) ──────────────────────────────────────────────────────────────────
-   Se enseña en vez de prometerse: el titular, lo que trae y el formulario a un lado; al otro, un número de
-   muestra con la última carrera, en hojas apiladas que se enderezan al bajar y se abren en abanico. */
+   Shown instead of promised: the headline, what it brings and the form on one side; on the other, a sample
+   issue with the last race, on stacked sheets that straighten as you scroll and fan out. */
 .nl { padding-block: clamp(3.5rem, 8vw, 6.5rem) clamp(1rem, 3vw, 2rem); overflow-x: clip; }
 .nl-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(2.5rem, 6vw, 6rem); align-items: center; }
 .nl-copy { display: grid; gap: 1.5rem; align-content: start; }
@@ -1248,7 +1248,7 @@ input::placeholder { color: var(--muted); }
   .nl-sheet-back, .nl-sheet-mid { transition: none; }
 }
 
-/* Consentimiento de la newsletter: casilla cuadrada de la marca, de 20 px y con 44 px de zona táctil. */
+/* Newsletter consent: the brand's square checkbox, 20 px with a 44 px touch target. */
 .consent { display: flex; align-items: flex-start; gap: 0.6rem; min-block-size: 44px; padding-block: 0.6rem; font-size: var(--step--1); line-height: 1.45; cursor: pointer; }
 .consent input { flex: none; appearance: none; inline-size: 20px; block-size: 20px; min-height: 0; margin: 0.1em 0 0; border: 1.5px solid var(--text); border-radius: 0; background: var(--bg); display: grid; place-items: center; cursor: pointer; }
 .consent input::before { content: ""; inline-size: 10px; block-size: 10px; background: var(--text); transform: scale(0); transition: transform 0.25s var(--ease-out-expo); }
@@ -1257,9 +1257,9 @@ input::placeholder { color: var(--muted); }
 .consent a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
 .consent a:hover { color: var(--accent-2); }
 
-/* ── Pie de página (SiteFooter) ───────────────────────────────────────────────────────────────────────
-   Siempre en negro. Izquierda: el símbolo entero, con el punto dando vueltas a la ligadura (y que se
-   inclina hacia el cursor), el eslogan y la newsletter. Derecha: la temporada y, debajo, la navegación. Lo legal, mínimo. */
+/* ── Footer (SiteFooter) ───────────────────────────────────────────────────────────────────────────────
+   Always black. Left: the full mark, with the dot lapping the ligature (and tilting towards the cursor),
+   the tagline and the newsletter. Right: the season and, below it, the navigation. Legal text, minimal. */
 .site-footer { background: var(--bg); color: var(--text); padding-block: clamp(3.5rem, 8vw, 6rem) 1.25rem; overflow: hidden; }
 .site-footer a { text-decoration: none; }
 .ft { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "brand side" "base base"; gap: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 6vw, 6rem); }
@@ -1288,7 +1288,7 @@ input::placeholder { color: var(--muted); }
 .ft-list a { display: inline-flex; align-items: center; min-block-size: 36px; color: var(--text); font-size: var(--step--1); font-weight: 600; transition: color 0.2s ease-out, transform 0.35s var(--ease-out-expo); }
 .ft-list a:hover { color: var(--accent); transform: translateX(4px); }
 
-/* La temporada, carrera a carrera: discreta, en columnas. */
+/* The season, race by race: discreet, in columns. */
 .ft-season { display: grid; gap: 0.75rem; min-inline-size: 0; }
 .ft-side > * { min-inline-size: 0; }
 .ft-round a { min-inline-size: 0; }
@@ -1307,17 +1307,17 @@ input::placeholder { color: var(--muted); }
 .ft-round.is-live .ft-dot { background: var(--accent); border-color: var(--accent); animation: live-blink 1.2s steps(2, jump-none) infinite; }
 .ft-round.is-cancelled .ft-round-name { text-decoration: line-through; }
 .ft-round-state { flex: none; font-size: 11px; }
-/* Mismo hover que la navegación del pie: lima y un paso a la derecha. */
+/* The same hover as the footer navigation: lime and a step to the right. */
 .ft-rounds .ft-round a:hover { color: var(--accent); transform: translateX(4px); }
 @keyframes ft-pulse { 50% { opacity: 0.4; } }
 
 .ft-base { grid-area: base; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 2rem; padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
-/* Lo legal, lo más apagado posible sin bajar del contraste mínimo de WCAG AA (4,5:1 sobre negro). */
+/* Legal text, as dim as possible without going below WCAG AA's minimum contrast (4.5:1 on black). */
 .ft-legal { margin: 0; font-size: 11px; line-height: 1.5; color: color-mix(in srgb, var(--muted) 76%, var(--bg)); max-inline-size: 70ch; }
 .ft-base-end { display: inline-flex; align-items: center; gap: 1.5rem; margin-inline-start: auto; font-size: var(--step--2); }
 
 .ft-lockup { display: block; block-size: 28px; inline-size: auto; }
-/* «Volver a la salida» fuera de la retícula, en la misma vertical que el botón de pausa del vídeo del hero. */
+/* "Back to the start" outside the grid, in the bottom corner of the footer. */
 .site-footer { position: relative; }
 .ft-top { position: absolute; inset-block-end: 1.25rem; inset-inline-end: clamp(16px, 4vw, 48px); display: inline-grid; place-items: center; inline-size: 44px; block-size: 44px; border: 1px solid var(--line); color: var(--text); font-size: 0; transition: border-color 0.2s ease-out; }
 .ft-top span { font-size: 18px; transition: transform 0.35s var(--ease-out-expo); }
@@ -1342,9 +1342,9 @@ input::placeholder { color: var(--muted); }
   .ft-mark { transition: none; }
 }
 
-/* ── Calendario de la temporada (season-view.tsx) ─────────────────────────────────────────────────────
-   Cabecera negra con la temporada como una recta; la siguiente carrera destacada; carrera a carrera por
-   meses. Siguiente en lila, terminadas en blanco, por disputar en contorno. */
+/* ── Season calendar (season-view.tsx) ────────────────────────────────────────────────────────────────
+   A black header with the season as a straight; the next race highlighted; race by race by month.
+   Next in lilac, finished in white, upcoming in outline. */
 .sv-hero { background: var(--bg); color: var(--text); margin-block: -2rem 3rem; padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 4vw, 3rem); overflow: hidden; }
 .sv-hero-grid { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
 .sv-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1rem 2rem; }
@@ -1354,7 +1354,7 @@ input::placeholder { color: var(--muted); }
 .sv-tools { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1.25rem; }
 .sv-ics { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 44px; padding-inline: 1rem; background: var(--accent-fill); color: var(--accent-contrast); font-weight: 700; font-size: var(--step--1); text-decoration: none; }
 
-/* La recta de la temporada. */
+/* The season's straight. */
 .tl { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
 .tl-rail { stroke: var(--line); stroke-width: 2; }
 .tl-done { stroke: var(--text); stroke-width: 2; }
@@ -1383,7 +1383,7 @@ input::placeholder { color: var(--muted); }
 .sv-sub { display: block; font-size: var(--step--1); font-weight: 500; color: var(--muted); letter-spacing: 0; }
 .sv-stat-next dd { color: var(--accent-2); }
 
-/* La siguiente carrera. */
+/* The next race. */
 .sv-next { position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line); background: var(--surface); overflow: hidden; }
 .sv-next-solo { grid-template-columns: minmax(0, 1fr); }
 .sv-next-copy { display: grid; gap: 0.75rem; align-content: start; }
@@ -1405,7 +1405,7 @@ input::placeholder { color: var(--muted); }
 .sv-next-track-line { stroke: var(--accent-2); stroke-width: 3px; stroke-dasharray: 1; animation: sv-trace 3.2s var(--ease-out-expo) 0.2s both; }
 @keyframes sv-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-/* Carrera a carrera, por meses: el mes a la izquierda (fijo al bajar), las carreras a la derecha. */
+/* Race by race, by month: the month on the left (sticky while scrolling), the races on the right. */
 .sv-section-title { font-size: var(--step-3); letter-spacing: -0.02em; }
 .sv-rounds { display: grid; gap: 1.5rem; }
 .sv-month { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 10fr); gap: 1.5rem; padding-block-start: 1rem; border-block-start: 1px solid var(--text); }
@@ -1449,11 +1449,11 @@ input::placeholder { color: var(--muted); }
   .sv-row, .sv-next-track-line, .tl-race.is-next .tl-mark, .sv-dot { animation: none; }
 }
 
-/* ── Página de cada Gran Premio (race-view.tsx) ───────────────────────────────────────────────────────
-   Cabecera negra con el nombre a gran escala, el trazado y el podio (o la cuenta atrás); resumen con cifras;
-   índice fijo; secciones; herramientas como tarjetas; anterior y siguiente. La misma para todas. */
+/* ── Each Grand Prix page (race-view.tsx) ─────────────────────────────────────────────────────────────
+   A black header with the name at large scale, the layout and the podium (or the countdown); a summary with
+   figures; a sticky index; sections; tools as cards; previous and next. The same for every race. */
 .rv .breadcrumbs { margin: 0; }
-/* Fondo de toda la página: gris de la marca y, detrás, el circuito que se recorre al bajar. */
+/* The whole page's background: the brand grey and, behind it, the circuit that is drawn as you scroll. */
 .rv { position: relative; isolation: isolate; background: var(--surface); padding-block-end: clamp(3.5rem, 7vw, 5.5rem); }
 body:has(.rv) main { padding-block-end: 0; }
 .rv-backdrop { position: fixed; z-index: -1; inset-block-start: calc(var(--header-total) + 4vh); inset-inline-end: -8vw; inline-size: min(78vw, 1100px); block-size: calc(100vh - var(--header-total) - 8vh); pointer-events: none; }
@@ -1487,7 +1487,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-track-base { stroke: var(--line); stroke-width: 12px; }
 .rv-track-line { stroke: var(--accent); stroke-width: 2.5px; stroke-dasharray: 1; animation: sv-trace 3.2s var(--ease-out-expo) 0.2s both; }
 
-/* Podio: P1 grande, P2 y P3 a su lado. Lima solo en la P1. */
+/* Podium: P1 large, P2 and P3 beside it. Lime for P1 only. */
 .rv-podium { grid-area: podium; list-style: none; margin: 0; padding: 1.25rem 0 0; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 1rem clamp(1rem, 3vw, 2.5rem); border-block-start: 1px solid var(--line); }
 .rv-step { display: grid; gap: 0.3rem; align-content: start; }
 .rv-step-pos { font-size: var(--step-1); font-weight: 700; font-stretch: var(--display-width); color: var(--muted); }
@@ -1498,7 +1498,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-step-given { display: block; font-size: var(--step-0); font-weight: 600; color: var(--muted); letter-spacing: 0; }
 .rv-step-meta { font-size: var(--step--1); color: var(--muted); }
 
-/* Por llegar: cuenta atrás y horarios. */
+/* Upcoming: countdown and times. */
 .rv-upcoming { grid-area: podium; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1rem clamp(1.5rem, 4vw, 3rem); align-items: start; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
 .rv-countdown { display: grid; margin: 0; }
 .rv-countdown-value { font-size: var(--step-5); font-weight: 700; font-stretch: var(--display-width); line-height: 0.9; color: var(--accent-2); }
@@ -1508,7 +1508,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-sessions time { font-weight: 600; }
 .rv-sessions .is-race { font-weight: 700; }
 
-/* Resumen: frase, cifras y la nota. */
+/* Summary: sentence, figures and the note. */
 .rv-summary { display: grid; gap: 1.5rem; }
 .rv-lede { margin: 0; font-size: var(--step-1); line-height: 1.45; max-inline-size: 60ch; }
 .rv-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem clamp(1rem, 3vw, 2rem); margin: 0; }
@@ -1523,15 +1523,15 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-note-arrow { grid-column: 2; grid-row: 1 / span 2; align-self: center; display: grid; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; background: var(--accent-fill); color: var(--accent-contrast); font-size: var(--step-1); transition: transform 0.35s var(--ease-out-expo); }
 .rv-note:hover .rv-note-arrow { transform: translateX(6px); }
 
-/* Subencabezado: la cabecera se alarga con un segundo nivel, del mismo negro y con la misma anchura que
-   la barra de navegación (.header-row). La sección que se lee lleva el bloque lima, que se desliza. */
+/* Sub-navigation: the header grows a second level, the same black and the same width as the navigation
+   bar (.header-row). The section being read carries the lime block, which slides. */
 .rsub { position: sticky; inset-block-start: var(--header-total); z-index: 30; margin-block: -2.5rem 2.5rem; padding: 0 clamp(8px, 2vw, 24px) 6px; background: var(--bg); color: var(--text); }
 .rsub-row { display: flex; align-items: center; gap: 0.75rem clamp(1rem, 2.5vw, 1.75rem); max-inline-size: 1240px; min-block-size: 54px; margin-inline: auto; padding: 0 0.75rem 0 0.9rem; border-block-start: 1px solid var(--line); }
 .rsub-id { flex: none; display: flex; align-items: baseline; gap: 0.55rem; margin: 0; }
 .rsub-round { font-size: var(--step--2); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
 .rsub-name { font-family: var(--font-display); font-size: 1.0625rem; font-weight: 700; font-stretch: var(--display-width); letter-spacing: -0.005em; white-space: nowrap; }
 .rsub-list { position: relative; flex: 1; min-inline-size: 0; display: flex; gap: 0.1rem; list-style: none; margin: 0; padding: 0; overflow-x: auto; scrollbar-width: none; }
-/* Centrada si cabe; si no, empieza por la izquierda (márgenes automáticos, nunca se corta el primero). */
+/* Centred if it fits; otherwise it starts from the left (auto margins, the first item is never cut). */
 .rsub-list li:first-child { margin-inline-start: auto; }
 .rsub-list li:last-child { margin-inline-end: auto; }
 .rsub-list::-webkit-scrollbar { display: none; }
@@ -1554,17 +1554,17 @@ body:has(.rv) main { padding-block-end: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .rsub-puck { transition: none; } }
 
-/* Sin JavaScript (o con movimiento reducido) el salto es el nativo: el margen deja el título bajo las dos
-   barras, igual que anchorOffset() en smooth-scroll.tsx (cabecera + subencabezado de 61 px + aire). */
+/* Without JavaScript (or with reduced motion) the jump is the native one: the margin leaves the heading under
+   both bars, like anchorOffset() in smooth-scroll.tsx (header + 61 px sub-navigation + breathing room). */
 .rv-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; min-inline-size: 0; }
-/* Resultado provisional (D-31): aviso con fondo lila tenue y borde completo, nunca un filete lateral. */
+/* Provisional result (D-31): a notice with a faint lilac background and a full border, never a side rule. */
 .rv-provisional { display: flex; align-items: flex-start; gap: 0.65rem; margin: 0; padding: 0.85rem 1rem; border: 1px solid var(--accent-2); background: color-mix(in oklab, var(--accent-2) 10%, var(--bg)); font-size: var(--step--1); line-height: 1.5; }
 .rv-provisional .icon { flex: none; inline-size: 1.25em; block-size: 1.25em; margin-block-start: 0.1em; color: var(--accent-2); }
 .rv-h2, .rv-section h2 { scroll-margin-top: calc(var(--header-total) + 81px); }
 .rv-h2 { font-size: var(--step-3); letter-spacing: -0.02em; }
 .rv-section-lede { margin: 0; color: var(--muted); font-size: var(--step--1); }
 
-/* Herramientas de análisis como tarjetas. */
+/* Analysis tools as cards. */
 .rv-tools { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.75rem; }
 .rv-tool { display: grid; gap: 0.4rem; align-content: start; block-size: 100%; padding: 1.1rem 1.1rem 1.25rem; border: 1px solid var(--line); background: var(--bg); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out, transform 0.35s var(--ease-out-expo); }
 .rv-tool .icon { inline-size: 1.6em; block-size: 1.6em; }
@@ -1572,7 +1572,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-tool-name { font-weight: 700; font-stretch: var(--display-width); font-size: var(--step-0); }
 .rv-tool-q { font-size: var(--step--1); color: var(--muted); line-height: 1.4; }
 
-/* Anterior y siguiente; el GP en otros años. */
+/* Previous and next; the Grand Prix in other years. */
 .rv-nav { display: grid; gap: 1.5rem; padding-block-start: 1.5rem; border-block-start: 1px solid var(--text); }
 .rv-nav-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
 .rv-nav-card { display: grid; gap: 0.3rem; padding: 1.1rem 1.25rem; border: 1px solid var(--line); background: var(--bg); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out, background-color 0.2s ease-out; }
@@ -1599,7 +1599,7 @@ body:has(.rv) main { padding-block-end: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .rv-track-line { animation: none; } }
 
-/* Carrera por llegar: cuenta atrás viva, sesiones con estado, calendario, previa y ganadores recientes. */
+/* Upcoming race: live countdown, sessions with their state, calendar, preview and recent winners. */
 .rv-count { display: grid; gap: 0.35rem; align-content: start; }
 .rv-count-label { margin: 0; font-size: var(--step--1); color: var(--muted); }
 .rv-count-digits { display: flex; gap: 1rem; margin: 0; }
@@ -1631,7 +1631,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .rv-winner-team { font-size: var(--step--1); color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .rv-live-mark { animation: none; } }
 
-/* Ficha de circuito: reutiliza la plantilla de carrera (rv-*); estas piezas son propias. */
+/* Circuit page: reuses the race template (rv-*); these pieces are its own. */
 .cv-track { grid-area: track; margin: 0; display: grid; gap: 0.5rem; justify-items: end; }
 .cv-track .rv-track { grid-area: auto; }
 .cv-track-source { font-size: 11px; color: var(--muted); }
@@ -1645,8 +1645,8 @@ body:has(.rv) main { padding-block-end: 0; }
 .cv-next-cta::after { content: "→"; transition: transform 0.3s var(--ease-out-expo); }
 .cv-next:hover .cv-next-cta::after { transform: translateX(4px); }
 @keyframes cv-pulse { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
-/* La previa con estructura: la frase de entrada grande, las curvas clave como tarjetas y el momento de la
-   historia en negro (h2 y listas del MDX, sin tocar el contenido). */
+/* The preview with structure: the opening sentence large, the key corners as cards and the historic moment
+   on black (MDX h2 and lists, without touching the content). */
 .cv-guide .article { max-inline-size: none; }
 .cv-guide .article > h2:first-child { font-size: var(--step--1); font-weight: 600; font-family: inherit; color: var(--muted); letter-spacing: 0; margin-block-end: 0.5rem; }
 .cv-guide .article > h2:first-child + p { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; font-stretch: var(--display-width); line-height: 1.12; letter-spacing: -0.02em; max-inline-size: 28ch; margin-block-end: 1rem; }
@@ -1665,8 +1665,8 @@ body:has(.rv) main { padding-block-end: 0; }
 .cv-fact-sub { display: block; font-size: var(--step--1); font-weight: 500; color: var(--muted); letter-spacing: 0; }
 .cv-guide { padding: clamp(1.25rem, 3vw, 2.25rem); background: var(--bg); border: 1px solid var(--line); display: grid; gap: 1rem; }
 
-/* «La previa» (circuit-guide.tsx): doble página de revista. Cita enorme, curvas clave en negro en el orden
-   de la vuelta, coche y estrategia enfrentados y el momento histórico con el año en grande. */
+/* The circuit guide (circuit-guide.tsx): a magazine spread. A huge quote, the key corners on black in lap
+   order, car and strategy facing each other and the historic moment with the year in large type. */
 .pv { display: grid; gap: clamp(1.75rem, 4vw, 3rem); }
 .pv > * { min-inline-size: 0; }
 .pv-kicker { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-size: var(--step--1); font-weight: 700; letter-spacing: 0; line-height: 1.2; }
@@ -1687,7 +1687,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .pv-corners-intro { max-inline-size: 70ch; color: var(--muted); }
 .pv-corner-list { --pv-gap: clamp(1.25rem, 2.5vw, 2rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 2.25rem var(--pv-gap); margin: 0; padding: 0; list-style: none; }
 .pv-corner-list li { position: relative; display: grid; align-content: start; justify-items: start; gap: 0.6rem; padding-block-start: 1.9rem; }
-/* La vuelta como una línea que une las curvas, en su orden; cada curva, un cuadrado lima. */
+/* The lap as a line joining the corners, in order; each corner, a lime square. */
 .pv-corner-list li::before { content: ""; position: absolute; inset-block-start: 5px; inset-inline: 0 calc(-1 * var(--pv-gap)); block-size: 2px; background: var(--line); transform-origin: left center; }
 .pv-corner-list li:last-child::before { inset-inline-end: 0; }
 .pv-corner-list li::after { content: ""; position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 12px; block-size: 12px; background: var(--accent); }
@@ -1722,8 +1722,8 @@ body:has(.rv) main { padding-block-end: 0; }
 @keyframes pv-year { from { opacity: 0; transform: translateX(-0.25em); } }
 @media (prefers-reduced-motion: reduce) { .pv-corner-list li::before, .pv-year { animation: none; } }
 
-/* ── Ficha de circuito ─────────────────────────────────────────────────────────────────────────────
-   Hero: el nombre y las cifras a la izquierda; a la derecha, la vuelta rápida a tiempo real, en grande. */
+/* ── Circuit page ──────────────────────────────────────────────────────────────────────────────────
+   Hero: the name and the figures on the left; on the right, the fastest lap in real time, large. */
 .cv-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); grid-template-areas: "crumbs crumbs" "head track" "facts track"; gap: clamp(1.25rem, 3vw, 2rem) clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
 .cv-hero .rv-head { align-self: end; }
 .cv-hero-track { grid-area: track; align-self: center; min-inline-size: 0; }
@@ -1735,7 +1735,7 @@ body:has(.rv) main { padding-block-end: 0; }
   .cv-hero .cv-facts { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
 }
 
-/* La vuelta a tiempo real: tramos del color de su velocidad, el cuadrado lima con estela y el velocímetro. */
+/* The lap in real time: stretches in the colour of their speed, the lime square with a trail and the speedometer. */
 .clap { margin: 0; display: grid; gap: 1.1rem; }
 .clap-svg { display: block; inline-size: 100%; block-size: auto; max-block-size: min(60vh, 540px); overflow: visible; }
 .clap-road { fill: none; stroke: var(--surface); stroke-width: 26px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
@@ -1774,7 +1774,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .clap.is-playing .clap-live::before { background: var(--accent); animation: cv-blink 1.2s steps(2, jump-none) infinite; }
 @keyframes cv-blink { 50% { opacity: 0.2; } }
 
-/* Dónde está: un globo girado hacia el circuito, con la noche de ahora, y los datos del sitio. */
+/* Where it is: a globe turned towards the circuit, with tonight's shading, and the venue's details. */
 .cv-where { position: relative; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 4vw, 3.5rem); padding: clamp(1.25rem, 4vw, 3.25rem); background: var(--bg); color: var(--text); overflow: hidden; }
 .cv-where-globe { justify-self: center; inline-size: min(100%, 460px); }
 .cglobe { display: block; inline-size: 100%; block-size: auto; animation: cglobe-in 1.4s var(--ease-out-expo) both; }
@@ -1804,7 +1804,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .cv-where-info .cv-next-name { font-size: var(--step-2); }
 @media (max-width: 860px) { .cv-where { grid-template-columns: minmax(0, 1fr); } .cv-where-globe { inline-size: min(100%, 340px); } }
 
-/* La vuelta: banda negra a todo el ancho entre la previa y el palmarés. */
+/* The lap: a full-width black band between the preview and the roll of honour. */
 .cv-band { position: relative; margin-block-start: clamp(3rem, 6vw, 4.5rem); padding-block: clamp(3rem, 7vw, 5.5rem); background: var(--bg); color: var(--text); overflow: hidden; }
 .cv-band-inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(2rem, 4vw, 3rem); }
 .cv-band-inner > * { min-inline-size: 0; }
@@ -1865,7 +1865,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .ccorners li.is-slowest .ccorners-n { -webkit-text-stroke-color: var(--accent-2); }
 .ccorners li.is-slowest .ccorners-fill { fill: var(--accent-2); }
 
-/* Palmarés: quién manda aquí (barras) y todos los ganadores, año a año. */
+/* Roll of honour: who rules here (bars) and every winner, year by year. */
 .cv-kings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem clamp(1.5rem, 4vw, 3.5rem); padding: clamp(1.25rem, 3vw, 2.25rem); border: 1px solid var(--line); background: var(--bg); }
 .cv-kings > .cv-h3 { grid-column: 1 / -1; margin: 0; }
 .cv-rank-title { margin: 0 0 0.85rem; font-size: var(--step--1); font-weight: 600; color: var(--muted); }
@@ -1892,9 +1892,9 @@ body:has(.rv) main { padding-block-end: 0; }
   .clap-segs, .clap-corner, .cglobe, .cglobe-pulse, .clap.is-playing .clap-live::before { animation: none; }
 }
 
-/* ── Histórico (history/page.tsx) ──────────────────────────────────────────────────────────────────────
-   La F1 desde 1950 como una banda de trazos, uno por temporada (blancos los que tienen datos, lila el
-   actual), que entra con un barrido; los grandes números; explorar; temporadas por décadas. */
+/* ── History band ──────────────────────────────────────────────────────────────────────────────────────
+   F1 since 1950 as a band of strokes, one per season (white for seasons with data, lilac for the current
+   one), entering with a sweep; the big numbers; explore; seasons by decade. */
 .hv-hero { padding-block-end: clamp(2.5rem, 5vw, 3.5rem); }
 .hv-hero-grid { display: grid; gap: clamp(2rem, 4vw, 3rem); }
 .hv-head { display: grid; gap: 0.75rem; max-inline-size: 48rem; }
@@ -1911,7 +1911,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .hv-barcode li.has-data > span { background: var(--text); }
 .hv-barcode li.is-now > span { background: var(--accent-2); }
 .hv-barcode li > span:hover { background: var(--accent); transform: scaleY(1.12); }
-/* El año, al señalar el trazo; los de los extremos se alinean hacia dentro para no salirse. */
+/* The year, when pointing at a stroke; those at the ends align inwards so they do not overflow. */
 .hv-barcode li > span::after { content: attr(data-year); position: absolute; inset-block-end: calc(100% + 0.6rem); inset-inline-start: 50%; transform: translateX(-50%); padding: 0.2rem 0.45rem; background: var(--accent-fill); color: var(--accent-contrast); font-size: 12px; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out; white-space: nowrap; }
 .hv-barcode li:nth-last-child(-n + 3) > span::after { inset-inline-start: auto; inset-inline-end: 0; transform: none; }
 .hv-barcode li:nth-child(-n + 3) > span::after { inset-inline-start: 0; transform: none; }
@@ -1959,9 +1959,9 @@ body:has(.rv) main { padding-block-end: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .hv-barcode { animation: none; } }
 
-/* ── Cronometraje de la página de carrera (race-timing.tsx) ───────────────────────────────────────────
-   Tablas sobre negro, como una pantalla de tiempos: posición grande, piloto y equipo, de la parrilla a la
-   meta con flecha, diferencia con barra y puntos. Lima solo para el ganador; lila para lo mejor. */
+/* ── Race page timing (race-timing.tsx) ───────────────────────────────────────────────────────────────
+   Tables on black, like a timing screen: large position, driver and team, grid to finish with an arrow,
+   gap with a bar and points. Lime for the winner only; lilac for the best. */
 .timing { background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.75rem, 2vw, 1.5rem); }
 .timing-table { inline-size: 100%; border-collapse: collapse; font-size: var(--step--1); }
 .timing-table thead th { padding-block: 0.75rem; font-size: var(--step--2); font-weight: 600; color: var(--muted); border-block-end: 1px solid var(--line); }
@@ -1998,7 +1998,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .timing-best { color: var(--accent-2); font-weight: 700; }
 .timing-table tr.is-favorite > * { background: var(--surface); }
 
-/* Paradas: una fila por piloto, cada parada en su vuelta. */
+/* Pit stops: one row per driver, each stop on its lap. */
 .pits { display: grid; gap: 1rem; }
 .pits-fastest { inline-size: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0; padding-block: 0.5rem 0.75rem; border-block-end: 1px solid var(--line); font-size: var(--step--1); color: var(--muted); }
 .pits-fastest .icon, .pits-fastest strong { color: var(--accent-2); }
@@ -2015,7 +2015,7 @@ body:has(.rv) main { padding-block-end: 0; }
 .pits-details summary { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 44px; font-size: var(--step--1); font-weight: 600; cursor: pointer; }
 .pits-details[open] summary { margin-block-end: 0.5rem; }
 
-/* La carrera, vuelta a vuelta: el gráfico de posiciones en una tarjeta. */
+/* The race, lap by lap: the positions chart in a card. */
 .rv-story { padding: clamp(1rem, 2.5vw, 1.75rem); background: var(--bg); border: 1px solid var(--line); }
 .rv-story .recap-chart { max-inline-size: 60rem; margin-inline: auto; }
 .rv-story .recap-card-title { visibility: hidden; }
@@ -2026,10 +2026,10 @@ body:has(.rv) main { padding-block-end: 0; }
   .rv-summary .rv-note { grid-column: 1 / -1; }
 }
 
-/* ── Pictogramas animados (icons.tsx) ──────────────────────────────────────────────────────────────────
-   Cada pieza móvil dice qué animación usa y alrededor de qué punto gira (en unidades de la retícula de 24).
-   Se mueven al pasar por encima del enlace o botón que las contiene; dentro de «.icon-scroll», también al
-   entrar en pantalla, al ritmo del scroll. En una sesión en directo del calendario, sin parar. */
+/* ── Animated pictograms (icons.tsx) ───────────────────────────────────────────────────────────────────
+   Each moving part says which animation it uses and the point it rotates around (in 24-grid units).
+   They move on hover of the link or button that contains them; inside ".icon-scroll", also when they
+   enter the viewport, at the pace of the scroll. On a live session in the calendar, non-stop. */
 .i-anim { transform-box: view-box; }
 .i-tilt { --icon-anim: icon-tilt; transform-origin: 10px 10px; }
 .i-nod { --icon-anim: icon-nod; transform-origin: 12px 12px; }
@@ -2071,20 +2071,20 @@ body:has(.rv) main { padding-block-end: 0; }
 .cal-live .i-anim { animation: var(--icon-anim) 1.8s var(--ease-out-expo) infinite; }
 @media (prefers-reduced-motion: reduce) { .i-anim, .icon-scroll .i-anim { animation: none !important; } }
 
-/* ── Foco con teclado, sin anillo ──────────────────────────────────────────────────────────────────────
-   El autor no quiere anillos de selección. El foco sigue viéndose (WCAG 2.4.7): los enlaces se subrayan
-   con el color de foco, los controles toman un fondo tenue y el logo se pinta en lima. Va al final para
-   ganar a los «text-decoration: none» de cada sección. */
+/* ── Keyboard focus, without a ring ────────────────────────────────────────────────────────────────────
+   The author does not want focus rings. Focus is still visible (WCAG 2.4.7): links underline in the focus
+   colour, controls take a faint background and the logo turns lilac. It sits at the end so it beats each
+   section's "text-decoration: none". */
 a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.22em; text-decoration-color: var(--focus); }
 :is(button, summary, select, [tabindex]:not(a)):focus-visible { background-color: color-mix(in srgb, var(--focus) 16%, var(--bg)); }
 :is(input, select, textarea):focus-visible { border-color: var(--focus); }
 .logo:focus-visible { text-decoration: none; }
 .logo:focus-visible .logo-stroke { stroke: var(--accent-2); }
 
-/* ── Transición entre páginas: cortina en dos capas (route-curtain.tsx) ──────────────────────────────
-   Las dos capas suben desde abajo (la segunda, 70 ms detrás) con el borde algo inclinado, tapan mientras
-   carga la página nueva (con el punto de la marca latiendo si tarda) y siguen subiendo para descubrirla:
-   la de delante se va primero. Lima y lila, alternando cuál va delante. Bajo la cabecera. Solo clip-path. */
+/* ── Page transition: a two-layer curtain (route-curtain.tsx) ─────────────────────────────────────────
+   Both layers rise from the bottom (the second one 70 ms behind) with a slightly slanted edge, cover the
+   screen while the new page loads (with the brand's dot pulsing if it takes a while) and keep rising to
+   reveal it: the front one leaves first. Lime and lilac, alternating which is in front. Below the header. Only clip-path. */
 .curtain { position: fixed; inset: 0; z-index: 45; pointer-events: none; visibility: hidden; }
 .curtain.is-cover, .curtain.is-reveal { visibility: visible; }
 .curtain.is-cover { pointer-events: auto; }
@@ -2106,15 +2106,15 @@ a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; te
   to { clip-path: polygon(0 -20%, 100% -20%, 100% -15%, 0 0%); }
 }
 @keyframes curtain-wait { 0% { opacity: 0; } 50% { opacity: 1; } }
-/* La página nueva sube un poco mientras se descubre. */
+/* The new page rises a little as it is revealed. */
 body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-expo) both; }
 @keyframes page-rise { from { transform: translateY(32px); } }
 @media (prefers-reduced-motion: reduce) { .curtain { display: none; } }
 
-/* ── Más vida al bajar (Lenis + animation-timeline) ─────────────────────────────────────────────────────
-   Titulares de sección que se descubren como una persiana, y profundidad: el contenido del hero se queda
-   un poco atrás al bajar (sin oscurecerse), el circuito de la última carrera y el símbolo del pie se mueven más despacio que la
-   página. Solo transform, opacity y clip-path. */
+/* ── More life on scroll (Lenis + animation-timeline) ───────────────────────────────────────────────────
+   Section headings revealed like a blind, and depth: the hero's content stays a little behind as you
+   scroll (without darkening), the last race's circuit and the footer mark move slower than the
+   page. Only transform, opacity and clip-path. */
 @supports (animation-timeline: view()) {
   :is(.recap-title, .tf-title, .nl-title, .ft-claim) { animation: title-in linear both; animation-timeline: view(); animation-range: entry 5% cover 35%; }
   @keyframes title-in { from { clip-path: inset(0 0 100% 0); transform: translateY(0.5em); opacity: 0; } to { clip-path: inset(-20% -5% -25% -5%); transform: none; opacity: 1; } }
@@ -2127,9 +2127,9 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
   :is(.recap-title, .tf-title, .nl-title, .ft-claim), .hero > .container, .recap-track { animation: none; }
 }
 
-/* ── Entrada de la web (intro-loader.tsx) ──────────────────────────────────────────────────────────────
-   Negro; el símbolo se dibuja (0,7 s), cae el punto lima, la línea de carga se completa y la pantalla sube
-   como una cortina (0,5 s). Una vez por sesión; sin JavaScript también termina sola. */
+/* ── Site entrance (intro-loader.tsx) ──────────────────────────────────────────────────────────────────
+   Black; the mark draws itself (0.7 s), the lime dot drops, the loading line completes and the screen rises
+   like a curtain (0.5 s). Once per session; without JavaScript it also finishes on its own. */
 .intro { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: #0A0A0A; animation: intro-out 0.55s cubic-bezier(0.7, 0, 0.3, 1) 1s both; }
 :root[data-intro="seen"] .intro { display: none; }
 .intro-mark { display: grid; justify-items: center; gap: 1.6rem; inline-size: clamp(7rem, 16vw, 11rem); }
@@ -2144,7 +2144,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 @keyframes intro-out { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
 @media (prefers-reduced-motion: reduce) { .intro { display: none; } }
 
-/* ── Clasificación (standings-view.tsx) ───────────────────────────────────────────────────────────── */
+/* ── Standings (standings-view.tsx) ───────────────────────────────────────────────────────────────── */
 .st { padding-block-end: clamp(3.5rem, 7vw, 5.5rem); }
 .st-hero { position: relative; overflow: hidden; margin-block: -2rem clamp(2.5rem, 5vw, 3.5rem); padding-block: clamp(2rem, 4vw, 3rem); background: var(--bg); color: var(--text); }
 .st-hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "head pickers" "head leader" "progress progress"; align-items: start; gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 4vw, 3.5rem); }
@@ -2225,7 +2225,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .heat-swatch.is-out { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
 .heat-swatch.is-dnf { box-shadow: inset 0 0 0 1px var(--accent-2); }
 
-/* ── Cabecera de sección (page-hero.tsx) ──────────────────────────────────────────────────────────── */
+/* ── Section header (page-hero.tsx) ───────────────────────────────────────────────────────────────── */
 .ph { position: relative; overflow: hidden; isolation: isolate; margin-block: -2rem clamp(2.5rem, 5vw, 3.5rem); padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.25rem, 5vw, 3.5rem); background: var(--bg); color: var(--text); }
 .ph-motif { position: absolute; z-index: -1; inset-block-start: 50%; inset-inline-end: -4vw; inline-size: min(46vw, 560px); block-size: auto; margin-block-start: calc(min(46vw, 560px) / -2); fill: none; stroke: var(--line); stroke-width: 0.35; stroke-linecap: square; opacity: 0.9; }
 .ph-motif .icon-fill { fill: var(--surface); stroke: none; }
@@ -2259,7 +2259,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 }
 @media (prefers-reduced-motion: reduce) { .ph-motif { animation: none; } }
 
-/* Tarjetas enlazadas: número o pictograma, título, texto y flecha. El enlace es toda la tarjeta. */
+/* Linked cards: number or pictogram, title, text and arrow. The whole card is the link. */
 .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .tile { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "icon arrow" "title title" "text text" "meta meta"; align-content: start; gap: 0.6rem 1rem; block-size: 100%; padding: 1.25rem 1.25rem 1.35rem; border: 1px solid var(--line); background: var(--bg); color: var(--text); text-decoration: none; transition: background-color 0.3s var(--ease-out-quart), color 0.3s var(--ease-out-quart), border-color 0.3s var(--ease-out-quart); }
 .tile:hover { border-color: var(--text); background: var(--text); color: var(--bg); }
@@ -2280,7 +2280,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .section-head h2 { margin: 0; }
 .section-head p { margin: 0; color: var(--muted); }
 
-/* Análisis: la última carrera en negro con sus herramientas. */
+/* Analysis: the last race on black with its tools. */
 .an-latest { display: grid; gap: 1.5rem; padding: clamp(1.25rem, 3.5vw, 2.5rem); border: 1px solid var(--line); background: var(--bg); color: var(--text); }
 .an-latest-head { display: grid; gap: 0.5rem; }
 .an-latest-head .eyebrow { margin: 0; }
@@ -2321,7 +2321,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .ln-glossary-text { color: var(--muted); }
 .ln-glossary:hover .ln-glossary-text { color: inherit; opacity: 0.8; }
 
-/* Lectura (explicadores y notas): el texto a la izquierda y, al lado, lo que acompaña, fijo al bajar. */
+/* Reading (explainers and notes): the text on the left and, beside it, what goes with it, sticky on scroll. */
 .reading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 17rem); align-items: start; gap: clamp(2rem, 5vw, 4.5rem); }
 .reading-main { min-inline-size: 0; }
 .reading-aside { position: sticky; inset-block-start: calc(var(--header-total) + 1.5rem); display: grid; gap: 1rem; }
@@ -2335,7 +2335,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .reading-links .icon { flex: none; inline-size: 1.25em; block-size: 1.25em; }
 @media (max-width: 960px) { .reading { grid-template-columns: minmax(0, 1fr); } .reading-aside { position: static; } }
 
-/* Glosario: el término, su definición grande y el ejemplo destacado. */
+/* Glossary: the term, its definition in large type and the example highlighted. */
 .gl-def { font-family: var(--font-display); font-size: clamp(1.35rem, 2.6vw, 2rem); font-weight: 600; font-stretch: var(--display-width); line-height: 1.2; letter-spacing: -0.015em; color: var(--text); }
 .gl-body { display: grid; gap: 1.5rem; max-inline-size: 60rem; }
 .gl-example { display: flex; gap: 0.85rem; margin: 0; padding: 1.25rem 1.4rem; background: var(--text); color: var(--bg); font-size: var(--step-1); line-height: 1.5; }
@@ -2346,7 +2346,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .gl-chips a:hover { background: var(--text); color: var(--bg); font-style: italic; }
 .gl-explainer { max-inline-size: 26rem; }
 
-/* Notas de carrera: la última en negro y a lo ancho; las demás, en columnas. */
+/* Race notes: the latest on black and full width; the rest, in columns. */
 .nt-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .nt-list > li:first-child { grid-column: 1 / -1; }
 .nt-card { display: grid; align-content: start; gap: 0.6rem; block-size: 100%; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); background: var(--bg); color: var(--text); text-decoration: none; transition: border-color 0.3s var(--ease-out-quart); }
@@ -2360,7 +2360,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .nt-card.is-first .nt-cta { color: var(--accent); }
 .gl-index { max-inline-size: 72rem; }
 
-/* Récords: una tarjeta por récord, el primero en grande y los cuatro siguientes con su barra. */
+/* Records: one card per record, the first one large and the next four with their bar. */
 .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .rec-card { display: grid; align-content: start; gap: 0.85rem; block-size: 100%; padding: 1.4rem 1.4rem 1.5rem; border: 1px solid var(--line); background: var(--bg); }
 .rec-grid > li:first-child .rec-card { background: var(--text); color: var(--bg); border-color: var(--text); }
@@ -2386,7 +2386,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .rec-more { margin-block-start: 0.25rem; color: inherit; }
 .rec-detail.tabular, td.rec-detail { color: var(--muted); font-size: var(--step--1); }
 
-/* Fichas de piloto y equipo (profile-view.tsx). */
+/* Driver and team profiles (profile-view.tsx). */
 .pf-hero { position: relative; overflow: hidden; isolation: isolate; margin-block: -2rem clamp(2.5rem, 5vw, 3.5rem); padding-block: clamp(1.75rem, 4vw, 3rem) clamp(2.25rem, 5vw, 3.5rem); background: var(--bg); color: var(--text); }
 .pf-mark { position: absolute; z-index: -1; inset-block-end: -0.12em; inset-inline-end: -0.04em; font-family: var(--font-display); font-size: clamp(14rem, 34vw, 30rem); font-weight: 800; font-stretch: var(--display-width); line-height: 0.8; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 2px var(--line); user-select: none; pointer-events: none; }
 .pf-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); grid-template-areas: "crumbs crumbs" "head stats"; align-items: end; gap: clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 4vw, 3.5rem); }
@@ -2429,7 +2429,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .pf-champ-year { font-family: var(--font-display); font-size: var(--step-2); font-weight: 800; font-stretch: var(--display-width); letter-spacing: -0.03em; }
 .pf-champ-name { font-weight: 600; }
 
-/* Cara a cara: formulario «A vs B» en la cabecera y el duelo con barras enfrentadas (A en lima, B en lila). */
+/* Head to head: the "A vs B" form in the header and the duel with opposing bars (A in lime, B in lilac). */
 .cmp-form { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: end; gap: 0.75rem; max-inline-size: 60rem; }
 .cmp-form label { display: grid; gap: 0.35rem; font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 .cmp-form input { min-inline-size: 0; inline-size: 100%; font-size: var(--step-1); font-weight: 700; }
@@ -2470,7 +2470,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .cmp-split-legend { display: flex; justify-content: space-between; font-size: var(--step--1); color: var(--muted); }
 .cmp-split-legend strong { color: var(--text); }
 
-/* Quiz: cada pregunta, una tarjeta; cada respuesta, una opción grande. Tras comprobar, la buena en negro. */
+/* Quiz: each question a card; each answer a large option. After checking, the right one on black. */
 .qz { max-inline-size: 60rem; }
 .qz-score { display: grid; gap: 0.4rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
 .qz-score-n { font-family: var(--font-display); font-size: clamp(4rem, 9vw, 7rem); font-weight: 800; font-stretch: var(--display-width); line-height: 0.8; letter-spacing: -0.05em; color: var(--accent); }
@@ -2492,7 +2492,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .quiz-explain { margin: 0; font-size: var(--step--1); color: var(--muted); }
 .qz-check { justify-self: start; min-inline-size: 12rem; }
 
-/* Simulador: el resultado en negro con el campeón; cada ronda que queda, una tarjeta con sus desplegables. */
+/* Simulator: the result on black with the champion; each remaining round a card with its dropdowns. */
 .sim-result { display: grid; gap: 1rem; padding: clamp(1.25rem, 3.5vw, 2.5rem); background: var(--bg); color: var(--text); }
 .sim-result-title { margin: 0; font-size: var(--step--1); font-weight: 700; color: var(--muted); }
 .sim-champion { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-family: var(--font-display); font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 800; font-stretch: var(--display-width); line-height: 1.05; letter-spacing: -0.025em; color: var(--accent); }
@@ -2512,7 +2512,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .sim-table select { min-inline-size: 5.5rem; min-block-size: 40px; font-size: var(--step--1); }
 .sim-submit { position: sticky; inset-block-end: 0; z-index: 2; padding-block: 0.85rem; border-block-start: 1px solid var(--line); background: var(--surface); }
 
-/* Predicciones: el podio se elige en su orden visual (2.º, 1.º, 3.º) y la pole aparte. */
+/* Predictions: the podium is picked in its visual order (2nd, 1st, 3rd) and the pole separately. */
 .pr { max-inline-size: 72rem; }
 .pr-next { display: grid; gap: 0.35rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
 .pr-next-kicker { display: inline-flex; align-items: center; gap: 0.45rem; font-size: var(--step--1); font-weight: 700; color: var(--accent-2); }
@@ -2531,7 +2531,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .pr-save { grid-column: 1 / -1; justify-self: start; min-inline-size: 12rem; }
 @media (max-width: 760px) { .pr-form { grid-template-columns: minmax(0, 1fr); } .pr-pick { min-block-size: 0; } }
 
-/* Newsletter: qué recibes, numerado, y el formulario en negro. */
+/* Newsletter: what you get, numbered, and the form on black. */
 .nlp { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: clamp(1.5rem, 4vw, 3.5rem); }
 @media (max-width: 860px) { .nlp { grid-template-columns: minmax(0, 1fr); } }
 .nlp-steps { display: grid; margin: 0; padding: 0; list-style: none; }
@@ -2540,7 +2540,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .nlp-n { flex: none; font-size: 2rem; font-weight: 800; line-height: 0.8; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1.25px var(--text); }
 .nlp-form { display: grid; gap: 1rem; padding: clamp(1.25rem, 3.5vw, 2.25rem); background: var(--bg); color: var(--text); }
 .nlp-form .source a { color: inherit; }
-/* Cuenta y búsqueda. */
+/* Account and search. */
 .acc-card-wrap { max-inline-size: 40rem; }
 .acc-card { display: grid; gap: 1.25rem; padding: clamp(1.25rem, 3.5vw, 2.25rem); border: 1px solid var(--line); background: var(--bg); }
 .acc-card .inline-form, .acc form .inline-form { display: grid; gap: 0.35rem; }
@@ -2550,7 +2550,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .srch-form .cmp-go { min-block-size: 56px; }
 .tx-h2 { font-size: var(--step-2); scroll-margin-top: calc(var(--header-total) + 1.5rem); }
 
-/* Aviso de la newsletter de demostración (D-33): <dialog> nativo, foco atrapado y Escape para cerrar. */
+/* The demo newsletter notice (D-33): a native <dialog>, focus trapped and Escape to close. */
 .demo-dialog { inline-size: min(92vw, 34rem); max-block-size: 90vh; margin: auto; padding: 0; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
 .demo-dialog::backdrop { background: rgb(10 10 10 / 0.72); }
 .demo-dialog[open] { animation: demo-in 0.45s var(--ease-out-expo) both; }
@@ -2562,9 +2562,9 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .demo-dialog .cmp-go { justify-self: start; min-inline-size: 10rem; }
 @media (prefers-reduced-motion: reduce) { .demo-dialog[open] { animation: none; } }
 
-/* ── Newsletter (página) ─────────────────────────────────────────────────────────────────────────────
-   Bandeja de entrada con un número por GP disputado, el formulario en la cabecera, la anatomía de un
-   número con llamadas numeradas y las fechas de los próximos envíos. */
+/* ── Newsletter (page) ───────────────────────────────────────────────────────────────────────────────
+   An inbox with one issue per Grand Prix raced, the form in the header, the anatomy of an issue with
+   numbered callouts and the dates of the next mailings. */
 .nlx-hero { position: relative; overflow: hidden; margin-block: -2rem clamp(2.5rem, 5vw, 3.5rem); padding-block: clamp(2rem, 4.5vw, 3.5rem) clamp(2.5rem, 5vw, 4rem); background: var(--bg); color: var(--text); }
 .nlx-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(2rem, 5vw, 4.5rem); }
 @media (max-width: 960px) { .nlx-hero-grid { grid-template-columns: minmax(0, 1fr); } }
@@ -2631,14 +2631,14 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .nlx-demo a { color: var(--text); }
 .nlx-part .nl-next { padding: 0; border: 0; }
 
-/* Cara a cara: desplegables de pilotos y cobertura de los datos. */
+/* Head to head: driver dropdowns and data coverage. */
 .cmp-pick { display: grid; gap: 0.35rem; font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 .cmp-pick select { inline-size: 100%; min-block-size: 52px; border-color: var(--text); font-size: var(--step-0); font-weight: 700; color: var(--text); }
 .cmp-coverage { color: var(--text); font-weight: 600; }
 .cmp-duel-kicker { display: inline-flex; align-items: center; gap: 0.45rem; margin: 0; font-size: var(--step--1); font-weight: 700; color: var(--muted); }
 .cmp-span { margin-block-start: 0.25rem; font-size: var(--step--2); font-weight: 600; color: var(--muted); }
 
-/* Fichas: nota de cobertura, anillos de ritmo y cinta año a año. */
+/* Profiles: coverage note, pace rings and a year-by-year ribbon. */
 .pf-data-note { display: flex; align-items: flex-start; gap: 0.6rem; max-inline-size: 78ch; margin: 0; padding: 0.9rem 1.1rem; border: 1px solid var(--accent-2); background: color-mix(in oklab, var(--accent-2) 8%, var(--bg)); font-size: var(--step--1); line-height: 1.5; }
 .pf-data-note .icon { flex: none; inline-size: 1.25em; block-size: 1.25em; margin-block-start: 0.1em; color: var(--accent-2); }
 .pf-pace { display: grid; gap: 1rem; }
@@ -2667,7 +2667,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .pf-ribbon-who { font-size: var(--step--2); color: var(--muted); }
 .pf-ribbon-wins { justify-self: start; padding: 0.1rem 0.45rem; border: 1px solid currentColor; font-size: var(--step--2); font-weight: 700; }
 
-/* Fichas de circuito (/learn/circuits): cada ficha en negro, con su trazado que se dibuja al señalarla. */
+/* Circuit guides (/learn/circuits): each guide on black, with its layout drawing itself on hover. */
 .cg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .cg-card { position: relative; display: grid; align-content: start; gap: 0.45rem; block-size: 100%; padding: 1.4rem; background: var(--bg); color: var(--text); text-decoration: none; overflow: hidden; }
 .cg-n { font-family: var(--font-display); font-size: 2.25rem; font-weight: 800; font-stretch: var(--display-width); line-height: 0.8; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1.25px var(--text); }
@@ -2684,7 +2684,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .cg-cta { margin-block-start: 0.4rem; font-size: var(--step--1); font-weight: 700; color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .cg-track-line { transition: none; stroke-dashoffset: 0; } }
 
-/* Explicadores (explainer-body.tsx): secciones numeradas, «Cómo verlo» en negro y términos como fichas. */
+/* Explainers (explainer-body.tsx): numbered sections, "How to see it" on black and terms as chips. */
 .xp { display: grid; gap: clamp(2rem, 4vw, 3rem); }
 .xp-lead p { margin: 0; font-family: var(--font-display); font-size: var(--step-2); font-weight: 600; font-stretch: var(--display-width); line-height: 1.25; letter-spacing: -0.015em; }
 .xp-sec { display: grid; gap: 1rem; scroll-margin-top: calc(var(--header-total) + 1.5rem); }
@@ -2710,7 +2710,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .ft-mark-link:focus-visible .ft-mark, .ft-lockup-link:focus-visible .ft-lockup { opacity: 0.75; }
 .ft-lockup-link { display: inline-flex; min-block-size: 44px; align-items: center; }
 
-/* Glosario: barra fija con buscador y categorías; los términos, en tarjetas por grupo. */
+/* Glossary: a sticky bar with search and categories; the terms, in cards by group. */
 .gx { display: grid; gap: clamp(2rem, 4vw, 3rem); }
 .gx-bar { position: sticky; inset-block-start: var(--header-total); z-index: 5; display: grid; gap: 0.75rem; margin-block-start: -1rem; padding-block: 1rem; background: var(--surface); border-block-end: 1px solid var(--line); }
 .gx-search { position: relative; display: block; max-inline-size: 40rem; }
@@ -2736,7 +2736,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .gx-card:hover dt a { font-style: italic; }
 .gx-card dd { margin: 0; font-size: var(--step--1); line-height: 1.5; color: var(--muted); }
 
-/* Quiz: tira de aciertos, tipo de pregunta y respuestas con letra. */
+/* Quiz: a strip of correct answers, the question type and answers with a letter. */
 .qz-strip { display: flex; gap: 4px; }
 .qz-strip span { flex: 1; block-size: 8px; background: var(--surface); }
 .qz-strip .is-right { background: var(--accent); }
@@ -2751,7 +2751,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .quiz-option.is-right::before { background: var(--bg); color: var(--text); }
 .quiz-option input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
 
-/* Cara a cara (D-35): selector con la parrilla en tarjetas y la cuadrícula carrera a carrera. */
+/* Head to head (D-35): a picker with the grid as cards and the race-by-race grid. */
 .cmp-form-pickers { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: start; max-inline-size: 64rem; }
 .cmp-form-pickers .cmp-vs { align-self: start; padding-block-start: 1.6rem; }
 .cmp-form-pickers .cmp-go { align-self: start; min-block-size: 56px; margin-block-start: 2.1rem; }
@@ -2772,7 +2772,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .dp-who { display: grid; min-inline-size: 0; }
 .dp-name { overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .dp-team { font-size: var(--step--2); color: var(--muted); }
-/* El panel se abre dentro del formulario (la cabecera recorta lo que sobresale): la parrilla, debajo. */
+/* The panel opens inside the form (the header clips whatever sticks out): the grid, below. */
 .dp-panel { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.25rem, 1fr)); gap: 0.4rem; margin: 0.4rem 0 0; padding: 0.5rem; max-block-size: 24rem; overflow: auto; border: 1px solid var(--line); background: var(--bg); animation: dp-in 0.3s var(--ease-out-expo) both; }
 @keyframes dp-in { from { opacity: 0; transform: translateY(-6px); } }
 .dp-option { position: relative; display: grid; gap: 0.1rem; padding: 0.6rem 0.7rem; border: 1px solid var(--line); cursor: pointer; transition: border-color 0.15s ease-out, background-color 0.15s ease-out; }
@@ -2800,7 +2800,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .cmp-race-round { font-family: var(--font-display); font-size: var(--step-0); font-weight: 800; font-stretch: var(--display-width); }
 .cmp-race-pos { font-size: var(--step--2); font-weight: 600; }
 
-/* Desplegable de cara a cara en la cabecera. */
+/* Head-to-head dropdown in the header. */
 .cmp-mega-duel { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: "a vs b" "gap gap gap"; align-items: center; gap: 0.6rem 1rem; margin-block-start: 0.5rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out; }
 .cmp-mega-duel:hover { border-color: var(--text); }
 .cmp-mega-side { display: grid; gap: 0.2rem; }
@@ -2820,7 +2820,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .cmp-mega-pairs a:hover .cmp-mega-pair { font-style: italic; }
 .cmp-mega-team { overflow: hidden; font-size: var(--step--2); color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
 
-/* Guía de iniciación: capítulos con número fijo y barra de progreso de lectura (solo CSS). */
+/* Beginner's guide: chapters with a sticky number and a reading progress bar (CSS only). */
 .xp-guide { gap: 0; }
 .xp-progress { position: fixed; z-index: 40; inset-block-start: var(--header-total); inset-inline: 0; block-size: 3px; background: var(--accent-2); transform: scaleX(0); transform-origin: left center; }
 @supports (animation-timeline: scroll()) {
@@ -2839,7 +2839,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 @media (max-width: 640px) { .xp-chapter { grid-template-columns: minmax(0, 1fr); } .xp-chapter-side { position: static; grid-auto-flow: column; align-items: center; } }
 @media (prefers-reduced-motion: reduce) { .xp-progress { display: none; } }
 
-/* Término del glosario: ejemplo gráfico en negro, «en la práctica», relacionados y paginación. */
+/* Glossary term: the graphic example on black, "in practice", related terms and pagination. */
 .gl-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); grid-template-areas: "main side" "pager pager"; align-items: start; gap: clamp(1.5rem, 4vw, 3.5rem); }
 @media (max-width: 900px) { .gl-page { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "side" "pager"; } }
 .gl-main { grid-area: main; display: grid; gap: 1.5rem; min-inline-size: 0; }
@@ -2920,7 +2920,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .gl-pager-term { font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; font-stretch: var(--display-width); }
 .gl-pager-link:hover .gl-pager-term { font-style: italic; }
 
-/* Quiz: barra fija de progreso y resultado por pregunta. */
+/* Quiz: a sticky progress bar and the result per question. */
 .qz-bar { position: sticky; inset-block-end: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-block-start: 0.5rem; padding: 0.85rem 1rem; border: 1px solid var(--line); background: var(--bg); }
 .qz-bar-dots { display: flex; gap: 5px; }
 .qz-bar-dots span { inline-size: 22px; block-size: 8px; background: var(--surface); transition: background-color 0.3s var(--ease-out-quart); }
@@ -2931,7 +2931,7 @@ body:has(.curtain.is-reveal) main { animation: page-rise 0.7s var(--ease-out-exp
 .quiz-result.is-right { background: var(--text); color: var(--bg); }
 .quiz-result.is-wrong { border: 1px solid var(--accent-2); color: var(--accent-2); }
 
-/* Desplegable de cara a cara (menú): el duelo por el título como cartel y los compañeros con su reparto de puntos. */
+/* Head-to-head dropdown (menu): the title fight as a poster and the teammates with their split of points. */
 .cmx { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
 .cmx > .mega-col { min-inline-size: 0; }
 .cmx-duel { display: grid; gap: 0.55rem; min-inline-size: 0; margin-block-start: 0.5rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: border-color 0.2s ease-out; }

@@ -18,9 +18,9 @@ const normalize = (s: string) =>
     .replace(/[̀-ͯ]/g, "");
 
 /**
- * Buscador del glosario (CON-02): filtra en el navegador al instante, por texto y por categoría (barra
- * fija bajo la cabecera). Los términos, en tarjetas por grupo. Sin JavaScript se ve la lista completa,
- * agrupada (los botones de categoría no hacen nada).
+ * Glossary search (CON-02): filters instantly in the browser, by text and by category (a sticky bar under
+ * the header). The terms, in cards by group. Without JavaScript the full list shows, grouped (the
+ * category buttons do nothing).
  */
 export function GlossarySearch({
   lang,

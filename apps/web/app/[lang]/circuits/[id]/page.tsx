@@ -53,11 +53,11 @@ export default async function CircuitPage({ params }: Params) {
   const { lang, profile } = await load(params);
   const t = dict(lang);
   const { circuit, races } = profile;
-  // Una respuesta cacheada de antes de añadir `facts` no los trae: la página sale igual, sin esas cifras.
+  // A response cached before `facts` was added does not have them: the page renders the same, without those figures.
   const facts = profile.facts ?? { laps: null, fastestRaceLap: null };
   const place = `${circuit.locality}, ${countryName(lang, circuit.country)}`;
   const first = races.at(-1);
-  // Solo cuentan los Grandes Premios ya disputados, no el del próximo fin de semana.
+  // Only Grands Prix already run count, not next weekend's.
   const today = new Date().toISOString().slice(0, 10);
   const held = races.filter((r) => r.date < today);
   const [layout, schedule] = await Promise.all([
@@ -65,7 +65,7 @@ export default async function CircuitPage({ params }: Params) {
     api.schedule("current").catch(() => null),
   ]);
   const lap = layout?.data ?? null;
-  // Sin telemetría, el trazado del GeoJSON de bacinger/f1-circuits (D-09).
+  // Without telemetry, the layout from bacinger/f1-circuits' GeoJSON (D-09).
   const outline = lap?.points ?? CIRCUIT_OUTLINES[circuit.id] ?? null;
   const nextHere = schedule?.data.find((r) => r.circuit.id === circuit.id && (r.status === "next" || r.status === "upcoming")) ?? null;
   const nextStart = nextHere?.sessions.find((s) => s.kind === "race")?.startsAt ?? nextHere?.startsAt ?? null;
@@ -75,7 +75,7 @@ export default async function CircuitPage({ params }: Params) {
   const km = lap ? nf.format(lap.length / 1000) : "";
   const timeZone = circuitTimeZone(circuit.id);
 
-  // Quién ha ganado más veces aquí: pilotos y equipos.
+  // Who has won here most often: drivers and teams.
   const tally = (key: (r: (typeof held)[number]) => { id: string; name: string } | null) => {
     const out = new Map<string, { id: string; name: string; n: number }>();
     for (const r of held) {
@@ -300,7 +300,7 @@ export default async function CircuitPage({ params }: Params) {
   );
 }
 
-/** Los que más han ganado aquí, con una barra proporcional al primero (el número va siempre en texto). */
+/** The most successful here, with a bar proportional to the first (the number is always in text). */
 function Ranking({ title, rows, wins }: { title: string; rows: { id: string; name: string; n: number }[]; wins: (n: number) => string }) {
   const max = rows[0]?.n ?? 1;
   return (
@@ -322,7 +322,7 @@ function Ranking({ title, rows, wins }: { title: string; rows: { id: string; nam
   );
 }
 
-/** Caja del trazado con margen, para el viewBox. */
+/** The layout's box with a margin, for the viewBox. */
 function trackBox(points: [number, number][]): string {
   const xs = points.map((p) => p[0]);
   const ys = points.map((p) => p[1]);

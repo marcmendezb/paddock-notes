@@ -30,8 +30,8 @@ app.onError((error, c) => {
 app.notFound((c) => errorResponse(c, "not_found", "Route not found."));
 
 /**
- * Registra una ruta GET en Hono y en el documento OpenAPI. Los parámetros de ruta se validan con el
- * esquema de la ruta; si no lo cumplen, 400 con el formato uniforme.
+ * Registers a GET route in Hono and in the OpenAPI document. Path parameters are validated with the
+ * route's schema; if they do not match, 400 with the uniform format.
  */
 function get(
   config: RouteConfig,
@@ -46,12 +46,12 @@ function get(
   });
 }
 
-// ---- Parámetros -----------------------------------------------------------------------------
+// ---- Parameters -----------------------------------------------------------------------------
 
 const seasonParam = z
   .string()
   .regex(/^(current|\d{4})$/)
-  .openapi({ param: { name: "season", in: "path" }, example: "2026", description: "Año o `current`" });
+  .openapi({ param: { name: "season", in: "path" }, example: "2026", description: "Year or `current`" });
 const roundParam = z
   .string()
   .regex(/^\d{1,2}$/)
@@ -108,7 +108,7 @@ const reader = (c: { env: AppEnv["Bindings"] }) => createF1Reader(c.env.DB);
 // ---- Rutas ----------------------------------------------------------------------------------
 
 get(
-  { method: "get", path: "/health", responses: { 200: { description: "Servicio operativo" } } },
+  { method: "get", path: "/health", responses: { 200: { description: "Service is up" } } },
   async (c) => {
     try {
       await reader(c).ping();
@@ -127,7 +127,7 @@ get(
     method: "get",
     path: "/seasons/{season}/schedule",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Calendario de la temporada"),
+    responses: ok("Season calendar"),
   },
   async (c, params) => {
     const r = reader(c);
@@ -146,13 +146,13 @@ get(
     method: "get",
     path: "/seasons/{season}/races/{round}",
     request: { params: z.object({ season: seasonParam, round: roundParam }) },
-    responses: ok("Carrera con sesiones y resultado"),
+    responses: ok("Race with its sessions and result"),
   },
   async (c, params) => {
     const r = reader(c);
     const season = await resolveSeason(r, params.season!);
     const round = Number(params.round);
-    // Temporadas pasadas: 24 h. Temporada en curso: 5 min, para recoger sanciones posteriores.
+    // Past seasons: 24 h. Current season: 5 min, to pick up later penalties.
     return cached(c, { ttl: season < currentYear() ? DAY : 300 }, async () => {
       const race = await r.getRace(season, round);
       if (!race) return null;
@@ -166,7 +166,7 @@ get(
 );
 
 get(
-  { method: "get", path: "/races/next", responses: ok("Próximo Gran Premio") },
+  { method: "get", path: "/races/next", responses: ok("Next Grand Prix") },
   async (c) =>
     cached(c, { ttl: 60, kvFallback: true }, async () => {
       const r = reader(c);
@@ -177,7 +177,7 @@ get(
 );
 
 get(
-  { method: "get", path: "/races/last", responses: ok("Última carrera con resultado") },
+  { method: "get", path: "/races/last", responses: ok("Last race with a result") },
   async (c) =>
     cached(c, { ttl: 60, kvFallback: true }, async () => {
       const r = reader(c);
@@ -197,7 +197,7 @@ get(
     method: "get",
     path: "/seasons/{season}/standings/drivers",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Clasificación de pilotos"),
+    responses: ok("Drivers' standings"),
   },
   async (c, params) => {
     const r = reader(c);
@@ -215,7 +215,7 @@ get(
     method: "get",
     path: "/seasons/{season}/standings/constructors",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Clasificación de constructores"),
+    responses: ok("Constructors' standings"),
   },
   async (c, params) => {
     const r = reader(c);
@@ -229,7 +229,7 @@ get(
 );
 
 
-// ---- Fase 2: histórico ------------------------------------------------------------------------
+// ---- Phase 2: history ---------------------------------------------------------------------------
 
 const idParam = (name: string) =>
   z
@@ -243,7 +243,7 @@ for (const prefix of ["/drivers", "/drivers/*", "/constructors/*", "/circuits/*"
 }
 app.use("/search", rateLimit);
 
-/** Respuesta de un perfil o lista del histórico: caché larga y fecha de la última clasificación. */
+/** A history profile or list response: long cache and the date of the last standings. */
 async function historyPayload<T>(r: F1Reader, data: T | null) {
   if (data === null) return null;
   return { data, updatedAt: await r.updatedAt([resourceKey.standings(currentYear())]) };
@@ -252,10 +252,10 @@ async function historyPayload<T>(r: F1Reader, data: T | null) {
 const raceParams = { params: z.object({ season: seasonParam, round: roundParam }) };
 
 for (const [path, description, load] of [
-  ["qualifying", "Clasificación Q1–Q3 (desde 1994)", (r: F1Reader, s: number, n: number) => r.getQualifying(s, n)],
+  ["qualifying", "Qualifying Q1 to Q3 (since 1994)", (r: F1Reader, s: number, n: number) => r.getQualifying(s, n)],
   ["sprint", "Resultado del sprint", (r: F1Reader, s: number, n: number) => r.getSprintResults(s, n)],
   ["pitstops", "Paradas (desde 2011)", (r: F1Reader, s: number, n: number) => r.getPitStops(s, n)],
-  ["navigation", "GP anterior, siguiente y el mismo GP en otros años", (r: F1Reader, s: number, n: number) => r.getNavigation(s, n)],
+  ["navigation", "Previous and next Grand Prix, and the same Grand Prix in other years", (r: F1Reader, s: number, n: number) => r.getNavigation(s, n)],
 ] as const) {
   get(
     { method: "get", path: `/seasons/{season}/races/{round}/${path}`, request: raceParams, responses: ok(description) },
@@ -277,7 +277,7 @@ get(
     method: "get",
     path: "/seasons/{season}/standings/history",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Puntos acumulados por ronda y resultado de cada carrera"),
+    responses: ok("Points accumulated per round and each race's result"),
   },
   async (c, params) => {
     const r = reader(c);
@@ -294,7 +294,7 @@ get(
     method: "get",
     path: "/seasons/{season}/standings/recalculated",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Pilotos con el sistema de puntos actual frente a la clasificación real (recálculo, HIS-06)"),
+    responses: ok("Drivers under today's points system against the real standings (recalculation, HIS-06)"),
   },
   async (c, params) => {
     const r = reader(c);
@@ -312,7 +312,7 @@ for (const kind of ["drivers", "constructors"] as const) {
       method: "get",
       path: `/seasons/{season}/rounds/{round}/standings/${kind}`,
       request: raceParams,
-      responses: ok(`Clasificación de ${kind === "drivers" ? "pilotos" : "constructores"} tras una ronda`),
+      responses: ok(`${kind === "drivers" ? "Drivers'" : "Constructors'"} standings after a round`),
     },
     async (c, params) => {
       const r = reader(c);
@@ -326,14 +326,14 @@ for (const kind of ["drivers", "constructors"] as const) {
   );
 }
 
-get({ method: "get", path: "/drivers", responses: ok("Pilotos con carreras en los datos cargados") }, async (c) =>
+get({ method: "get", path: "/drivers", responses: ok("Drivers with races in the loaded data") }, async (c) =>
   cached(c, { ttl: 3600 }, async () => {
     const r = reader(c);
     return historyPayload(r, await r.listDrivers());
   }),
 );
 
-get({ method: "get", path: "/seasons", responses: ok("Temporadas disponibles") }, async (c) =>
+get({ method: "get", path: "/seasons", responses: ok("Available seasons") }, async (c) =>
   cached(c, { ttl: 3600 }, async () => {
     const r = reader(c);
     const seasons = await r.getSeasons();
@@ -351,7 +351,7 @@ for (const [kind, load] of [
       method: "get",
       path: `/${kind}/{id}`,
       request: { params: z.object({ id: idParam("id") }) },
-      responses: ok("Ficha"),
+      responses: ok("Profile"),
     },
     async (c, params) => cached(c, { ttl: DAY }, async () => historyPayload(reader(c), await load(reader(c), params.id!))),
   );
@@ -362,7 +362,7 @@ get(
     method: "get",
     path: "/compare/drivers/{a}/{b}",
     request: { params: z.object({ a: idParam("a"), b: idParam("b") }) },
-    responses: ok("Cara a cara entre dos pilotos"),
+    responses: ok("Head to head between two drivers"),
   },
   async (c, params) =>
     cached(c, { ttl: DAY }, async () => historyPayload(reader(c), await reader(c).compareDrivers(params.a!, params.b!))),
@@ -373,12 +373,12 @@ get(
     method: "get",
     path: "/compare/drivers/{a}/{b}/{season}",
     request: { params: z.object({ a: idParam("a"), b: idParam("b"), season: seasonParam }) },
-    responses: ok("Cara a cara entre dos pilotos en una temporada"),
+    responses: ok("Head to head between two drivers in one season"),
   },
   async (c, params) => {
     const r = reader(c);
     const season = await resolveSeason(r, params.season!);
-    // La temporada en curso cambia tras cada carrera: 5 minutos, como sus resultados.
+    // The current season changes after each race: 5 minutes, like its results.
     return cached(c, { ttl: season < currentYear() ? DAY : 300 }, async () => historyPayload(r, await r.compareDrivers(params.a!, params.b!, season)));
   },
 );
@@ -388,7 +388,7 @@ get(
     method: "get",
     path: "/records/{type}",
     request: { params: z.object({ type: z.enum(recordTypes).openapi({ param: { name: "type", in: "path" } }) }) },
-    responses: ok("Récord: los 20 primeros"),
+    responses: ok("Record: the top 20"),
   },
   async (c, params) =>
     cached(c, { ttl: 6 * 3600 }, async () =>
@@ -396,12 +396,12 @@ get(
     ),
 );
 
-get({ method: "get", path: "/history/this-week", responses: ok("Esta semana en la historia") }, async (c) =>
+get({ method: "get", path: "/history/this-week", responses: ok("This week in history") }, async (c) =>
   cached(c, { ttl: 3600 }, async () => historyPayload(reader(c), await reader(c).getThisWeek())),
 );
 
-/** Búsqueda (TRA-03). Único parámetro admitido: `q`, de 2 a 50 caracteres. */
-get({ method: "get", path: "/search", responses: ok("Pilotos, equipos y circuitos") }, async (c) => {
+/** Search (TRA-03). The only parameter accepted: `q`, from 2 to 50 characters. */
+get({ method: "get", path: "/search", responses: ok("Drivers, teams and circuits") }, async (c) => {
   const url = new URL(c.req.url);
   const keys = [...url.searchParams.keys()];
   const q = url.searchParams.get("q")?.trim() ?? "";
@@ -417,16 +417,16 @@ get({ method: "get", path: "/search", responses: ok("Pilotos, equipos y circuito
 });
 
 
-// ---- Fase 3: zona técnica -------------------------------------------------------------------
+// ---- Phase 3: technical zone ----------------------------------------------------------------
 
 const TOOLS = ["strategy", "pace", "sectors", "replay"] as const;
 app.use("/analysis", noQueryParams, rateLimit);
 app.use("/analysis/*", noQueryParams, rateLimit);
 
-/** JSON de análisis guardado en R2 por el Workflow POST_RACE (D-08). */
+/** Analysis JSON stored in R2 by the POST_RACE Workflow (D-08). */
 /**
- * Fichero de un análisis en R2, cacheado con la versión y la fecha del análisis en la clave: si la ingesta
- * lo rehace (otra versión de los cálculos), la respuesta nueva se sirve al momento.
+ * An analysis file in R2, cached with the analysis version and date in the key: if ingestion redoes it
+ * (another version of the computations), the new response is served at once.
  */
 async function analysisFile(c: Context<AppEnv>, season: number, round: number, file: string) {
   const index = await reader(c).getAnalysis(season, round);
@@ -438,7 +438,7 @@ async function analysisFile(c: Context<AppEnv>, season: number, round: number, f
   });
 }
 
-get({ method: "get", path: "/analysis", responses: ok("Últimas carreras analizadas") }, async (c) =>
+get({ method: "get", path: "/analysis", responses: ok("Latest analysed races") }, async (c) =>
   cached(c, { ttl: 300, source: SOURCE_OPENF1 }, async () => {
     const list = await reader(c).listAnalyses();
     return list.length ? { data: list, updatedAt: null } : null;
@@ -450,7 +450,7 @@ get(
     method: "get",
     path: "/analysis/{season}/{round}",
     request: raceParams,
-    responses: ok("Herramientas disponibles para una carrera"),
+    responses: ok("Tools available for a race"),
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
@@ -473,7 +473,7 @@ get(
         tool: z.enum(TOOLS).openapi({ param: { name: "tool", in: "path" } }),
       }),
     },
-    responses: ok("Datos de una herramienta (estrategia, ritmo, sectores o posiciones)"),
+    responses: ok("A tool's data (strategy, pace, sectors or positions)"),
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
@@ -492,7 +492,7 @@ get(
         driver: z.string().regex(/^\d{1,2}$/).openapi({ param: { name: "driver", in: "path" }, example: "44" }),
       }),
     },
-    responses: ok("Telemetría reducida de la vuelta más rápida de un piloto"),
+    responses: ok("Reduced telemetry of a driver's fastest lap"),
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
@@ -507,11 +507,11 @@ get(
     method: "get",
     path: "/circuits/{id}/layout",
     request: { params: z.object({ id: idParam("id") }) },
-    responses: ok("Trazado del circuito, de la última carrera analizada allí (D-09)"),
+    responses: ok("Circuit layout, from the last race analysed there (D-09)"),
   },
   async (c, params) => {
-    // La clave lleva el análisis del que sale y la versión de la detección de frenadas: si cambia cualquiera
-    // de los dos, el trazado nuevo se sirve al momento.
+    // The key carries the analysis it comes from and the braking detection version: if either changes,
+    // the new layout is served at once.
     const latest = await reader(c).latestAnalysisAtCircuit(params.id!);
     const variant = latest ? `${latest.season}-${latest.round}-${latest.version}-${latest.createdAt}-c${CORNERS_VERSION}` : "none";
     return cached(c, { ttl: DAY, source: SOURCE_OPENF1, variant }, async () => {
@@ -540,7 +540,7 @@ get(
         week: z.string().regex(/^\d{4}-W\d{2}$/).openapi({ param: { name: "week", in: "path" }, example: "2026-W45" }),
       }),
     },
-    responses: ok("Quiz de la semana: cinco preguntas con datos reales (COM-08)"),
+    responses: ok("Quiz of the week: five questions with real data (COM-08)"),
   },
   async (c, params) =>
     cached(c, { ttl: DAY }, async () => {
@@ -551,14 +551,14 @@ get(
 
 // ---- Fase 4: comunidad --------------------------------------------------------------------------
 
-/** Ranking global de predicciones (COM-06): público, solo alias y puntos. */
+/** Global predictions ranking (COM-06): public, display names and points only. */
 app.use("/rankings/*", noQueryParams, rateLimit);
 get(
   {
     method: "get",
     path: "/rankings/{season}",
     request: { params: z.object({ season: seasonParam }) },
-    responses: ok("Ranking global de predicciones"),
+    responses: ok("Global predictions ranking"),
   },
   async (c, params) => {
     const season = await resolveSeason(reader(c), params.season!);
@@ -581,8 +581,8 @@ app.doc31("/docs", {
     title: "Paddock Notes API",
     version: "1.0.0",
     description:
-      "API pública de solo lectura de Paddock Notes. Datos de Jolpica F1 con licencia CC BY-NC-SA 4.0. " +
-      "Proyecto no oficial, sin afiliación con Formula 1.",
+      "Paddock Notes' public read-only API. Data from Jolpica F1 and OpenF1, licensed CC BY-NC-SA 4.0. " +
+      "Unofficial project, not affiliated with Formula 1.",
     license: { name: "CC BY-NC-SA 4.0 (datos)", url: "https://creativecommons.org/licenses/by-nc-sa/4.0/" },
   },
 });

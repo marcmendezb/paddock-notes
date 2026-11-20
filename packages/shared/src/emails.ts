@@ -4,9 +4,9 @@ import { suggestedExplainer } from "./explainers";
 import { gpName } from "./localize";
 
 /**
- * Emails de la newsletter (CON-06) y de los avisos (COM-11), en texto plano: se leen bien en cualquier
- * cliente y con lector de pantalla. Cada lista tiene su zona horaria por defecto (contenido.md §5.5).
- * Pie: aviso de no afiliación, baja en un clic y dirección del responsable (si está configurada).
+ * Newsletter (CON-06) and notification (COM-11) emails, in plain text: they read well in any client and
+ * with a screen reader. Each list has its default time zone (content.md §5.5).
+ * Footer: non-affiliation notice, one-click unsubscribe and the controller's address (if configured).
  */
 
 export interface EmailContent {
@@ -18,7 +18,7 @@ export const LIST_TIMEZONE: Record<Lang, string> = { es: "Europe/Madrid", en: "E
 
 const LOCALE: Record<Lang, string> = { es: "es-ES", en: "en-GB", de: "de-DE" };
 
-/** Cabeceras de baja en un clic (RFC 8058): el cliente de correo hace POST a la URL sin abrir nada. */
+/** One-click unsubscribe headers (RFC 8058): the mail client POSTs to the URL without opening anything. */
 export function unsubscribeHeaders(url: string): Record<string, string> {
   return { "List-Unsubscribe": `<${url}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
 }
@@ -53,7 +53,7 @@ const SESSION_NAMES: Record<Lang, Record<SessionKind, string>> = {
   },
 };
 
-/** Textos de los emails en cada idioma. Los nombres y cifras se insertan; nada se traduce en tiempo real. */
+/** Email copy in each language. Names and figures are inserted; nothing is translated at runtime. */
 const COPY = {
   es: {
     unsubscribe: (url: string) => `Darte de baja en un clic: ${url}`,
@@ -170,7 +170,7 @@ export function newsletterConfirmEmail(lang: Lang, confirmUrl: string): EmailCon
   return { subject: COPY[lang].confirmSubject, text: COPY[lang].confirmText(confirmUrl) };
 }
 
-/** Datos de una edición, sin idioma: la plantilla los pone en el idioma de cada lista. */
+/** An issue's data, without a language: the template puts it in each list's language. */
 export interface RaceDigest {
   season: number;
   round: number;
@@ -181,7 +181,7 @@ export interface RaceDigest {
   biggestGain: { name: string; gained: number; finish: number } | null;
   leader: { name: string; points: number; gap: number } | null;
   hasAnalysis: boolean;
-  /** Nota post-carrera publicada (CON-04), si la hay. */
+  /** The published post-race note (CON-04), if there is one. */
   note: { slug: string; title: Record<Lang, string> } | null;
   history: { season: number; gp: string; winner: string } | null;
   next: { season: number; round: number; gp: string; circuitId: string; isSprintWeekend: boolean; raceStart: string | null } | null;
@@ -191,7 +191,7 @@ function points(lang: Lang, n: number): string {
   return new Intl.NumberFormat(LOCALE[lang]).format(n);
 }
 
-/** Newsletter semanal tras cada carrera (contenido.md §5.5). */
+/** The weekly newsletter after each race (content.md §5.5). */
 export function newsletterEmail(lang: Lang, d: RaceDigest, siteUrl: string, unsubscribeUrl: string, postalAddress: string): EmailContent {
   const c = COPY[lang];
   const gp = gpName(lang, d.gp);
@@ -205,7 +205,7 @@ export function newsletterEmail(lang: Lang, d: RaceDigest, siteUrl: string, unsu
   if (d.pole) summary.push(c.pole(d.pole));
   if (d.biggestGain) summary.push(c.climb(d.biggestGain.name, d.biggestGain.gained, d.biggestGain.finish));
   if (d.leader) summary.push(c.leader(d.leader.name, points(lang, d.leader.points), points(lang, d.leader.gap)));
-  // Cinco líneas como máximo: la vuelta rápida (sin punto desde 2025) es la primera que sobra.
+  // Five lines at most: the fastest lap (no point since 2025) is the first to go.
   if (d.fastestLap) summary.push(c.fastest(d.fastestLap.name, d.fastestLap.time ? ` (${d.fastestLap.time})` : ""));
 
   const sections: string[] = [];
@@ -231,7 +231,7 @@ export interface RaceNotice {
   sessions: { kind: SessionKind; startsAt: string | null }[];
 }
 
-/** Aviso antes de cada GP (COM-11): horarios en la zona de la lista y enlace al calendario .ics. */
+/** Notice before each Grand Prix (COM-11): times in the list's time zone and a link to the .ics calendar. */
 export function raceNoticeEmail(lang: Lang, n: RaceNotice, siteUrl: string, unsubscribeUrl: string, postalAddress: string): EmailContent {
   const c = COPY[lang];
   const gp = gpName(lang, n.gp);
@@ -244,7 +244,7 @@ export function raceNoticeEmail(lang: Lang, n: RaceNotice, siteUrl: string, unsu
   return { subject: c.raceSubject(gp), text: body + footer(lang, unsubscribeUrl, postalAddress, c.raceReason) };
 }
 
-/** Aviso al publicar el análisis técnico de una carrera (COM-11). */
+/** Notice when a race's technical analysis is published (COM-11). */
 export function analysisNoticeEmail(
   lang: Lang,
   n: { season: number; round: number; gp: string },

@@ -5,7 +5,7 @@ const COMPOUNDS: Compound[] = ["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"];
 const toCompound = (value: string | null | undefined): Compound =>
   COMPOUNDS.includes(value as Compound) ? (value as Compound) : "UNKNOWN";
 
-/** Estrategia de neumáticos (TEC-02): stints por piloto, paradas y periodos neutralizados. */
+/** Tyre strategy (TEC-02): stints per driver, stops and neutralised periods. */
 export function strategy(
   drivers: DriverInfo[],
   stints: OpenF1Stint[],
@@ -23,7 +23,7 @@ export function strategy(
         toLap: s.lap_end ?? s.lap_start!,
         tyreAge: s.tyre_age_at_start ?? 0,
       }));
-    // Paradas: vueltas de pit lane salvo la vuelta 1 (salida desde boxes o formación).
+    // Stops: pit lane laps except lap 1 (a pit lane start or the formation lap).
     const pitLaps = [
       ...new Set(
         pits

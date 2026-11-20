@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Versionados (el nombre cambia con el contenido, así que se cachean un año) y servidos por /media, que
- * admite peticiones por rangos: Safari en iPhone las necesita para reproducir vídeo.
+ * Versioned (the name changes with the content, so they are cached for a year) and served by /media, which
+ * supports range requests: Safari on iPhone needs them to play video.
  */
 const SOURCES = { wide: "/media/hero-v1-720.mp4", narrow: "/media/hero-v1-480.mp4" };
 
@@ -14,14 +14,14 @@ interface NetworkInformation {
 }
 
 /**
- * Vídeo de fondo del hero: grabado desde la grada, en blanco y negro, sin sonido y recortado para que no
- * aparezca ninguna marca (contenido.md §13). Decorativo y oscurecido por el velo del hero.
+ * The hero's background video: filmed from the grandstand, in black and white, silent and cropped so no
+ * brand appears (content.md §13). Decorative and darkened by the hero's overlay.
  *
- * Carga sin estorbar a la página: el HTML no lo pide; se le da la fuente cuando la página ya ha cargado
- * (versión de 480 px en pantallas estrechas) y aparece con un fundido solo cuando puede reproducirse sin
- * cortes. Hasta entonces, negro. Con ahorro de datos o conexión 2G no se carga.
- * Sin botón de pausa por decisión del autor (D-33, excepción a WCAG 2.2.2): con movimiento reducido no se
- * reproduce y se queda quieto en su primer fotograma.
+ * It loads without getting in the page's way: the HTML does not request it; it gets its source once the
+ * page has loaded (a 480 px version on narrow screens) and fades in only when it can play without
+ * stalling. Until then, black. With data saver or a 2G connection it is not loaded.
+ * No pause button, by the author's decision (D-33, an exception to WCAG 2.2.2): with reduced motion it does
+ * not play and stays still on its first frame.
  */
 export function HeroVideo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -49,7 +49,7 @@ export function HeroVideo() {
       if (reduced) video.pause();
       else void video.play().catch(() => undefined);
     };
-    // canplaythrough: el navegador calcula que puede reproducirlo entero sin pararse a cargar.
+    // canplaythrough: the browser estimates it can play the whole thing without stopping to load.
     if (video.readyState >= 4) show();
     else video.addEventListener("canplaythrough", show, { once: true });
     return () => video.removeEventListener("canplaythrough", show);
@@ -57,7 +57,7 @@ export function HeroVideo() {
 
   return (
     <>
-      {/* Marco que recorta: el vídeo se mueve dentro (paralaje) y el velo lo cubre siempre entero. */}
+      {/* A clipping frame: the video moves inside it (parallax) and the overlay always covers it entirely. */}
       <div className="hero-media" aria-hidden="true">
       <video
         ref={ref}

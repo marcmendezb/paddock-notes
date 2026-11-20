@@ -1,4 +1,4 @@
-/** Cifras clave de una ficha: valor grande y etiqueta, como una cota (marca.md §4). */
+/** A profile's key figures: a large value and a label, like a dimension line (brand.md §4). */
 export function StatGrid({ items }: { items: { label: string; value: string | number; detail?: string }[] }) {
   return (
     <dl className="stat-grid">

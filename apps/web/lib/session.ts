@@ -6,7 +6,7 @@ import { userFetch } from "./api";
 
 export type { Driver };
 
-/** Cookie de sesión del visitante, tal cual llega (solo se reenvían las __Host-pn.*). */
+/** The visitor's session cookie, as it arrives (only __Host-pn.* cookies are forwarded). */
 export async function cookieHeader(): Promise<string> {
   return (await cookies())
     .getAll()
@@ -25,7 +25,7 @@ export interface Me {
   notifications: { race: boolean; analysis: boolean };
 }
 
-/** Perfil del visitante con sesión, o null. Una sola llamada a la API por petición (cache de React). */
+/** The signed-in visitor's profile, or null. A single API call per request (React cache). */
 export const currentUser = cache(async (): Promise<Me | null> => {
   const cookie = await cookieHeader();
   if (!cookie.includes("__Host-pn.")) return null;
@@ -34,17 +34,17 @@ export const currentUser = cache(async (): Promise<Me | null> => {
   return ((await res.json()) as { data: Me }).data;
 });
 
-/** Favoritos del visitante (COM-10): "d:piloto" y "c:equipo". Vacío sin sesión. */
+/** The visitor's favourites (COM-10): "d:driver" and "c:team". Empty without a session. */
 export async function favoriteSet(): Promise<Set<string>> {
   try {
     return new Set((await currentUser())?.favorites ?? []);
   } catch {
-    // Si la API no responde, la página sale igual, sin destacar nada.
+    // If the API does not answer, the page renders anyway, without highlighting anything.
     return new Set();
   }
 }
 
-/** GET autenticado a la API; null si no hay sesión o el recurso no existe. */
+/** An authenticated GET to the API; null if there is no session or the resource does not exist. */
 export async function userGet<T>(path: string): Promise<T | null> {
   const res = await userFetch(path, { cookie: await cookieHeader() });
   if (!res.ok) return null;

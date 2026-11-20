@@ -2,7 +2,7 @@ import type { OpenF1Lap } from "@paddock/shared/openf1";
 import { isNeutralised } from "./neutralised";
 import type { DriverInfo, NeutralisedPeriod, SectorsData } from "./types";
 
-/** Sectores (TEC-06): mejor tiempo y media de cada sector por piloto, sin vueltas neutralizadas ni de boxes. */
+/** Sectors (TEC-06): each driver's best time and mean per sector, without neutralised or pit laps. */
 export function sectors(
   drivers: DriverInfo[],
   laps: OpenF1Lap[],

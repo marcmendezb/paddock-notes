@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: dict(lang).newsletter.unsubscribeTitle, robots: { index: false } };
 }
 
-/** Baja desde el enlace del pie de cada email (D-16). Los clientes de correo usan la baja en un clic de la API; aquí, un botón. */
+/** Unsubscribing from the link in each email's footer (D-16). Mail clients use the API's one-click unsubscribe; here, a button. */
 export default async function UnsubscribePage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const { token = "" } = await searchParams;

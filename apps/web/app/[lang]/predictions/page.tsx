@@ -25,7 +25,7 @@ interface Form {
   picks: { p1: string; p2: string; p3: string; pole: string } | null;
 }
 
-/** Predicciones (COM-04 a COM-06): formulario de la próxima carrera, historial puntuado y ranking global. */
+/** Predictions (COM-04 to COM-06): the next race's form, the scored history and the global ranking. */
 export default async function PredictionsPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const { msg } = await searchParams;

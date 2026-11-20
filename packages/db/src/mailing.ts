@@ -1,6 +1,6 @@
 /**
- * Listas de envío (D-16): newsletter (CON-06) y avisos de la cuenta (COM-11). Solo tablas de comunidad.
- * Los tokens de confirmación se guardan como hash; los de baja son aleatorios y van en cada email.
+ * Mailing lists (D-16): the newsletter (CON-06) and account notifications (COM-11). Community tables only.
+ * Confirmation tokens are stored as a hash; unsubscribe tokens are random and go in each email.
  */
 import { and, asc, eq, gt, lt, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
@@ -17,7 +17,7 @@ export interface Recipient {
 }
 
 const CONFIRM_TTL_MS = 48 * 3_600_000;
-/** No se reenvía el email de confirmación a la misma dirección antes de 10 minutos (evita usarlo para molestar). */
+/** The confirmation email is not resent to the same address within 10 minutes (so it cannot be used to harass). */
 const RESEND_AFTER_MS = 10 * 60_000;
 
 function randomToken(bytes = 24): string {
@@ -33,9 +33,9 @@ export function createMailing(d1: D1Database) {
   const db = drizzle(d1, { schema });
 
   /**
-   * Alta en la newsletter. Devuelve el token que hay que enviar para confirmar, o null si no hay que
-   * enviar nada (ya activo, o confirmación enviada hace muy poco). La respuesta pública es la misma en
-   * todos los casos, para no revelar quién está suscrito.
+   * Newsletter sign-up. Returns the token to send for confirmation, or null if nothing should be sent
+   * (already active, or a confirmation sent very recently). The public response is the same in every case,
+   * so it does not reveal who is subscribed.
    */
   async function subscribe(email: string, lang: string, now = Date.now()): Promise<{ token: string } | null> {
     const address = email.trim().toLowerCase();
@@ -59,7 +59,7 @@ export function createMailing(d1: D1Database) {
     return { token };
   }
 
-  /** Doble confirmación: activa la suscripción si el token existe y no ha caducado. */
+  /** Double opt-in: activates the subscription if the token exists and has not expired. */
   async function confirm(token: string, now = Date.now()): Promise<boolean> {
     const hash = await sha256(token);
     const rows = await db
@@ -70,7 +70,7 @@ export function createMailing(d1: D1Database) {
     return rows.length > 0;
   }
 
-  /** Baja en un clic: borra al suscriptor o apaga los avisos de la cuenta que tenga ese token. */
+  /** One-click unsubscribe: deletes the subscriber or turns off the notifications of the account with that token. */
   async function unsubscribe(token: string): Promise<boolean> {
     const [subs, accounts] = await db.batch([
       db.delete(newsletterSubscribers).where(eq(newsletterSubscribers.unsubscribeToken, token)).returning({ id: newsletterSubscribers.id }),
@@ -102,7 +102,7 @@ export function createMailing(d1: D1Database) {
       .where(eq(users.id, userId));
   }
 
-  /** Destinatarios de un envío, por lotes ordenados por id (el Workflow guarda el cursor). */
+  /** A mailing's recipients, in batches ordered by id (the Workflow keeps the cursor). */
   async function recipients(kind: MailingKind, after: string, limit = 40): Promise<Recipient[]> {
     if (kind === "newsletter") {
       return db
@@ -127,7 +127,7 @@ export function createMailing(d1: D1Database) {
     return rows.filter((r): r is Recipient => r.token !== null);
   }
 
-  /** Altas sin confirmar caducadas: se borran (no se guarda un email que nadie confirmó). */
+  /** Expired unconfirmed sign-ups: deleted (an email nobody confirmed is not kept). */
   async function purgePending(now = Date.now()) {
     const rows = await db
       .delete(newsletterSubscribers)

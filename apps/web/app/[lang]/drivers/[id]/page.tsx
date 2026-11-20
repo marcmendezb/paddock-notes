@@ -46,7 +46,7 @@ export default async function DriverPage({ params }: Params) {
   const country = nationalityCountry(lang, driver.nationality);
 
   const topPoints = Math.max(1, ...profile.seasons.map((x) => x.points));
-  // Temporadas cargadas: las cifras solo cuentan esas (el histórico se carga hacia atrás).
+  // Loaded seasons: the figures only count those (the history is loaded backwards).
   const loaded = (await api.seasons().catch(() => null))?.data ?? [];
   const from = loaded.length ? Math.min(...loaded) : (profile.seasons[0]?.season ?? null);
   const to = loaded.length ? Math.max(...loaded) : (profile.seasons.at(-1)?.season ?? null);

@@ -7,10 +7,10 @@ import { PAGE_SLUGS } from "@/lib/pages";
 import { RECORD_TYPES, RECORDS_PUBLIC } from "@/lib/records";
 import { SITE_URL } from "@/lib/site";
 
-// Se genera por petición: incluye las carreras y los análisis que haya en la API.
+// Generated per request: it includes the races and analyses the API has.
 export const dynamic = "force-dynamic";
 
-/** sitemap.xml con todas las páginas públicas en los dos idiomas (CON-09). */
+/** sitemap.xml with every public page in every language (CON-09). */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const season = new Date().getUTCFullYear();
   const paths = [
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       paths.push(`/drivers/${row.driver.id}`, ...row.constructors.map((c) => `/constructors/${c.id}`));
     }
   } catch {
-    // Sin API, el sitemap sigue incluyendo las páginas fijas.
+    // Without the API, the sitemap still includes the fixed pages.
   }
 
   return [...new Set(paths)].flatMap((path) =>

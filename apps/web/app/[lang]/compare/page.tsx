@@ -26,8 +26,8 @@ const pct = (n: number, total: number) => (total ? `${Math.round((n / total) * 1
 const ID = /^[a-z0-9_-]{1,64}$/;
 
 /**
- * Cara a cara (D-35): dos pilotos de la temporada en curso, y solo con sus carreras de este año. Se eligen
- * en la parrilla del Mundial (DriverPicker); sin elección, el duelo por el título (P1 frente a P2).
+ * Head to head (D-35): two drivers from the current season, with this year's races only. They are picked
+ * from the championship grid (DriverPicker); with no choice, the title fight (P1 against P2).
  */
 export default async function ComparePage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);

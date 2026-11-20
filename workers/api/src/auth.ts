@@ -10,11 +10,11 @@ import type { Env } from "./env";
 const DAY = 86_400;
 
 /**
- * Autenticación (D-17, seguridad.md §9): Better Auth sobre D1, creado por petición con los bindings.
- * - Sin contraseñas: enlace mágico de un solo uso (15 min, guardado como hash) y OAuth si hay credenciales.
- * - Cookies `__Host-`, HttpOnly, Secure, SameSite=Lax. Sin IP.
- * - Sesión: 7 días de inactividad, 30 días como máximo (la sesión no se renueva más allá).
- * - Turnstile en la petición del enlace mágico (COM-12).
+ * Authentication (D-17, security.md §9): Better Auth over D1, created per request with the bindings.
+ * - No passwords: a single-use magic link (15 min, stored as a hash) and OAuth if there are credentials.
+ * - `__Host-` cookies, HttpOnly, Secure, SameSite=Lax. No IP.
+ * - Session: 7 days of inactivity, 30 days at most (the session is not renewed beyond that).
+ * - Turnstile on the magic-link request (COM-12).
  */
 export function createAuth(env: Env) {
   const db = drizzle(env.DB);
@@ -52,7 +52,7 @@ export function createAuth(env: Env) {
         expiresIn: 15 * 60,
         storeToken: "hashed",
         sendMagicLink: async ({ email, url }) => {
-          // El idioma del email sale de la página a la que vuelve el enlace (/es/... o /en/...).
+          // The email's language comes from the page the link returns to (/es/..., /en/... or /de/...).
           const decoded = decodeURIComponent(url);
           const lang = decoded.includes("/en/") ? "en" : decoded.includes("/de/") ? "de" : "es";
           await sendEmail(env, { to: email, ...magicLinkEmail(lang, url) });
@@ -61,7 +61,7 @@ export function createAuth(env: Env) {
       captcha({ provider: "cloudflare-turnstile", secretKey: env.TURNSTILE_SECRET, endpoints: ["/sign-in/magic-link"] }),
     ],
     advanced: {
-      // Sin el prefijo __Secure- automático: el nombre ya lleva __Host- y los atributos fijan Secure.
+      // Without the automatic __Secure- prefix: the name already carries __Host- and the attributes set Secure.
       useSecureCookies: false,
       cookiePrefix: "__Host-pn",
       defaultCookieAttributes: { secure: true, httpOnly: true, sameSite: "lax", path: "/" },

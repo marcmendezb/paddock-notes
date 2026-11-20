@@ -6,10 +6,10 @@ import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 
 /**
- * Alta en la newsletter (NUC-10) como demostración (D-33): Paddock Notes es un proyecto de portfolio y
- * el formulario no guarda ni envía nada. Al enviarlo se abre un aviso que lo explica y el campo se vacía.
- * Sin JavaScript, el formulario va a la ruta de formularios, que descarta los datos sin leerlos y vuelve
- * con el mismo aviso. La casilla de consentimiento se mantiene: el formulario se ve como el real.
+ * Newsletter sign-up (NUC-10) as a demonstration (D-33): Paddock Notes is a portfolio project and the form
+ * neither stores nor sends anything. Submitting it opens a notice that explains this and clears the field.
+ * Without JavaScript, the form goes to the forms route, which discards the data without reading it and
+ * returns with the same notice. The consent checkbox stays: the form looks like the real one.
  */
 export function NewsletterForm({ lang, back }: { lang: Lang; back: string }) {
   const t = dict(lang).newsletter;

@@ -1,6 +1,6 @@
 /**
- * Trazado del circuito (NUC-43): generado con las coordenadas de OpenF1 de una vuelta real (D-09),
- * nunca copiado de un plano oficial. El punto de acento marca la línea de meta.
+ * The circuit layout (NUC-43): generated from OpenF1's coordinates for a real lap (D-09), never copied from
+ * an official map. The accent dot marks the finish line.
  */
 export function CircuitMap({
   points,
@@ -11,7 +11,7 @@ export function CircuitMap({
   points: [number, number][];
   label: string;
   caption: string;
-  /** Frenadas numeradas (NUC-44); la tabla de la página repite lo mismo en texto. */
+  /** Numbered braking zones (NUC-44); the page's table repeats the same in text. */
   corners?: { n: number; point: [number, number] }[];
 }) {
   if (points.length < 10) return null;

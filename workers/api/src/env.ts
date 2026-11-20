@@ -10,9 +10,9 @@ export interface Env {
     send: (message: { from: string; to: string; subject: string; text: string; headers?: Record<string, string> }) => Promise<unknown>;
   };
   EMAIL_FROM: string;
-  /** Origen público de la API para los enlaces de autenticación (en producción, el mismo que la web). */
+  /** The API's public origin for authentication links (in production, the same as the web app's). */
   AUTH_BASE_URL: string;
-  /** Orígenes que pueden enviar peticiones que cambian estado (CSRF, seguridad.md §5). Separados por comas. */
+  /** Origins allowed to send state-changing requests (CSRF, security.md §5). Comma-separated. */
   TRUSTED_ORIGINS: string;
   AUTH_SECRET: string;
   TURNSTILE_SECRET: string;

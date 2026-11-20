@@ -3,7 +3,7 @@ import { formatPoints } from "@/lib/format";
 import { dict } from "@/lib/i18n";
 import { DriverLink } from "./links";
 
-/** Tabla de un récord como pantalla de cronometraje: el valor con una barra proporcional al primero. */
+/** A record's table as a timing screen: the value with a bar proportional to the first. */
 export function RecordTable({ lang, rows, label }: { lang: Lang; rows: RecordEntry[]; label: string }) {
   const t = dict(lang).records.cols;
   const hasDetail = rows.some((r) => r.detail);

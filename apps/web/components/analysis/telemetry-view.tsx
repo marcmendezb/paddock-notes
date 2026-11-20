@@ -6,9 +6,9 @@ import { useEffect, useMemo, useState, type KeyboardEvent, type PointerEvent } f
 import type { TelemetryData } from "@paddock/analysis";
 
 /**
- * Comparador de telemetría (TEC-04): velocidad, acelerador, freno y delta acumulado de la vuelta más
- * rápida de dos pilotos, con un cursor sincronizado que se mueve con el puntero o con las flechas.
- * Mapa del circuito por tramos (TEC-05) y unidades km/h o mph recordadas en el navegador (TEC-12).
+ * Telemetry comparison (TEC-04): speed, throttle, brake and cumulative delta of two drivers' fastest laps,
+ * with a synchronised cursor that moves with the pointer or the arrow keys.
+ * A circuit map by stretches (TEC-05) and km/h or mph units remembered in the browser (TEC-12).
  */
 
 export interface TelemetryLabels {
@@ -49,7 +49,7 @@ export function TelemetryView({
     try {
       setMph(localStorage.getItem(UNITS_KEY) === "mph");
     } catch {
-      // Sin almacenamiento disponible: km/h por defecto.
+      // No storage available: km/h by default.
     }
   }, []);
   const toggleUnits = () => {
@@ -57,7 +57,7 @@ export function TelemetryView({
       try {
         localStorage.setItem(UNITS_KEY, v ? "kmh" : "mph");
       } catch {
-        // Preferencia no persistente.
+        // Preference not persisted.
       }
       return !v;
     });
@@ -174,7 +174,7 @@ export function TelemetryView({
   );
 }
 
-/** Mapa del circuito con cada tramo del color del piloto más rápido en él (TEC-05), y su tabla. */
+/** The circuit map with each stretch in the colour of the driver fastest there (TEC-05), and its table. */
 function TrackMap({
   a,
   b,

@@ -5,7 +5,7 @@ import { IconPaths } from "./icons";
 import type { LapLayout } from "./lap-stage";
 
 const BUCKETS = 5;
-/** Cuánto se queda atrás cada punto de la estela, en segundos de la vuelta. */
+/** How far behind each point of the trail stays, in seconds of the lap. */
 const TRAIL = [0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.5];
 
 function clock(s: number): string {
@@ -15,14 +15,14 @@ function clock(s: number): string {
 }
 
 /**
- * La vuelta rápida del circuito, a tiempo real (ficha de circuito). El trazado, coloreado por la velocidad
- * de cada tramo (marca.md §5, escala secuencial), y el cuadrado lima del logo que lo recorre con el ritmo de
- * la telemetría: frena donde frenó el coche. Al lado, un velocímetro con la cifra, el crono de la vuelta y
- * una barra de progreso.
+ * The circuit's fastest lap, in real time (circuit page). The layout, coloured by the speed of each stretch
+ * (brand.md §5, sequential scale), and the logo's lime square running it at the telemetry's pace: it brakes
+ * where the car braked. Beside it, a speedometer with the figure, the lap timer and
+ * a progress bar.
  *
- * Se mueve con requestAnimationFrame y atributos SVG (no estilos en línea: CSP, D-04). Lo que se pinta en el
- * servidor es la figura entera, quieta en la línea de meta: sin JavaScript se ve igual, sin moverse. Con
- * movimiento reducido no arranca sola; se puede pausar siempre (WCAG 2.2.2) y se para fuera de pantalla.
+ * It moves with requestAnimationFrame and SVG attributes (no inline styles: CSP, D-04). What is painted on
+ * the server is the whole figure, still on the finish line: without JavaScript it looks the same, without
+ * moving. With reduced motion it does not start on its own; it can always be paused (WCAG 2.2.2) and it stops off screen.
  */
 export function CircuitLap({
   layout,
@@ -61,7 +61,7 @@ export function CircuitLap({
   const [ready, setReady] = useState(false);
   const visible = useRef(true);
 
-  // Arranca sola salvo con movimiento reducido.
+  // Starts on its own except with reduced motion.
   useEffect(() => {
     if (!synced) return;
     setReady(true);
@@ -80,7 +80,7 @@ export function CircuitLap({
 
   useEffect(() => {
     if (!playing || !synced) return;
-    // Momento de la vuelta (0…lapTime) → posición y velocidad, interpolando entre dos muestras.
+    // Moment of the lap (0…lapTime) → position and speed, interpolating between two samples.
     const rel = [...times.map((t) => t - t0), lapTime];
     const at = (s: number) => {
       const tt = ((s % lapTime) + lapTime) % lapTime;

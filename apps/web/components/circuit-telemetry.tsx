@@ -5,15 +5,15 @@ import { dict } from "@/lib/i18n";
 import type { LapLayout } from "./lap-stage";
 
 /**
- * La vuelta rápida de un circuito, en la ficha (NUC-43, NUC-44): la traza de velocidad metro a metro, sus
- * cifras y cada frenada. Todo sale de la telemetría de OpenF1 que ya guarda la ingesta (D-09); nada se
- * inventa: la distancia de cada muestra es su posición en el trazado, escalada a la longitud de la vuelta.
- * SVG dibujado en el servidor, con atributos y clases (CSP, D-04).
+ * A circuit's fastest lap, on its page (NUC-43, NUC-44): the speed trace metre by metre, its figures and
+ * each braking zone. Everything comes from the OpenF1 telemetry ingestion already stores (D-09); nothing is
+ * invented: each sample's distance is its position on the layout, scaled to the lap's length.
+ * SVG drawn on the server, with attributes and classes (CSP, D-04).
  */
 
 export type Telemetry = LapLayout & { length: number; season: number; driver: { code: string; name: string } };
 
-/** Distancia (m) de cada punto desde la meta, y la vuelta completa al final. */
+/** Distance (m) of each point from the finish line, with the full lap at the end. */
 function distances(t: Telemetry): number[] {
   const closed = [...t.points, t.points[0]!];
   const acc = [0];
@@ -26,7 +26,7 @@ function distances(t: Telemetry): number[] {
   return acc.map((d) => (d / total) * t.length);
 }
 
-/** Índice del punto del trazado más cercano a una frenada. */
+/** Index of the layout point closest to a braking zone. */
 function nearest(t: Telemetry, point: [number, number]): number {
   let best = 0;
   let bestD = Infinity;
@@ -41,7 +41,7 @@ export function lapNumbers(t: Telemetry) {
   const top = Math.max(...t.speeds);
   const avg = t.length / 1000 / (t.lapTime / 3600);
   const slowest = t.corners.reduce<Telemetry["corners"][number] | null>((m, c) => (!m || c.speed < m.speed ? c : m), null);
-  // Tiempo por encima de 300 km/h: cada tramo entre dos muestras cuenta si su velocidad media lo supera.
+  // Time above 300 km/h: each stretch between two samples counts if its mean speed exceeds it.
   const rel = [...t.times.map((x) => x - (t.times[0] ?? 0)), t.lapTime];
   let flat = 0;
   for (let i = 0; i < t.speeds.length; i++) {
@@ -113,7 +113,7 @@ export function SpeedTrace({ lang, t, name }: { lang: Lang; t: Telemetry; name: 
               </g>
             );
           })}
-          {/* Las dos notas de la marca: la punta y la frenada más lenta. */}
+          {/* The brand's two notes: the top speed and the slowest braking zone. */}
           {topI >= 0 ? (
             <g className="ctrace-note">
               <circle cx={x(d[topI]!)} cy={y(top)} r={4.5} />
@@ -124,7 +124,7 @@ export function SpeedTrace({ lang, t, name }: { lang: Lang; t: Telemetry; name: 
           ) : null}
           {slowest ? (
             <g className="ctrace-note is-low">
-              {/* A la derecha del punto, o a la izquierda si está en el último tercio y no cabría. */}
+              {/* To the right of the dot, or to the left if it is in the last third and would not fit. */}
               <text
                 x={x(d[nearest(t, slowest.point)]!) + (x(d[nearest(t, slowest.point)]!) > W * 0.6 ? -14 : 14)}
                 y={y(slowest.speed) + 4}
@@ -168,7 +168,7 @@ export function LapStats({ lang, t }: { lang: Lang; t: Telemetry }) {
   );
 }
 
-/** Cada frenada como una ficha: número, velocidad mínima con su barra, marcha y, si la hay, la nota editorial. */
+/** Each braking zone as a card: number, minimum speed with its bar, gear and, if there is one, the editorial note. */
 export function CornerCards({ lang, t, circuitId }: { lang: Lang; t: Telemetry; circuitId: string }) {
   const c = dict(lang).circuit;
   const v = dict(lang).circuitView;

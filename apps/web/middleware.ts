@@ -1,4 +1,4 @@
-// middleware.ts (runtime edge) en lugar de proxy.ts: OpenNext solo da soporte estable al middleware edge (D-03).
+// middleware.ts (edge runtime) instead of proxy.ts: OpenNext only supports edge middleware as stable (D-03).
 import { NextResponse, type NextRequest } from "next/server";
 import { DEFAULT_LANG, isLang, type Lang } from "@paddock/shared";
 
@@ -29,8 +29,8 @@ export function preferredLang(country: string | null, acceptLanguage: string | n
 }
 
 /**
- * CSP estricta con nonce (seguridad.md §4.1, D-04). En desarrollo, Next.js necesita `unsafe-eval` y
- * estilos en línea para la recarga en caliente; nunca en producción.
+ * Strict CSP with a nonce (security.md §4.1, D-04). In development, Next.js needs `unsafe-eval` and inline
+ * styles for hot reload; never in production.
  */
 export function contentSecurityPolicy(nonce: string): string {
   return [
@@ -38,11 +38,11 @@ export function contentSecurityPolicy(nonce: string): string {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
     `style-src 'self'${isDev ? " 'unsafe-inline'" : ""}`,
     "img-src 'self' data:",
-    // Vídeo de fondo del hero, servido desde el propio sitio.
+    // The hero's background video, served from the site itself.
     "media-src 'self'",
     "font-src 'self'",
     "connect-src 'self' https://cloudflareinsights.com",
-    // Turnstile (COM-12): su script se carga con el nonce; el widget vive en un iframe.
+    // Turnstile (COM-12): its script loads with the nonce; the widget lives in an iframe.
     "frame-src https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "form-action 'self'",
@@ -56,8 +56,8 @@ export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const first = pathname.split("/")[1] ?? "";
 
-  // Sin prefijo de idioma: redirección interna y relativa al idioma preferido. No hay ningún parámetro
-  // que acepte URLs externas (seguridad.md §5).
+  // No language prefix: an internal redirect, relative, to the preferred language. No parameter accepts
+  // external URLs (security.md §5).
   if (!isLang(first)) {
     const lang = preferredLang(request.headers.get("cf-ipcountry"), request.headers.get("accept-language"));
     const target = new URL(`/${lang}${pathname === "/" ? "" : pathname}${search}`, request.url);
@@ -66,13 +66,13 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Las imágenes para redes no son HTML: sin CSP ni no-store, para que se puedan cachear.
+  // Social images are not HTML: no CSP and no no-store, so they can be cached.
   if (pathname.endsWith("/opengraph-image")) return NextResponse.next();
 
   const nonce = btoa(crypto.randomUUID());
   const csp = contentSecurityPolicy(nonce);
 
-  // Next.js lee el nonce de la cabecera CSP de la petición y lo aplica a sus scripts.
+  // Next.js reads the nonce from the request's CSP header and applies it to its scripts.
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("content-security-policy", csp);
   requestHeaders.set("x-nonce", nonce);
@@ -91,12 +91,12 @@ export function middleware(request: NextRequest) {
   response.headers.set("cross-origin-opener-policy", "same-origin");
   response.headers.set("cross-origin-resource-policy", "same-origin");
   response.headers.set("x-frame-options", "DENY");
-  // El HTML lleva un nonce único: nunca se cachea (D-04).
+  // The HTML carries a unique nonce: it is never cached (D-04).
   response.headers.set("cache-control", "private, no-store");
   return response;
 }
 
 export const config = {
-  // `api/`: proxy a la API (D-26), sin redirección de idioma ni CSP de página.
+  // `api/`: the proxy to the API (D-26), without the language redirect or the page CSP.
   matcher: ["/((?!_next/static|_next/image|api/|fonts/|brand/|og-fonts/|video/|media/|icon.svg|favicon.ico|robots.txt|sitemap.xml|\\.well-known/).*)"],
 };

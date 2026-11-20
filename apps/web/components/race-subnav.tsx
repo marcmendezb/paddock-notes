@@ -12,11 +12,11 @@ export interface SubnavItem {
 }
 
 /**
- * Subencabezado de la página de carrera: la cabecera se alarga con un segundo nivel, del mismo negro y con
- * la misma anchura que la barra de navegación. A la izquierda, qué carrera es; en el centro, las secciones,
- * y la que se está leyendo lleva el bloque lima, que se desliza de una a otra al bajar (como en el menú
- * principal; se coloca con el CSSOM, que la CSP permite); a la derecha, la carrera anterior y la siguiente.
- * Sin JavaScript, los enlaces funcionan igual (anclas); solo falta marcar la sección actual.
+ * The race page's sub-navigation: the header grows a second level, the same black and the same width as
+ * the navigation bar. On the left, which race it is; in the centre, the sections, with the one being read
+ * carrying the lime block, which slides from one to the next as you scroll (as in the main menu; it is
+ * positioned through the CSSOM, which the CSP allows); on the right, the previous and next race.
+ * Without JavaScript the links work the same (anchors); only marking the current section is missing.
  */
 export function RaceSubnav({
   label,
@@ -36,17 +36,17 @@ export function RaceSubnav({
   const [active, setActive] = useState<string | null>(null);
   const list = useRef<HTMLUListElement>(null);
   const puck = useRef<HTMLSpanElement>(null);
-  // Tras pulsar una pestaña, el bloque va directo a ella y se queda allí (aunque la sección no llegue a subir
-  // del todo, al final de la página) hasta que se vuelve a desplazar a mano.
+  // After clicking a tab, the block goes straight to it and stays there (even if the section never rises
+  // all the way, at the end of the page) until the user scrolls by hand again.
   const lock = useRef(false);
 
-  // El bloque lima bajo la sección activa; en móvil, además, la pestaña activa se desplaza a la vista.
+  // The lime block under the active section; on mobile, the active tab also scrolls into view.
   useEffect(() => {
     const ul = list.current;
     const block = puck.current;
     if (!ul || !block) return;
     const place = () => {
-      // Se mide el <li> (hijo directo de la lista, que es la referencia del bloque), no el enlace.
+      // The <li> is measured (a direct child of the list, which is the block's reference), not the link.
       const link = active ? ul.querySelector<HTMLElement>(`a[href="#${active}"]`)?.parentElement ?? null : null;
       if (!link) {
         block.style.opacity = "0";
@@ -65,9 +65,9 @@ export function RaceSubnav({
   useEffect(() => {
     const targets = items.map((i) => document.getElementById(i.id)).filter((el): el is HTMLElement => el !== null);
     if (!targets.length) return;
-    // La sección activa es la última cuyo principio ya ha pasado por debajo de las dos barras (con la misma
-    // medida que usa el desplazamiento a un ancla, para que la pestaña pulsada sea la que queda marcada).
-    // Al final de la página, la última: puede que nunca llegue a subir tanto.
+    // The active section is the last one whose start has already passed under both bars (with the same
+    // measurement the anchor scroll uses, so the clicked tab is the one that stays marked).
+    // At the end of the page, the last one: it may never rise that far.
     const update = () => {
       if (lock.current) return;
       const line = window.scrollY + anchorOffset() + 24;

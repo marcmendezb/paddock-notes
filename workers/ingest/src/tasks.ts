@@ -12,9 +12,9 @@ export { QuarantineError } from "./rounds";
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
-/** Una sesión que terminó hace menos de esto se reingesta en cada cron de 15 min. */
+/** A session that ended less than this ago is re-ingested on every 15-minute cron. */
 const RECENT_WINDOW_MS = 6 * HOUR;
-/** Rondas sin resultado que se cargan como máximo en una ejecución diaria. */
+/** Rounds without a result loaded at most in one daily run. */
 const MAX_MISSING_PER_RUN = 25;
 
 interface TaskContext extends RoundContext {
@@ -22,7 +22,7 @@ interface TaskContext extends RoundContext {
   rows: number;
 }
 
-/** Calendario de la temporada y, en la misma pasada, las rondas disputadas que aún no tienen resultado. */
+/** The season's calendar and, in the same pass, the rounds run that still have no result. */
 async function refreshSchedule(t: TaskContext, season: number) {
   const rounds = await ingestSchedule(t, season);
   const reader = createF1Reader(t.env.DB);
@@ -36,9 +36,9 @@ async function refreshSchedule(t: TaskContext, season: number) {
 }
 
 /**
- * Cron de 15 min: si una clasificación, un sprint o una carrera terminó en las últimas 6 h, reingesta esa
- * ronda (y sus vueltas, si fue la carrera). Tras una carrera, antes que nada, el resultado provisional de
- * OpenF1 (D-31). Si no, no llama a la fuente.
+ * 15-minute cron: if a qualifying, sprint or race ended in the last 6 h, re-ingest that round (and its laps,
+ * if it was the race). After a race, first of all, OpenF1's provisional result (D-31). Otherwise, it does
+ * not call the source.
  */
 async function ingestRecent(t: TaskContext, season: number) {
   const reader = createF1Reader(t.env.DB);
@@ -50,8 +50,8 @@ async function ingestRecent(t: TaskContext, season: number) {
       return end <= t.now && t.now - end <= RECENT_WINDOW_MS;
     });
     if (ended.length === 0) continue;
-    // Primero el provisional de OpenF1 (D-31): minutos después de la carrera, aunque Jolpica tarde o falle.
-    // Si falla (OpenF1 cerrado por otra sesión en directo, D-25), no impide intentar el oficial.
+    // First OpenF1's provisional result (D-31): minutes after the race, even if Jolpica is late or fails.
+    // If it fails (OpenF1 closed for another live session, D-25), it does not stop the official attempt.
     if (ended.some((s) => s.kind === "race")) {
       try {
         t.rows += await ingestProvisional(t.env, race, t.now);
@@ -65,7 +65,7 @@ async function ingestRecent(t: TaskContext, season: number) {
   }
 }
 
-/** Revisión semanal de sanciones posteriores en las tres últimas carreras disputadas. */
+/** Weekly review of later penalties in the last three races run. */
 async function weeklyCorrections(t: TaskContext, season: number) {
   const reader = createF1Reader(t.env.DB);
   const completed = (await reader.getSchedule(season, t.now)).filter((r) => r.status === "completed").slice(-3);
@@ -82,7 +82,7 @@ export const CRON_TASKS: Record<string, TaskName> = {
   "0 5 * * 1": "corrections",
 };
 
-/** Ejecuta una tarea y la registra en `ingest_runs`. */
+/** Runs a job and records it in `ingest_runs`. */
 export async function runTask(env: Env, task: TaskName, now = Date.now()) {
   const ctx = jolpicaContext(env);
   const writer = createF1Writer(env.DB);
@@ -90,7 +90,7 @@ export async function runTask(env: Env, task: TaskName, now = Date.now()) {
   const season = new Date(now).getUTCFullYear();
   const id = crypto.randomUUID();
 
-  // El cron de 15 min sin sesiones recientes no deja rastro en ingest_runs.
+  // The 15-minute cron with no recent sessions leaves no trace in ingest_runs.
   if (task === "recent") {
     const schedule = await createF1Reader(env.DB).getSchedule(season, now);
     if (!schedule.some((r) => Math.abs(raceStart(r) - now) < 3 * DAY)) return { status: "skipped" as const };
@@ -100,7 +100,7 @@ export async function runTask(env: Env, task: TaskName, now = Date.now()) {
   try {
     if (task === "schedule") {
       await refreshSchedule(t, season);
-      // Desde octubre, también el calendario siguiente, en cuanto Jolpica lo publique (NUC-07).
+      // From October, the next calendar too, as soon as Jolpica publishes it (NUC-07).
       if (new Date(now).getUTCMonth() >= 9) t.rows += (await ingestSchedule(t, season + 1)).length;
     }
     else if (task === "recent") await ingestRecent(t, season);
@@ -109,7 +109,7 @@ export async function runTask(env: Env, task: TaskName, now = Date.now()) {
     return { status: "ok" as const, requests: ctx.counter.requests, rows: t.rows };
   } catch (error) {
     const quarantined = error instanceof QuarantineError || error instanceof IncoherentDataError;
-    const detail = `${error instanceof DeferredError ? "aplazada: " : ""}${String(error)}`;
+    const detail = `${error instanceof DeferredError ? "deferred: " : ""}${String(error)}`;
     await writer.finishRun(id, {
       status: quarantined ? "quarantined" : "error",
       requests: ctx.counter.requests,

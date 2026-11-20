@@ -1,4 +1,4 @@
-/** Contrato de la API pública /api/v1 (apis.md §6, D-06). */
+/** Contract of the public /api/v1 API (apis.md §6, D-06). */
 
 export type ErrorCode =
   | "invalid_parameter"
@@ -29,13 +29,13 @@ export interface ApiEnvelope<T> {
   data: T;
   source: string[];
   license: string;
-  /** Última ingesta correcta del recurso, en ISO 8601 UTC. */
+  /** The resource's last successful ingestion, in ISO 8601 UTC. */
   updated_at: string | null;
 }
 
 export interface ScheduleSession {
   kind: SessionKind;
-  /** Inicio en ISO 8601 UTC, o null si la fuente solo da la fecha. */
+  /** Start in ISO 8601 UTC, or null if the source only gives the date. */
   startsAt: string | null;
   date: string;
 }
@@ -56,7 +56,7 @@ export interface CircuitSummary {
   name: string;
   locality: string;
   country: string;
-  /** Coordenadas del circuito, para el mapa de la temporada (NUC-17). */
+  /** The circuit's coordinates, for the season map (NUC-17). */
   lat: number;
   lng: number;
 }
@@ -76,7 +76,7 @@ export interface RaceSummary {
 
 export interface RaceDetail extends RaceSummary {
   results: RaceResultRow[];
-  /** Resultado provisional de OpenF1, sin la confirmación oficial de Jolpica (D-31). */
+  /** Provisional result from OpenF1, without Jolpica's official confirmation (D-31). */
   provisional?: boolean;
 }
 
@@ -98,7 +98,7 @@ export interface RaceResultRow {
   driver: DriverRef;
   constructor: ConstructorRef;
   grid: number | null;
-  /** Posiciones ganadas (+) o perdidas (−); null si salió desde boxes o no terminó (NUC-22). */
+  /** Positions gained (+) or lost (−); null if the driver started from the pit lane or did not finish (NUC-22). */
   positionsGained: number | null;
   laps: number;
   time: string | null;
@@ -127,12 +127,12 @@ export interface ConstructorStandingRow {
 
 export interface Standings<Row> {
   season: number;
-  /** Ronda tras la que se calculó la clasificación. */
+  /** Round after which the standings were computed. */
   round: number;
   rows: Row[];
 }
 
-// ---- Fase 2: histórico ------------------------------------------------------------------------
+// ---- Phase 2: history --------------------------------------------------------------------------
 
 export interface QualifyingEntry {
   position: number | null;
@@ -147,7 +147,7 @@ export interface PitStopEntry {
   driver: DriverRef;
   stop: number;
   lap: number;
-  /** Tiempo en el pit lane (entrada, parada y salida). */
+  /** Time in the pit lane (entry, stop and exit). */
   duration: string;
   durationMs: number | null;
 }
@@ -155,7 +155,7 @@ export interface PitStopEntry {
 export interface RaceNavigation {
   previous: { season: number; round: number; name: string } | null;
   next: { season: number; round: number; name: string } | null;
-  /** El mismo Gran Premio en otras temporadas, del más reciente al más antiguo. */
+  /** The same Grand Prix in other seasons, most recent first. */
   otherYears: { season: number; round: number }[];
 }
 
@@ -164,9 +164,9 @@ export interface StandingsHistory {
   rounds: { round: number; name: string }[];
   drivers: {
     driver: DriverRef;
-    /** Puntos acumulados tras cada ronda (null si aún no tenía clasificación). */
+    /** Points accumulated after each round (null if there were no standings yet). */
     points: (number | null)[];
-    /** Resultado en cada carrera: "1", "R", "DNS"... null si no participó. */
+    /** Result in each race: "1", "R", "DNS"... null if the driver did not take part. */
     results: (string | null)[];
     finalPosition: number | null;
   }[];
@@ -175,10 +175,10 @@ export interface StandingsHistory {
 export interface CareerStats {
   races: number;
   wins: number;
-  /** Salidas desde la primera posición de la parrilla. */
+  /** Starts from the first grid position. */
   poles: number;
   podiums: number;
-  /** Suma de los puntos obtenidos en carrera y sprint, con el sistema de cada época. */
+  /** Sum of the points scored in races and sprints, under each era's system. */
   points: number;
   dnfs: number;
   bestFinish: number | null;
@@ -186,7 +186,7 @@ export interface CareerStats {
   lastRace: { season: number; round: number; name: string } | null;
 }
 
-/** Entrada del índice de pilotos: su primera y última temporada en los datos cargados. */
+/** An entry in the driver index: their first and last season in the loaded data. */
 export interface DriverIndexEntry {
   driver: DriverRef;
   first: number;
@@ -206,7 +206,7 @@ export interface DriverProfile {
     wins: number;
     races: number;
   }[];
-  /** Carreras en las que coincidió con un compañero de equipo y ambos terminaron clasificados. */
+  /** Races shared with a teammate in which both were classified. */
   teammates: { races: number; ahead: number };
 }
 
@@ -221,11 +221,11 @@ export interface ConstructorProfile {
 export interface CircuitProfile {
   circuit: CircuitSummary & { lat: number; lng: number };
   races: { season: number; round: number; name: string; date: string; winner: DriverRef | null; constructor: ConstructorRef | null }[];
-  /** Datos de la ficha (CON-05), calculados con los resultados guardados. */
+  /** The guide's figures (CON-05), computed from the stored results. */
   facts: {
-    /** Vueltas de la última carrera disputada. */
+    /** Laps of the last race run. */
     laps: { season: number; laps: number } | null;
-    /** Vuelta rápida en carrera más rápida de los datos (Jolpica la tiene desde 2004). */
+    /** The fastest race lap in the data (Jolpica has it since 2004). */
     fastestRaceLap: { time: string; season: number; driver: DriverRef } | null;
   };
 }
@@ -233,7 +233,7 @@ export interface CircuitProfile {
 export interface DriverComparison {
   a: DriverProfile;
   b: DriverProfile;
-  /** Carreras en las que ambos terminaron clasificados. */
+  /** Races in which both were classified. */
   headToHead: {
     races: { season: number; round: number; name: string; a: number; b: number }[];
     aAhead: number;
@@ -247,7 +247,7 @@ export interface RecordEntry {
   rank: number;
   driver: DriverRef;
   value: number;
-  /** Contexto del récord: la carrera de una remontada o el tramo de una racha. */
+  /** The record's context: the race of a comeback or the stretch of a streak. */
   detail: string | null;
 }
 
@@ -267,7 +267,7 @@ export interface HistoryEvent {
   constructor: ConstructorRef | null;
 }
 
-/** Clasificación de pilotos recalculada con el sistema de puntos actual (HIS-06). */
+/** Drivers' standings recalculated under today's points system (HIS-06). */
 export interface RecalculatedStandings {
   season: number;
   races: number;
@@ -277,7 +277,7 @@ export interface RecalculatedStandings {
     driver: DriverRef;
     points: number;
     wins: number;
-    /** Posición y puntos reales al final de la temporada (o tras la última ronda disputada). */
+    /** Real position and points at the end of the season (or after the last round run). */
     actualPosition: number | null;
     actualPoints: number | null;
   }[];

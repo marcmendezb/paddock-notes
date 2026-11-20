@@ -9,11 +9,11 @@
   "observability": { "enabled": true },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "routes": [{ "pattern": "paddocknotes.dev/*", "zone_name": "paddocknotes.dev" }],
-  // La web consulta la API sin salir a internet (D-05).
+  // The web app queries the API without going out to the internet (D-05).
   "services": [{ "binding": "API", "service": "paddock-api" }],
   "vars": {
     "SITE_URL": "https://paddocknotes.dev",
-    // seguridad.md §4.1: primera versión en modo informe; pasar a "false" antes del lanzamiento público.
+    // security.md §4.1: the first version in report-only mode; set to "false" before the public launch.
     "CSP_REPORT_ONLY": "true",
     "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
   },

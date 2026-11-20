@@ -6,10 +6,10 @@ import { dict } from "@/lib/i18n";
 import { Marker, SERIES_COUNT, seriesClass } from "./series";
 
 /**
- * Puntos acumulados ronda a ronda (NUC-33), según el estilo de gráficos de la marca (marca.md §5):
- * rejilla horizontal de 1 px, solo la línea de cero, etiquetas directas al final de cada serie,
- * protagonista a 3 px y una única nota en color de acento. Se renderiza en el servidor: no necesita JS.
- * Siempre va acompañado de una tabla con los mismos datos (TRA-22).
+ * Points accumulated round by round (NUC-33), in the brand's chart style (brand.md §5):
+ * a 1 px horizontal grid, only the zero line, direct labels at the end of each series, the protagonist at
+ * 3 px and a single note in the accent colour. Rendered on the server: it needs no JS.
+ * Always accompanied by a table with the same data (TRA-22).
  */
 
 const W = 760;
@@ -28,7 +28,7 @@ export function PointsChart({
   history: StandingsHistory;
   selected: string[];
   title: string;
-  /** ID de pilotos favoritos (COM-10): trazo más grueso y estrella en la etiqueta, y «favorito» en la descripción. */
+  /** Favourite driver IDs (COM-10): a heavier stroke and a star on the label, and "favourite" in the description. */
   favorites?: Set<string>;
 }) {
   const t = dict(lang);
@@ -50,7 +50,7 @@ export function PointsChart({
     .x((_, i) => x(i))
     .y((p) => y(p ?? 0));
 
-  // Etiquetas directas al final de cada serie, separadas para que no se pisen.
+  // Direct labels at the end of each series, spaced so they do not overlap.
   const labels = series
     .map((s, i) => ({
       i,
@@ -63,7 +63,7 @@ export function PointsChart({
     labels[k]!.y = Math.max(labels[k]!.y, labels[k - 1]!.y + LABEL_GAP);
   }
 
-  // Nota: la ventaja del líder sobre el segundo al final, anclada con un punto (marca.md §5).
+  // Note: the leader's margin over second place at the end, anchored with a dot (brand.md §5).
   const [first, second] = [...series].sort((a, b) => lastValue(b.points) - lastValue(a.points));
   const lead = first && second ? lastValue(first.points) - lastValue(second.points) : 0;
   const markerEvery = Math.max(1, Math.ceil(n / 8));

@@ -1,6 +1,6 @@
 import type { DriverRef } from "./api";
 
-/** Quiz semanal (COM-08): preguntas generadas con datos reales; la web redacta el texto en cada idioma. */
+/** Weekly quiz (COM-08): questions generated from real data; the web app writes the text in each language. */
 
 export type QuizKind = "race-winner" | "champion" | "constructor-champion" | "season-wins" | "pole";
 
@@ -13,11 +13,11 @@ export interface QuizQuestion {
   id: string;
   kind: QuizKind;
   season: number;
-  /** Nombre del GP en inglés (la web lo traduce) o nombre del piloto, según el tipo. */
+  /** The Grand Prix name in English (the web app translates it) or the driver's name, depending on the type. */
   subject: string | null;
   options: QuizOption[];
   answer: string;
-  /** Dato para la explicación: posición, puntos o número de victorias. */
+  /** A figure for the explanation: position, points or number of wins. */
   detail: string | null;
   race?: { season: number; round: number };
 }
@@ -37,7 +37,7 @@ export function isoWeek(date: Date): string {
   return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
-/** Generador pseudoaleatorio determinista (mulberry32) sembrado con un texto. */
+/** A deterministic pseudo-random generator (mulberry32) seeded with a string. */
 export function seededRandom(seed: string): () => number {
   let h = 1779033703 ^ seed.length;
   for (let i = 0; i < seed.length; i++) {

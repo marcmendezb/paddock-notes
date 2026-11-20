@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: dict(lang).account.title, robots: { index: false } };
 }
 
-/** Cuenta (COM-01 a COM-03, COM-07): entrar con enlace mágico, perfil, ligas, exportar y borrar. */
+/** Account (COM-01 to COM-03, COM-07): sign in with a magic link, profile, leagues, export and delete. */
 export default async function AccountPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const { msg } = await searchParams;
@@ -165,7 +165,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
   );
 }
 
-/** Favoritos (COM-10): pilotos y equipos de la temporada en curso. */
+/** Favourites (COM-10): drivers and teams of the current season. */
 async function Favorites({ lang, selected, action }: { lang: Lang; selected: Set<string>; action: string }) {
   const t = dict(lang).account;
   const [drivers, teams] = await Promise.all([

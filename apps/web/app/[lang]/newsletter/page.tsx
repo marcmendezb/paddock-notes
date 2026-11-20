@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const ICONS: IconName[] = ["flag", "chart", "book", "calendar"];
 
-/** El martes siguiente a una carrera, que es cuando sale el número (cron de los martes a las 08:00). */
+/** The Tuesday after a race, which is when the issue goes out (Tuesday cron at 08:00). */
 function tuesdayAfter(date: string): string {
   const d = new Date(`${date}T12:00:00Z`);
   const add = (2 - d.getUTCDay() + 7) % 7 || 7;
@@ -32,9 +32,9 @@ function tuesdayAfter(date: string): string {
 }
 
 /**
- * Newsletter (NUC-10, CON-06), enseñada en vez de prometida. Una bandeja de entrada con un número por cada
- * GP disputado (el asunto, con el ganador real), el formulario en la cabecera, la anatomía de un número
- * hecho con la última carrera y las fechas de los próximos envíos. El alta es una demostración (D-33).
+ * Newsletter (NUC-10, CON-06), shown instead of promised. An inbox with one issue per Grand Prix raced (the
+ * subject, with the real winner), the form in the header, the anatomy of an issue made with the last race
+ * and the dates of the next mailings. Signing up is a demonstration (D-33).
  */
 export default async function NewsletterPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);

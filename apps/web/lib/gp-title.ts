@@ -1,8 +1,8 @@
 import { gpName, type Lang } from "@paddock/shared";
 
 /**
- * "Gran Premio de Brasil" → antes «Gran Premio de», palabra «Brasil»; "Großer Preis von Brasilien" → antes
- * «Großer Preis von», palabra «Brasilien»; "Brazilian Grand Prix" → «Brazilian», después «Grand Prix».
+ * "Gran Premio de Brasil" → before "Gran Premio de", word "Brasil"; "Großer Preis von Brasilien" → before
+ * "Großer Preis von", word "Brasilien"; "Brazilian Grand Prix" → "Brazilian", after "Grand Prix".
  */
 export function splitGpName(lang: Lang, raw: string): { before: string; word: string; after: string } {
   const name = gpName(lang, raw);
@@ -15,7 +15,7 @@ export function splitGpName(lang: Lang, raw: string): { before: string; word: st
   return { before: "", word: name, after: "" };
 }
 
-/** Escala del titular según lo largo que sea: la palabra siempre llena la hoja sin desbordarla. */
+/** The headline's scale by its length: the word always fills the sheet without overflowing it. */
 export function wordSize(word: string): string {
   if (word.length <= 7) return "sheet-word-xxl";
   if (word.length <= 11) return "sheet-word-xl";

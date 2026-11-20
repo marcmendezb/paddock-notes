@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Levanta el stack local completo con una D1 compartida en .wrangler/state:
-#   ingesta en :8788, API en :8787 y web (build de OpenNext) en :8789.
-# Uso: scripts/local-stack.sh [--seed | --backfill | --no-cron]   (--seed lanza la tarea diaria de ingesta contra Jolpica)
+# Starts the full local stack with a shared D1 in .wrangler/state:
+#   ingestion on :8788, API on :8787 and web (OpenNext build) on :8789.
+# Usage: scripts/local-stack.sh [--seed | --backfill | --no-cron]   (--seed runs the daily ingestion job against Jolpica)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,8 +13,8 @@ mkdir -p "$LOGS"
 
 trap 'kill 0' EXIT INT TERM
 
-# Arranque escalonado y un puerto de inspector distinto para cada Worker: si arrancan a la vez,
-# los tres wrangler dev compiten por los mismos sockets internos ("Address already in use").
+# Staggered start and a different inspector port for each Worker: if they start at the same time,
+# the three wrangler dev processes fight over the same internal sockets ("Address already in use").
 (cd "$ROOT/workers/api" && pnpm exec wrangler dev --persist-to "$STATE" --port 8787 --inspector-port 9230 >"$LOGS/api.log" 2>&1) &
 curl -s --retry 60 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:8787/api/v1/health
 
@@ -23,24 +23,24 @@ curl -s --retry 60 --retry-connrefused --retry-delay 1 -o /dev/null http://local
 
 (cd "$ROOT/apps/web" && pnpm exec wrangler dev --port 8789 --inspector-port 9232 --local-upstream localhost:8789 --var CSP_REPORT_ONLY:false --var SITE_URL:http://localhost:8789 >"$LOGS/web.log" 2>&1) &
 curl -s --retry 60 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:8789/es
-echo "Stack listo: web http://localhost:8789 · API http://localhost:8787/api/v1/docs · logs en .wrangler/logs"
+echo "Stack ready: web http://localhost:8789 · API http://localhost:8787/api/v1/docs · logs in .wrangler/logs"
 
 if [[ "${1:-}" == "--seed" ]]; then
   curl -s "http://localhost:8788/__scheduled?cron=0+4+*+*+*" >/dev/null
-  echo "Ingesta diaria lanzada (ver .wrangler/logs/ingest.log)"
+  echo "Daily ingestion started (see .wrangler/logs/ingest.log)"
 fi
 
-# --backfill: lanza el cron de 15 minutos, que crea la siguiente instancia del Workflow del histórico.
-# En local no se cargan las vueltas (BACKFILL_LAPS=false). Repítelo para avanzar de temporada.
+# --backfill: runs the 15-minute cron, which creates the next instance of the history Workflow.
+# Locally, laps are not loaded (BACKFILL_LAPS=false). Repeat it to move on a season.
 if [[ "${1:-}" == "--backfill" ]]; then
   curl -s "http://localhost:8788/__scheduled?cron=*/15+*+*+*+*" >/dev/null
-  echo "Avance del histórico lanzado (ver .wrangler/logs/ingest.log)"
+  echo "History backfill step started (see .wrangler/logs/ingest.log)"
 fi
 
-# Crons de la ingesta: wrangler dev no los dispara solos (--test-scheduled solo los expone). Mientras el
-# stack está arriba se lanzan como en producción (workers/ingest/wrangler.jsonc): el de 15 minutos
-# (resultados recientes, provisional de OpenF1, análisis e histórico), el diario (calendario y rondas sin
-# resultado) y el semanal (sanciones), los tres también al arrancar. --no-cron los desactiva.
+# Ingestion crons: wrangler dev does not fire them on its own (--test-scheduled only exposes them). While the
+# stack is up they run as in production (workers/ingest/wrangler.jsonc): the 15-minute one (recent results,
+# OpenF1's provisional result, analysis and history), the daily one (calendar and rounds without a result)
+# and the weekly one (penalties), all three also on start. --no-cron turns them off.
 if [[ "${1:-}" != "--no-cron" ]]; then
   (
     tick=0
@@ -52,7 +52,7 @@ if [[ "${1:-}" != "--no-cron" ]]; then
       sleep 900
     done
   ) &
-  echo "Crons de la ingesta activos: cada 15 min, diario y semanal (--no-cron para desactivarlos)"
+  echo "Ingestion crons running: every 15 min, daily and weekly (--no-cron turns them off)"
 fi
 
 wait

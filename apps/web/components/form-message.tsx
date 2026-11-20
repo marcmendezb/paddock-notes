@@ -1,7 +1,7 @@
 import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 
-/** Resultado de un formulario tras la redirección (?msg=accion:resultado), anunciado a lectores de pantalla. */
+/** A form's result after the redirect (?msg=action:result), announced to screen readers. */
 export function FormMessage({ lang, msg, okText }: { lang: Lang; msg: string | undefined; okText?: string }) {
   if (!msg) return null;
   const t = dict(lang).account;

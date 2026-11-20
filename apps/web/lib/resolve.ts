@@ -2,8 +2,8 @@ import "server-only";
 import { api } from "./api";
 
 /**
- * Resuelve lo que escribe el visitante en el formulario del cara a cara: un ID exacto o un nombre.
- * Si hay varios pilotos con ese nombre, gana el más reciente (la búsqueda ordena por última temporada).
+ * Resolves what the visitor types in the head-to-head form: an exact ID or a name.
+ * If several drivers share that name, the most recent wins (the search orders by last season).
  */
 export async function resolveDriver(input: string | undefined): Promise<string | null> {
   const value = input?.trim();

@@ -12,10 +12,10 @@ export interface PickerDriver {
 }
 
 /**
- * Selector de piloto del cara a cara (D-35): en vez de un <select>, un desplegable con la parrilla de la
- * temporada en tarjetas (posición, código grande, nombre y equipo). Son radios dentro del formulario, así
- * que funciona sin JavaScript; con JavaScript, la cabecera muestra al elegido y el panel se cierra al
- * elegir, al pulsar fuera o con Escape. `side` pinta al piloto A en lima y al B en lila.
+ * The head-to-head driver picker (D-35): instead of a <select>, a dropdown with the season's grid as cards
+ * (position, large code, name and team). They are radio inputs inside the form, so it works without
+ * JavaScript; with JavaScript, the header shows the chosen driver and the panel closes on choosing, on an
+ * outside click or with Escape. `side` paints driver A in lime and driver B in lilac.
  */
 export function DriverPicker({
   name,

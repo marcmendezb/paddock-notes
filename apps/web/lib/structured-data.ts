@@ -1,9 +1,9 @@
 import { countryCode, sessionDurationMs, type Lang, type RaceSummary } from "@paddock/shared";
 
 /**
- * Datos estructurados (CON-08) con los campos que pide Google para cada tipo: obligatorios y recomendados
- * que tenemos de verdad. Sin `organizer`: el proyecto no es oficial y no hablamos en nombre de nadie.
- * Funciones puras para poder probarlas sin renderizar páginas.
+ * Structured data (CON-08) with the fields Google asks for for each type: required and recommended ones
+ * we really have. No `organizer`: the project is unofficial and does not speak on anyone's behalf.
+ * Pure functions so they can be tested without rendering pages.
  */
 
 const org = (site: string, lang: Lang) => ({ "@type": "Organization", name: "Paddock Notes", url: `${site}/${lang}/about` });

@@ -10,20 +10,20 @@ export interface LapLayout {
 }
 
 const r1 = (v: number) => Math.round(v * 10) / 10;
-/** Tramos de velocidad: de la lima oscura (lento) a la lima clara (rápido), escala secuencial de la marca. */
+/** Speed stretches: from dark lime (slow) to light lime (fast), the brand's sequential scale. */
 const BUCKETS = 5;
-/** Estela del coche: copias que van detrás, cada vez más pequeñas y transparentes. */
+/** The car's trail: copies following behind, ever smaller and more transparent. */
 const TRAIL = [0.07, 0.14, 0.21, 0.28];
 
 /**
- * Una vuelta real (hero de la home): el trazado del próximo circuito coloreado por la velocidad de la vuelta
- * rápida (marca.md §5, «velocidad sobre el mapa») y un cuadrado lima —el punto del logo— que lo recorre al
- * ritmo real, con estela. Cada tramo dura lo que duró en la telemetría (keyPoints/keyTimes): frena donde
- * frenó el coche. Un velocímetro, debajo, se mueve sincronizado con él.
+ * A real lap (home hero): the next circuit's layout coloured by the speed of the fastest lap (brand.md §5,
+ * "speed on the map") and a lime square (the logo's dot) running it at the real pace, with a trail. Each
+ * stretch lasts as long as it did in the telemetry (keyPoints/keyTimes): it brakes where the car braked.
+ * A speedometer below moves in sync with it.
  *
- * Animación SVG nativa y CSS: sin JavaScript ni estilos en línea (CSP, D-04). El trazado pasa por encima
- * del nombre del GP con un halo del color del fondo, que corta las letras. Decorativo para lectores de
- * pantalla: el nombre y los datos están en el texto.
+ * Native SVG animation and CSS: no JavaScript and no inline styles (CSP, D-04). The layout passes over the
+ * Grand Prix name with a halo in the background colour, which cuts the letters. Decorative for screen
+ * readers: the name and the details are in the text.
  */
 export function LapStage({
   layout,
@@ -44,7 +44,7 @@ export function LapStage({
   const h = Math.max(...ys) - minY + pad;
   const path = `M${points.map((p) => p.join(",")).join("L")}Z`;
 
-  // Posición de cada punto en el recorrido (fracción de la longitud del polígono cerrado)…
+  // Position of each point along the path (fraction of the closed polygon's length)…
   const closed = [...points, points[0]!];
   const cumulative = [0];
   for (let i = 1; i < closed.length; i++) {
@@ -53,7 +53,7 @@ export function LapStage({
     cumulative.push(cumulative[i - 1]! + Math.hypot(bx - ax, by - ay));
   }
   const total = cumulative.at(-1)! || 1;
-  // …y el momento de la vuelta en que se pasa por él. La vuelta se cierra en el primer punto.
+  // …and the moment of the lap at which it is passed. The lap closes on the first point.
   const t0 = times[0] ?? 0;
   const keyTimes = [...times.map((t) => Math.min(1, Math.max(0, (t - t0) / lapTime))), 1];
   const synced =
@@ -93,7 +93,7 @@ export function LapStage({
       <div className="lap-visual">
         <svg className="lap-figure" viewBox={`${minX} ${minY} ${w} ${h}`} aria-hidden="true" focusable="false">
           <defs>
-            {/* Máscara que descubre la pista de principio a fin al cargar. */}
+            {/* A mask that reveals the track from start to finish on load. */}
             <mask id="lap-reveal" maskUnits="userSpaceOnUse" x={minX} y={minY} width={w} height={h}>
               <path d={path} pathLength={1} className="lap-reveal" />
             </mask>
@@ -122,7 +122,7 @@ export function LapStage({
               </text>
             </g>
           ))}
-          {/* Meta: la línea y la bandera a cuadros encima. */}
+          {/* Finish: the line with the chequered flag above it. */}
           <line x1={sx} y1={sy - 34} x2={sx} y2={sy + 34} className="lap-finish" />
           <svg x={sx - 22} y={sy - 86} width="44" height="44" viewBox="0 0 24 24" className="lap-flag">
             <IconPaths name="flag" />
@@ -158,7 +158,7 @@ export function LapStage({
           <rect className="lap-car-static" x={sx - 17} y={sy - 17} width={34} height={34} />
         </svg>
 
-        {/* Velocímetro sincronizado con el cuadrado: la barra se llena con la velocidad de cada tramo. */}
+        {/* A speedometer in sync with the square: the bar fills with each stretch's speed. */}
         {synced ? (
           <div className="lap-speed" aria-hidden="true">
             <span className="lap-speed-label">{labels.speed}</span>

@@ -5,8 +5,8 @@ import { createF1Writer } from "@paddock/db/f1-write";
 import app from "../src/index";
 
 /**
- * Comunidad (fase 4) de punta a punta: enlace mágico, sesión, perfil, predicciones, ligas, CSRF,
- * exportación y borrado. El email se captura con un binding falso y Turnstile se simula.
+ * Community (phase 4) end to end: magic link, session, profile, predictions, leagues, CSRF, export and
+ * deletion. Email is captured with a fake binding and Turnstile is simulated.
  */
 
 const ORIGIN = "http://localhost:8789";
@@ -21,7 +21,7 @@ const testEnv = {
   },
 } as unknown as typeof env;
 
-/** IP del visitante que la web reenvía por Service Binding; cada usuario de prueba tiene la suya. */
+/** The visitor's IP the web app forwards over the Service Binding; each test user has their own. */
 let ipCounter = 0;
 const ipFor = new Map<string, string>();
 
@@ -40,7 +40,7 @@ async function call(path: string, init: RequestInit & { cookie?: string; ip?: st
   return res;
 }
 
-/** Inicia sesión con el enlace mágico y devuelve la cookie de sesión. */
+/** Signs in with the magic link and returns the session cookie. */
 async function signIn(email: string): Promise<string> {
   const res = await call("/auth/sign-in/magic-link", {
     ip: email,
@@ -61,7 +61,7 @@ async function signIn(email: string): Promise<string> {
 }
 
 beforeAll(async () => {
-  // Turnstile: siteverify siempre aprueba en los tests.
+  // Turnstile: siteverify always passes in the tests.
   vi.stubGlobal(
     "fetch",
     vi.fn(async (input: RequestInfo | URL) => {
@@ -69,7 +69,7 @@ beforeAll(async () => {
       throw new Error(`fetch inesperado: ${String(input)}`);
     }),
   );
-  // Una carrera en el futuro, para que las predicciones estén abiertas pase lo que pase con el reloj.
+  // A race in the future, so predictions are open whatever the clock says.
   const writer = createF1Writer(env.DB);
   await writer.write({
     circuits: [{ id: "test_ring", name: "Test Ring", locality: "Testville", country: "Spain", lat: 40, lng: -3 }],

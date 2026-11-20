@@ -4,7 +4,7 @@ import { dict } from "@/lib/i18n";
 import { parseLang, parseSeason } from "@/lib/params";
 import { SITE_URL } from "@/lib/site";
 
-/** Calendario de la temporada en formato .ics (NUC-16). */
+/** The season's calendar in .ics format (NUC-16). */
 export async function GET(_request: Request, { params }: { params: Promise<{ lang: string; season: string }> }) {
   const p = await params;
   const lang = parseLang(p.lang);

@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { articleLd, definedTermLd, sportsEventLd } from "../lib/structured-data";
 
 /**
- * Campos que pide Google para cada tipo (developers.google.com/search/docs/appearance/structured-data):
- * Event, obligatorios name, startDate y location con address; Article, recomendados headline, image,
- * dateModified y author con name y url (CON-08).
+ * The fields Google asks for for each type (developers.google.com/search/docs/appearance/structured-data):
+ * Event requires name, startDate and location with address; Article recommends headline, image,
+ * dateModified and author with name and url (CON-08).
  */
 
 const race = {

@@ -1,27 +1,27 @@
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 /**
- * Tablas de comunidad (fase 4). Las cuatro primeras son las de Better Auth (D-17), con nombres propios
- * para no chocar con `sessions` (las sesiones de F1). Solo los datos imprescindibles (COM-02):
- * sin IP, sin contraseñas.
+ * Community tables (phase 4). The first four are Better Auth's (D-17), with their own names so they do not
+ * clash with `sessions` (the F1 sessions). Only the essential data (COM-02):
+ * no IP, no passwords.
  */
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
-  /** Alias público (COM-02). */
+  /** Public display name (COM-02). */
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
   lang: text("lang").notNull().default("es"),
-  /** JSON con los ID de pilotos y equipos favoritos (COM-10). */
+  /** JSON with the IDs of favourite drivers and teams (COM-10). */
   favorites: text("favorites").notNull().default("[]"),
-  /** Aviso de borrado por inactividad enviado (seguridad.md §17). Deja de valer con cualquier actividad posterior. */
+  /** Inactivity deletion warning sent (security.md §17). It no longer counts after any later activity. */
   inactiveWarnedAt: integer("inactive_warned_at", { mode: "timestamp_ms" }),
-  /** Avisos por email (COM-11), desactivados por defecto: antes de cada GP y al publicar el análisis. */
+  /** Email notifications (COM-11), off by default: before each Grand Prix and when the analysis is published. */
   notifyRace: integer("notify_race", { mode: "boolean" }).notNull().default(false),
   notifyAnalysis: integer("notify_analysis", { mode: "boolean" }).notNull().default(false),
-  /** Token de baja en un clic de los avisos (List-Unsubscribe). Se crea al activar alguno. */
+  /** One-click unsubscribe token for notifications (List-Unsubscribe). Created when one is turned on. */
   emailToken: text("email_token").unique(),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
@@ -75,7 +75,7 @@ export const verifications = sqliteTable("verifications", {
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }),
 });
 
-/** Predicción de un usuario para una ronda (COM-04). Se puntúa al leer, con el resultado oficial (COM-05). */
+/** A user's prediction for a round (COM-04). Scored on read, with the official result (COM-05). */
 export const predictions = sqliteTable(
   "predictions",
   {
@@ -93,7 +93,7 @@ export const predictions = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.season, t.round] }), index("predictions_race_idx").on(t.season, t.round)],
 );
 
-/** Ligas privadas con enlace de invitación (COM-07). IDs y tokens aleatorios, nunca secuenciales. */
+/** Private leagues with an invitation link (COM-07). Random IDs and tokens, never sequential. */
 export const leagues = sqliteTable("leagues", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -118,7 +118,7 @@ export const leagueMembers = sqliteTable(
   (t) => [primaryKey({ columns: [t.leagueId, t.userId] })],
 );
 
-/** Puntuación del quiz semanal con cuenta: guarda la racha (COM-08). */
+/** Weekly quiz score with an account: keeps the streak (COM-08). */
 export const quizAnswers = sqliteTable(
   "quiz_answers",
   {
@@ -132,7 +132,7 @@ export const quizAnswers = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.week] })],
 );
 
-/** Denuncias de alias y nombres de liga (COM-13). */
+/** Reports of display names and league names (COM-13). */
 export const reports = sqliteTable("reports", {
   id: text("id").primaryKey(),
   kind: text("kind", { enum: ["alias", "league"] }).notNull(),
@@ -144,8 +144,8 @@ export const reports = sqliteTable("reports", {
 });
 
 /**
- * Newsletter (CON-06, D-16): solo email e idioma. Doble confirmación: la fila queda `pending` hasta que se
- * abre el enlace; el token de confirmación se guarda como hash y caduca. La baja borra la fila.
+ * Newsletter (CON-06, D-16): email and language only. Double opt-in: the row stays `pending` until the link
+ * is opened; the confirmation token is stored as a hash and expires. Unsubscribing deletes the row.
  */
 export const newsletterSubscribers = sqliteTable(
   "newsletter_subscribers",
@@ -156,7 +156,7 @@ export const newsletterSubscribers = sqliteTable(
     status: text("status", { enum: ["pending", "active"] }).notNull(),
     confirmHash: text("confirm_hash"),
     confirmExpiresAt: integer("confirm_expires_at", { mode: "timestamp_ms" }),
-    /** Token de baja en un clic (List-Unsubscribe), aleatorio y propio de cada suscriptor. */
+    /** One-click unsubscribe token (List-Unsubscribe), random and unique to each subscriber. */
     unsubscribeToken: text("unsubscribe_token").notNull().unique(),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     confirmedAt: integer("confirmed_at", { mode: "timestamp_ms" }),

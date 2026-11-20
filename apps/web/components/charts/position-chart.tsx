@@ -2,8 +2,8 @@ import { scaleBand, scaleLinear } from "d3-scale";
 import type { Lang } from "@paddock/shared";
 
 /**
- * Posición final en el campeonato por temporada (NUC-41): un punto por temporada, la 1.ª arriba.
- * La nota marca los títulos. Va acompañado de la tabla de temporadas de la ficha (TRA-22).
+ * Final championship position per season (NUC-41): one point per season, 1st at the top.
+ * The note marks the titles. It comes with the profile's table of seasons (TRA-22).
  */
 const W = 720;
 const H = 220;

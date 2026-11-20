@@ -22,14 +22,14 @@ import { smoothClosedPath } from "./race-recap";
 import { VisitorTime } from "./visitor-time";
 
 /**
- * Plantilla de la página de cada Gran Premio (NUC-05), la misma para todas las carreras: las de hoy, las que
- * están por llegar y las de 1950.
- * - Cabecera negra: el nombre del GP con la palabra clave a toda escala, el circuito y su trazado si hay
- *   telemetría; debajo, el podio (si se ha corrido) o la cuenta atrás y los horarios (si no).
- * - Resumen: una frase y las cifras clave (pole, vuelta rápida, remontada, tiempo).
- * - Un subencabezado fijo (race-subnav.tsx) para saltar a cada sección, las herramientas de análisis como
- * tarjetas y, al final, la
- *   carrera anterior y la siguiente y el mismo GP en otros años.
+ * Template for each Grand Prix page (NUC-05), the same for every race: today's, the upcoming ones and those
+ * from 1950.
+ * - Black header: the Grand Prix name with its key word at full scale, the circuit and its layout if there
+ *   is telemetry; below, the podium (if it has been run) or the countdown and the times (if not).
+ * - Summary: one sentence and the key figures (pole, fastest lap, comeback, time).
+ * - A sticky sub-navigation (race-subnav.tsx) to jump to each section, the analysis tools as cards and,
+ * at the end, the
+ *   previous and next race and the same Grand Prix in other years.
  */
 
 const TOOL_ICON: Record<ToolName, IconName> = { strategy: "layers", pace: "gauge", telemetry: "chart", sectors: "stopwatch", replay: "flag" };
@@ -156,7 +156,7 @@ export function RaceHero({
   );
 }
 
-/** Cifras clave de la carrera, cada una con su pictograma. Solo las que tenemos. */
+/** The race's key figures, each with its pictogram. Only those we have. */
 export function RaceFacts({
   lang,
   race,
@@ -194,7 +194,7 @@ export function RaceFacts({
   );
 }
 
-/** Las herramientas de análisis de la carrera, como tarjetas con la pregunta que responde cada una. */
+/** The race's analysis tools, as cards with the question each one answers. */
 export function RaceTools({ lang, season, round, tools }: { lang: Lang; season: number; round: number; tools: string[] }) {
   const t = dict(lang);
   return (
@@ -212,7 +212,7 @@ export function RaceTools({ lang, season, round, tools }: { lang: Lang; season: 
   );
 }
 
-/** La carrera anterior y la siguiente, como dos tarjetas, y el mismo GP en otros años. */
+/** The previous and next race, as two cards, and the same Grand Prix in other years. */
 export function RaceNav({ lang, nav, name }: { lang: Lang; nav: RaceNavigation; name: string }) {
   const t = dict(lang);
   const card = (dir: "prev" | "next", r: NonNullable<RaceNavigation["previous"]>) => (
@@ -251,8 +251,8 @@ export function RaceNav({ lang, nav, name }: { lang: Lang; nav: RaceNavigation; 
 }
 
 /**
- * Fondo de la página: el trazado del circuito, enorme y tenue, fijo detrás del contenido. Al bajar por la
- * página, una línea lo va recorriendo (animation-timeline: scroll): leer la carrera es dar la vuelta.
+ * The page background: the circuit layout, huge and faint, fixed behind the content. As you scroll down
+ * the page, a line runs along it (animation-timeline: scroll): reading the race is doing a lap.
  */
 export function RaceBackdrop({ points }: { points: [number, number][] }) {
   if (points.length < 3) return null;
@@ -276,7 +276,7 @@ export function RaceBackdrop({ points }: { points: [number, number][] }) {
   );
 }
 
-/** La previa: la ficha del circuito (si la hay) y el explicador que mejor encaja con este GP. */
+/** The preview: the circuit guide (if there is one) and the explainer that best fits this Grand Prix. */
 export function RacePreview({
   lang,
   circuitId,
@@ -315,7 +315,7 @@ export function RacePreview({
   );
 }
 
-/** Ganadores de este Gran Premio en los últimos años, del más reciente al más antiguo. */
+/** Winners of this Grand Prix in recent years, most recent first. */
 export function RecentWinners({
   lang,
   rows,

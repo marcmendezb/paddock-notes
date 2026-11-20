@@ -2,9 +2,9 @@ import type { OpenF1CarData, OpenF1Location } from "@paddock/shared/openf1";
 import type { DriverInfo, TelemetryData } from "./types";
 
 /**
- * Telemetría reducida de una vuelta (TEC-04): distancia por integración de la velocidad, muestras cada
- * `step` metros y coordenadas interpoladas en el tiempo. Unos 430 puntos por vuelta de 4,3 km: cumple el
- * presupuesto de 300 kB por vista (TEC-13) con dos pilotos.
+ * Reduced telemetry for one lap (TEC-04): distance by integrating speed, a sample every `step` metres and
+ * coordinates interpolated in time. About 430 points for a 4.3 km lap: within the 300 kB budget per view
+ * (TEC-13) with two drivers.
  */
 export function telemetry(
   driver: DriverInfo,
@@ -19,7 +19,7 @@ export function telemetry(
   const samples = [...car].sort((a, b) => a.date.localeCompare(b.date)).map((c) => ({ ...c, t: (Date.parse(c.date) - start) / 1000 }));
   if (samples.length < 20) return null;
 
-  // Distancia acumulada (m) por la regla del trapecio sobre la velocidad (km/h).
+  // Cumulative distance (m) by the trapezoidal rule over speed (km/h).
   const dist: number[] = [0];
   for (let i = 1; i < samples.length; i++) {
     const dt = samples[i]!.t - samples[i - 1]!.t;
@@ -53,7 +53,7 @@ export function telemetry(
     out.time.push(round(t, 3));
     out.speed.push(Math.round(a.speed + (b.speed - a.speed) * f));
     out.throttle.push(Math.round(f < 0.5 ? a.throttle : b.throttle));
-    // OpenF1 da el freno como 0 o 100: se guarda como 0/1.
+    // OpenF1 gives the brake as 0 or 100: stored as 0/1.
     out.brake.push((f < 0.5 ? a.brake : b.brake) > 0 ? 1 : 0);
     out.gear.push(f < 0.5 ? a.n_gear : b.n_gear);
     out.x.push(pos ? Math.round(pos.x) : 0);
@@ -75,8 +75,8 @@ function interpolateLocation(locs: { t: number; x: number; y: number }[], t: num
 const round = (v: number, digits: number) => Math.round(v * 10 ** digits) / 10 ** digits;
 
 /**
- * Diferencia de tiempo acumulada de B respecto a A a lo largo de la vuelta (positivo: B más lento).
- * Es una estimación: sale de la distancia integrada a partir de la velocidad.
+ * Cumulative time difference of B against A along the lap (positive: B slower).
+ * It is an estimate: it comes from the distance integrated from speed.
  */
 export function delta(a: TelemetryData, b: TelemetryData): { distance: number[]; delta: number[] } {
   const n = Math.min(a.distance.length, b.distance.length);
@@ -85,29 +85,29 @@ export function delta(a: TelemetryData, b: TelemetryData): { distance: number[];
 }
 
 /**
- * Trazado de un circuito (NUC-43, D-09) a partir de las coordenadas de una vuelta: se normaliza a una
- * caja de 0 a 1000 y se reduce a un punto cada `every` metros. El SVG se dibuja en la web.
+ * A circuit layout (NUC-43, D-09) from the coordinates of one lap: normalised to a 0 to 1000 box and
+ * reduced to one point every `every` metres. The SVG is drawn in the web app.
  */
-/** Versión de la detección de frenadas: forma parte de la clave de caché del trazado. Súbela al cambiarla. */
+/** Version of the braking detection: part of the layout's cache key. Bump it when it changes. */
 export const CORNERS_VERSION = 4;
 
 export interface BrakingZone {
-  /** Orden en la vuelta, desde la línea de meta. */
+  /** Order in the lap, from the finish line. */
   n: number;
-  /** Posición en la vuelta, de 0 a 1 (para casar notas editoriales aunque cambie la longitud medida). */
+  /** Position in the lap, from 0 to 1 (to match editorial notes even if the measured length changes). */
   at: number;
-  /** Velocidad mínima (km/h) y marcha en ese punto. */
+  /** Minimum speed (km/h) and gear at that point. */
   speed: number;
   gear: number;
-  /** Índice de la muestra, para situarla en el trazado. */
+  /** Index of the sample, to place it on the layout. */
   index: number;
 }
 
 /**
- * Frenadas fuertes de una vuelta (NUC-44): mínimos locales de la velocidad suavizada que quedan al menos
- * `minDrop` km/h por debajo de lo más rápido de los `window` metros anteriores y posteriores. Dos mínimos a
- * menos de `merge` metros (una chicane) cuentan como uno, el más lento. No son las curvas oficiales:
- * una curva a fondo no aparece, porque no hay frenada.
+ * Heavy braking zones in a lap (NUC-44): local minima of the smoothed speed that sit at least `minDrop`
+ * km/h below the fastest point in the `window` metres before and after. Two minima less than `merge`
+ * metres apart (a chicane) count as one, the slower. They are not the official corners: a flat-out corner
+ * does not appear, because there is no braking.
  */
 export function brakingZones(t: TelemetryData, { minDrop = 20, window = 600, merge = 120 } = {}): BrakingZone[] {
   const n = t.speed.length;
@@ -130,14 +130,14 @@ export function brakingZones(t: TelemetryData, { minDrop = 20, window = 600, mer
     }
     found.push(i);
   }
-  // El suavizado desplaza el mínimo (en una chicane cae en el repunte entre los dos vértices): cada zona se
-  // ajusta a la muestra real más lenta de su entorno.
+  // Smoothing shifts the minimum (in a chicane it lands on the rise between the two apexes): each zone is
+  // snapped to the slowest real sample around it.
   const around = Math.max(1, Math.round(merge / t.step));
   const refined: number[] = [];
   for (const i of found) {
     let best = i;
     for (let j = Math.max(0, i - around); j <= Math.min(n - 1, i + around); j++) if (t.speed[j]! < t.speed[best]!) best = j;
-    // Al ajustar, dos zonas cercanas pueden caer casi en el mismo sitio: cuentan como una, la más lenta.
+    // After snapping, two nearby zones can land almost on the same spot: they count as one, the slower.
     const prev = refined.at(-1);
     if (prev !== undefined && t.distance[best]! - t.distance[prev]! < merge) {
       if (t.speed[best]! < t.speed[prev]!) refined[refined.length - 1] = best;
@@ -157,9 +157,9 @@ export function brakingZones(t: TelemetryData, { minDrop = 20, window = 600, mer
 
 export interface CircuitLayout {
   points: [number, number][];
-  /** Segundo de la vuelta en que se pasa por cada punto: permite recorrer el trazado al ritmo real. */
+  /** Second of the lap at which each point is passed: lets the layout be run at the real pace. */
   times: number[];
-  /** Velocidad (km/h) en cada punto: el trazado se colorea con ella. */
+  /** Speed (km/h) at each point: the layout is coloured with it. */
   speeds: number[];
   length: number;
   lapTime: number;
@@ -173,7 +173,7 @@ export function circuitLayout(t: TelemetryData, every = 40): CircuitLayout {
   const ys = t.y;
   const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
   const scale = 1000 / Math.max(maxX - minX, maxY - minY, 1);
-  // El eje y de las coordenadas crece hacia arriba; en SVG, hacia abajo.
+  // The coordinates' y axis grows upwards; in SVG, downwards.
   const project = (i: number): [number, number] => [Math.round((xs[i]! - minX) * scale), Math.round((maxY - ys[i]!) * scale)];
   const points: [number, number][] = [];
   const times: number[] = [];

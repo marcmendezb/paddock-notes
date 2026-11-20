@@ -9,11 +9,11 @@ const config: NextConfig = {
   pageExtensions: ["ts", "tsx"],
 };
 
-// MDX del repositorio, compilado en el build (seguridad.md §5): nunca contenido de usuarios ni externo.
-// Con Turbopack, los plugins se pasan por nombre.
+// MDX from the repository, compiled at build time (security.md §5): never user or external content.
+// With Turbopack, plugins are passed by name.
 const withMDX = createMDX({ options: { remarkPlugins: [["remark-gfm", {}]] } });
 
 export default withMDX(config);
 
-// En `next dev`, expone los bindings de wrangler.jsonc (Service Binding a la API) a getCloudflareContext().
+// In `next dev`, it exposes the bindings in wrangler.jsonc (the Service Binding to the API) to getCloudflareContext().
 if (process.env.NODE_ENV === "development") initOpenNextCloudflareForDev();

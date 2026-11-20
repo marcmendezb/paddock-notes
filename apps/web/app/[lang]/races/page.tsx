@@ -3,8 +3,8 @@ import { FIRST_SEASON } from "@paddock/shared";
 import { parseLang } from "@/lib/params";
 
 /**
- * /races lleva a la temporada en curso. El selector de temporada envía `?season=` con un formulario
- * GET, así que funciona sin JavaScript (TRA-34). Solo se aceptan años válidos.
+ * /races leads to the current season. The season picker sends `?season=` with a GET form, so it works
+ * without JavaScript (TRA-34). Only valid years are accepted.
  */
 export default async function RacesIndex({
   params,

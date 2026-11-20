@@ -13,7 +13,7 @@ import {
 } from "@paddock/shared/jolpica";
 import type { Jolpica } from "./jolpica";
 
-/** Primeras temporadas con cada tipo de dato en Jolpica (apis.md §2.1). */
+/** The first seasons with each kind of data in Jolpica (apis.md §2.1). */
 export const COVERAGE = {
   qualifying: 1994,
   laps: 1996,
@@ -22,7 +22,7 @@ export const COVERAGE = {
 } as const;
 
 const DAY = 86_400_000;
-/** Un resultado con más de 30 días se considera consolidado (cuarentena, seguridad.md §8). */
+/** A result older than 30 days counts as settled (quarantine, security.md §8). */
 const CONSOLIDATED_AFTER_MS = 30 * DAY;
 const QUARANTINE_THRESHOLD = 3;
 
@@ -47,7 +47,7 @@ function dedupe<T extends { id: string }>(rows: T[]): T[] {
   return [...new Map(rows.map((r) => [r.id, r])).values()];
 }
 
-/** Calendario de una temporada. Devuelve las rondas, para recorrerlas después. */
+/** A season's calendar. Returns the rounds, to go through them afterwards. */
 export async function ingestSchedule(c: RoundContext, season: number): Promise<RoundRef[]> {
   const normalized = normalizeSchedule(await c.jolpica.schedule(season));
   await c.writer.write({ ...normalized, resources: [resourceKey.schedule(season)] }, new Date(c.now));
@@ -60,8 +60,8 @@ export async function ingestSchedule(c: RoundContext, season: number): Promise<R
 }
 
 /**
- * Todo lo de una ronda salvo las vueltas: resultado, sprint, clasificación, paradas y las dos
- * clasificaciones del campeonato tras esa ronda. Devuelve las filas escritas (0 si aún no hay resultado).
+ * Everything for a round except the laps: result, sprint, qualifying, pit stops and both championship
+ * standings after that round. Returns the rows written (0 if there is no result yet).
  */
 export async function ingestRound(c: RoundContext, ref: RoundRef): Promise<number> {
   const { season, round } = ref;
@@ -74,7 +74,7 @@ export async function ingestRound(c: RoundContext, ref: RoundRef): Promise<numbe
     const existing = await c.writer.existingResults(season, round);
     const changed = changedResultRows(existing, results.results);
     if (existing.length > 0 && changed > QUARANTINE_THRESHOLD) {
-      throw new QuarantineError(`${season}/${round}: cambiarían ${changed} filas de un resultado consolidado`);
+      throw new QuarantineError(`${season}/${round}: ${changed} rows of a settled result would change`);
     }
   }
 
@@ -125,7 +125,7 @@ export async function ingestRound(c: RoundContext, ref: RoundRef): Promise<numbe
   );
 }
 
-/** Vueltas de una carrera (desde 1996). Suelen ser 12-15 peticiones. */
+/** A race's laps (since 1996). Usually 12 to 15 requests. */
 export async function ingestLaps(c: RoundContext, season: number, round: number): Promise<number> {
   if (season < COVERAGE.laps) return 0;
   const laps = normalizeLaps(season, round, await c.jolpica.laps(season, round));

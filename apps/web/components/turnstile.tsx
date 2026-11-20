@@ -9,10 +9,10 @@ declare global {
 }
 
 /**
- * Turnstile (COM-12): verificación anti-bots sin rompecabezas. El script se carga al montar, así que no
- * altera el HTML que hidrata React; la CSP lo autoriza por 'strict-dynamic' (lo crea código con nonce).
- * El widget añade el campo `cf-turnstile-response` al formulario que lo contiene.
- * Con `lazy`, el script no se carga hasta que el visitante toca el formulario: la home no paga su peso.
+ * Turnstile (COM-12): bot verification without puzzles. The script loads on mount, so it does not alter
+ * the HTML React hydrates; the CSP authorises it through 'strict-dynamic' (it is created by nonced code).
+ * The widget adds the `cf-turnstile-response` field to the form that contains it.
+ * With `lazy`, the script does not load until the visitor touches the form: the page does not pay for its weight.
  */
 export function Turnstile({ siteKey, lang, lazy = false }: { siteKey: string; lang: string; lazy?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);

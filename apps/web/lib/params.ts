@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { FIRST_SEASON, isLang, type Lang } from "@paddock/shared";
 
-/** Validación de los segmentos de ruta: cualquier valor fuera de lo esperado es un 404. */
+/** Validation of path segments: any value outside what is expected is a 404. */
 
 export function parseLang(value: string): Lang {
   if (!isLang(value)) notFound();

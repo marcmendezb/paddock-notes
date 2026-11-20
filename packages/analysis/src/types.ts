@@ -1,15 +1,15 @@
 /**
- * Formato de los JSON de análisis que se guardan en R2 (stack.md §7) y sirve la API.
- * Los textos no van aquí: la web redacta las notas automáticas a partir de `facts` (TEC-08), en cada idioma.
+ * Format of the analysis JSON stored in R2 (stack.md §7) and served by the API.
+ * No copy here: the web app writes the automatic notes from `facts` (TEC-08), in each language.
  */
 
 /**
- * Versión del formato y de los cálculos. Al subirla, la ingesta vuelve a analizar las carreras con una
- * versión anterior. v2: vueltas lentas anómalas excluidas del ritmo y tendencia anclada a vueltas reales.
+ * Version of the format and the computations. When it goes up, ingestion analyses again the races with an
+ * older version. v2: anomalous slow laps excluded from pace and the trend anchored to real laps.
  */
 export const ANALYSIS_VERSION = 2;
 
-/** Ruta de un JSON de análisis en R2: analysis/{season}/{round}/v{n}/{file}.json (stack.md §8.2). */
+/** Path of an analysis JSON in R2: analysis/{season}/{round}/v{n}/{file}.json (stack.md §8.2). */
 export const analysisKey = (season: number, round: number, file: string, version = ANALYSIS_VERSION) =>
   `analysis/${season}/${round}/v${version}/${file}.json`;
 
@@ -20,7 +20,7 @@ export interface DriverInfo {
   code: string;
   name: string;
   team: string | null;
-  /** Posición final, si terminó clasificado. */
+  /** Final position, if the driver was classified. */
   finish: number | null;
 }
 
@@ -43,8 +43,8 @@ export interface StrategyData {
 }
 
 /**
- * Por qué una vuelta no cuenta para el ritmo: salida, boxes, neutralización o, desde v2, `slow`: más de un 7 %
- * por encima de la mediana del piloto (la vuelta de relanzamiento tras una bandera roja, un trompo).
+ * Why a lap does not count for pace: the start, the pits, a neutralisation or, since v2, `slow`: more than
+ * 7 % above the driver's median (the restart lap after a red flag, a spin).
  */
 export type PaceExclusion = "pit" | "neutralised" | "first" | "slow";
 
@@ -54,8 +54,8 @@ export interface PaceData {
   drivers: (DriverInfo & {
     laps: { lap: number; time: number; stint: number; excluded: PaceExclusion | null }[];
     /**
-     * Media y pendiente (s por vuelta) de cada stint, sin vueltas excluidas. `trend`: la recta ajustada entre
-     * la primera y la última vuelta limpia del stint, [vuelta, tiempo, vuelta, tiempo] (desde v2).
+     * Mean and slope (s per lap) of each stint, without excluded laps. `trend`: the fitted line between the
+     * first and last clean lap of the stint, [lap, time, lap, time] (since v2).
      */
     stints: {
       stint: number;
@@ -72,7 +72,7 @@ export interface TelemetryData {
   driver: DriverInfo;
   lap: number;
   lapTime: number;
-  /** Muestras remuestreadas cada `step` metros. */
+  /** Samples resampled every `step` metres. */
   step: number;
   distance: number[];
   time: number[];

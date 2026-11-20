@@ -8,8 +8,8 @@ import type { AppEnv } from "./env";
 import { HttpError } from "./errors";
 
 /**
- * Newsletter (NUC-10, CON-06) y avisos de la cuenta (COM-11), D-16. El alta responde igual exista o no la
- * dirección (no revela quién está suscrito) y exige Turnstile (COM-12) y doble confirmación.
+ * Newsletter (NUC-10, CON-06) and account notifications (COM-11), D-16. Sign-up answers the same whether or
+ * not the address exists (it does not reveal who is subscribed) and requires Turnstile (COM-12) and double opt-in.
  */
 
 const token = z.string().regex(/^[a-f0-9]{48}$/);
@@ -29,7 +29,7 @@ async function json<T extends z.ZodType>(c: Context<AppEnv>, schema: T): Promise
   return parsed.data;
 }
 
-/** Verificación de Turnstile en el servidor (seguridad.md §5); la clave secreta nunca sale del Worker. */
+/** Server-side Turnstile verification (security.md §5); the secret key never leaves the Worker. */
 async function verifyTurnstile(c: Context<AppEnv>, response: string | undefined): Promise<boolean> {
   if (!response) return false;
   const body = new URLSearchParams({ secret: c.env.TURNSTILE_SECRET, response });
@@ -47,7 +47,7 @@ export function mountMailing(app: Hono<AppEnv>) {
   app.post("/newsletter", async (c) => {
     const { email, lang } = await json(
       c,
-      // Consentimiento expreso (RGPD art. 7): sin la casilla marcada no hay alta.
+      // Explicit consent (GDPR art. 7): without the box ticked there is no sign-up.
       z.object({ email: z.string().trim().max(200).pipe(z.email()), lang: z.string(), consent: z.literal(true) }).strict(),
     );
     if (!isLang(lang)) throw new HttpError("invalid_parameter", "Invalid language.");
@@ -70,8 +70,8 @@ export function mountMailing(app: Hono<AppEnv>) {
   });
 
   /**
-   * Baja en un clic (RFC 8058). Responde 200 aunque el token ya no exista: darse de baja dos veces no es
-   * un error, y así no se puede usar para comprobar tokens.
+   * One-click unsubscribe (RFC 8058). Answers 200 even if the token no longer exists: unsubscribing twice is
+   * not an error, and that way it cannot be used to probe tokens.
    */
   app.post("/email/unsubscribe/:token", async (c) => {
     const parsed = token.safeParse(c.req.param("token"));

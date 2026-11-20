@@ -4,9 +4,9 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { SITE_URL } from "./site";
 
 /**
- * Imagen para redes de 1200×630 (TEC-11), según la plantilla del brandboard (marca.md §7): fondo negro,
- * titular a la izquierda, cota en lima y fuente con fecha. Las fuentes (TTF, OFL) se leen de los
- * recursos estáticos: en Workers no hay sistema de archivos.
+ * A 1200×630 social image (TEC-11), following the brandboard's template (brand.md §7): black background,
+ * headline on the left, a lime dimension line and the source with a date. The fonts (TTF, OFL) are read
+ * from the static assets: Workers has no file system.
  */
 export const OG_SIZE = { width: 1200, height: 630 };
 

@@ -23,16 +23,16 @@ import { notifyAnalysis } from "./mailing";
 import { createOpenF1, openf1Context } from "./openf1";
 
 /**
- * Análisis tras cada carrera (D-08): datos de OpenF1, cálculo en TypeScript y JSON en R2.
- * Un paso para los datos de sesión y uno por piloto para la telemetría, todos idempotentes.
+ * Analysis after each race (D-08): OpenF1 data, computation in TypeScript and JSON in R2.
+ * One step for the session data and one per driver for telemetry, all idempotent.
  */
 /**
- * 30 reintentos cada 5 minutos: dos horas y media de margen, lo que dura una sesión en directo con
- * banderas rojas, durante la que OpenF1 no responde sin clave (D-25).
+ * 30 retries every 5 minutes: two and a half hours of margin, the length of a live session with red flags,
+ * during which OpenF1 does not answer without a key (D-25).
  */
 const STEP = { retries: { limit: 30, delay: "5 minutes", backoff: "constant" }, timeout: "10 minutes" } as const;
 
-/** Primera temporada con datos en OpenF1. */
+/** First season with data in OpenF1. */
 export const OPENF1_FROM = 2023;
 
 export interface PostRaceParams {
@@ -68,7 +68,7 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
       const match = sessions
         .map((s) => ({ s, diff: Math.abs(Date.parse(s.date_start) - target) }))
         .sort((a, b) => a.diff - b.diff)[0];
-      if (!match || match.diff > 6 * 3_600_000) throw new Error(`OpenF1 aún no tiene la carrera ${season}/${round}`);
+      if (!match || match.diff > 6 * 3_600_000) throw new Error(`OpenF1 does not have race ${season}/${round} yet`);
       return match.s.session_key;
     });
 
@@ -84,7 +84,7 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
         api.raceControl(sessionKey),
         api.position(sessionKey),
       ]);
-      if (laps.length === 0) throw new Error("OpenF1 aún no tiene las vueltas");
+      if (laps.length === 0) throw new Error("OpenF1 does not have the laps yet");
       const totalLaps = Math.max(...laps.map((l) => l.lap_number));
       const infos = driverInfos(drivers, positions);
       const neutralised = neutralisedPeriods(rc, totalLaps);
@@ -97,7 +97,7 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
         putJson(bucket, analysisKey(season, round, "sectors"), sectors(infos, laps, pitLaps, neutralised)),
         putJson(bucket, analysisKey(season, round, "replay"), replay(infos, laps, positions, totalLaps)),
       ]);
-      // Vuelta más rápida limpia de cada piloto: la que se compara en la telemetría (TEC-04).
+      // Each driver's fastest clean lap: the one compared in the telemetry (TEC-04).
       return infos.flatMap((d) => {
         const own = laps
           .filter((l) => l.driver_number === d.number && l.lap_duration && l.date_start && !l.is_pit_out_lap && l.lap_number > 1)
@@ -140,7 +140,7 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
       await putJson(this.env.ANALYSIS, analysisKey(season, round, "index"), index);
       await createF1Writer(this.env.DB).saveAnalysis(index);
     });
-    // Aviso a quien lo activó (COM-11), solo si la carrera es reciente.
+    // Notice to whoever turned it on (COM-11), only if the race is recent.
     await step.do("notify", STEP, async () => notifyAnalysis(this.env, season, round, event.timestamp.getTime()));
     return { season, round, telemetryDrivers: telemetryDrivers.length };
   }
@@ -148,12 +148,12 @@ export class PostRaceWorkflow extends WorkflowEntrypoint<Env, PostRaceParams> {
 
 const INSTANCE = "analysis:instance";
 const ACTIVE = new Set(["queued", "running", "waiting", "paused", "waitingForPause"]);
-/** Tras terminar una carrera, OpenF1 tarda un rato en tener todo el histórico. */
+/** After a race ends, OpenF1 takes a while to have the whole history. */
 const AFTER_RACE_MS = 3 * 3_600_000;
 
 /**
- * Analiza las carreras pendientes desde 2023, de la más reciente a la más antigua, de una en una.
- * Una carrera que falla se marca y no se reintenta hasta que alguien borre la marca.
+ * Analyses the pending races since 2023, most recent first, one at a time.
+ * A race that fails is marked and not retried until someone clears the mark.
  */
 export async function advanceAnalysis(env: Env, now = Date.now()): Promise<string> {
   const writer = createF1Writer(env.DB);
@@ -168,8 +168,8 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
   }
 
   const reader = createF1Reader(env.DB);
-  // Con una sesión en directo, OpenF1 no responde sin clave: ni se empieza (D-25).
-  if (await liveSession(reader, now)) return "aplazada: sesión en directo";
+  // With a live session, OpenF1 does not answer without a key: do not even start (D-25).
+  if (await liveSession(reader, now)) return "deferred: live session";
   const candidates = await reader.racesWithoutAnalysis(OPENF1_FROM, new Date(now - AFTER_RACE_MS).toISOString(), 20, ANALYSIS_VERSION);
   for (const c of candidates) {
     if (await writer.getState(`analysis:failed:${c.season}:${c.round}`)) continue;
@@ -179,18 +179,18 @@ export async function advanceAnalysis(env: Env, now = Date.now()): Promise<strin
     return `creada: ${id}`;
   }
   if (running) await writer.setState(INSTANCE, "");
-  return "al día";
+  return "up to date";
 }
 
-/** Margen tras el final previsto de una sesión: retrasos y banderas rojas. */
+/** Margin after a session's scheduled end: delays and red flags. */
 const LIVE_MARGIN_MS = 45 * 60_000;
 /**
- * OpenF1 cierra el acceso desde 30 minutos antes de cada sesión; un análisis tarda unos minutos, así que
- * no se empieza si la siguiente sesión arranca en menos de una hora.
+ * OpenF1 closes access from 30 minutes before each session; an analysis takes a few minutes, so it does
+ * not start if the next session begins in under an hour.
  */
 const BEFORE_SESSION_MS = 60 * 60_000;
 
-/** ¿Hay una sesión de F1 en directo, recién terminada o a punto de empezar, según el calendario cargado? */
+/** Is an F1 session live, just finished or about to start, according to the loaded calendar? */
 export async function liveSession(reader: ReturnType<typeof createF1Reader>, now: number): Promise<boolean> {
   const season = new Date(now).getUTCFullYear();
   const schedule = await reader.getSchedule(season, now);

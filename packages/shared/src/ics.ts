@@ -1,7 +1,7 @@
 import type { RaceSummary, SessionKind } from "./api";
 import { sessionDurationMs } from "./schedule";
 
-/** Calendario .ics de una temporada (NUC-16), según RFC 5545. */
+/** A season's .ics calendar (NUC-16), following RFC 5545. */
 
 export interface IcsLabels {
   calendarName: string;
@@ -10,12 +10,12 @@ export interface IcsLabels {
   url: (season: number, round: number) => string;
 }
 
-/** Escapa texto de una propiedad: barra invertida, punto y coma, coma y saltos de línea. */
+/** Escapes a property's text: backslash, semicolon, comma and line breaks. */
 function escapeText(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 
-/** Pliega las líneas de más de 75 octetos, sin partir caracteres UTF-8. */
+/** Folds lines longer than 75 octets, without splitting UTF-8 characters. */
 function fold(line: string): string {
   const encoder = new TextEncoder();
   const parts: string[] = [];

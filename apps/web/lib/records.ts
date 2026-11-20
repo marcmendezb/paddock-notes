@@ -2,8 +2,8 @@ import type { RecordType } from "@paddock/shared";
 import type { IconName } from "@/components/icons";
 
 /**
- * Las páginas de récords están ocultas (D-34): con el histórico a medio cargar, «récord» no es el de la
- * Fórmula 1 sino el de las temporadas cargadas. Al ponerlo a true vuelven las páginas, los enlaces y el sitemap.
+ * The records pages are hidden (D-34): with the history half loaded, a "record" is not Formula 1's but the
+ * loaded seasons'. Setting this to true brings back the pages, the links and the sitemap entries.
  */
 export const RECORDS_PUBLIC = false;
 
@@ -13,7 +13,7 @@ export function isRecordType(value: string): value is RecordType {
   return (RECORD_TYPES as string[]).includes(value);
 }
 
-/** Pictograma de cada récord. */
+/** Each record's pictogram. */
 export const RECORD_ICON: Record<RecordType, IconName> = {
   wins: "trophy",
   poles: "flag",

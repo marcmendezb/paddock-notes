@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-10-15",
   "compatibility_flags": ["nodejs_compat"],
-  // Sin rutas públicas: solo Cron Triggers (seguridad.md §14).
+  // No public routes: Cron Triggers only (security.md §14).
   "workers_dev": false,
   "preview_urls": false,
   "observability": { "enabled": true },
@@ -31,7 +31,7 @@
   "vars": {
     "SITE_URL": "https://paddocknotes.dev",
     "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
-    // Pendiente: la dirección postal del responsable para el pie de la newsletter.
+    // Pending: the controller's postal address for the newsletter footer.
     "MAIL_POSTAL_ADDRESS": "",
     "JOLPICA_BASE_URL": "https://api.jolpi.ca/ergast/f1",
     "JOLPICA_MAX_PER_SECOND": "1",

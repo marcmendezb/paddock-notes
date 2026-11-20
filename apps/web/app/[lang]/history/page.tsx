@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { parseLang } from "@/lib/params";
 
 /**
- * La sección Histórico se retiró (D-35): con el histórico a medio cargar no era histórica. Quien llegue
- * por un enlace antiguo va al cara a cara de la temporada en curso.
+ * The History section was removed (D-35): with the history half loaded it was not historical. Anyone
+ * arriving through an old link goes to the current season's head to head.
  */
 export default async function HistoryPage({ params }: { params: Promise<{ lang: string }> }) {
   redirect(`/${parseLang((await params).lang)}/compare`);

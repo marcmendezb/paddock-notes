@@ -4,8 +4,8 @@ import type { Lang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 
 /**
- * Estrategia de neumáticos (TEC-02): una fila por piloto y un tramo por stint. El compuesto se distingue
- * por trama y letra, no solo por color, y no copia los colores oficiales de los neumáticos.
+ * Tyre strategy (TEC-02): one row per driver and one stretch per stint. The compound is told apart by
+ * pattern and letter, not just colour, and does not copy the tyres' official colours.
  */
 const ROW = 22;
 const M = { top: 40, right: 12, bottom: 28, left: 52 };
@@ -48,7 +48,7 @@ export function StrategyChart({ lang, data }: { lang: Lang; data: StrategyData }
         {data.neutralised.map((p, i) => (
           <g key={i} className={`neutralised neutralised-${p.kind}`}>
             <rect x={x(p.fromLap - 1)} width={x(p.toLap) - x(p.fromLap - 1)} y={M.top - 6} height={H - M.top - M.bottom + 6} />
-            {/* Si dos periodos van seguidos (un SC que acaba en bandera roja), la etiqueta sube una línea. */}
+            {/* If two periods come in a row (an SC that ends in a red flag), the label moves up a line. */}
             <text
               x={x(p.fromLap - 1) + 3}
               y={M.top - 10 - (i > 0 && x(p.fromLap - 1) - x(data.neutralised[i - 1]!.fromLap - 1) < 40 ? 12 : 0)}
@@ -109,8 +109,8 @@ export function StrategyChart({ lang, data }: { lang: Lang; data: StrategyData }
 }
 
 /**
- * `official`: clasificación oficial por código de piloto (Jolpica). La posición de OpenF1 es la de pista al
- * cruzar la meta; las sanciones posteriores solo están en la oficial.
+ * `official`: the official classification by driver code (Jolpica). OpenF1's position is the on-track one
+ * at the finish line; later penalties are only in the official one.
  */
 export function StrategyTable({ lang, data, official }: { lang: Lang; data: StrategyData; official?: Map<string, string> }) {
   const t = dict(lang).analysis;
@@ -144,7 +144,7 @@ export function StrategyTable({ lang, data, official }: { lang: Lang; data: Stra
   );
 }
 
-/** Pilotos cuya posición en pista no coincide con la oficial (sanciones posteriores), para avisarlo en texto. */
+/** Drivers whose on-track position does not match the official one (later penalties), to say so in text. */
 export function officialDifferences(data: StrategyData, official: Map<string, string>): string[] {
   return data.drivers
     .filter((d) => d.finish !== null && official.has(d.code) && /^\d+$/.test(official.get(d.code)!) && Number(official.get(d.code)) !== d.finish)

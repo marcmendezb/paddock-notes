@@ -9,8 +9,8 @@ const LAND = feature(topology, topology.objects.land);
 const GRATICULE = geoGraticule10();
 
 /**
- * Punto donde el sol está en el cénit ahora (aproximación de un grado: declinación por el día del año y
- * longitud por la hora UTC, sin la ecuación del tiempo). Basta para sombrear la noche en el globo.
+ * The point where the sun is at its zenith now (a one-degree approximation: declination from the day of the
+ * year and longitude from the UTC time, without the equation of time). Enough to shade the night on the globe.
  */
 function subsolar(now: Date): [number, number] {
   const start = Date.UTC(now.getUTCFullYear(), 0, 0);
@@ -21,7 +21,7 @@ function subsolar(now: Date): [number, number] {
   return [lng, decl];
 }
 
-/** ¿Es de noche ahora en ese punto? (el sol, a más de 90° del cénit). */
+/** Is it night now at that point? (the sun more than 90° from the zenith). */
 export function isNight(lat: number, lng: number, now = new Date()): boolean {
   const [slng, slat] = subsolar(now);
   const rad = Math.PI / 180;
@@ -30,12 +30,12 @@ export function isNight(lat: number, lng: number, now = new Date()): boolean {
 }
 
 /**
- * Dónde está el circuito, sobre un globo girado hacia él: tierra, meridianos y paralelos cada 10°, la parte
- * del mundo donde ahora es de noche y, en el centro, el cuadrado lima con su meridiano y su paralelo.
- * Se dibuja en el servidor, en cada petición (D-04), así que la noche es la del momento de la visita.
+ * Where the circuit is, on a globe turned towards it: land, meridians and parallels every 10°, the part of
+ * the world where it is night now and, in the centre, the lime square with its meridian and parallel.
+ * Drawn on the server, on every request (D-04), so the night is the one at the moment of the visit.
  */
 export function CircuitGlobe({ lat, lng, label, now = new Date() }: { lat: number; lng: number; label: string; now?: Date }) {
-  // Un poco inclinado: el punto queda por encima del centro y se ve más hemisferio.
+  // Slightly tilted: the point sits above the centre and more of the hemisphere shows.
   const projection = geoOrthographic()
     .rotate([-lng, -lat + 12])
     .scale(SIZE / 2 - 8)

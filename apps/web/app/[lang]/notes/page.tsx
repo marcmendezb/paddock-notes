@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Índice de notas post-carrera (CON-04), de la más reciente a la más antigua. */
+/** Index of post-race notes (CON-04), most recent first. */
 export default async function NotesPage({ params }: Props) {
   const lang = parseLang((await params).lang);
   const t = dict(lang).notes;

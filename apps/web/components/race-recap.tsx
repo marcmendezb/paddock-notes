@@ -5,15 +5,15 @@ import { Marker, SeriesSwatch, seriesClass } from "./charts/series";
 import { Icon } from "./icons";
 
 /**
- * Gráfico de posiciones vuelta a vuelta de una carrera (página de carrera): los tres del podio destacados,
- * el resto del pelotón detrás, las neutralizaciones como franjas y una nota en el momento clave. La crónica
- * de la portada está en race-report.tsx.
+ * A race's lap-by-lap positions chart (race page): the three on the podium highlighted, the rest of the
+ * field behind, neutralisations as bands and a note at the key moment. The home page's report is in
+ * race-report.tsx.
  */
 
 const W = 760;
 const H = 300;
 const M = { top: 34, right: 64, bottom: 44, left: 30 };
-/** El gráfico enfoca la pelea de delante: de la P1 a la P10. Lo que cae más atrás se recorta. */
+/** The chart focuses on the fight at the front: from P1 to P10. Whatever falls further back is cropped. */
 const DEPTH = 10;
 
 export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; race: RaceDetail; replay: ReplayData; strategy: StrategyData | null }) {
@@ -37,7 +37,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
     return d;
   };
 
-  // El momento clave: desde qué vuelta lideró el ganador sin perder ya la primera posición.
+  // The key moment: the lap from which the winner led without losing first place again.
   const winner = top[0]!;
   let leadFrom: number | null = null;
   for (let i = winner.positions.length - 1; i >= 0; i--) {
@@ -69,7 +69,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
           </clipPath>
         </defs>
         {(strategy?.neutralised ?? []).map((p, i, all) => {
-          // Dos franjas seguidas (coche de seguridad y bandera roja): la segunda etiqueta baja una línea.
+          // Two bands in a row (safety car and red flag): the second label drops a line.
           const crowded = i > 0 && x(p.fromLap) - x(all[i - 1]!.fromLap) < 36;
           return (
             <g key={i} className={`neutralised neutralised-${p.kind}`}>
@@ -85,7 +85,7 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
             {p === 1 ? "P1" : p}
           </text>
         ))}
-        {/* El resto del pelotón, detrás y sin color. */}
+        {/* The rest of the field, behind and without colour. */}
         <g clipPath="url(#recap-clip)">
           {replay.drivers
             .filter((d) => !podium.includes(d.code))
@@ -131,8 +131,8 @@ export function PositionsChart({ lang, race, replay, strategy }: { lang: Lang; r
 }
 
 /**
- * Trazado cerrado y suave: los puntos de telemetría unidos con curvas (Catmull-Rom pasado a Bézier) en vez
- * de rectas, para que no queden picos. Se queda uno de cada dos puntos, que basta para la forma.
+ * A smooth closed layout: the telemetry points joined with curves (Catmull-Rom turned into Bézier) instead
+ * of straight lines, so no spikes remain. One point in two is kept, which is enough for the shape.
  */
 export function smoothClosedPath(raw: [number, number][]): string {
   const pts = raw.filter((_, i) => i % 2 === 0);

@@ -3,9 +3,9 @@ import { isLang } from "@paddock/shared";
 import { userFetch } from "@/lib/api";
 
 /**
- * Formularios de la comunidad (fase 4), sin JavaScript: POST → API por Service Binding → redirección
- * (POST/Redirect/GET). Protección CSRF: el Origin debe ser el del propio sitio (seguridad.md §5), y la API
- * vuelve a comprobarlo. Solo se aceptan rutas de vuelta internas (sin redirecciones abiertas).
+ * Community forms (phase 4), without JavaScript: POST → API over the Service Binding → redirect
+ * (POST/Redirect/GET). CSRF protection: the Origin must be the site's own (security.md §5), and the API
+ * checks it again. Only internal return paths are accepted (no open redirects).
  */
 
 type Field = (name: string) => string;
@@ -21,15 +21,15 @@ interface Action {
   path: (f: Field) => string;
   body?: (f: Field, ctx: Ctx, all: All) => unknown;
   headers?: (f: Field) => Record<string, string>;
-  /** A dónde volver si todo va bien; por defecto, a la página del formulario. */
+  /** Where to return if all goes well; by default, the form's page. */
   next?: (f: Field, data: unknown) => string | null;
 }
 
-/** Segmento de ruta de la API: solo identificadores, nunca "..", "/" ni nada que cambie la ruta. */
+/** An API path segment: identifiers only, never "..", "/" or anything that changes the path. */
 const seg = (value: string) => (/^[A-Za-z0-9_-]{1,64}$/.test(value) ? value : "_");
 
 const ACTIONS: Record<string, Action> = {
-  /** Enlace mágico (COM-01). El widget de Turnstile añade su token al formulario (COM-12). */
+  /** Magic link (COM-01). The Turnstile widget adds its token to the form (COM-12). */
   "magic-link": {
     method: "POST",
     path: () => "/auth/sign-in/magic-link",
@@ -71,15 +71,15 @@ const ACTIONS: Record<string, Action> = {
     }),
   },
   report: { method: "POST", path: () => "/reports", body: (f) => ({ kind: f("kind"), targetId: f("target") }) },
-  /** Favoritos (COM-10): casillas "fav" con "d:piloto" o "c:equipo". */
+  /** Favourites (COM-10): "fav" checkboxes with "d:driver" or "c:team". */
   favorites: { method: "POST", path: () => "/me", body: (_f, _ctx, all) => ({ favorites: all("fav").slice(0, 20) }) },
-  /** Avisos por email (COM-11): casillas sin marcar no llegan en el formulario. */
+  /** Email notifications (COM-11): unchecked boxes do not arrive in the form. */
   notifications: {
     method: "POST",
     path: () => "/me/notifications",
     body: (f) => ({ race: f("race") === "on", analysis: f("analysis") === "on" }),
   },
-  /** Newsletter (NUC-10): hoy es una demostración y el POST no llega aquí (D-33); se conserva para reactivarla. */
+  /** Newsletter (NUC-10): today it is a demo and the POST does not get here (D-33); kept so it can be turned back on. */
   newsletter: {
     method: "POST",
     path: () => "/newsletter",
@@ -90,7 +90,7 @@ const ACTIONS: Record<string, Action> = {
   unsubscribe: { method: "POST", path: (f) => `/email/unsubscribe/${seg(f("token"))}`, body: () => ({}), next: () => "newsletter" },
 };
 
-/** Ruta interna de vuelta: siempre "/{lang}/…", nunca una URL externa. */
+/** Internal return path: always "/{lang}/…", never an external URL. */
 function safeBack(lang: string, value: string | null, fallback: string): string {
   if (value && /^[a-z0-9/_?=&.-]{0,200}$/i.test(value) && !value.includes("//") && !value.startsWith("/")) {
     return `/${lang}/${value}`;
@@ -105,7 +105,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ lan
   if (!isLang(lang) || !action) return new NextResponse(null, { status: 404 });
   if (request.headers.get("origin") !== origin) return new NextResponse("Forbidden", { status: 403 });
 
-  // Newsletter de demostración (D-33): no se lee el formulario ni se llama a la API; vuelve con el aviso.
+  // Demo newsletter (D-33): the form is not read and the API is not called; it returns with the notice.
   if (name === "newsletter") {
     const url = new URL(`/${lang}/newsletter`, origin);
     url.searchParams.set("msg", "newsletter:ok");
@@ -133,7 +133,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ lan
   try {
     data = await res.json();
   } catch {
-    // Respuestas sin cuerpo JSON (cerrar sesión).
+    // Responses without a JSON body (sign out).
   }
   const ok = res.ok;
   const code = ok ? "ok" : ((data as { error?: { code?: string; message?: string } })?.error?.message ?? "error");
@@ -142,7 +142,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ lan
   url.searchParams.set("msg", ok ? `${name}:ok` : `${name}:${code.split(" ")[0]?.replace(/[^a-z_:.-]/gi, "") || "error"}`);
 
   const response = NextResponse.redirect(url, 303);
-  // La API puede fijar o borrar la cookie de sesión (cerrar sesión, borrar cuenta).
+  // The API can set or clear the session cookie (sign out, delete account).
   for (const cookie of res.headers.getSetCookie?.() ?? []) response.headers.append("set-cookie", cookie);
   return response;
 }

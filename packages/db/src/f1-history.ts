@@ -1,6 +1,6 @@
 /**
- * Consultas del histórico (fase 2). Solo lectura: forma parte de `f1-read` (D-14).
- * Las definiciones de cada estadística están aquí y se muestran tal cual en la web (HIS-07).
+ * History queries (phase 2). Read only: part of `f1-read` (D-14).
+ * Each statistic's definition lives here and is shown as is on the site (HIS-07).
  */
 import { sql, type SQL } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
@@ -33,9 +33,9 @@ import type * as schema from "./schema";
 
 type Db = DrizzleD1Database<typeof schema>;
 
-/** Inscripciones que no llegaron a tomar la salida: no cuentan como carrera disputada. */
+/** Entries that never took the start: they do not count as a race started. */
 const NOT_STARTED = sql`('Did not qualify', 'Did not prequalify', 'Withdrew', 'Did not start')`;
-/** Vio la bandera a cuadros: "Finished", "Lapped" o "+N Laps". */
+/** Saw the chequered flag: "Finished", "Lapped" or "+N Laps". */
 const FINISHED = (alias: SQL) =>
   sql`(${alias}.status = 'Finished' or ${alias}.status = 'Lapped' or ${alias}.status like '+% Lap%')`;
 const R = sql.raw("r");
@@ -153,7 +153,7 @@ export function createHistoryReader(db: Db) {
     return { season, rounds, drivers };
   }
 
-  /** Pilotos de una temporada con el sistema de puntos actual frente a la clasificación real (HIS-06). */
+  /** A season's drivers under today's points system against the real standings (HIS-06). */
   async function getRecalculatedStandings(season: number): Promise<RecalculatedStandings | null> {
     const results = await all<DriverRow & { kind: "race" | "sprint"; round: number; position: number | null }>(sql`
       select r.kind, r.round, r.position, d.id, d.code, d.given_name, d.family_name
@@ -182,15 +182,15 @@ export function createHistoryReader(db: Db) {
     };
   }
 
-  /** Temporadas con calendario cargado, de la más reciente a la más antigua (HIS-09). */
+  /** Seasons with a calendar loaded, most recent first (HIS-09). */
   async function getSeasons(): Promise<number[]> {
     const rows = await all<{ season: number }>(sql`select distinct season from races order by season desc`);
     return rows.map((r) => r.season);
   }
 
   /**
-   * Todos los pilotos con al menos una carrera en los datos cargados, con su primera y última temporada y
-   * sus carreras (para elegir en el cara a cara). Los de la última temporada, primero.
+   * Every driver with at least one race in the loaded data, with their first and last season and their
+   * races (to pick in the head to head). Those from the latest season first.
    */
   async function listDrivers(): Promise<DriverIndexEntry[]> {
     const rows = await all<{ id: string; code: string | null; given: string; family: string; first: number; last: number; races: number }>(sql`
@@ -245,7 +245,7 @@ export function createHistoryReader(db: Db) {
     };
   }
 
-  /** Posición final de cada temporada: la clasificación tras la última ronda con datos. */
+  /** Final position in each season: the standings after the last round with data. */
   const FINAL_DRIVERS = sql`
     select s.* from standings_drivers s
     join (select season, max(round) as round from standings_drivers group by season) last
@@ -256,8 +256,8 @@ export function createHistoryReader(db: Db) {
       on last.season = s.season and last.round = s.round`;
 
   /**
-   * Clasificación definitiva: solo si la última ronda con clasificación es la última ronda del calendario.
-   * Una temporada en curso o cargada a medias no puede dar un campeón (títulos y quiz).
+   * Final standings: only if the last round with standings is the calendar's last round.
+   * A season in progress or half loaded cannot produce a champion (titles and quiz).
    */
   const COMPLETE_DRIVERS = sql`
     select f.* from (${FINAL_DRIVERS}) f
@@ -266,7 +266,7 @@ export function createHistoryReader(db: Db) {
     select f.* from (${FINAL_CONSTRUCTORS}) f
     where f.round = (select max(round) from races where races.season = f.season)`;
 
-  /** Ficha de un piloto; con `season`, solo esa temporada (cara a cara de la temporada en curso, D-35). */
+  /** A driver's profile; with `season`, that season only (current-season head to head, D-35). */
   async function getDriver(id: string, season?: number): Promise<DriverProfile | null> {
     const [d] = await all<DriverRow & { number: number | null; nationality: string | null; date_of_birth: string | null }>(
       sql`select * from drivers where id = ${id}`,
@@ -455,7 +455,7 @@ export function createHistoryReader(db: Db) {
 
   async function getRecords(type: RecordType, limit = 20): Promise<RecordEntry[]> {
     if (type === "comebacks") {
-      // Mayor remontada: posiciones ganadas entre la parrilla y la meta. No cuenta a quien salió desde boxes.
+      // Biggest comeback: positions gained between the grid and the flag. Pit lane starters do not count.
       const rows = await all<DriverRow & { value: number; season: number; name: string }>(sql`
         select r.grid - r.position as value, r.season, races.name, d.id, d.code, d.given_name, d.family_name
         from results r
@@ -474,7 +474,7 @@ export function createHistoryReader(db: Db) {
     return rankRows(rows.map((r) => ({ driver: driverRef(r), value: Math.round(r.value * 10) / 10, detail: null })));
   }
 
-  /** Mayor racha de victorias consecutivas: carreras seguidas del campeonato ganadas por el mismo piloto. */
+  /** Longest winning streak: consecutive championship races won by the same driver. */
   async function winStreaks(limit: number): Promise<RecordEntry[]> {
     const rows = await all<DriverRow & { season: number; round: number }>(sql`
       select races.season, races.round, d.id, d.code, d.given_name, d.family_name
@@ -504,7 +504,7 @@ export function createHistoryReader(db: Db) {
     return rankRows(streaks.slice(0, limit));
   }
 
-  /** Posición en el ranking; los empates comparten posición. */
+  /** Position in the ranking; ties share a position. */
   function rankRows(rows: Omit<RecordEntry, "rank">[]): RecordEntry[] {
     let rank = 0;
     return rows.map((r, i) => {
@@ -541,7 +541,7 @@ export function createHistoryReader(db: Db) {
     ].slice(0, limit);
   }
 
-  /** Carreras de temporadas anteriores disputadas esta semana: del día −3 al +3 (HIS-08). */
+  /** Races from earlier seasons held this week: from day −3 to +3 (HIS-08). */
   async function getThisWeek(now = Date.now(), limit = 12): Promise<HistoryEvent[]> {
     const today = new Date(now);
     const days = Array.from({ length: 7 }, (_, i) => {
@@ -570,7 +570,7 @@ export function createHistoryReader(db: Db) {
     }));
   }
 
-  /** Índice de análisis de una carrera (fase 3). */
+  /** A race's analysis index (phase 3). */
   async function getAnalysis(season: number, round: number) {
     const [row] = await all<{ season: number; round: number; version: number; session_key: number; tools: string; telemetry_drivers: string; weather: string | null; created_at: string }>(
       sql`select * from analysis_artifacts where season = ${season} and round = ${round}`,
@@ -589,7 +589,7 @@ export function createHistoryReader(db: Db) {
       : null;
   }
 
-  /** Último análisis de una carrera en ese circuito: de su telemetría sale el trazado (D-09). */
+  /** The latest analysis of a race at that circuit: the layout comes from its telemetry (D-09). */
   async function latestAnalysisAtCircuit(circuitId: string) {
     const [row] = await all<{ season: number; round: number; version: number; telemetry_drivers: string; created_at: string }>(sql`
       select a.season, a.round, a.version, a.telemetry_drivers, a.created_at from analysis_artifacts a
@@ -599,7 +599,7 @@ export function createHistoryReader(db: Db) {
     return row ? { ...row, createdAt: row.created_at, telemetryDrivers: JSON.parse(row.telemetry_drivers) as number[] } : null;
   }
 
-  /** Últimas carreras analizadas, de la más reciente a la más antigua (TEC-01). */
+  /** The latest analysed races, most recent first (TEC-01). */
   async function listAnalyses(limit = 30) {
     return all<{ season: number; round: number; name: string; date: string; tools: string }>(sql`
       select a.season, a.round, races.name, races.date, a.tools
@@ -609,8 +609,8 @@ export function createHistoryReader(db: Db) {
     );
   }
 
-  /** Carreras disputadas desde `fromSeason` que aún no tienen análisis, de la más reciente a la más antigua. */
-  /** Carreras sin análisis o con uno de una versión anterior a `version` (se vuelven a analizar). */
+  /** Races run since `fromSeason` that have no analysis yet, most recent first. */
+  /** Races without an analysis or with one older than `version` (they are analysed again). */
   async function racesWithoutAnalysis(fromSeason: number, beforeIso: string, limit = 5, version = 0) {
     return all<{ season: number; round: number; starts_at: string | null; date: string }>(sql`
       select races.season, races.round, races.starts_at, races.date from races
@@ -622,8 +622,8 @@ export function createHistoryReader(db: Db) {
   }
 
   /**
-   * Quiz de la semana (COM-08): cinco preguntas con datos reales, iguales para todos durante la semana.
-   * Solo usa temporadas cerradas o carreras ya disputadas.
+   * Quiz of the week (COM-08): five questions with real data, the same for everyone during the week.
+   * It only uses completed seasons or races already run.
    */
   async function getQuiz(week: string): Promise<Quiz> {
     const random = seededRandom(week);

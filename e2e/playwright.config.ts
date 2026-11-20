@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Pruebas de extremo a extremo (TRA-46) contra la web desplegada: en local, el stack de `wrangler dev`;
- * en CI, la preview detrás de Cloudflare Access, con su service token (D-18).
+ * End-to-end tests (TRA-46) against the deployed site: locally, the `wrangler dev` stack; in CI, the
+ * preview behind Cloudflare Access, with its service token (D-18).
  */
 const accessHeaders: Record<string, string> = process.env.CF_ACCESS_CLIENT_ID
   ? {
@@ -20,14 +20,14 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:8789",
     extraHTTPHeaders: accessHeaders,
     timezoneId: "Europe/Madrid",
-    // Las pruebas miran la página en reposo: con movimiento reducido no hay entradas a medio animar,
-    // que axe leería como contraste insuficiente.
+    // The tests look at the page at rest: with reduced motion there are no half-animated entrances,
+    // which axe would read as insufficient contrast.
     contextOptions: { reducedMotion: "reduce" },
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
-    // Modo oscuro: el contraste AA se comprueba también con la paleta oscura de la marca.
+    // Dark mode: AA contrast is also checked with the brand's dark palette.
     { name: "dark", use: { ...devices["Desktop Chrome"], colorScheme: "dark" } },
   ],
 });

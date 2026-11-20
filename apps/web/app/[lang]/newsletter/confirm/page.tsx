@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: dict(lang).newsletter.confirmTitle, robots: { index: false } };
 }
 
-/** Confirmación de la newsletter (CON-06): un botón y no el propio enlace, para que los escáneres de correo no confirmen por el usuario. */
+/** Newsletter confirmation (CON-06): a button and not the link itself, so mail scanners do not confirm on the user's behalf. */
 export default async function NewsletterConfirmPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const { token = "" } = await searchParams;

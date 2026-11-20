@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Nota post-carrera (CON-04, contenido.md §5.1): texto en MDX con los gráficos reales de la carrera. */
+/** A post-race note (CON-04, content.md §5.1): MDX text with the race's real charts. */
 export default async function NotePage({ params }: Props) {
   const { lang, note, Body } = await load(params);
   const t = dict(lang);

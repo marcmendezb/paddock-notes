@@ -14,11 +14,11 @@ import YasMarinaEn from "./circuit-guides/en/yas_marina.mdx";
 import YasMarinaDe from "./circuit-guides/de/yas_marina.mdx";
 
 /**
- * Fichas editoriales de circuito (CON-05, contenido.md §5.4): se publican antes de cada GP. Las cifras
- * (longitud, vueltas, primera edición, vuelta rápida) no van en el texto: las pinta la página con los datos.
+ * Editorial circuit guides (CON-05, content.md §5.4): published before each Grand Prix. The figures
+ * (length, laps, first edition, fastest lap) are not in the text: the page draws them from the data.
  */
 export interface CircuitGuide {
-  /** Última revisión (AAAA-MM-DD). */
+  /** Last review (YYYY-MM-DD). */
   updated: string;
   body: Record<Lang, MDXContent>;
 }
@@ -30,7 +30,7 @@ export const CIRCUIT_GUIDES: Record<string, CircuitGuide> = {
   yas_marina: { updated: "2026-11-06", body: { es: YasMarinaEs, en: YasMarinaEn, de: YasMarinaDe } },
 };
 
-/** Nombre para enlazar la ficha sin consultar la API (índice de «Aprende»). */
+/** A name to link the guide without querying the API ("Learn" index). */
 export const CIRCUIT_NAMES: Record<string, string> = {
   interlagos: "Interlagos",
   vegas: "Las Vegas",

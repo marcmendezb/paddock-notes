@@ -6,8 +6,8 @@ import { Icon, type IconName } from "./icons";
 import { HeroStats } from "./page-hero";
 
 /**
- * Fichas de piloto y de equipo (NUC-40, NUC-41): cabecera negra con el nombre en grande, el dorsal (o las
- * iniciales del equipo) enorme en contorno detrás, los títulos como insignias y las cifras clave al lado.
+ * Driver and team profiles (NUC-40, NUC-41): a black header with the name in large type, the race number
+ * (or the team's initials) huge and outlined behind, titles as badges and the key figures beside them.
  */
 export function ProfileHero({
   icon,
@@ -26,7 +26,7 @@ export function ProfileHero({
   kicker: ReactNode;
   given?: string;
   family: string;
-  /** Dorsal o iniciales, en gigante detrás (decorativo). */
+  /** Race number or initials, giant behind (decorative). */
   mark: string | null;
   titles: number[];
   titleLabel: string;
@@ -72,7 +72,7 @@ export function ProfileHero({
   );
 }
 
-/** Frente al compañero de equipo: una barra partida, lo que va por delante en lima. */
+/** Against the teammate: a split bar, whoever is ahead in lime. */
 export function TeammateBar({ lang, ahead, races }: { lang: Lang; ahead: number; races: number }) {
   const t = dict(lang).driver;
   const share = races ? (ahead / races) * 100 : 0;
@@ -100,7 +100,7 @@ export function TeammateBar({ lang, ahead, races }: { lang: Lang; ahead: number;
   );
 }
 
-/** Puntos de una temporada con barra proporcional a la mejor de la carrera del piloto o equipo. */
+/** A season's points with a bar proportional to the best of the driver's or team's career. */
 export function SeasonPoints({ lang, points, top }: { lang: Lang; points: number | null; top: number }) {
   if (points === null) return <>—</>;
   return (
@@ -119,7 +119,7 @@ export function PositionBadge({ position }: { position: number | null }) {
   return <span className={position === 1 ? "pf-pos is-1" : position <= 3 ? "pf-pos is-podium" : "pf-pos"}>P{position}</span>;
 }
 
-/** Qué temporadas cuentan las cifras de la ficha: el histórico se carga de la más reciente hacia atrás. */
+/** Which seasons the profile's figures cover: the history is loaded from the most recent backwards. */
 export function DataNote({ lang, from, to }: { lang: Lang; from: number; to: number }) {
   return (
     <p className="pf-data-note">
@@ -129,7 +129,7 @@ export function DataNote({ lang, from, to }: { lang: Lang; from: number; to: num
   );
 }
 
-/** Victorias, podios y puntos por carrera como anillos: el porcentaje, en texto dentro de cada uno. */
+/** Wins, podiums and points per race as rings: the percentage, in text inside each one. */
 export function RateRings({ items }: { items: { label: string; value: number; text: string; accent?: boolean }[] }) {
   const R = 42;
   const C = 2 * Math.PI * R;
@@ -156,7 +156,7 @@ export function RateRings({ items }: { items: { label: string; value: number; te
   );
 }
 
-/** Año a año: una columna por temporada con su equipo (o pilotos), la posición final y una barra de puntos. */
+/** Year by year: one column per season with its team (or drivers), the final position and a points bar. */
 export function SeasonRibbon({
   lang,
   title,

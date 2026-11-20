@@ -1,27 +1,27 @@
 import { RESULT_GRACE_HOURS } from "./constants";
 import type { RoundStatus, SessionKind } from "./api";
 
-/** Duración estimada de una carrera para considerarla terminada (horas). */
+/** A race's estimated duration for it to count as finished (hours). */
 const RACE_DURATION_HOURS = 2;
 
 export interface RoundTiming {
   round: number;
-  /** Inicio de la carrera en ISO UTC, o fecha (YYYY-MM-DD) si no hay hora. */
+  /** Race start in ISO UTC, or the date (YYYY-MM-DD) if there is no time. */
   startsAt: string | null;
   date: string;
   hasResult: boolean;
   cancelled: boolean;
 }
 
-/** Instante de salida; si la fuente no da hora, se toma el final del día UTC. */
+/** Start instant; if the source gives no time, the end of the UTC day is used. */
 export function raceStart(r: Pick<RoundTiming, "startsAt" | "date">): number {
   if (r.startsAt) return Date.parse(r.startsAt);
   return Date.parse(`${r.date}T23:59:59Z`);
 }
 
 /**
- * Estado de cada ronda (NUC-12), calculado con la hora UTC de la carrera.
- * "next" es la primera ronda no cancelada que aún no ha empezado.
+ * Each round's state (NUC-12), computed from the race's UTC time.
+ * "next" is the first non-cancelled round that has not started yet.
  */
 export function roundStatuses(rounds: RoundTiming[], now: number): Map<number, RoundStatus> {
   const sorted = [...rounds].sort((a, b) => a.round - b.round);
@@ -43,7 +43,7 @@ export function roundStatuses(rounds: RoundTiming[], now: number): Map<number, R
 }
 
 /**
- * La carrera terminó hace más de RESULT_GRACE_HOURS y no hay resultado: la ingesta va retrasada (D-06).
+ * The race ended more than RESULT_GRACE_HOURS ago and there is no result: ingestion is behind (D-06).
  */
 export function isResultOverdue(r: RoundTiming, now: number): boolean {
   if (r.hasResult || r.cancelled) return false;
@@ -51,7 +51,7 @@ export function isResultOverdue(r: RoundTiming, now: number): boolean {
   return now > expected;
 }
 
-/** Une la fecha y la hora de Jolpica ("2026-03-08", "04:00:00Z") en ISO UTC. */
+/** Joins Jolpica's date and time ("2026-03-08", "04:00:00Z") into ISO UTC. */
 export function toIsoUtc(date: string, time: string | undefined): string | null {
   if (!time) return null;
   const t = time.endsWith("Z") ? time : `${time}Z`;
@@ -59,7 +59,7 @@ export function toIsoUtc(date: string, time: string | undefined): string | null 
   return Number.isNaN(Date.parse(iso)) ? null : new Date(iso).toISOString();
 }
 
-/** Duración estimada de cada sesión, para el estado "en curso" (NUC-04) y el archivo .ics (NUC-16). */
+/** Each session's estimated duration, for the "live" state (NUC-04) and the .ics file (NUC-16). */
 const SESSION_MINUTES: Record<SessionKind, number> = {
   fp1: 60,
   fp2: 60,

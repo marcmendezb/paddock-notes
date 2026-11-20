@@ -5,8 +5,8 @@ import MexicoEn from "./notes/en/2026-mexico.mdx";
 import MexicoDe from "./notes/de/2026-mexico.mdx";
 
 /**
- * Cuerpos de las notas post-carrera (CON-04). El índice (título, fecha, carrera) está en
- * `@paddock/shared` (NOTES). Importaciones explícitas, sin rutas dinámicas: cada nota existe en los tres idiomas.
+ * The bodies of the post-race notes (CON-04). The index (title, date, race) is in
+ * `@paddock/shared` (NOTES). Explicit imports, no dynamic paths: each note exists in all three languages.
  */
 const BODIES: Record<Lang, Record<string, MDXContent>> = {
   es: { "2026-mexico": MexicoEs },

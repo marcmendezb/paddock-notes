@@ -5,22 +5,22 @@ import { HttpError } from "./errors";
 
 export interface Payload<T> {
   data: T;
-  /** Recursos de `ingest_state` que alimentan la respuesta. */
+  /** `ingest_state` resources that feed the response. */
   updatedAt: string | null;
-  /** La ingesta va retrasada respecto a lo esperado (D-06). */
+  /** Ingestion is behind what was expected (D-06). */
   stale?: boolean;
 }
 
 export interface CacheOptions {
-  /** Segundos de caché en el borde. */
+  /** Seconds of edge caching. */
   ttl: number;
-  /** Guardar una copia de último recurso en KV, para cuando D1 falle (stack.md §8.3). */
+  /** Keep a last-resort copy in KV, for when D1 fails (stack.md §8.3). */
   kvFallback?: boolean;
-  /** Fuente de los datos (D-12). Por defecto, Jolpica F1. */
+  /** Source of the data (D-12). Jolpica F1 by default. */
   source?: string;
   /**
-   * Parte extra de la clave: cuando cambia, la copia anterior deja de servirse. Los análisis la usan con su
-   * versión y fecha, para que un análisis rehecho se vea al momento y no al caducar la caché.
+   * An extra part of the key: when it changes, the previous copy is no longer served. Analyses use it with
+   * their version and date, so a redone analysis shows at once and not when the cache expires.
    */
   variant?: string;
 }
@@ -28,7 +28,7 @@ export interface CacheOptions {
 const KV_PREFIX = "last-good:";
 const KV_TTL_SECONDS = 7 * 24 * 3600;
 
-/** Clave de caché normalizada: solo la ruta, sin consulta (las rutas de lectura no admiten parámetros). */
+/** A normalised cache key: the path only, no query (read routes accept no parameters). */
 function cacheKey(c: Context<AppEnv>, variant?: string): Request {
   const url = new URL(c.req.url);
   const suffix = variant ? `?v=${encodeURIComponent(variant)}` : "";
@@ -45,8 +45,8 @@ function respond<T>(c: Context<AppEnv>, envelope: ApiEnvelope<T>, ttl: number, s
 }
 
 /**
- * Sirve una respuesta de lectura desde la Cache API; si no está, la calcula con D1 y la guarda.
- * Si D1 falla, sirve la copia de KV con `X-Data-Stale: true`, o 503 si no la hay.
+ * Serves a read response from the Cache API; if it is not there, computes it with D1 and stores it.
+ * If D1 fails, serves the KV copy with `X-Data-Stale: true`, or 503 if there is none.
  */
 export async function cached<T>(
   c: Context<AppEnv>,
@@ -77,7 +77,7 @@ export async function cached<T>(
     updated_at: payload.updatedAt,
   };
   const stale = payload.stale ?? false;
-  // Un dato retrasado se cachea poco tiempo, para recoger la ingesta en cuanto llegue.
+  // Late data is cached briefly, to pick up the ingestion as soon as it arrives.
   const response = respond(c, envelope, stale ? Math.min(options.ttl, 60) : options.ttl, stale);
   c.executionCtx.waitUntil(
     Promise.all([

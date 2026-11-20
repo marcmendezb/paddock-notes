@@ -1,10 +1,10 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
- * Vídeo del hero con soporte de rangos (HTTP 206). Los recursos estáticos de Workers responden 200 a las
- * peticiones con Range, y Safari en iPhone necesita 206 para reproducir un MP4. Esta ruta lee el archivo de
- * los recursos estáticos (binding ASSETS), recorta el tramo pedido y responde 206 con su Content-Range.
- * Solo sirve los vídeos del hero de la lista: nada de rutas arbitrarias.
+ * The hero video with range support (HTTP 206). Workers static assets answer 200 to requests with Range,
+ * and Safari on iPhone needs 206 to play an MP4. This route reads the file from
+ * the static assets (ASSETS binding), cuts out the requested range and answers 206 with its Content-Range.
+ * It only serves the hero videos on the list: no arbitrary paths.
  */
 const FILES = /^hero-v\d+-(480|720)\.mp4$/;
 const CACHE = "public, max-age=31536000, immutable";
@@ -27,7 +27,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ file
   const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get("range") ?? "");
   if (!range) return new Response(body, { status: 200, headers: { ...headers, "content-length": String(size) } });
 
-  // "bytes=a-b", "bytes=a-" o "bytes=-n" (los últimos n bytes).
+  // "bytes=a-b", "bytes=a-" or "bytes=-n" (the last n bytes).
   let start = range[1] ? Number(range[1]) : size - Number(range[2] || 0);
   let end = range[1] && range[2] ? Number(range[2]) : size - 1;
   start = Math.max(0, start);

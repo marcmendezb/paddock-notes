@@ -4,7 +4,7 @@ import { dict } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 import { JsonLd } from "./json-ld";
 
-/** Migas de pan en páginas de segundo nivel o más (TRA-02). La última es la página actual. */
+/** Breadcrumbs on second-level pages and deeper (TRA-02). The last one is the current page. */
 export function Breadcrumbs({ lang, items }: { lang: Lang; items: { href?: string; label: string }[] }) {
   const list = {
     "@type": "BreadcrumbList",

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Lang } from "@paddock/shared";
 import { localeOf } from "@/lib/format";
 
-/** Hora local de un sitio, en vivo (cada 20 s). En el servidor no se pinta la hora: se evita un salto. */
+/** A place's local time, live (every 20 s). The server does not paint the time: that avoids a jump. */
 export function LocalClock({ lang, timeZone }: { lang: Lang; timeZone: string }) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {

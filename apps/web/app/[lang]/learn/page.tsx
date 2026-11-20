@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Portada de Aprende: guía de iniciación, explicadores y glosario. */
+/** The Learn landing page: beginner's guide, explainers and glossary. */
 export default async function LearnPage({ params }: Props) {
   const lang = parseLang((await params).lang);
   const t = dict(lang).learn;

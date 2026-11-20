@@ -6,8 +6,8 @@ import { Marker, seriesClass } from "../charts/series";
 import { localeOf } from "@/lib/format";
 
 /**
- * Ritmo de carrera (TEC-03): tiempo por vuelta de hasta cuatro pilotos y tendencia de cada stint.
- * Las vueltas excluidas (boxes, salida, neutralizadas) se ocultan salvo que se pidan.
+ * Race pace (TEC-03): lap times for up to four drivers and the trend of each stint.
+ * Excluded laps (pits, start, neutralised) are hidden unless asked for.
  */
 const W = 760;
 const H = 360;
@@ -29,7 +29,7 @@ export function PaceChart({
   const points = series.flatMap((s) => s.laps.filter((l) => showAll || l.excluded === null));
   if (points.length === 0) return null;
   const times = points.map((p) => p.time).sort((a, b) => a - b);
-  // Escala robusta: del mínimo al percentil 98, para que una vuelta lenta no aplaste el resto.
+  // A robust scale: from the minimum to the 98th percentile, so one slow lap does not flatten the rest.
   const lo = times[0]!;
   const hi = times[Math.floor(times.length * 0.98)] ?? times.at(-1)!;
   const x = scaleLinear().domain([1, data.laps]).range([M.left, W - M.right]);
@@ -40,7 +40,7 @@ export function PaceChart({
   return (
     <figure className="chart">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.tools.pace.name} className="chart-svg">
-        {/* Nada se dibuja fuera del área del gráfico, aunque un dato venga mal. */}
+        {/* Nothing is drawn outside the chart area, even if a data point is wrong. */}
         <defs>
           <clipPath id={clipId}>
             <rect x={M.left} y={M.top} width={W - M.left - M.right} height={H - M.top - M.bottom} />

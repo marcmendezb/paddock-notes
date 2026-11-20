@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Explicador en MDX (CON-01) o guía de iniciación (CON-03). La primera frase responde al título. */
+/** An MDX explainer (CON-01) or the beginner's guide (CON-03). The first sentence answers the title. */
 export default async function ExplainerPage({ params }: Props) {
   const { lang, explainer, Body } = await load(params);
   const t = dict(lang).learn;
@@ -43,7 +43,7 @@ export default async function ExplainerPage({ params }: Props) {
   const i = list.findIndex((e) => e.slug === explainer.slug);
   const next = list[(i + 1) % list.length];
   const parts = explainerSections(Body);
-  // La entradilla del MDX repite la descripción de la cabecera: no se pinta dos veces.
+  // The MDX lede repeats the header's description: it is not painted twice.
   const norm = (x: string) => x.replace(/\s+/g, " ").trim().slice(0, 60);
   const leadText = parts?.lead.map((n) => String((n.props as { children?: unknown }).children ?? "")).join(" ") ?? "";
   const lead = parts && norm(leadText) === norm(explainer.description[lang]) ? [] : (parts?.lead ?? []);

@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import type { ReplayData } from "@paddock/analysis";
 
 /**
- * Revive la carrera (TEC-07): posiciones vuelta a vuelta con reproducción, pausa y velocidad.
- * Con prefers-reduced-motion no hay animación: la vista es estática y se recorre con el control de vuelta.
+ * Replay the race (TEC-07): lap-by-lap positions with play, pause and speed.
+ * With prefers-reduced-motion there is no animation: the view is static and is stepped with the lap control.
  */
 
 export interface ReplayLabels {

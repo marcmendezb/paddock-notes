@@ -6,14 +6,14 @@ import { Icon } from "./icons";
 import { DriverLink } from "./links";
 
 /**
- * Las tablas de la página de carrera como una pantalla de cronometraje, sobre negro (data-surface="ink").
- * Siguen siendo tablas HTML (encabezados, filas, texto): las barras y flechas son un añadido visual, nunca
- * el único dato (TRA-20, TRA-22). Las barras van en porcentaje como atributos SVG (D-04).
+ * The race page's tables as a timing screen, on black (data-surface="ink").
+ * They remain HTML tables (headers, rows, text): bars and arrows are a visual addition, never the only
+ * data (TRA-20, TRA-22). Bars use percentages as SVG attributes (D-04).
  */
 
 const pct = (v: number) => `${Math.max(0, Math.min(100, v)).toFixed(2)}%`;
 
-/** "+0.799" → 0.799; "+1:02.345" → 62.345; "2:20:28.772" (el ganador) → 0. Vueltas o estados → null. */
+/** "+0.799" → 0.799; "+1:02.345" → 62.345; "2:20:28.772" (the winner) → 0. Laps or statuses → null. */
 function gapSeconds(time: string | null, isWinner: boolean): number | null {
   if (isWinner) return 0;
   if (!time || !time.startsWith("+")) return null;
@@ -26,7 +26,7 @@ function isFavorite(favorites: Set<string>, driverId: string, teamId: string): b
   return favorites.has(`d:${driverId}`) || favorites.has(`c:${teamId}`);
 }
 
-/** Resultado: posición, piloto y equipo, de la parrilla a la meta, diferencia con barra y puntos. */
+/** Result: position, driver and team, grid to finish, gap with a bar and points. */
 export function ResultsTower({ lang, results, favorites, label }: { lang: Lang; results: RaceResultRow[]; favorites: Set<string>; label: string }) {
   const t = dict(lang);
   const c = t.race.columns;
@@ -102,7 +102,7 @@ const lapTime = (s: string | null) => {
   return parts.some((n) => Number.isNaN(n)) ? null : parts.reduce((acc, n) => acc * 60 + n, 0);
 };
 
-/** Clasificación: los eliminados en Q1 y Q2 atenuados y el mejor tiempo de cada sesión destacado. */
+/** Qualifying: those knocked out in Q1 and Q2 dimmed and each session's best time highlighted. */
 export function QualifyingTower({ lang, rows, label }: { lang: Lang; rows: QualifyingEntry[]; label: string }) {
   const t = dict(lang);
   const v = t.raceView;
@@ -151,8 +151,8 @@ export function QualifyingTower({ lang, rows, label }: { lang: Lang; rows: Quali
 }
 
 /**
- * Paradas como una línea de tiempo: una fila por piloto (en el orden de llegada), cada parada en su vuelta.
- * La más rápida, en lila. Debajo, la tabla completa se despliega.
+ * Pit stops as a timeline: one row per driver (in finishing order), each stop on its lap.
+ * The fastest one in lilac. Below, the full table expands.
  */
 export function PitTimeline({
   lang,

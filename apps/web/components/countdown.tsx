@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 
 interface Props {
   startsAt: string;
-  /** Salida del GP anterior: origen de la cota. Sin él, la cota mide las dos últimas semanas. */
+  /** Start of the previous Grand Prix: the origin of the dimension line. Without it, the line measures the last two weeks. */
   fromIso: string | null;
-  /** Hora del servidor al renderizar: la cuenta atrás se pinta ya en el HTML (es el LCP de la home). */
+  /** Server time at render: the countdown is already painted in the HTML (it is the home page's LCP). */
   serverNow: number;
   units: { d: string; h: string; m: string; s: string };
   startedLabel: string;
   labels: { from: string; now: string; to: string };
-  /** Rótulo de la cota («Hasta la salida»), a la izquierda de las cifras. Visible; el texto accesible va aparte. */
+  /** The dimension line's label ("Until the start"), to the left of the figures. Visible; the accessible text is separate. */
   caption?: string;
 }
 
@@ -19,11 +19,11 @@ const TWO_WEEKS = 14 * 86_400_000;
 const pct = (v: number) => `${(v * 100).toFixed(3)}%`;
 
 /**
- * Cuenta atrás como cota a escala (NUC-02, marca.md §1): una línea de medida que va de la salida del GP
- * anterior a la de este. Lo recorrido queda en discontinua; lo que falta, en lima, con su valor escrito
- * encima. Todo con atributos en porcentaje dentro del SVG: sin estilos en línea (CSP, D-04).
- * Se pinta en el servidor con su hora y el cliente la actualiza cada segundo; los números y la cota van
- * con aria-hidden: el texto accesible es la frase estática que la acompaña.
+ * The countdown as a dimension line to scale (NUC-02, brand.md §1): a measuring line running from the start
+ * of the previous Grand Prix to this one's. What has passed is dashed; what is left, in lime, with its value
+ * written above. All with percentage attributes inside the SVG: no inline styles (CSP, D-04).
+ * It is painted on the server with its time and the client updates it every second; the numbers and the
+ * line carry aria-hidden: the accessible text is the static sentence that goes with it.
  */
 export function Countdown({ startsAt, fromIso, serverNow, units, startedLabel, labels, caption }: Props) {
   const [now, setNow] = useState<number>(serverNow);
@@ -59,7 +59,7 @@ export function Countdown({ startsAt, fromIso, serverNow, units, startedLabel, l
           <div key={unit} className="countdown-part">
             <dt className="countdown-unit">{unit}</dt>
             <dd className="countdown-value" suppressHydrationWarning>
-              {/* La clave cambia con el valor: cada cifra nueva entra con su animación. */}
+              {/* The key changes with the value: each new figure enters with its animation. */}
               <span key={value} className="countdown-digit">
                 {String(value).padStart(2, "0")}
               </span>
@@ -69,14 +69,14 @@ export function Countdown({ startsAt, fromIso, serverNow, units, startedLabel, l
         </dl>
       </div>
       <svg className="cota-scale" width="100%" height="72" focusable="false">
-        {/* Lo recorrido desde el GP anterior: referencia, en discontinua. */}
+        {/* What has passed since the previous Grand Prix: a reference, dashed. */}
         <line className="cota-elapsed" x1="0%" x2={pct(ratio)} y1="32" y2="32" />
-        {/* Lo que falta: la cota, en lima, con remates en los dos extremos. */}
+        {/* What is left: the dimension line, in lime, with ticks at both ends. */}
         <line className="cota-remaining" x1={pct(ratio)} x2="100%" y1="32" y2="32" pathLength={1} />
         <line className="cota-tick cota-tick-from" x1="1" x2="1" y1="22" y2="42" />
         <line className="cota-tick cota-tick-now" x1={pct(ratio)} x2={pct(ratio)} y1="16" y2="48" />
         <line className="cota-tick cota-tick-to" x1="99.85%" x2="99.85%" y1="22" y2="42" />
-        {/* «Ahora», encima de la línea: nunca choca con las etiquetas de los extremos, que van debajo. */}
+        {/* "Now", above the line: it never collides with the end labels, which sit below. */}
         <text className="cota-label cota-label-now" x={pct(ratio)} y="11" textAnchor={anchor}>
           {labels.now}
         </text>

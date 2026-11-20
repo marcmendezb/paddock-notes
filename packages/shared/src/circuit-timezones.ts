@@ -1,6 +1,6 @@
 /**
- * Zona horaria IANA de cada circuito, para mostrar la hora local del circuito (NUC-03).
- * Jolpica no la publica. Si un circuito no está en la lista, la web solo muestra la hora del visitante.
+ * Each circuit's IANA time zone, to show the circuit's local time (NUC-03).
+ * Jolpica does not publish it. If a circuit is not on the list, the web app only shows the visitor's time.
  */
 export const CIRCUIT_TIMEZONES: Record<string, string> = {
   albert_park: "Australia/Melbourne",

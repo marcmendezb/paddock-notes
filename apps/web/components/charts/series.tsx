@@ -1,13 +1,13 @@
 /**
- * Seis series categóricas de la marca (marca.md §5): cada una con color, trazo y marcador propios,
- * para que no dependan solo del tono. Los colores salen de los tokens --data-1 … --data-6 vía clases
- * (la CSP no permite estilos en línea).
+ * The brand's six categorical series (brand.md §5): each with its own colour, stroke and marker, so they
+ * do not depend on hue alone. Colours come from the --data-1 … --data-6 tokens through classes
+ * (the CSP does not allow inline styles).
  */
 export const SERIES_COUNT = 6;
 
 export const seriesClass = (i: number) => `series series-${(i % SERIES_COUNT) + 1}`;
 
-/** Marcador de 8 px: círculo, cuadrado, triángulo, rombo, aspa, anillo. */
+/** An 8 px marker: circle, square, triangle, diamond, cross, ring. */
 export function Marker({ index, cx, cy }: { index: number; cx: number; cy: number }) {
   const r = 4;
   switch (index % SERIES_COUNT) {
@@ -31,7 +31,7 @@ export function Marker({ index, cx, cy }: { index: number; cx: number; cy: numbe
   }
 }
 
-/** Muestra de leyenda para formularios de selección: el mismo trazo y marcador que en el gráfico. */
+/** A legend swatch for selection forms: the same stroke and marker as in the chart. */
 export function SeriesSwatch({ index }: { index: number }) {
   return (
     <svg width="28" height="12" viewBox="0 0 28 12" aria-hidden="true" className={seriesClass(index)}>

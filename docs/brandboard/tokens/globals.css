@@ -1,53 +1,53 @@
-/* Paddock Notes · tokens (negro y lima; la lima solo aparece sobre negro)
-   Sustituye las variables de globals.css. Fuente (Google Fonts, OFL):
+/* Paddock Notes · tokens (black and lime; lime only appears on black)
+   Replaces the variables in globals.css. Typeface (Google Fonts, OFL):
    https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap */
 
 :root {
   color-scheme: light;
 
-  /* Base (modo claro) */
-  --bg: #FFFFFF;              /* Blanco */
-  --surface: #F5F5F5;         /* Gris claro */
-  --text: #0A0A0A;            /* Negro */
-  --muted: #5A5A5A;           /* Grafito */
-  --line: #DADADA;            /* Trazo (bordes, rejillas; nunca texto) */
-  --accent: #0A0A0A;          /* Negro: sobre blanco no hay lima */
-  --accent-fill: #0A0A0A;     /* Superficies de acento (en negro: lima) */
-  --accent-contrast: #FFFFFF; /* Texto sobre el relleno de acento */
-  --accent-2: #6A3FC8;        /* Lila oscura: acento secundario sobre blanco */
+  /* Base (light mode) */
+  --bg: #FFFFFF;              /* White */
+  --surface: #F5F5F5;         /* Light grey */
+  --text: #0A0A0A;            /* Black */
+  --muted: #5A5A5A;           /* Graphite */
+  --line: #DADADA;            /* Stroke (borders, grids; never text) */
+  --accent: #0A0A0A;          /* Black: no lime on white */
+  --accent-fill: #0A0A0A;     /* Accent surfaces (on black: lime) */
+  --accent-contrast: #FFFFFF; /* Text on the accent fill */
+  --accent-2: #6A3FC8;        /* Dark lilac: secondary accent on white */
   --focus: #0A0A0A;
 
-  /* Datos: categórica (6 series, cada una con marcador y trazo propios) */
-  --data-1: #0A0A0A;  /* Negro (lima sobre negro) · círculo   · continuo      */
-  --data-2: #1F6FB2;  /* Cielo   · cuadrado  · guion largo   */
-  --data-3: #B36B00;  /* Ámbar   · triángulo · punteado      */
-  --data-4: #7B4FD6;  /* Lila    · rombo     · guion-punto   */
-  --data-5: #2F3A4A;  /* Pizarra · aspa      · guion corto   */
-  --data-6: #6B6B6B;  /* Gris    · anillo    · continuo fino */
+  /* Data: categorical (6 series, each with its own marker and stroke) */
+  --data-1: #0A0A0A;  /* Black (lime on black) · circle   · solid       */
+  --data-2: #1F6FB2;  /* Sky     · square    · long dash   */
+  --data-3: #B36B00;  /* Amber   · triangle  · dotted      */
+  --data-4: #7B4FD6;  /* Lilac   · diamond   · dash-dot    */
+  --data-5: #2F3A4A;  /* Slate   · cross     · short dash  */
+  --data-6: #6B6B6B;  /* Grey    · ring      · thin solid  */
 
-  /* Datos: secuencial (grises a negro sobre blanco; lima sobre negro) */
+  /* Data: sequential (greys to black on white; lime on black) */
   --seq-1: #F2F2F2; --seq-2: #D9D9D9; --seq-3: #B3B3B3; --seq-4: #8C8C8C;
   --seq-5: #5E5E5E; --seq-6: #333333; --seq-7: #0A0A0A;
 
-  /* Datos: divergente (pierde tiempo ← neutro → gana tiempo) */
+  /* Data: diverging (losing time ← neutral → gaining time) */
   --div-loss-3: #6A3FC8; --div-loss-2: #9C7FE0; --div-loss-1: #DCD0F7;
   --div-mid: #EDEDED;
   --div-gain-1: #D4D4D4; --div-gain-2: #7A7A7A; --div-gain-3: #0A0A0A;
 
-  /* Tipografía: una familia, dos anchos */
+  /* Typography: one family, two widths */
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --display-width: 87.5%;     /* semicondensada para titulares y cifras */
+  --display-width: 87.5%;     /* semi-condensed for headlines and figures */
 
-  --step--2: 0.8125rem;                                  /* 13 · ejes, pies de gráfico */
-  --step--1: 0.9375rem;                                  /* 15 · UI, tablas */
-  --step-0: 1.0625rem;                                   /* 17 · texto */
-  --step-1: 1.3125rem;                                   /* 21 · entradilla */
-  --step-2: 1.625rem;                                    /* 26 · h3 / sección de home */
+  --step--2: 0.8125rem;                                  /* 13 · axes, chart captions */
+  --step--1: 0.9375rem;                                  /* 15 · UI, tables */
+  --step-0: 1.0625rem;                                   /* 17 · body */
+  --step-1: 1.3125rem;                                   /* 21 · lede */
+  --step-2: 1.625rem;                                    /* 26 · h3 / home section */
   --step-3: clamp(1.75rem, 1.45rem + 1.3vw, 2.25rem);    /* 28–36 · h2 */
-  --step-4: clamp(2.25rem, 1.6rem + 2.8vw, 3.5rem);      /* 36–56 · h1 de artículo */
-  --step-5: clamp(2.5rem, 1.4rem + 4.8vw, 5rem);         /* 40–80 · nombre del GP */
-  --step-count: clamp(2.75rem, 1.2rem + 7vw, 7rem);      /* 44–112 · cuenta atrás */
+  --step-4: clamp(2.25rem, 1.6rem + 2.8vw, 3.5rem);      /* 36–56 · article h1 */
+  --step-5: clamp(2.5rem, 1.4rem + 4.8vw, 5rem);         /* 40–80 · Grand Prix name */
+  --step-count: clamp(2.75rem, 1.2rem + 7vw, 7rem);      /* 44–112 · countdown */
 
   --lh-tight: 0.98;
   --lh-heading: 1.12;
@@ -55,7 +55,7 @@
   --lh-body: 1.6;
   --measure: 68ch;
 
-  /* Forma */
+  /* Shape */
   --radius: 6px;
   --radius-sm: 3px;
   --stroke-series: 2px;
@@ -75,7 +75,7 @@
   }
 }
 
-/* Negro forzado: tema oscuro manual y bloques "tinta" (cabecera + hero) en ambos modos */
+/* Forced black: manual dark theme and "ink" blocks (header + hero) in both modes */
 :root[data-theme="dark"],
 [data-surface="ink"] {
   color-scheme: dark;

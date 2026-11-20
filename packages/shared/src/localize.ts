@@ -1,11 +1,11 @@
 import type { Lang } from "./constants";
 
 /**
- * Nombres de Grandes Premios y países en español. Jolpica los publica en inglés.
- * Si un nombre no está en la tabla, se muestra tal cual (es un dato, no una traducción inventada).
+ * Grand Prix and country names in Spanish and German. Jolpica publishes them in English.
+ * If a name is not in the table, it is shown as is (it is data, not an invented translation).
  */
 
-/** "Australian" → "de Australia". Incluye la preposición para los casos con artículo. */
+/** "Australian" → "de Australia". Includes the preposition for the cases with an article. */
 const GP_ES: Record<string, string> = {
   "70th Anniversary": "del 70.º Aniversario",
   "Abu Dhabi": "de Abu Dabi",
@@ -69,7 +69,7 @@ const SPECIAL_ES: Record<string, string> = {
   "United States Grand Prix West": "Gran Premio del Oeste de Estados Unidos",
 };
 
-/** "Australian" → "von Australien". Incluye la preposición o el artículo que pide cada nombre. */
+/** "Australian" → "von Australien". Includes the preposition or article each name needs. */
 const GP_DE: Record<string, string> = {
   "70th Anniversary": "zum 70. Jubiläum",
   "Abu Dhabi": "von Abu Dhabi",
@@ -132,7 +132,7 @@ const SPECIAL_DE: Record<string, string> = {
   "United States Grand Prix West": "Großer Preis der USA West",
 };
 
-/** Nombre del GP en el idioma de la página: "Brazilian Grand Prix" → "Gran Premio de Brasil" / "Großer Preis von Brasilien". */
+/** The Grand Prix name in the page's language: "Brazilian Grand Prix" → "Gran Premio de Brasil" / "Großer Preis von Brasilien". */
 export function gpName(lang: Lang, name: string): string {
   if (lang === "en") return name;
   const special = (lang === "de" ? SPECIAL_DE : SPECIAL_ES)[name];
@@ -143,7 +143,7 @@ export function gpName(lang: Lang, name: string): string {
   return lang === "de" ? `Großer Preis ${of}` : `Gran Premio ${of}`;
 }
 
-/** Nombre corto del GP, sin «Gran Premio de» / «Grand Prix» / «Großer Preis von»: «Brasil», «Brazilian», «Brasilien». */
+/** The short Grand Prix name, without "Gran Premio de" / "Grand Prix" / "Großer Preis von": "Brasil", "Brazilian", "Brasilien". */
 export function gpShortName(lang: Lang, name: string): string {
   return gpName(lang, name)
     .replace(/^Gran Premio (?:de la |de los |de las |del |de )?/, "")
@@ -151,7 +151,7 @@ export function gpShortName(lang: Lang, name: string): string {
     .replace(/ Grand Prix$/, "");
 }
 
-/** País de Jolpica → código ISO 3166, para que Intl ponga el nombre en cada idioma. */
+/** Jolpica country → ISO 3166 code, so Intl gives the name in each language. */
 const COUNTRY_CODES: Record<string, string> = {
   Argentina: "AR",
   Australia: "AU",
@@ -200,7 +200,7 @@ function regionName(lang: Lang, code: string): string | undefined {
   return names.of(code);
 }
 
-/** País de Jolpica → código ISO 3166-1 alfa-2, o null si no lo conocemos. */
+/** Jolpica country → ISO 3166-1 alpha-2 code, or null if we do not know it. */
 export function countryCode(country: string): string | null {
   return COUNTRY_CODES[country] ?? null;
 }
@@ -210,7 +210,7 @@ export function countryName(lang: Lang, country: string): string {
   return (code && regionName(lang, code)) || country;
 }
 
-/** Nacionalidades de Jolpica ("British") → nombre del país en el idioma de la página. */
+/** Jolpica nationalities ("British") → the country's name in the page's language. */
 const NATIONALITY_CODES: Record<string, string> = {
   American: "US",
   Argentine: "AR",

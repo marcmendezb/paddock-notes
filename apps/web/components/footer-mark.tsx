@@ -3,9 +3,9 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
- * El símbolo grande del pie se inclina en 3D hacia el cursor mientras este pasa por el pie. Los ángulos se
- * fijan con el CSSOM (style.setProperty), que la CSP permite (D-04). Sin ratón fino o con «reducir
- * movimiento», se queda quieto.
+ * The footer's large mark tilts in 3D towards the cursor while it moves over the footer. The angles are
+ * set through the CSSOM (style.setProperty), which the CSP allows (D-04). Without a fine pointer or with
+ * "reduce motion", it stays still.
  */
 export function FooterMark({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);

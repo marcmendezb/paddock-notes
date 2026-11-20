@@ -54,8 +54,8 @@ export default async function StandingsPage({ params, searchParams }: Props) {
       : [api.driverStandings(season), api.constructorStandings(season)],
   );
 
-  // Selección del gráfico: los que lleguen en ?d= (máximo 6) o, por defecto, los favoritos (COM-10) y
-  // después los primeros de la clasificación.
+  // The chart's selection: whoever arrives in ?d= (6 at most) or, by default, the favourites (COM-10) and
+  // then the top of the standings.
   const picked = [query.d ?? []].flat().filter((id) => /^[a-z0-9_-]{1,64}$/.test(id));
   const allDrivers = history?.data.drivers ?? [];
   const favoriteDrivers = new Set(
@@ -211,7 +211,7 @@ function RoundPicker({
   );
 }
 
-/** Selector de pilotos del gráfico: formulario GET, funciona sin JavaScript. */
+/** The chart's driver picker: a GET form, it works without JavaScript. */
 function DriverPicker({
   lang,
   season,

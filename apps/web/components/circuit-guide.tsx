@@ -3,18 +3,18 @@ import type { MDXContent } from "mdx/types";
 import { Icon, type IconName } from "./icons";
 
 /**
- * «La previa» de la ficha de circuito (CON-05) como una doble página de revista. El MDX sigue la plantilla
- * de contenido.md §5.4: cinco títulos de segundo nivel, siempre en el mismo orden (la frase, las curvas
- * clave, el coche, la estrategia y el momento histórico). Se lee el árbol que devuelve el MDX, se parte por
- * esos títulos y cada parte se compone a su manera:
+ * The circuit page's guide (CON-05) as a magazine spread. The MDX follows the template in content.md §5.4:
+ * five second-level headings, always in the same order (the sentence, the key corners, the car, the
+ * strategy and the historic moment). The tree the MDX returns is read, split by those headings and each
+ * part is laid out in its own way:
  *
- * 1. La frase, como una cita enorme; lo demás, al margen.
- * 2. Las curvas clave, en negro, en el orden de la vuelta: número, curva oficial (lo que va entre
- *    paréntesis en el texto), nombre y explicación.
- * 3 y 4. El coche y la estrategia, enfrentados, con su pictograma.
- * 5. El momento histórico, con el año en grande.
+ * 1. The sentence, as a huge quote; the rest, in the margin.
+ * 2. The key corners, on black, in lap order: number, official corner (what sits in brackets in the
+ *    text), name and explanation.
+ * 3 and 4. The car and the strategy, facing each other, with their pictogram.
+ * 5. The historic moment, with the year in large type.
  *
- * Si una guía no sigue la plantilla, se pinta tal cual, como un artículo. Todo en el servidor.
+ * If a guide does not follow the template, it is rendered as is, as an article. All on the server.
  */
 
 type Props = { children?: ReactNode };
@@ -30,7 +30,7 @@ function text(node: ReactNode): string {
   return "";
 }
 
-/** «La S de Senna (curvas 1 y 2).» → nombre y curva oficial; sin paréntesis, solo el nombre. */
+/** "Senna S (turns 1 and 2)." → name and official corner; without brackets, the name only. */
 function cornerTitle(raw: string): { name: string; turn: string | null } {
   const m = raw.trim().match(/^(.*?)\s*\(([^)]+)\)\.?$/);
   if (m) return { name: m[1]!, turn: m[2]!.charAt(0).toUpperCase() + m[2]!.slice(1) };
@@ -38,7 +38,7 @@ function cornerTitle(raw: string): { name: string; turn: string | null } {
 }
 
 function sections(Body: MDXContent): Section[] | null {
-  // Un MDX sin envoltorio devuelve un fragmento con los bloques de primer nivel como hijos.
+  // An MDX without a wrapper returns a fragment with the top-level blocks as children.
   const root = (Body as unknown as (props: object) => ReactNode)({});
   if (!el(root)) return null;
   const out: Section[] = [];
@@ -89,8 +89,8 @@ export function GuideSpread({ Body, updated }: { Body: MDXContent; updated: stri
     });
   const cornerIntro = corners.nodes.filter((n) => n.type === "p");
 
-  // «2008, última carrera del año…» → el año aparte y el resto con mayúscula. «2021. Max…» empieza como
-  // una lista numerada en Markdown (<ol start="2021">): el año es su inicio y el texto, su elemento.
+  // "2008, last race of the year…" → the year apart and the rest capitalised. "2021. Max…" starts like a
+  // numbered list in Markdown (<ol start="2021">): the year is its start and the text, its item.
   const [story, ...storyRest] = moment.nodes;
   let year: string | null = null;
   let storyKids: ReactNode[] = story ? kids(story) : [];

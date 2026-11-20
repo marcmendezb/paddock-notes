@@ -3,7 +3,7 @@ import * as s from "@paddock/shared/openf1";
 import type { Env } from "./env";
 import { fetchJson, type FetchContext } from "./http";
 
-/** Cliente de OpenF1 (apis.md §2.2): solo histórico, siempre filtrado por sesión. */
+/** OpenF1 client (apis.md §2.2): history only, always filtered by session. */
 export function openf1Context(env: Env): FetchContext {
   return {
     env,
@@ -13,7 +13,7 @@ export function openf1Context(env: Env): FetchContext {
       windowMs: 60_000,
     },
     counter: { requests: 0 },
-    // La ventana de OpenF1 es de un minuto: dentro de un paso de Workflow compensa esperarla.
+    // OpenF1's window is one minute: inside a Workflow step, waiting for it pays off.
     maxWaitMs: 65_000,
   };
 }
@@ -34,7 +34,7 @@ export function createOpenF1(ctx: FetchContext) {
     raceControl: bySession("race_control", s.raceControlSchema),
     position: bySession("position", s.positionSchema),
     weather: bySession("weather", s.weatherSchema),
-    /** Telemetría de un piloto acotada al intervalo de una vuelta: nunca la sesión completa. */
+    /** A driver's telemetry bounded to one lap's time window: never the whole session. */
     carData: (sessionKey: number, driver: number, from: string, to: string) =>
       get(`car_data?session_key=${sessionKey}&driver_number=${driver}&date>=${from}&date<${to}`, s.carDataSchema),
     location: (sessionKey: number, driver: number, from: string, to: string) =>

@@ -8,13 +8,13 @@ import { VisitorTime } from "./visitor-time";
 import { localeOf } from "@/lib/format";
 
 /**
- * Calendario de la temporada contado como un año de carreras (NUC-04):
- * - Cabecera negra con la temporada como una recta de marzo a diciembre: cada Gran Premio en su fecha
- *   real (terminadas en blanco, la siguiente en lila, las que faltan en contorno; los sprints, con su
- *   marca), la línea de hoy y cifras calculadas del calendario.
- * - La siguiente carrera destacada, con su trazado y las sesiones en la hora del visitante.
- * - Carrera a carrera, agrupadas por meses: fechas del fin de semana, circuito y ganador o estado.
- * Todo en el servidor: las posiciones van como atributos SVG (D-04).
+ * The season calendar told as a year of racing (NUC-04):
+ * - A black header with the season as a straight from March to December: each Grand Prix on its real date
+ *   (finished in white, the next in lilac, the rest in outline; sprints with their mark), today's line and
+ *   figures computed from the calendar.
+ * - The next race highlighted, with its layout and the sessions in the visitor's time.
+ * - Race by race, grouped by month: the weekend's dates, the circuit and the winner or status.
+ * All on the server: positions go as SVG attributes (D-04).
  */
 
 const DAY = 86_400_000;
@@ -23,7 +23,7 @@ const short = gpShortName;
 const locale = localeOf;
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-/** «6–8 mar» (o «30 abr–2 may»): del primer día con sesiones al de la carrera. */
+/** "6–8 Mar" (or "30 Apr–2 May"): from the first day with sessions to race day. */
 function weekend(lang: Lang, r: RaceSummary): string {
   const days = r.sessions.map((s) => s.date).filter(Boolean).sort();
   const first = days[0] ?? r.date;
@@ -109,7 +109,7 @@ export function SeasonHero({
   lang: Lang;
   season: number;
   races: RaceSummary[];
-  /** Selector de temporada (componente propio de la página). */
+  /** Season picker (the page's own component). */
   picker: ReactNode;
 }) {
   const t = dict(lang);

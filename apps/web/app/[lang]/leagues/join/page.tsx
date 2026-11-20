@@ -9,7 +9,7 @@ type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ token?
 
 export const metadata: Metadata = { robots: { index: false } };
 
-/** Enlace de invitación: unirse es una acción explícita (POST), nunca un GET que cambie datos. */
+/** The invitation link: joining is an explicit action (POST), never a GET that changes data. */
 export default async function JoinLeaguePage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const token = (await searchParams).token ?? "";

@@ -10,7 +10,7 @@ import { field, parsePosition, simulate, type Choices } from "@/lib/simulator";
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<Choices> };
 
-/** Aspirantes que se pueden mover en el simulador. */
+/** Contenders that can be moved in the simulator. */
 const CONTENDERS = 6;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Simulador "¿y si...?" (COM-09): sin cuenta, en el navegador o sin JS, con URL compartible. */
+/** The "what if...?" simulator (COM-09): no account, in the browser or without JS, with a shareable URL. */
 export default async function SimulatorPage({ params, searchParams }: Props) {
   const lang = parseLang((await params).lang);
   const choices = await searchParams;

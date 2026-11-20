@@ -1,15 +1,15 @@
 import type { SessionKind } from "@paddock/shared";
 
 /**
- * Pictogramas propios con el ADN del símbolo (marca.md §2): retícula de 24, un solo trazo de 1,75 con
- * remates rectos y, en la mayoría, un cuadrado macizo como «punto» (el eje del cronómetro, el del
- * cuentarrevoluciones, el centro del pin, la fecha del calendario…). Sin librerías ni fuentes de iconos.
- * Siempre decorativos: el texto de al lado dice lo mismo. Los libres («wrench») se dibujan como un neumático.
+ * Our own pictograms with the mark's DNA (brand.md §2): a 24 grid, a single 1.75 stroke with square
+ * caps and, in most of them, a solid square as the "dot" (the stopwatch's axis, the rev counter's, the
+ * centre of the pin, the calendar's date…). No icon libraries or icon fonts.
+ * Always decorative: the text beside them says the same. Practice ("wrench") is drawn as a tyre.
  *
- * Cada uno tiene una pieza que se mueve (clase «i-anim» y una propia que fija el giro y la animación en
- * globals.css): la aguja del cronómetro da la vuelta, la bandera ondea, el cuentarrevoluciones sube… Se
- * mueve al pasar por encima del enlace o botón que lo contiene y, dentro de un «icon-scroll», al entrar en
- * pantalla. Con «reducir movimiento», quietos.
+ * Each one has a moving part (the "i-anim" class and its own class that sets the pivot and the animation
+ * in globals.css): the stopwatch needle laps, the flag waves, the rev counter climbs… It moves on hover of
+ * the link or button that contains it and, inside an "icon-scroll", when it enters the viewport. With
+ * "reduce motion", still.
  */
 export type IconName =
   | "search"
@@ -48,7 +48,7 @@ export function IconPaths({ name }: { name: IconName }) {
         </>
       );
     case "flag":
-      // Bandera a cuadros de 4 × 3 casillas, que ondea desde el mástil.
+      // A chequered flag of 4 × 3 squares, waving from the pole.
       return (
         <>
           <path d="M5 21.5V3" />
@@ -79,7 +79,7 @@ export function IconPaths({ name }: { name: IconName }) {
         </>
       );
     case "stopwatch":
-      // Cronómetro con corona y botón lateral; la aguja da la vuelta y el eje es el cuadrado de la marca.
+      // A stopwatch with a crown and a side button; the needle laps and the axis is the brand's square.
       return (
         <>
           <circle cx="12" cy="13.5" r="7" />
@@ -89,7 +89,7 @@ export function IconPaths({ name }: { name: IconName }) {
         </>
       );
     case "wrench":
-      // Libres: un neumático (banda, llanta y dibujo) que rueda.
+      // Practice: a tyre (tread, rim and pattern) that rolls.
       return (
         <g className="i-anim i-roll">
           <circle cx="12" cy="12" r="8.5" />
@@ -122,7 +122,7 @@ export function IconPaths({ name }: { name: IconName }) {
         </g>
       );
     case "gauge":
-      // Cuentarrevoluciones con marcas; la aguja sube y el eje es el cuadrado de la marca.
+      // A rev counter with ticks; the needle climbs and the axis is the brand's square.
       return (
         <>
           <path d="M4 17.5a8.5 8.5 0 1 1 16 0" />
@@ -157,7 +157,7 @@ export function IconPaths({ name }: { name: IconName }) {
         </>
       );
     case "sun":
-      // El sol es el cuadrado de la marca; los rayos giran despacio.
+      // The sun is the brand's square; the rays turn slowly.
       return (
         <>
           <rect x="8.5" y="8.5" width="7" height="7" className="icon-fill" />
@@ -174,7 +174,7 @@ export function IconPaths({ name }: { name: IconName }) {
   }
 }
 
-/** Pictograma en línea con el texto (1em, color del texto). */
+/** A pictogram inline with the text (1em, the text colour). */
 export function Icon({ name, className }: { name: IconName; className?: string }) {
   return (
     <svg className={className ? `icon ${className}` : "icon"} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -183,7 +183,7 @@ export function Icon({ name, className }: { name: IconName; className?: string }
   );
 }
 
-/** El pictograma de cada tipo de sesión. */
+/** The pictogram for each session type. */
 export const SESSION_ICON: Record<SessionKind, IconName> = {
   fp1: "wrench",
   fp2: "wrench",

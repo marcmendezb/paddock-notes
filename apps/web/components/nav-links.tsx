@@ -8,24 +8,24 @@ import type { Lang } from "@paddock/shared";
 export interface NavItem {
   href: string;
   label: string;
-  /** Una línea que dice qué hay dentro (menú móvil). */
+  /** A line saying what is inside (mobile menu). */
   teaser: string;
-  /** Panel con datos reales que se abre al pasar por encima o al llegar con el tabulador (escritorio). */
+  /** A panel with real data that opens on hover or when tabbing in (desktop). */
   panel?: ReactNode;
-  /** Panel ancho, centrado bajo toda la navegación en vez de bajo su enlace. */
+  /** A wide panel, centred under the whole navigation instead of under its link. */
   wide?: boolean;
 }
 
 const isCurrent = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
 /**
- * Navegación principal de escritorio (TRA-01): un bloque lima se desliza bajo la sección que se señala o
- * enfoca y vuelve a la actual (aria-current) al salir; el texto pasa a negro encima. Sin JavaScript, la
- * sección actual se marca igual en lima con CSS. Cada sección abre un panel con datos al pasar por encima
- * o al tabular; Escape lo cierra (WCAG 1.4.13).
+ * Main desktop navigation (TRA-01): a lime block slides under the section being pointed at or focused and
+ * returns to the current one (aria-current) on leave; the text turns black on top of it. Without
+ * JavaScript, the current section is marked the same way in lime with CSS. Each section opens a panel with
+ * data on hover or when tabbing; Escape closes it (WCAG 1.4.13).
  *
- * La posición del bloque se fija con el CSSOM (style.transform), que la CSP permite: no hay atributos
- * style en el HTML (D-04).
+ * The block's position is set through the CSSOM (style.transform), which the CSP allows: there are no style
+ * attributes in the HTML (D-04).
  */
 export function NavLinks({ lang, items }: { lang: Lang; items: NavItem[] }) {
   const pathname = usePathname() ?? "";
@@ -36,8 +36,8 @@ export function NavLinks({ lang, items }: { lang: Lang; items: NavItem[] }) {
   const currentIndex = items.findIndex((item) => isCurrent(pathname, `/${lang}${item.href}`));
   const target = pointed ?? (currentIndex >= 0 ? currentIndex : null);
 
-  // Al pulsar un enlace de la navegación o de un panel, el panel se cierra (no vuelve a abrirse hasta
-  // entrar en otra sección). En fase de captura: la cortina de transición detiene el clic antes de React.
+  // Clicking a link in the navigation or in a panel closes the panel (it does not open again until another
+  // section is entered). In the capture phase: the transition curtain stops the click before React.
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const link = (event.target as Element | null)?.closest?.(".nav-panel a, .nav-link");
@@ -59,7 +59,7 @@ export function NavLinks({ lang, items }: { lang: Lang; items: NavItem[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Coloca el bloque bajo el enlace señalado (o el actual); si no hay ninguno, lo encoge.
+  // Places the block under the link pointed at (or the current one); if there is none, it shrinks it.
   useEffect(() => {
     const list = ref.current;
     const block = puck.current;
@@ -102,7 +102,7 @@ export function NavLinks({ lang, items }: { lang: Lang; items: NavItem[] }) {
           <li
             key={item.href}
             className={`nav-item${target === i ? " is-target" : ""}${item.wide ? " has-mega" : ""}`}
-            // Entrar en otra sección (con el ratón o el tabulador) vuelve a permitir los paneles.
+            // Entering another section (with the mouse or the tab key) allows the panels again.
             onMouseEnter={() => {
               setPointed(i);
               setDismissed(false);
@@ -124,8 +124,8 @@ export function NavLinks({ lang, items }: { lang: Lang; items: NavItem[] }) {
 }
 
 /**
- * Menú de móvil a pantalla completa: un <details>, así que abre y cierra sin JavaScript. Con JavaScript,
- * además se cierra al navegar y con Escape.
+ * Full-screen mobile menu: a <details>, so it opens and closes without JavaScript. With JavaScript, it
+ * also closes on navigation and with Escape.
  */
 export function MobileMenu({
   lang,

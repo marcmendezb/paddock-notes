@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Caja del trazado con margen, para el viewBox. */
+/** The layout's box with a margin, for the viewBox. */
 function box(points: [number, number][]): string {
   const xs = points.map((p) => p[0]);
   const ys = points.map((p) => p[1]);
@@ -34,8 +34,8 @@ function box(points: [number, number][]): string {
 }
 
 /**
- * Fichas de circuito (CON-05): índice propio, con URL limpia, en lugar de un ancla dentro de «Aprende».
- * Cada ficha, una tarjeta con el trazado dibujándose al pasar el ratón, el lugar y el próximo GP allí.
+ * Circuit guides (CON-05): their own index, with a clean URL, instead of an anchor inside "Learn".
+ * Each guide is a card with its layout drawing itself on hover, the venue and the next Grand Prix there.
  */
 export default async function CircuitGuidesPage({ params }: Props) {
   const lang = parseLang((await params).lang);

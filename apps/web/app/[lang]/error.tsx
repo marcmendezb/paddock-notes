@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { DEFAULT_LANG, isLang } from "@paddock/shared";
 import { dict } from "@/lib/i18n";
 
-/** Página 500 en el idioma de la URL (TRA-14). Nunca muestra trazas ni mensajes internos. */
+/** The 500 page in the URL's language (TRA-14). It never shows stack traces or internal messages. */
 export default function LangError({ reset }: { error: Error; reset: () => void }) {
   const params = useParams<{ lang?: string }>();
   const lang = params?.lang && isLang(params.lang) ? params.lang : DEFAULT_LANG;

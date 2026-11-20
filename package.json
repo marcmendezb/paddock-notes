@@ -15,6 +15,7 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
     "db:generate": "pnpm --filter @paddock/db generate"
   },
   "devDependencies": {

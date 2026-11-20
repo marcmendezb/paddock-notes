@@ -19,9 +19,9 @@ import {
 import type { Env } from "./env";
 
 /**
- * Envíos (D-16): newsletter tras cada carrera (CON-06), aviso antes de cada GP y aviso al publicar el
- * análisis (COM-11). Un Workflow por envío: primero compone el contenido (sin idioma) y después manda
- * lotes de 40, un paso por lote (el binding admite 50 subpeticiones por invocación).
+ * Mailings (D-16): the newsletter after each race (CON-06), the notice before each Grand Prix and the notice
+ * when the analysis is published (COM-11). One Workflow per mailing: first it composes the content (without
+ * a language) and then sends batches of 40, one step per batch (the binding allows 50 subrequests per invocation).
  */
 
 const DAY = 86_400_000;
@@ -41,7 +41,7 @@ type Content =
 
 const fullName = (d: DriverRef) => `${d.givenName} ${d.familyName}`;
 
-/** Datos de la newsletter de una carrera (contenido.md §5.5), sacados solo de D1. */
+/** A race's newsletter data (content.md §5.5), taken from D1 only. */
 export async function composeDigest(env: Env, season: number, round: number, now = Date.now()): Promise<RaceDigest | null> {
   const reader = createF1Reader(env.DB);
   const race = await reader.getRace(season, round, now);
@@ -104,7 +104,7 @@ async function compose(env: Env, { kind, season, round }: MailingParams, now: nu
   return { kind, notice: { season, round, gp: race.name } };
 }
 
-/** Email de un destinatario: el contenido en su idioma y sus enlaces de baja (página y un clic). */
+/** One recipient's email: the content in their language and their unsubscribe links (page and one click). */
 export function render(env: Env, content: Content, to: Recipient): EmailContent & { headers: Record<string, string> } {
   const lang: Lang = isLang(to.lang) ? to.lang : "es";
   const page = `${env.SITE_URL}/${lang}/newsletter/unsubscribe?token=${to.token}`;
@@ -131,7 +131,7 @@ export class MailingWorkflow extends WorkflowEntrypoint<Env, MailingParams> {
     let cursor = "";
     let total = 0;
     for (let batch = 0; ; batch++) {
-      // Si un lote falla a medias, el reintento puede repetir algún email de ese lote; nunca de los anteriores.
+      // If a batch fails halfway, the retry may repeat an email from that batch; never from earlier ones.
       const result = await step.do(`batch-${batch}`, STEP, async () => {
         const list = await createMailing(this.env.DB).recipients(params.kind, cursor, BATCH);
         for (const to of list) {
@@ -149,8 +149,8 @@ export class MailingWorkflow extends WorkflowEntrypoint<Env, MailingParams> {
 }
 
 /**
- * Lanza un envío una sola vez: la marca en `ingest_state` y el id del Workflow (único) evitan repetirlo
- * aunque el cron vuelva a pasar por la misma carrera.
+ * Starts a mailing only once: the marker in `ingest_state` and the Workflow's (unique) id prevent a repeat
+ * even if the cron passes over the same race again.
  */
 export async function startMailing(env: Env, params: MailingParams): Promise<string> {
   const id = `${params.kind}-${params.season}-${params.round}`;
@@ -165,7 +165,7 @@ export async function startMailing(env: Env, params: MailingParams): Promise<str
   return `creado: ${id}`;
 }
 
-/** Aviso de GP (COM-11): cuando la primera sesión del próximo GP empieza en las próximas 48 h. */
+/** Grand Prix notice (COM-11): when the next Grand Prix's first session starts within the next 48 h. */
 export async function scheduleRaceNotice(env: Env, now = Date.now()): Promise<string> {
   const next = await createF1Reader(env.DB).getNextRace(now);
   const first = next?.sessions
@@ -176,7 +176,7 @@ export async function scheduleRaceNotice(env: Env, now = Date.now()): Promise<st
   return startMailing(env, { kind: "race", season: next.season, round: next.round });
 }
 
-/** Newsletter (CON-06): el martes, si hubo carrera en los últimos 7 días y ya tiene resultado. */
+/** Newsletter (CON-06): on Tuesday, if there was a race in the last 7 days and it already has a result. */
 export async function scheduleNewsletter(env: Env, now = Date.now()): Promise<string> {
   const last = await createF1Reader(env.DB).getLastRace(now);
   if (!last?.startsAt || last.results.length === 0) return "sin carrera con resultado";
@@ -184,7 +184,7 @@ export async function scheduleNewsletter(env: Env, now = Date.now()): Promise<st
   return startMailing(env, { kind: "newsletter", season: last.season, round: last.round });
 }
 
-/** Aviso de análisis (COM-11): solo de carreras recientes, no de las que se analizan al cargar el histórico. */
+/** Analysis notice (COM-11): only for recent races, not for those analysed while loading the history. */
 export async function notifyAnalysis(env: Env, season: number, round: number, now = Date.now()): Promise<string> {
   const race = await createF1Reader(env.DB).getRace(season, round, now);
   if (!race?.startsAt || now - Date.parse(race.startsAt) > 7 * DAY) return "carrera antigua: sin aviso";

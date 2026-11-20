@@ -3,24 +3,24 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-/** Las dos capas suben y tapan (0,34 s + 0,07 s de desfase)… */
+/** Both layers rise and cover (0.34 s + 0.07 s offset)… */
 const COVER_MS = 410;
-/** …y siguen subiendo para descubrir la página nueva (0,46 s + 0,08 s). */
+/** …and keep rising to reveal the new page (0.46 s + 0.08 s). */
 const REVEAL_MS = 560;
-/** Si la página nueva no llega, la cortina se levanta igual. */
+/** If the new page does not arrive, the curtain lifts anyway. */
 const GIVE_UP_MS = 10_000;
 
 type Phase = "idle" | "cover" | "reveal";
 
 /**
- * Cortina entre páginas, en dos capas: al pulsar un enlace interno, suben al instante desde abajo una
- * capa de cada acento, la segunda pegada a la primera, y tapan la página mientras la nueva se carga por
- * debajo (ya pedida con prefetch). Si tarda, el punto de la marca late en el centro. En cuanto la página
- * nueva está pintada, las dos siguen subiendo y la descubren: la de delante se va primero y deja pasar una
- * franja de la otra. En cada navegación se alterna qué acento va delante. La cabecera queda por encima.
+ * A curtain between pages, in two layers: on clicking an internal link, one layer in each accent rises
+ * instantly from the bottom, the second right behind the first, and covers the page while the new one
+ * loads underneath (already prefetched). If it takes a while, the brand's dot pulses in the centre. As soon
+ * as the new page is painted, both keep rising and reveal it: the front one leaves first and lets a strip
+ * of the other through. Each navigation alternates which accent is in front. The header stays on top.
  *
- * Solo enlaces del sitio a otra ruta, con clic normal (ni Ctrl/Cmd ni pestaña nueva). Sin JavaScript, con
- * «reducir movimiento» o al ir atrás y adelante, la navegación es la de siempre.
+ * Only links within the site to another route, with a normal click (no Ctrl/Cmd or new tab). Without
+ * JavaScript, with "reduce motion" or on back and forward, navigation is the usual one.
  */
 export function RouteCurtain() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export function RouteCurtain() {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = (event.target as Element | null)?.closest?.("a[href]");
       if (!(link instanceof HTMLAnchorElement) || (link.target && link.target !== "_self") || link.hasAttribute("download")) return;
-      // Cambio de idioma: carga completa, sin cortina.
+      // Language change: a full load, without the curtain.
       if (link.hasAttribute("hreflang")) return;
       const url = new URL(link.href);
       if (url.origin !== location.origin || url.pathname === location.pathname) return;
@@ -75,7 +75,7 @@ export function RouteCurtain() {
     };
   }, [router]);
 
-  // Página nueva pintada: dos fotogramas para que el navegador la tenga lista debajo, y fuera la cortina.
+  // New page painted: two frames so the browser has it ready underneath, and away with the curtain.
   useEffect(() => {
     if (!waiting.current) return;
     let inner = 0;
@@ -101,12 +101,12 @@ export function RouteCurtain() {
   );
 }
 
-/** El logo de la cabecera da su vuelta al llegar a la página nueva. */
+/** The header logo does its lap on arriving at the new page. */
 function lap() {
   const logo = document.querySelector<HTMLElement>(".site-header .logo");
   if (!logo) return;
   logo.classList.remove("is-lapping");
-  void logo.offsetWidth; // reinicia la animación si ya estaba en marcha
+  void logo.offsetWidth; // restarts the animation if it was already running
   logo.classList.add("is-lapping");
   window.setTimeout(() => logo.classList.remove("is-lapping"), 1200);
 }

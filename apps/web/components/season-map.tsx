@@ -13,12 +13,12 @@ import {
 } from "@/lib/world-land";
 
 /**
- * Mapa de la temporada (NUC-17): dónde se corre cada carrera, y nada más. El mundo entero, con todas las
- * carreras (las europeas, como cuadrados pequeños), y al lado la ampliación de Europa, marcada en el mundo
- * con el mismo marco: allí los circuitos están demasiado juntos para numerarlos en el mapa del mundo. Cada circuito es
- * un cuadrado con su número de ronda (relleno = disputada, lila = la siguiente, contorno = por disputar;
- * forma además de color, TRA-22) que enlaza a su ficha y muestra su nombre al señalarlo. Si dos se pisan,
- * el segundo se aparta lo justo para leerse. SVG propio, dibujado en el servidor.
+ * Season map (NUC-17): where each race is held, and nothing else. The whole world, with every race (the
+ * European ones as small squares), and beside it the enlargement of Europe, marked on the world with the
+ * same frame: there the circuits are too close together to number on the world map. Each circuit is
+ * a square with its round number (filled = raced, lilac = next, outline = upcoming; shape as well as
+ * colour, TRA-22) that links to its page and shows its name on hover. If two overlap, the second moves just
+ * enough to be readable. Our own SVG, drawn on the server.
  */
 
 const world = geoNaturalEarth1().scale(WORLD_PROJECTION.scale).translate(WORLD_PROJECTION.translate);
@@ -37,7 +37,7 @@ const lngLat = (r: RaceSummary): [number, number] => [r.circuit.lng, r.circuit.l
 function Pins({ lang, races, project, size, width }: { lang: Lang; races: RaceSummary[]; project: Project; size: number; width: number }) {
   const SIZE = size;
   const t = dict(lang);
-  // Un circuito con varias rondas en la temporada lleva un solo cuadrado.
+  // A circuit with several rounds in the season gets a single square.
   const byCircuit = new Map<string, RaceSummary[]>();
   for (const r of races) byCircuit.set(r.circuit.id, [...(byCircuit.get(r.circuit.id) ?? []), r]);
 
@@ -47,7 +47,7 @@ function Pins({ lang, races, project, size, width }: { lang: Lang; races: RaceSu
     const point = project(lngLat(first));
     if (!point) return [];
     const [x0, y0] = point;
-    // Si pisa a otro, se aparta lo justo, en la primera dirección libre.
+    // If it overlaps another, it moves just enough, in the first free direction.
     let [x, y] = [x0, y0];
     const clash = (px: number, py: number) => placed.some((p) => Math.hypot(p.x - px, p.y - py) < SIZE + 3);
     if (clash(x, y)) {
@@ -75,7 +75,7 @@ function Pins({ lang, races, project, size, width }: { lang: Lang; races: RaceSu
         <text x={x} y={y} dy="0.35em" textAnchor="middle" className="map-label">
           {label}
         </text>
-        {/* El nombre, al señalarlo: a la derecha, o a la izquierda si no cabe. */}
+        {/* The name, on hover: to the right, or to the left if it does not fit. */}
         <text
           x={x > width * 0.8 ? x - w / 2 - 6 : x + w / 2 + 6}
           y={y}
@@ -105,7 +105,7 @@ export function SeasonMap({ lang, races, season }: { lang: Lang; races: RaceSumm
         <svg viewBox={WORLD_VIEWBOX} className="map-svg" aria-labelledby={`map-world-${season}`}>
           <title id={`map-world-${season}`}>{m.world(season)}</title>
           <path d={WORLD_LAND_PATH} className="map-land" />
-          {/* La zona ampliada, marcada: el mismo marco y el mismo nombre que la ampliación de al lado. */}
+          {/* The enlarged area, marked: the same frame and the same name as the enlargement beside it. */}
           {european.length ? (
             <g className="map-zoom" aria-hidden="true">
               <rect x={zx0} y={zy0} width={zx1 - zx0} height={zy1 - zy0} />
@@ -114,7 +114,7 @@ export function SeasonMap({ lang, races, season }: { lang: Lang; races: RaceSumm
               </text>
             </g>
           ) : null}
-          {/* Europa también en el mapa del mundo, con cuadrados pequeños sin número: los números, en la ampliación. */}
+          {/* Europe on the world map too, with small squares and no numbers: the numbers go in the enlargement. */}
           <g aria-hidden="true">
             {european.map((r) => {
               const p = world(lngLat(r));

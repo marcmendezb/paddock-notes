@@ -195,7 +195,7 @@ async function Tool({
     );
   }
 
-  // Telemetría: por defecto, los dos primeros con datos (TEC-04); la URL guarda la vista (TEC-10).
+  // Telemetry: by default, the first two with data (TEC-04); the URL keeps the view (TEC-10).
   const pick = (v: string | undefined, fallback: number) =>
     v && /^\d{1,2}$/.test(v) && telemetryDrivers.includes(Number(v)) ? Number(v) : fallback;
   const aNum = pick(query.a, telemetryDrivers[0]!);

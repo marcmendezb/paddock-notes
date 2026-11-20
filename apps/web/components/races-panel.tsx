@@ -18,7 +18,7 @@ import { RECORDS_PUBLIC } from "@/lib/records";
 
 const shortName = gpShortName;
 
-/** «8 nov»: sin año, que ya lo dice el panel. */
+/** "8 Nov": no year, the panel already says it. */
 const dayMonth = (lang: Lang, iso: string) =>
   new Intl.DateTimeFormat(localeOf(lang), { day: "numeric", month: "short", timeZone: "UTC" })
     .format(new Date(`${iso.slice(0, 10)}T12:00:00Z`))
@@ -27,13 +27,13 @@ const dayMonth = (lang: Lang, iso: string) =>
 type SessionState = "done" | "live" | "next" | "upcoming";
 
 /**
- * Panel de «Carreras» en la cabecera (TRA-01): todo lo que se busca de un fin de semana sin salir de la
- * página en la que se está.
- * - El próximo Gran Premio con sus sesiones en la hora del visitante (hechas, en directo en lima, la
- *   siguiente en lila) y los enlaces que se usan: la ficha, la previa del circuito y el calendario .ics.
- * - La temporada alrededor de hoy: las dos últimas con su ganador, la siguiente y las que vienen.
- * - La última carrera: el podio y sus enlaces (resultados, análisis y nota).
- * - Una fila de accesos rápidos.
+ * The "Races" panel in the header (TRA-01): everything people look for about a weekend without leaving the
+ * page they are on.
+ * - The next Grand Prix with its sessions in the visitor's time (done, live in lime, the next in lilac)
+ *   and the links people use: the race page, the circuit guide and the .ics calendar.
+ * - The season around today: the last two with their winner, the next one and those coming up.
+ * - The last race: the podium and its links (results, analysis and note).
+ * - A row of shortcuts.
  */
 export function RacesPanel({
   lang,

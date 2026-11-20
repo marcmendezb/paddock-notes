@@ -2,10 +2,10 @@ import type { MiddlewareHandler } from "hono";
 import type { AppEnv } from "./env";
 import { errorResponse } from "./errors";
 
-/** Cabeceras de seguridad de todas las respuestas de la API (seguridad.md §4). */
+/** Security headers on every API response (security.md §4). */
 export const securityHeaders: MiddlewareHandler<AppEnv> = async (c, next) => {
   await next();
-  // Las respuestas servidas desde la Cache API tienen cabeceras inmutables: se copian.
+  // Responses served from the Cache API have immutable headers: they are copied.
   c.res = new Response(c.res.body, c.res);
   const h = c.res.headers;
   h.set("strict-transport-security", "max-age=63072000; includeSubDomains; preload");
@@ -13,11 +13,11 @@ export const securityHeaders: MiddlewareHandler<AppEnv> = async (c, next) => {
   h.set("referrer-policy", "strict-origin-when-cross-origin");
   h.set("x-frame-options", "DENY");
   h.set("content-security-policy", "default-src 'none'; frame-ancestors 'none'");
-  // La API pública de lectura se puede consumir desde otros orígenes (D-07).
+  // The public read API can be consumed from other origins (D-07).
   h.set("cross-origin-resource-policy", "cross-origin");
 };
 
-/** Rutas de comunidad (fase 4): cambian estado, llevan sesión y no se cachean. */
+/** Community routes (phase 4): they change state, carry a session and are not cached. */
 export const COMMUNITY_PREFIXES = [
   "/api/v1/auth",
   "/api/v1/me",
@@ -30,16 +30,16 @@ export const COMMUNITY_PREFIXES = [
 const under = (prefixes: string[], path: string) => prefixes.some((p) => path === p || path.startsWith(`${p}/`));
 export const isCommunity = (path: string) => under(COMMUNITY_PREFIXES, path);
 /**
- * Baja en un clic (RFC 8058): el proveedor de correo del destinatario hace POST sin Origin ni cookies. El
- * token de la URL es la única credencial y solo permite darse de baja, así que no aplica la comprobación CSRF.
+ * One-click unsubscribe (RFC 8058): the recipient's mail provider POSTs without Origin or cookies. The
+ * token in the URL is the only credential and can only unsubscribe, so the CSRF check does not apply.
  */
 export const isOneClick = (path: string) => under(["/api/v1/email/unsubscribe"], path);
 
 const trusted = (c: { env: AppEnv["Bindings"] }) => c.env.TRUSTED_ORIGINS.split(",");
 
 /**
- * CORS (D-07): lectura pública abierta y sin credenciales; comunidad solo para los orígenes propios,
- * con credenciales.
+ * CORS (D-07): public reads open and without credentials; community routes only for our own origins,
+ * with credentials.
  */
 export const publicCors: MiddlewareHandler<AppEnv> = async (c, next) => {
   const pathname = new URL(c.req.url).pathname;
@@ -87,8 +87,8 @@ export const publicCors: MiddlewareHandler<AppEnv> = async (c, next) => {
 };
 
 /**
- * Métodos permitidos (seguridad.md §6): la API pública solo lee; las rutas de comunidad admiten además
- * POST y DELETE, con comprobación de Origin (CSRF) y límite de escritura por IP.
+ * Allowed methods (security.md §6): the public API only reads; community routes also accept POST and
+ * DELETE, with an Origin check (CSRF) and a per-IP write limit.
  */
 export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
   const path = new URL(c.req.url).pathname;
@@ -100,14 +100,14 @@ export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
     return;
   }
   if (isCommunity(path) && ["POST", "DELETE"].includes(c.req.method)) {
-    // Desde internet manda el Origin del navegador. Por Service Binding, la web no puede reenviarlo (es una
-    // cabecera prohibida en fetch) y envía x-paddock-origin, que solo vale si la petición es interna: desde
-    // internet Cloudflare fija siempre CF-Connecting-IP.
+    // From the internet the browser's Origin arrives. Over the Service Binding the web app cannot forward it
+    // (it is a forbidden header in fetch) and sends x-paddock-origin, which only counts if the request is
+    // internal: from the internet Cloudflare always sets CF-Connecting-IP.
     const internal = !c.req.header("cf-connecting-ip");
     const origin = c.req.header("origin") ?? (internal ? c.req.header("x-paddock-origin") : undefined);
     if (!origin || !trusted(c).includes(origin)) return errorResponse(c, "forbidden", "Forbidden origin.");
-    // Las peticiones de la web llegan por Service Binding con la IP del visitante en una cabecera interna;
-    // desde internet, Cloudflare fija siempre CF-Connecting-IP y esa cabecera interna no se tiene en cuenta.
+    // Requests from the web app arrive over the Service Binding with the visitor's IP in an internal header;
+    // from the internet, Cloudflare always sets CF-Connecting-IP and that internal header is ignored.
     const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-client-ip") ?? "internal";
     const { success } = await c.env.RATE_LIMIT_WRITE.limit({ key: ip });
     if (!success) return errorResponse(c, "rate_limited", "Too many requests. Please wait a minute.", 60);
@@ -122,7 +122,7 @@ export const readOnlyMethods: MiddlewareHandler<AppEnv> = async (c, next) => {
   await next();
 };
 
-/** Las rutas de lectura no aceptan parámetros de consulta: los desconocidos se rechazan (seguridad.md §6). */
+/** Read routes accept no query parameters: unknown ones are rejected (security.md §6). */
 export const noQueryParams: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (new URL(c.req.url).search.length > 1) {
     return errorResponse(c, "invalid_parameter", "This route does not accept query parameters.");
@@ -131,12 +131,12 @@ export const noQueryParams: MiddlewareHandler<AppEnv> = async (c, next) => {
 };
 
 /**
- * Límite por IP (seguridad.md §6). Las peticiones de la web llegan por Service Binding, sin
- * `CF-Connecting-IP` (Cloudflare la fija siempre en las peticiones de internet), y no se limitan.
+ * Per-IP limit (security.md §6). Requests from the web app arrive over the Service Binding, without
+ * `CF-Connecting-IP` (Cloudflare always sets it on internet requests), and are not limited.
  */
 export const rateLimit: MiddlewareHandler<AppEnv> = async (c, next) => {
-  // Desde internet manda CF-Connecting-IP. Lo que llega por el proxy /api de la web (D-26) trae la IP del
-  // visitante en x-paddock-proxy-ip, que solo vale en peticiones internas.
+  // From the internet, CF-Connecting-IP arrives. What comes through the web app's /api proxy (D-26) carries
+  // the visitor's IP in x-paddock-proxy-ip, which only counts on internal requests.
   const ip = c.req.header("cf-connecting-ip") ?? c.req.header("x-paddock-proxy-ip");
   if (ip) {
     const { success } = await c.env.RATE_LIMIT_READ.limit({ key: ip });
@@ -145,7 +145,7 @@ export const rateLimit: MiddlewareHandler<AppEnv> = async (c, next) => {
   await next();
 };
 
-/** Un log estructurado por petición, sin IP ni cabeceras (seguridad.md §16). */
+/** One structured log per request, without IP or headers (security.md §16). */
 export const requestLog: MiddlewareHandler<AppEnv> = async (c, next) => {
   const started = Date.now();
   await next();

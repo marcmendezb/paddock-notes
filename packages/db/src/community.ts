@@ -1,7 +1,7 @@
 /**
- * Datos de la comunidad (fase 4). Es lo único que la API puede escribir (D-14): solo tablas de comunidad,
- * nunca datos de F1. Toda consulta de un recurso de usuario filtra por el usuario de la sesión en el propio
- * SQL (seguridad.md §10).
+ * Community data (phase 4). The only thing the API may write (D-14): community tables only, never F1
+ * data. Every query for a user resource filters by the session's user inside the SQL itself
+ * (security.md §10).
  */
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
@@ -38,7 +38,7 @@ export function createCommunity(d1: D1Database) {
       .where(eq(users.id, userId));
   }
 
-  /** Exportación de todos los datos del usuario en JSON (COM-03). */
+  /** Export of all the user's data as JSON (COM-03). */
   async function exportUser(userId: string) {
     const [p, preds, own, member, quiz] = await Promise.all([
       profile(userId),
@@ -50,7 +50,7 @@ export function createCommunity(d1: D1Database) {
     return { profile: p, predictions: preds, leaguesOwned: own, leagueMemberships: member, quiz };
   }
 
-  /** Borrado efectivo e inmediato (COM-03): las claves foráneas borran en cascada todo lo demás. */
+  /** Effective and immediate deletion (COM-03): foreign keys cascade-delete everything else. */
   async function deleteUser(userId: string) {
     await db.delete(users).where(eq(users.id, userId));
   }
@@ -73,7 +73,7 @@ export function createCommunity(d1: D1Database) {
       .where(and(eq(predictions.userId, userId), eq(predictions.season, season)));
   }
 
-  /** Podio y pole oficiales de cada ronda de la temporada: pole por clasificación o, si no hay, por parrilla. */
+  /** Official podium and pole for each round of the season: pole from qualifying or, failing that, from the grid. */
   async function officialResults(season: number) {
     const rows = await db.all<{ round: number; kind: string; driver_id: string; position: number }>(sql`
       select round, 'podium' as kind, driver_id, position from results
@@ -93,7 +93,7 @@ export function createCommunity(d1: D1Database) {
     return byRound;
   }
 
-  /** Clasificación de predicciones de una temporada; con `members`, solo esos usuarios (ligas). */
+  /** A season's prediction standings; with `members`, only those users (leagues). */
   async function ranking(season: number, members?: string[]) {
     const [preds, official] = await Promise.all([
       db
@@ -128,8 +128,8 @@ export function createCommunity(d1: D1Database) {
   }
 
   /**
-   * Resumen del último GP con resultado (COM-07): qué sumó cada miembro en esa carrera. Quien no predijo
-   * aparece sin puntos (null), para que se vea quién se lo saltó.
+   * Summary of the last Grand Prix with a result (COM-07): what each member scored in that race. Anyone who
+   * did not predict appears without points (null), so it shows who skipped it.
    */
   async function lastRoundSummary(season: number, members: string[]) {
     const official = await officialResults(season);
@@ -164,7 +164,7 @@ export function createCommunity(d1: D1Database) {
     return id;
   }
 
-  /** Unirse con el token de invitación. Máximo 50 miembros (COM-07). */
+  /** Join with the invitation token. At most 50 members (COM-07). */
   async function joinLeague(userId: string, token: string): Promise<{ ok: true; id: string } | { ok: false; reason: "not_found" | "full" }> {
     const [league] = await db.select().from(leagues).where(eq(leagues.inviteToken, token));
     if (!league) return { ok: false, reason: "not_found" };
@@ -180,7 +180,7 @@ export function createCommunity(d1: D1Database) {
     return { ok: true, id: league.id };
   }
 
-  /** Una liga solo la ve quien pertenece a ella: si no, es como si no existiera (404, seguridad.md §10). */
+  /** A league is only visible to its members: otherwise it is as if it did not exist (404, security.md §10). */
   async function league(userId: string, leagueId: string, season: number) {
     const [row] = await db
       .select({ league: leagues })
@@ -194,7 +194,7 @@ export function createCommunity(d1: D1Database) {
       id: row.league.id,
       name: row.league.name,
       isOwner,
-      // El token solo lo ve el propietario, que es quien invita.
+      // Only the owner, who is the one inviting, sees the token.
       inviteToken: isOwner ? row.league.inviteToken : null,
       ranking: await ranking(season, members.map((m) => m.userId)),
       lastRound: await lastRoundSummary(season, members.map((m) => m.userId)),
@@ -208,7 +208,7 @@ export function createCommunity(d1: D1Database) {
       .innerJoin(leagueMembers, and(eq(leagueMembers.leagueId, leagues.id), eq(leagueMembers.userId, userId)));
   }
 
-  /** El propietario puede revocar la invitación: el enlace anterior deja de funcionar. */
+  /** The owner can revoke the invitation: the previous link stops working. */
   async function rotateInvite(userId: string, leagueId: string) {
     await db
       .update(leagues)
@@ -224,7 +224,7 @@ export function createCommunity(d1: D1Database) {
     await db.insert(quizAnswers).values({ userId, week, score, total }).onConflictDoNothing();
   }
 
-  /** Semanas seguidas jugadas hasta la última (COM-08). */
+  /** Consecutive weeks played up to the latest (COM-08). */
   async function quizStreak(userId: string): Promise<number> {
     const rows = await db.select({ week: quizAnswers.week }).from(quizAnswers).where(eq(quizAnswers.userId, userId));
     const weeks = new Set(rows.map((r) => r.week));
@@ -239,8 +239,8 @@ export function createCommunity(d1: D1Database) {
   }
 
   /**
-   * Cuentas sin actividad desde `cutoff` (ni sesión renovada ni cambios de perfil), con la fecha del aviso
-   * si ya se envió (seguridad.md §17).
+   * Accounts without activity since `cutoff` (no renewed session or profile change), with the date of the
+   * warning if it was already sent (security.md §17).
    */
   async function inactiveUsers(cutoff: Date) {
     return db.all<{ id: string; email: string; lang: string; warned_at: number | null; last_active: number }>(sql`
@@ -285,11 +285,11 @@ export function createCommunity(d1: D1Database) {
 
 export type Community = ReturnType<typeof createCommunity>;
 
-/** "2026-W01" → "2025-W52" (o W53): la semana ISO anterior. */
+/** "2026-W01" → "2025-W52" (or W53): the previous ISO week. */
 export function previousWeek(week: string): string {
   const [y, w] = week.split("-W").map(Number) as [number, number];
   if (w > 1) return `${y}-W${String(w - 1).padStart(2, "0")}`;
-  // La última semana ISO de un año es la que contiene el 28 de diciembre.
+  // The last ISO week of a year is the one that contains 28 December.
   const dec28 = new Date(Date.UTC(y - 1, 11, 28));
   const day = dec28.getUTCDay() || 7;
   dec28.setUTCDate(dec28.getUTCDate() + 4 - day);
