@@ -42,8 +42,8 @@ export function contentSecurityPolicy(nonce: string): string {
     "media-src 'self'",
     "font-src 'self'",
     "connect-src 'self' https://cloudflareinsights.com",
-    // Turnstile (COM-12): its script loads with the nonce; the widget lives in an iframe.
-    "frame-src https://challenges.cloudflare.com",
+    // No frames: Turnstile left the web app with the sign-in demo (D-38).
+    "frame-src 'none'",
     "frame-ancestors 'none'",
     "form-action 'self'",
     "base-uri 'none'",

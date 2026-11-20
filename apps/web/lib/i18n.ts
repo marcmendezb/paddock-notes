@@ -747,6 +747,9 @@ const es = {
     title: "Tu cuenta",
     signInTitle: "Entrar",
     signInLede: "Te enviamos un enlace por email. Sin contraseñas.",
+    /** Sign-in is a demonstration, like the newsletter (D-33, D-38): nothing is stored or sent. */
+    demo: { title: "Esto es un proyecto de portfolio", text: "Paddock Notes es un proyecto de portfolio: no hay registro y no se envía ningún email. Tu dirección no se ha guardado en ningún sitio.", close: "Entendido" },
+    demoNote: "Paddock Notes es un proyecto de portfolio: este formulario no guarda ni envía nada.",
     email: "Email",
     send: "Enviar el enlace",
     sent: "Revisa tu correo: el enlace funciona una vez y caduca en 15 minutos.",
@@ -783,7 +786,7 @@ const es = {
       rate: "Demasiados intentos. Espera un minuto.",
     },
     okBy: {
-      "magic-link": "Revisa tu correo: el enlace funciona una vez y caduca en 15 minutos.",
+      "magic-link": "Paddock Notes es un proyecto de portfolio: no hay registro y no se envía ningún email. Tu dirección no se ha guardado en ningún sitio.",
       newsletter: "Revisa tu correo para confirmar la suscripción.",
       "newsletter-confirm": "Suscripción confirmada. El próximo número llega tras la siguiente carrera.",
       unsubscribe: "Hecho: no volverás a recibir estos emails.",
@@ -1632,6 +1635,9 @@ const en: Dictionary = {
     title: "Your account",
     signInTitle: "Sign in",
     signInLede: "We'll email you a link. No passwords.",
+    /** Sign-in is a demonstration, like the newsletter (D-33, D-38): nothing is stored or sent. */
+    demo: { title: "This is a portfolio project", text: "Paddock Notes is a portfolio project: there are no sign-ups and no emails are sent. Your address hasn't been stored anywhere.", close: "Got it" },
+    demoNote: "Paddock Notes is a portfolio project: this form doesn't store or send anything.",
     email: "Email",
     send: "Send the link",
     sent: "Check your inbox: the link works once and expires in 15 minutes.",
@@ -1668,7 +1674,7 @@ const en: Dictionary = {
       rate: "Too many attempts. Wait a minute.",
     },
     okBy: {
-      "magic-link": "Check your inbox: the link works once and expires in 15 minutes.",
+      "magic-link": "Paddock Notes is a portfolio project: there are no sign-ups and no emails are sent. Your address hasn't been stored anywhere.",
       newsletter: "Check your inbox to confirm your subscription.",
       "newsletter-confirm": "Subscription confirmed. The next issue arrives after the next race.",
       unsubscribe: "Done: you won't get these emails again.",
@@ -2515,6 +2521,9 @@ const de: Dictionary = {
     title: "Dein Konto",
     signInTitle: "Anmelden",
     signInLede: "Wir schicken dir einen Link per E-Mail. Ohne Passwort.",
+    /** Sign-in is a demonstration, like the newsletter (D-33, D-38): nothing is stored or sent. */
+    demo: { title: "Das ist ein Portfolio-Projekt", text: "Paddock Notes ist ein Portfolio-Projekt: Es gibt keine Registrierung, und es werden keine E-Mails verschickt. Deine Adresse wurde nirgends gespeichert.", close: "Verstanden" },
+    demoNote: "Paddock Notes ist ein Portfolio-Projekt: Dieses Formular speichert und versendet nichts.",
     email: "E-Mail",
     send: "Link senden",
     sent: "Schau in dein Postfach: Der Link funktioniert einmal und läuft nach 15 Minuten ab.",
@@ -2551,7 +2560,7 @@ const de: Dictionary = {
       rate: "Zu viele Versuche. Warte eine Minute.",
     },
     okBy: {
-      "magic-link": "Schau in dein Postfach: Der Link funktioniert einmal und läuft nach 15 Minuten ab.",
+      "magic-link": "Paddock Notes ist ein Portfolio-Projekt: Es gibt keine Registrierung, und es werden keine E-Mails verschickt. Deine Adresse wurde nirgends gespeichert.",
       newsletter: "Schau in dein Postfach, um dein Abo zu bestätigen.",
       "newsletter-confirm": "Abo bestätigt. Die nächste Ausgabe kommt nach dem nächsten Rennen.",
       unsubscribe: "Erledigt: Du bekommst diese E-Mails nicht mehr.",

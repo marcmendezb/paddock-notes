@@ -411,7 +411,7 @@ describe("email dispatches (CON-06, COM-11, D-16)", () => {
     expect(email.text).toContain(`/es/newsletter/unsubscribe?token=${to.token}`);
     expect(email.text).toContain("no oficial");
     expect(email.headers).toEqual({
-      "List-Unsubscribe": `<https://paddocknotes.dev/api/v1/email/unsubscribe/${to.token}>`,
+      "List-Unsubscribe": `<${env.SITE_URL}/api/v1/email/unsubscribe/${to.token}>`,
       "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
     });
     const en = render(env, { kind: "newsletter", digest }, { ...to, lang: "en" });

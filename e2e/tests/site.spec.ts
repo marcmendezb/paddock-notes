@@ -321,6 +321,34 @@ test("without JavaScript, newsletter also displays demo notice (D-33)", async ({
   await context.close();
 });
 
+test("sign-in is a portfolio demo: no request, no email, the same notice (D-38)", async ({ page }) => {
+  const sent: string[] = [];
+  page.on("request", (r) => {
+    if (r.method() === "POST") sent.push(r.url());
+  });
+  await page.goto("/es/account");
+  const form = page.locator("form[action$='/forms/magic-link']");
+  await form.locator("input[name=email]").fill("prueba@example.com");
+  await form.getByRole("button", { name: "Enviar el enlace" }).click();
+  const dialog = page.getByRole("dialog", { name: "Esto es un proyecto de portfolio" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("no se envía ningún email");
+  expect(sent).toEqual([]);
+  await expect(form.locator("input[name=email]")).toHaveValue("");
+});
+
+test("without JavaScript, sign-in also returns with the portfolio notice (D-38)", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/en/account");
+  const form = page.locator("form[action$='/forms/magic-link']");
+  await form.locator("input[name=email]").fill("test@example.com");
+  await form.getByRole("button", { name: "Send the link" }).click();
+  await expect(page).toHaveURL(/\/en\/account\?msg=magic-link%3Aok/);
+  await expect(page.getByRole("status")).toContainText("no emails are sent");
+  await context.close();
+});
+
 test("homepage race report columns adapt cleanly to viewport (NUC-05)", async ({ page, isMobile }) => {
   await page.goto("/es");
   const points = page.locator(".rr-points");

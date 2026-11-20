@@ -135,7 +135,8 @@ export class MailingWorkflow extends WorkflowEntrypoint<Env, MailingParams> {
       const result = await step.do(`batch-${batch}`, STEP, async () => {
         const list = await createMailing(this.env.DB).recipients(params.kind, cursor, BATCH);
         for (const to of list) {
-          await this.env.EMAIL.send({ from: this.env.EMAIL_FROM, to: to.email, ...render(this.env, content as Content, to) });
+          // No Email Service binding (D-38): nothing is sent.
+          await this.env.EMAIL?.send({ from: this.env.EMAIL_FROM, to: to.email, ...render(this.env, content as Content, to) });
         }
         return { cursor: list.at(-1)?.id ?? cursor, count: list.length };
       });

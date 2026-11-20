@@ -5,8 +5,11 @@ export interface Env {
   RATE_LIMIT_READ: RateLimit;
   RATE_LIMIT_WRITE: RateLimit;
   SITE_URL: string;
-  /** Cloudflare Email Service (D-16). */
-  EMAIL: {
+  /**
+   * Cloudflare Email Service (D-16). Not bound today: Paddock Notes is a portfolio project and sends no email
+   * (D-38); without it, sending is logged and skipped.
+   */
+  EMAIL?: {
     send: (message: { from: string; to: string; subject: string; text: string; headers?: Record<string, string> }) => Promise<unknown>;
   };
   EMAIL_FROM: string;

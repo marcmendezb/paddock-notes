@@ -19,8 +19,11 @@ export interface Env {
   JOLPICA_MAX_PER_HOUR: string;
   /** The history backfill's hourly limit: leaves room for live ingestion (D-10). */
   JOLPICA_BACKFILL_MAX_PER_HOUR: string;
-  /** Email Service (D-16): newsletter, notifications (COM-11) and retention notices. */
-  EMAIL: {
+  /**
+   * Email Service (D-16): newsletter, notifications (COM-11) and retention notices. Not bound today: the
+   * project sends no email (D-38); without it, sending is logged and skipped.
+   */
+  EMAIL?: {
     send: (message: { from: string; to: string; subject: string; text: string; headers?: Record<string, string> }) => Promise<unknown>;
   };
   EMAIL_FROM: string;

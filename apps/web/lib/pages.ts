@@ -104,14 +104,11 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
       sections: [
         {
           paragraphs: [
-            "Si no creas una cuenta, Paddock Notes no trata datos personales: las visitas se miden con Cloudflare Web Analytics, sin cookies y sin identificar a nadie. Por eso no hay banner de consentimiento.",
-            "Newsletter: Paddock Notes es un proyecto de portfolio y el formulario de la newsletter es una demostración. Lo que escribes no se envía a ningún servidor ni se guarda en ningún sitio, y no recibirás ningún email.",
-            "Si creas una cuenta, guardamos tu email, el alias que elijas, tu idioma, tus predicciones, tus ligas y tus puntuaciones del quiz. Solo para que funcionen esas funciones (base legal: ejecución del servicio que pides). No usamos contraseñas: entras con un enlace por email.",
-            "La sesión usa una cookie técnica imprescindible (__Host-pn.session_token), sin fines publicitarios. No guardamos tu dirección IP.",
-            "Los avisos por email de la cuenta (antes de cada Gran Premio y al publicarse el análisis) están desactivados por defecto. Los activas y desactivas desde tu cuenta o con el enlace de baja de cada email.",
-            "Puedes descargar tus datos en JSON y borrar tu cuenta en cualquier momento desde tu cuenta: el borrado es inmediato. Las cuentas inactivas durante 24 meses se borran tras avisarte.",
+            "Paddock Notes no trata datos personales: las visitas se miden con Cloudflare Web Analytics, sin cookies y sin identificar a nadie. Por eso no hay banner de consentimiento.",
+            "Paddock Notes es un proyecto de portfolio: la newsletter y el acceso con cuenta son demostraciones. Lo que escribes en esos formularios no se envía a ningún servidor ni se guarda en ningún sitio, no se crea ninguna cuenta y no recibirás ningún email.",
+            "El sitio no usa cookies. Tu navegador solo guarda dos preferencias técnicas, que no salen de tu dispositivo: la unidad de velocidad del comparador de telemetría y si ya has visto la animación de entrada en esta sesión.",
             "Los registros técnicos guardan la ruta, el código de respuesta y el país, nunca la IP completa ni cabeceras de autorización.",
-            "Proveedor: Cloudflare, Inc. (alojamiento, base de datos en la UE, envío de emails, verificación anti-bots y analítica). Normativa de referencia: RGPD (UE) y nLPD (Suiza).",
+            "Proveedor: Cloudflare, Inc. (alojamiento, base de datos en la UE y analítica). Normativa de referencia: RGPD (UE) y nLPD (Suiza).",
           ],
         },
       ],
@@ -122,14 +119,11 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
       sections: [
         {
           paragraphs: [
-            "If you don't create an account, Paddock Notes processes no personal data: visits are measured with Cloudflare Web Analytics, with no cookies and without identifying anyone. That's why there is no consent banner.",
-            "Newsletter: Paddock Notes is a portfolio project and the newsletter form is a demonstration. What you type isn't sent to any server or stored anywhere, and you won't receive any email.",
-            "If you create an account, we store your email, the alias you choose, your language, your predictions, your leagues and your quiz scores, only so those features work (legal basis: providing the service you ask for). There are no passwords: you sign in with an email link.",
-            "The session uses one strictly necessary technical cookie (__Host-pn.session_token), never for advertising. We don't store your IP address.",
-            "Account email alerts (before every Grand Prix and when the analysis is published) are off by default. Turn them on or off from your account, or with the unsubscribe link in every email.",
-            "You can download your data as JSON and delete your account at any time from your account page: deletion is immediate. Accounts inactive for 24 months are deleted after a warning.",
+            "Paddock Notes processes no personal data: visits are measured with Cloudflare Web Analytics, with no cookies and without identifying anyone. That's why there is no consent banner.",
+            "Paddock Notes is a portfolio project: the newsletter and signing in are demonstrations. What you type in those forms isn't sent to any server or stored anywhere, no account is created and you won't receive any email.",
+            "The site uses no cookies. Your browser only keeps two technical preferences, which never leave your device: the speed unit of the telemetry comparison and whether you've already seen the intro animation in this session.",
             "Technical logs store the path, the response code and the country, never the full IP address or authorisation headers.",
-            "Provider: Cloudflare, Inc. (hosting, EU database, email delivery, bot protection and analytics). Reference regulations: GDPR (EU) and nFADP (Switzerland).",
+            "Provider: Cloudflare, Inc. (hosting, EU database and analytics). Reference regulations: GDPR (EU) and nFADP (Switzerland).",
           ],
         },
       ],
@@ -140,14 +134,11 @@ export const PAGES: Record<PageSlug, Record<Lang, TextPage>> = {
       sections: [
         {
           paragraphs: [
-            "Wenn du kein Konto anlegst, verarbeitet Paddock Notes keine personenbezogenen Daten: Besuche werden mit Cloudflare Web Analytics gemessen, ohne Cookies und ohne jemanden zu identifizieren. Deshalb gibt es kein Einwilligungsbanner.",
-            "Newsletter: Paddock Notes ist ein Portfolio-Projekt, und das Newsletter-Formular ist eine Demonstration. Was du eingibst, wird an keinen Server geschickt und nirgends gespeichert, und du bekommst keine E-Mail.",
-            "Wenn du ein Konto anlegst, speichern wir deine E-Mail-Adresse, den gewählten Namen, deine Sprache, deine Tipps, deine Ligen und deine Quiz-Ergebnisse, nur damit diese Funktionen laufen (Rechtsgrundlage: Erbringung des gewünschten Dienstes). Es gibt keine Passwörter: Du meldest dich über einen Link per E-Mail an.",
-            "Die Sitzung nutzt ein einziges technisch notwendiges Cookie (__Host-pn.session_token), nie für Werbung. Deine IP-Adresse speichern wir nicht.",
-            "Die E-Mail-Benachrichtigungen des Kontos (vor jedem Grand Prix und bei Erscheinen der Analyse) sind standardmäßig aus. Du schaltest sie in deinem Konto oder über den Abmeldelink in jeder E-Mail an oder aus.",
-            "Du kannst deine Daten jederzeit als JSON herunterladen und dein Konto auf deiner Kontoseite löschen: Die Löschung erfolgt sofort. Konten, die 24 Monate inaktiv sind, werden nach einer Vorwarnung gelöscht.",
+            "Paddock Notes verarbeitet keine personenbezogenen Daten: Besuche werden mit Cloudflare Web Analytics gemessen, ohne Cookies und ohne jemanden zu identifizieren. Deshalb gibt es kein Einwilligungsbanner.",
+            "Paddock Notes ist ein Portfolio-Projekt: Newsletter und Anmeldung sind Demonstrationen. Was du in diese Formulare eingibst, wird an keinen Server geschickt und nirgends gespeichert, es wird kein Konto angelegt, und du bekommst keine E-Mail.",
+            "Die Website nutzt keine Cookies. Dein Browser speichert nur zwei technische Einstellungen, die dein Gerät nie verlassen: die Geschwindigkeitseinheit des Telemetrie-Vergleichs und ob du die Einstiegsanimation in dieser Sitzung schon gesehen hast.",
             "Technische Protokolle speichern den Pfad, den Antwortcode und das Land, nie die vollständige IP-Adresse oder Autorisierungs-Header.",
-            "Dienstleister: Cloudflare, Inc. (Hosting, Datenbank in der EU, E-Mail-Versand, Bot-Schutz und Analyse). Maßgebliche Vorschriften: DSGVO (EU) und revDSG (Schweiz).",
+            "Dienstleister: Cloudflare, Inc. (Hosting, Datenbank in der EU und Analyse). Maßgebliche Vorschriften: DSGVO (EU) und revDSG (Schweiz).",
           ],
         },
       ],

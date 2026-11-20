@@ -120,7 +120,7 @@ report-to csp-endpoint;
 |---|---|---|---|
 | `script-src` | None extra: the Web Analytics script is loaded with the nonce and `'strict-dynamic'` authorises it | Cookieless analytics | 1 |
 | `connect-src` | `https://cloudflareinsights.com` | Sending the Web Analytics metrics | 1 |
-| `script-src`, `frame-src` | `https://challenges.cloudflare.com` | Turnstile | 4–5 |
+| `frame-src` | `'none'` | No frames. Turnstile left the web app when sign-in became a demonstration (D-38); the API still requires a Turnstile token, so a direct call to it cannot sign in | — |
 | `media-src` | `'self'` | The hero's background video, served from `/media` (D-27) | 1 |
 
 The Archivo typeface is self-hosted, so `font-src 'self'` needs no exceptions.

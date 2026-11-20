@@ -40,7 +40,8 @@ export async function purgeInactiveAccounts(env: Env, now = Date.now()) {
       await community.deleteUser(u.id);
       deleted++;
     } else if (!warnedThisPeriod) {
-      await env.EMAIL.send({ from: env.EMAIL_FROM, to: u.email, ...warning(u.lang, env.SITE_URL) });
+      // No Email Service binding (D-38): the account is still marked, nothing is sent.
+      await env.EMAIL?.send({ from: env.EMAIL_FROM, to: u.email, ...warning(u.lang, env.SITE_URL) });
       await community.markInactiveWarned(u.id, new Date(now));
       warned++;
     }

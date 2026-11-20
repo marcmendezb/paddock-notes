@@ -1,10 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
- * `/api/*` served by the web app (D-26). Not used in production: the domain's `paddocknotes.dev/api/*` route
- * goes straight to the API Worker. In preview and locally, the web app and the API live on different hosts
- * and the links in emails (magic link, one-click unsubscribe) point to the web app: this proxy takes them to
- * the API over the Service Binding, with the cookie on the web app's host, as in production.
+ * `/api/*` served by the web app (D-26). The API Worker has no public host of its own (D-38): in production,
+ * preview and locally, browsers and the links in emails (magic link, one-click unsubscribe) reach it through
+ * this proxy, over the Service Binding, with the cookie on the web app's host.
  *
  * The browser cannot smuggle in internal headers: every incoming `x-paddock-*` and `cf-*` header is dropped,
  * and only the real origin (for the API's CSRF check) and the visitor's IP (limits) are set here.

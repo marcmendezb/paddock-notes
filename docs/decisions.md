@@ -247,7 +247,7 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 
 **Decision:** pnpm 10 or later, pinned in `packageManager`, with `minimumReleaseAge: 20160` (14 days, in minutes) in `pnpm-workspace.yaml`. Renovate with `minimumReleaseAge: "14 days"`. Security patches are excluded by hand with `minimumReleaseAgeExclude` and reviewed in the PR.
 
-## D-20 · Domain (proposal)
+## D-20 · Domain (proposal) · superseded by D-38
 
 **Check (5 November 2026):** `paddocknotes.com` (registered in 2021) and `paddocknotes.net` (registered in April 2026) are taken. `paddocknotes.dev`, `.app`, `.io` and `.es` have no DNS records (NXDOMAIN), so they are probably available.
 
@@ -512,6 +512,24 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 
 **Consequence:** each chart's markup is doubled (a few kB of HTML per chart page). New charts take a `size` and are drawn with `CHART_SIZES` (`components/charts/sizes.ts`). The season map keeps small pins on phones: the calendar list above it carries the same links (the "equivalent" exception of WCAG 2.5.8).
 
+
+## D-38 · Hosting: the author's account, workers.dev first, then pn.marcmendezb.com
+
+**Context:** the site goes live on the author's Cloudflare account (`marcmendezb`). `paddocknotes.dev` (D-20) was never bought; the long-term address is a subdomain of the author's own domain, `pn.marcmendezb.com`, which is not on Cloudflare yet. Importing the repository from the dashboard had created a `paddock-notes` Worker with Workers Builds, whose build ran from the monorepo root and could not produce three Workers.
+
+**Decision:**
+
+- **One deployment path: GitHub Actions** (`deploy.yml`, stack.md §12): D1 migrations, the three Workers, a health check and a rollback. Workers Builds is not used and the dashboard's template Worker is removed, so a push does not trigger a second, failing build.
+- **On workers.dev until the domain:** the web app is `paddock-web.marcmendezb.workers.dev` (preview: `paddock-web-preview.…`). The zone routes are gone from the `wrangler.jsonc` files; `SITE_URL`, `AUTH_BASE_URL` and `TRUSTED_ORIGINS` follow the workers.dev host.
+- **The API has no public host**, in production or preview: browsers and email links reach it through the web app's `/api/*` proxy over the Service Binding (D-26). One host less to expose and to protect with Access.
+- **No email, no sign-ups.** Paddock Notes is a portfolio project, so signing in becomes a demonstration like the newsletter (extending D-33): the form clears itself and opens the same portfolio notice, and without JavaScript the forms route returns with that text without reading the form. Neither form reaches the API. The API and ingestion Workers have no Email Service binding: the `EMAIL` binding is optional in code and, missing, a send is logged as `email_disabled` and skipped. The community features behind an account (predictions, leagues, favourites) stay in the code, unreachable.
+- **Turnstile leaves the web app** (its only form no longer submits), so the CSP drops `challenges.cloudflare.com` and has `frame-src 'none'`. The API keeps its Turnstile check with the real widget's secret: with no widget published, a direct call to its sign-in endpoint cannot pass.
+- **Resources:** D1 `paddock-db` and `paddock-db-preview` in the EU jurisdiction (with `preview_database_id` keeping the local `wrangler dev` data under its old id) and the `CACHE` and `CACHE_PREVIEW` KV namespaces.
+- **The privacy policy** says what is true now: no accounts, no cookies, two technical preferences in the browser.
+
+**Pending until the domain:** `security.txt` (its contact and canonical URL) and the custom-domain route. Moving to `pn.marcmendezb.com` means adding `marcmendezb.com` to Cloudflare, a `custom_domain` route on `paddock-web` and the URLs above.
+
+**Consequence:** it supersedes D-20, and extends D-33 to sign-in. The custom domain is a configuration change, not a code change.
 ---
 
 ## Sources (consulted on 5 November 2026)

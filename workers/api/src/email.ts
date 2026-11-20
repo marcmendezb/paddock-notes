@@ -12,6 +12,11 @@ export interface OutgoingEmail {
 }
 
 export async function sendEmail(env: Env, email: OutgoingEmail): Promise<void> {
+  // No Email Service binding (D-38): nothing leaves the Worker.
+  if (!env.EMAIL) {
+    console.log(JSON.stringify({ event: "email_disabled", subject: email.subject }));
+    return;
+  }
   await env.EMAIL.send({ from: env.EMAIL_FROM, ...email });
   console.log(JSON.stringify({ event: "email_sent", subject: email.subject, toDomain: email.to.split("@")[1] }));
 }

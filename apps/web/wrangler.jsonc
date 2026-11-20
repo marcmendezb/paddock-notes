@@ -4,18 +4,17 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-10-15",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "workers_dev": false,
+  // On workers.dev until the custom domain (D-38); then a "custom_domain" route replaces it.
+  "workers_dev": true,
   "preview_urls": false,
   "observability": { "enabled": true },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "routes": [{ "pattern": "paddocknotes.dev/*", "zone_name": "paddocknotes.dev" }],
   // The web app queries the API without going out to the internet (D-05).
   "services": [{ "binding": "API", "service": "paddock-api" }],
   "vars": {
-    "SITE_URL": "https://paddocknotes.dev",
+    "SITE_URL": "https://paddock-web.marcmendezb.workers.dev",
     // security.md §4.1: the first version in report-only mode; set to "false" before the public launch.
-    "CSP_REPORT_ONLY": "true",
-    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
+    "CSP_REPORT_ONLY": "true"
   },
   "env": {
     "preview": {
@@ -25,9 +24,8 @@
       "routes": [],
       "services": [{ "binding": "API", "service": "paddock-api-preview" }],
       "vars": {
-        "SITE_URL": "https://paddock-web-preview.workers.dev",
-        "CSP_REPORT_ONLY": "false",
-        "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
+        "SITE_URL": "https://paddock-web-preview.marcmendezb.workers.dev",
+        "CSP_REPORT_ONLY": "false"
       }
     }
   }

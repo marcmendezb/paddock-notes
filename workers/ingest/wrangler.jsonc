@@ -13,7 +13,9 @@
     {
       "binding": "DB",
       "database_name": "paddock-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "8bd68b75-62c1-4b01-9801-38f7e683bde3",
+      // wrangler dev keeps its local SQLite under this id: the local data survives the real id above.
+      "preview_database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "../../packages/db/migrations"
     }
   ],
@@ -27,9 +29,8 @@
     { "name": "paddock-mailing", "binding": "MAILING", "class_name": "MailingWorkflow" }
   ],
   "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis", "jurisdiction": "eu" }],
-  "send_email": [{ "name": "EMAIL" }],
   "vars": {
-    "SITE_URL": "https://paddocknotes.dev",
+    "SITE_URL": "https://paddock-web.marcmendezb.workers.dev",
     "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
     // Pending: the controller's postal address for the newsletter footer.
     "MAIL_POSTAL_ADDRESS": "",
@@ -50,7 +51,9 @@
         {
           "binding": "DB",
           "database_name": "paddock-db-preview",
-          "database_id": "00000000-0000-0000-0000-000000000001",
+          "database_id": "2466983f-5be1-42aa-8c11-9d8d29a64e7e",
+          // wrangler dev keeps its local SQLite under this id: the local data survives the real id above.
+          "preview_database_id": "00000000-0000-0000-0000-000000000001",
           "migrations_dir": "../../packages/db/migrations"
         }
       ],
@@ -63,9 +66,8 @@
         { "name": "paddock-mailing-preview", "binding": "MAILING", "class_name": "MailingWorkflow" }
       ],
       "r2_buckets": [{ "binding": "ANALYSIS", "bucket_name": "paddock-analysis-preview", "jurisdiction": "eu" }],
-      "send_email": [{ "name": "EMAIL" }],
       "vars": {
-        "SITE_URL": "https://paddocknotes.dev",
+        "SITE_URL": "https://paddock-web-preview.marcmendezb.workers.dev",
         "EMAIL_FROM": "Paddock Notes <hola@paddocknotes.dev>",
         "MAIL_POSTAL_ADDRESS": "",
         "JOLPICA_BASE_URL": "https://api.jolpi.ca/ergast/f1",

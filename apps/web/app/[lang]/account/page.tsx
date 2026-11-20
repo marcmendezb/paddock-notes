@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FormMessage } from "@/components/form-message";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { Turnstile } from "@/components/turnstile";
+import { DemoForm } from "@/components/demo-form";
 import { api } from "@/lib/api";
 import { fullName } from "@/lib/format";
 import type { Lang } from "@paddock/shared";
@@ -35,18 +34,16 @@ export default async function AccountPage({ params, searchParams }: Props) {
 
 
         <FormMessage lang={lang} msg={msg} />
-        <form action={action("magic-link")} method="post" className="stack">
+        {/* A demonstration, like the newsletter (D-33, D-38): no sign-ups and no emails. */}
+        <DemoForm action={action("magic-link")} className="stack" notice={t.demo}>
           <input type="hidden" name="back" value="account" />
           <label className="inline-form">
             <span>{t.email}</span>
             <input type="email" name="email" required autoComplete="email" maxLength={200} />
           </label>
-          <Turnstile siteKey={(await getCloudflareContext({ async: true })).env.TURNSTILE_SITE_KEY} lang={lang} />
-          <noscript>
-            <p className="muted">{t.needsJs}</p>
-          </noscript>
           <button type="submit">{t.send}</button>
-        </form>
+          <p className="muted">{t.demoNote}</p>
+        </DemoForm>
         <p className="source">
           <Link href={`/${lang}/privacy`}>{dict(lang).footer.privacy}</Link>
         </p>

@@ -29,7 +29,7 @@ interface Action {
 const seg = (value: string) => (/^[A-Za-z0-9_-]{1,64}$/.test(value) ? value : "_");
 
 const ACTIONS: Record<string, Action> = {
-  /** Magic link (COM-01). The Turnstile widget adds its token to the form (COM-12). */
+  /** Magic link (COM-01): today a demonstration that never gets here (D-38); kept so it can be turned back on. */
   "magic-link": {
     method: "POST",
     path: () => "/auth/sign-in/magic-link",
@@ -105,10 +105,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ lan
   if (!isLang(lang) || !action) return new NextResponse(null, { status: 404 });
   if (request.headers.get("origin") !== origin) return new NextResponse("Forbidden", { status: 403 });
 
-  // Demo newsletter (D-33): the form is not read and the API is not called; it returns with the notice.
-  if (name === "newsletter") {
-    const url = new URL(`/${lang}/newsletter`, origin);
-    url.searchParams.set("msg", "newsletter:ok");
+  // Demonstrations (D-33, D-38): the newsletter sign-up and the sign-in are not read and the API is not called;
+  // they return with the portfolio notice. No email address ever leaves this function.
+  const demo: Record<string, string> = { newsletter: "newsletter", "magic-link": "account" };
+  if (name in demo) {
+    const url = new URL(`/${lang}/${demo[name]}`, origin);
+    url.searchParams.set("msg", `${name}:ok`);
     return NextResponse.redirect(url, 303);
   }
 
