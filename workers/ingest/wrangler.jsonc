@@ -43,7 +43,9 @@
     "OPENF1_MAX_PER_SECOND": "2",
     "OPENF1_MAX_PER_MINUTE": "25",
     // No lap-by-lap history: nothing reads it, and ~700,000 rows exceed the free plan's D1 writes (D-39).
-    "BACKFILL_LAPS": "false"
+    "BACKFILL_LAPS": "false",
+    // Jolpica answers 429 to Workers (one shared Cloudflare address): GitHub Actions ingests it (D-40).
+    "JOLPICA_IN_WORKER": "false"
   },
   "env": {
     "preview": {
@@ -83,7 +85,8 @@
         "OPENF1_BASE_URL": "https://api.openf1.org/v1",
         "OPENF1_MAX_PER_SECOND": "2",
         "OPENF1_MAX_PER_MINUTE": "25",
-        "BACKFILL_LAPS": "false"
+        "BACKFILL_LAPS": "false",
+        "JOLPICA_IN_WORKER": "false"
       }
     }
   }

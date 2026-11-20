@@ -30,18 +30,22 @@ export default {
       console.error(JSON.stringify({ event: "unknown_cron", cron: controller.cron }));
       return;
     }
-    ctx.waitUntil(runTask(env, task, controller.scheduledTime));
+    // In production Jolpica's part runs from GitHub Actions (D-40); here, only what does not call it.
+    const jolpica = env.JOLPICA_IN_WORKER !== "false";
+    if (jolpica) ctx.waitUntil(runTask(env, task, controller.scheduledTime));
     // Retention of inactive accounts, once a week (security.md §17).
     if (task === "corrections") ctx.waitUntil(purgeInactiveAccounts(env, controller.scheduledTime));
     // Grand Prix notice (COM-11), after refreshing the calendar.
     if (task === "schedule") ctx.waitUntil(scheduleRaceNotice(env, controller.scheduledTime).then(log("race_notice")));
     // The history backfill advances on every 15-minute cron, one season at a time (D-11).
     if (task === "recent") {
-      ctx.waitUntil(
-        advanceBackfill(env, controller.scheduledTime).then((state) =>
-          console.log(JSON.stringify({ event: "backfill", state })),
-        ),
-      );
+      if (jolpica) {
+        ctx.waitUntil(
+          advanceBackfill(env, controller.scheduledTime).then((state) =>
+            console.log(JSON.stringify({ event: "backfill", state })),
+          ),
+        );
+      }
       // Technical zone analysis: the most recent race without one, one at a time (D-08).
       ctx.waitUntil(
         advanceAnalysis(env, controller.scheduledTime).then((state) =>

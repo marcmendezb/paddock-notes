@@ -13,7 +13,7 @@ Unofficial web app that explains F1 with data. pnpm monorepo, entirely TypeScrip
 
 ## Non-negotiable rules
 
-- **D-05:** Only `workers/ingest` calls Jolpica and OpenF1, always through `fetchJson` (closed host whitelist, rate limiter, Zod).
+- **D-05:** Only `workers/ingest` calls Jolpica and OpenF1, always through `fetchJson` (closed host whitelist, rate limiter, Zod). In production Jolpica's part runs from GitHub Actions with the same code (`workers/ingest/runner`, D-40).
 - **D-14:** The API and web never import `@paddock/db/f1-write`. Enforced by ESLint and `packages/db/test/architecture.test.ts`.
 - **D-04:** All HTML is rendered per request with nonce-based CSP (`apps/web/middleware.ts`). No inline `style=""`, no `dangerouslySetInnerHTML`, no third-party scripts unjustified in `docs/security.md` §4.1.
 - **D-19:** pnpm does not install versions released under 14 days ago (`pnpm-workspace.yaml`).

@@ -15,7 +15,7 @@
 | Database | SQLite with Drizzle ORM | D1, EU jurisdiction (D-13) |
 | Data cache | JSON responses with a TTL | Cache API + KV |
 | Precomputed analyses | JSON per race and tool | Workers KV (D-39) |
-| Scheduled ingestion | TypeScript | `paddock-ingest` Worker with Cron Triggers |
+| Scheduled ingestion | TypeScript | `paddock-ingest` Worker with Cron Triggers (OpenF1); GitHub Actions for Jolpica (D-40) |
 | Long loads and analyses | Steps with retries and pauses | `BACKFILL`, `POST_RACE` and `MAILING` Workflows |
 | Analysis computation | TypeScript (`packages/analysis`) | Inside the `POST_RACE` Workflow (D-08) |
 | Outbound limiter | A global counter per source | `OUTBOUND_LIMITER` Durable Object (D-10) |
@@ -155,7 +155,9 @@ Every HTML page is rendered on each request, because the strict CSP needs a fres
 
 ## 6. Ingestion: the `paddock-ingest` Worker
 
-The Worker has no public routes: it only runs from Cron Triggers and starts Workflows. It has the `send_email` binding (`EMAIL`) for the newsletter, account notifications and retention notices.
+The Worker has no public routes: it only runs from Cron Triggers and starts Workflows. It sends no email today (D-38).
+
+**Jolpica from GitHub Actions (D-40).** Jolpica answers 429 to every Worker, which reach it from one shared Cloudflare address. In production (`JOLPICA_IN_WORKER="false"`) the jobs below that call Jolpica (recent sessions, calendar, corrections, history) run from `.github/workflows/ingest.yml` with the same code (`workers/ingest/runner`), writing to D1 through the REST API; the Worker keeps OpenF1 and `POST_RACE`. The history advances round by round, ten minutes per run and 25,000 rows a day at most.
 
 ### 6.1 Scheduled jobs (Cron Triggers)
 

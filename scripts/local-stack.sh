@@ -18,7 +18,7 @@ trap 'kill 0' EXIT INT TERM
 (cd "$ROOT/workers/api" && pnpm exec wrangler dev --persist-to "$STATE" --port 8787 --inspector-port 9230 >"$LOGS/api.log" 2>&1) &
 curl -s --retry 60 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:8787/api/v1/health
 
-(cd "$ROOT/workers/ingest" && pnpm exec wrangler dev --test-scheduled --persist-to "$STATE" --port 8788 --inspector-port 9231 --var BACKFILL_LAPS:false --var SITE_URL:http://localhost:8789 >"$LOGS/ingest.log" 2>&1) &
+(cd "$ROOT/workers/ingest" && pnpm exec wrangler dev --test-scheduled --persist-to "$STATE" --port 8788 --inspector-port 9231 --var BACKFILL_LAPS:false --var JOLPICA_IN_WORKER:true --var SITE_URL:http://localhost:8789 >"$LOGS/ingest.log" 2>&1) &
 curl -s --retry 60 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:8788/ || true
 
 (cd "$ROOT/apps/web" && pnpm exec wrangler dev --port 8789 --inspector-port 9232 --local-upstream localhost:8789 --var CSP_REPORT_ONLY:false --var SITE_URL:http://localhost:8789 >"$LOGS/web.log" 2>&1) &

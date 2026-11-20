@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { ALLOWED_OUTBOUND_HOSTS, userAgent } from "@paddock/shared";
 import type { Env } from "./env";
-import type { LimitPolicy } from "./limiter";
+import type { LimitPolicy } from "./limit-policy";
 
 /** Common rules for any external API (apis.md §8). */
 const TIMEOUT_MS = 10_000;

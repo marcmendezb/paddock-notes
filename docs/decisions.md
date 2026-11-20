@@ -97,7 +97,7 @@ Package: `@opennextjs/cloudflare`, at the newest version that satisfies D-19 and
 
 **Cost:** a few ms of CPU per visit, well inside the 30 million ms included per month. Lighthouse CI watches the performance risk (TRA-40, TRA-41); if mobile LCP goes above 2.5 s, this decision is revisited.
 
-## D-05 · The API never calls external sources
+## D-05 · The API never calls external sources · amended by D-40
 
 **Context:** the earlier plan let the API query Jolpica during the MVP before the database was loaded, which contradicted the architecture principle.
 
@@ -545,6 +545,20 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 - **Backups as a private GitHub Actions artifact**, kept 90 days, instead of an R2 bucket (D-15 keeps its weekly schedule).
 
 **Consequence:** it amends stack.md §14 and D-15. If the site outgrows the free limits (100,000 requests a day, 10 ms of CPU), the paid plan is a configuration change: an R2 bucket again, `limits.cpu_ms` and laps.
+
+## D-40 · Jolpica is ingested from GitHub Actions
+
+**Context:** after the first deploy, every request from the `paddock-ingest` Worker to Jolpica got a 429, while the same request from a laptop got a 200. Jolpica sits behind Cloudflare and limits by IP (4 requests per second, 500 an hour, no token access yet). A Worker that calls another site on Cloudflare reaches it from an internal address shared by every Worker, so that budget is always spent by someone else. No retry or backoff fixes it. OpenF1 is not behind Cloudflare and answers the Worker normally.
+
+**Decision:**
+
+- **Jolpica's half of ingestion runs from GitHub Actions** (`.github/workflows/ingest.yml`): the 15-minute recent sessions, the daily calendar, the weekly corrections and the history. The job runs `workers/ingest/runner/main.ts` with `tsx`: the same `tasks.ts`, `rounds.ts` and `fetchJson` (closed host list, the limiter rule, Zod), with the limiter's state in memory for the run (`limit-policy.ts`, shared with the Durable Object) and D1 reached through Cloudflare's REST API (`runner/d1-http.ts`, including atomic batches). Settings come from `wrangler.jsonc`.
+- **The history advances round by round**, with its progress in `ingest_state` (`runner:backfill-season`, `runner:backfill-round`), at most ten minutes per run and 25,000 rows a day, so D1's free 100,000 written rows a day (indexes included) also cover live ingestion (D-39). It takes several days, once.
+- **The Worker keeps OpenF1:** `POST_RACE` and its analysis, on its 15-minute cron. With `JOLPICA_IN_WORKER="false"` (production and preview) its crons skip Jolpica's tasks; `scripts/local-stack.sh` sets it to `"true"`, since `wrangler dev` calls Jolpica from the developer's own IP.
+- **The repository is public**, so GitHub Actions minutes are unlimited and the job can run every 15 minutes. It was always meant to be read (PRODUCT.md); CodeQL now runs as well.
+- **A dedicated secret**, `CLOUDFLARE_API_TOKEN_INGEST`, with no GitHub environment, so the job does not create a deployment every 15 minutes.
+
+**Consequence:** D-05 still holds in substance: only ingestion code calls Jolpica, always through `fetchJson`; it now also runs outside Workers. GitHub may start scheduled runs a few minutes late and disables them after 60 days without activity in the repository. When Jolpica offers tokens, ingestion can move back into the Worker by setting `JOLPICA_IN_WORKER` to `"true"`.
 ---
 
 ## Sources (consulted on 5 November 2026)

@@ -32,4 +32,9 @@ export interface Env {
   MAIL_POSTAL_ADDRESS?: string;
   /** "false" in local development: laps are not loaded (some 14 requests per race). */
   BACKFILL_LAPS?: string;
+  /**
+   * "false" in production: Jolpica answers 429 to every Worker (they share one Cloudflare address), so its
+   * part of ingestion runs from GitHub Actions (runner/, D-40). Locally, wrangler dev reaches it directly.
+   */
+  JOLPICA_IN_WORKER?: string;
 }

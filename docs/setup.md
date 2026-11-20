@@ -48,8 +48,8 @@ pnpm --filter @paddock/ingest exec wrangler deploy
 pnpm --filter @paddock/web run deploy
 ```
 
-- [ ] Trigger the daily cron by hand from the Workers dashboard (`paddock-ingest` → Triggers → Cron), or wait for it. **The site is not published without the season in D1 (D-05).**
-- [ ] The history (`BACKFILL`) advances on its own, one season per 15-minute cron: about 33 hours (D-11).
+- [ ] Load the season: run the `ingest` workflow by hand (Actions → ingest → Run workflow, tasks `schedule recent backfill`). Jolpica is ingested from GitHub Actions, not the Worker (D-40). **The site is not published without the season in D1 (D-05).**
+- [ ] The history advances on its own with every `ingest` run, round by round, at most 25,000 rows a day: several days, once (D-40).
 - [ ] Check `https://paddock-web.marcmendezb.workers.dev/api/v1/health` and the home page.
 
 ## 6. Before announcing the site
@@ -64,13 +64,14 @@ In the repository, **Settings → Secrets and variables → Actions**:
 | Type | Name | Value | State |
 |---|---|---|---|
 | Secret | `CLOUDFLARE_ACCOUNT_ID` | The account ID | Set |
-| Secret (`production` environment) | `CLOUDFLARE_API_TOKEN` | A custom token limited to this account: *Workers Scripts*, *D1* and *Workers KV Storage* (Edit) and *Account Settings* (Read) | Pending |
-| Secret | `CLOUDFLARE_API_TOKEN_PREVIEW` | The same token, or one for the preview resources only | Pending |
-| Secret (`backup` environment) | `CLOUDFLARE_API_TOKEN_BACKUP` | Production D1 only (read and export) | Pending |
+| Secret (`production` environment) | `CLOUDFLARE_API_TOKEN` | A custom token limited to this account: *Workers Scripts*, *D1* and *Workers KV Storage* (Edit) and *Account Settings* (Read) | Set |
+| Secret | `CLOUDFLARE_API_TOKEN_PREVIEW` | The same token, or one for the preview resources only | Set |
+| Secret (`backup` environment) | `CLOUDFLARE_API_TOKEN_BACKUP` | Production D1 only (read and export) | Set |
+| Secret | `CLOUDFLARE_API_TOKEN_INGEST` | D1 (Edit) on this account: Jolpica ingestion from GitHub Actions (D-40) | Set |
 | Secret | `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET` | The Access service token from step 4 | Pending |
 | Variable | `SITE_URL` | `https://paddock-web.marcmendezb.workers.dev` | Set |
 | Variable | `PREVIEW_URL` | `https://paddock-web-preview.marcmendezb.workers.dev` | Set |
-| Variable | `CLOUDFLARE_READY` | `true`, **last of all**: it turns on preview, deploy and the weekly backup | Pending |
+| Variable | `CLOUDFLARE_READY` | `true`, **last of all**: it turns on preview, deploy, Jolpica ingestion and the weekly backup | Set |
 
 Paste tokens with `gh secret set NAME [--env ENV]`, which prompts for the value: it never goes into a file or the shell history.
 
@@ -78,7 +79,7 @@ Paste tokens with `gh secret set NAME [--env ENV]`, which prompts for the value:
 - [ ] Manual approval on `production` (security.md §13). On a private repository it needs a paid GitHub plan.
 - [ ] Protect `main`: required green checks and PRs instead of direct pushes, once you stop working alone.
 - [ ] Install the **Renovate** app on the repository: `renovate.json` already respects D-19's 14 days.
-- [ ] CodeQL only runs if the repository is public: on a private one it requires GitHub Advanced Security.
+- [x] The repository is public (D-40): unlimited Actions minutes, and CodeQL runs.
 - [x] Workers Builds is not used (D-38): deploys come only from `deploy.yml`.
 
 ## 8. Final checks

@@ -255,7 +255,7 @@ Library (D-17): Better Auth with `drizzleAdapter` over `drizzle-orm/d1`, an inst
 | `production` environment | Secrets only available in that environment, with manual approval by the author |
 | Third-party PRs | Workflows for external PRs receive no secrets (`pull_request`, never `pull_request_target` with outside code) |
 | Static analysis | CodeQL for TypeScript (`codeql.yml`); it only runs while the repository is public, because a private one requires GitHub Advanced Security |
-| Cloudflare tokens in CI | Three, one per use: production deploy, preview deploy and the weekly backup (production D1 only) |
+| Cloudflare tokens in CI | One per use: production deploy, preview deploy, the weekly backup (production D1 only) and Jolpica ingestion (`CLOUDFLARE_API_TOKEN_INGEST`, D1 only, D-40) |
 | Alerts | Dependabot alerts and secret scanning on |
 | Audit | The Cloudflare audit log reviewed monthly |
 
