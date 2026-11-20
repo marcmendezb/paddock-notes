@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { SeasonPicker } from "@/components/season-picker";
-import { StaleNotice } from "@/components/site-chrome";
 import { SeasonMap } from "@/components/season-map";
 import { NextRaceFeature, SeasonHero, SeasonRounds } from "@/components/season-view";
 import { api } from "@/lib/api";
@@ -43,7 +42,6 @@ export default async function CalendarPage({ params }: Params) {
     <>
       <SeasonHero lang={lang} season={season} races={races} picker={picker} />
       <div className="container stack-xl">
-        {schedule?.stale ? <StaleNotice lang={lang} updatedAt={schedule.updatedAt} /> : null}
         {schedule ? (
           <>
             {next ? <NextRaceFeature lang={lang} race={next} layout={layout?.data.points ?? null} /> : null}

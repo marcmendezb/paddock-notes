@@ -181,6 +181,9 @@ export async function SiteHeader({ lang }: { lang: Lang }) {
       <form action={`/${lang}/search`} method="get" role="search" className="header-search">
         <Icon name="search" />
         <input type="search" name="q" minLength={2} maxLength={50} placeholder={t.nav.searchPlaceholder} aria-label={t.nav.search} autoComplete="off" enterKeyHint="search" />
+        <button type="submit" className="header-search-go" aria-label={t.nav.search}>
+          <span aria-hidden="true">→</span>
+        </button>
       </form>
       <Link href={`/${lang}/account`} className="header-tool">
         <Icon name="user" />
@@ -442,12 +445,3 @@ export async function SiteFooter({ lang }: { lang: Lang }) {
   );
 }
 
-/** Aviso de datos antiguos (TRA-32). */
-export function StaleNotice({ lang, updatedAt }: { lang: Lang; updatedAt: string | null }) {
-  const hours = updatedAt ? Math.max(1, Math.round((Date.now() - Date.parse(updatedAt)) / 3_600_000)) : null;
-  return (
-    <p className="notice" role="status">
-      {hours === null ? dict(lang).error.data : dict(lang).stale(hours)}
-    </p>
-  );
-}

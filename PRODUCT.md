@@ -35,7 +35,7 @@ Someone who watches the race closely and explains it calmly in the paddock. Clos
 
 ## Strategic principles
 
-1. **Data first, honest about its limits.** Every chart has a source and a date. Missing, partial or stale data is said out loud (TRA-31 to TRA-33). A record computed over a few seasons is not shown as an F1 record (D-34).
+1. **Data first, honest about its limits.** Every chart has a source and a date. Missing or partial data is said out loud (TRA-31, TRA-33); stale data shows no banner, by the author's decision (D-41). A record computed over a few seasons is not shown as an F1 record (D-34).
 2. **Every chart has a table.** Nothing lives only in a picture (TRA-22). Core content works without JavaScript (TRA-34).
 3. **Never wait on someone else's API.** Pages read precomputed data; only ingestion talks to Jolpica and OpenF1 (D-05).
 4. **Write the decision down.** Anything non-obvious gets a `D-xx` entry in [docs/decisions.md](docs/decisions.md), and superseded decisions stay in the log.

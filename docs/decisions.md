@@ -559,6 +559,14 @@ A lint rule (`no-restricted-imports`) and an architecture test fail if the API i
 - **A dedicated secret**, `CLOUDFLARE_API_TOKEN_INGEST`, with no GitHub environment, so the job does not create a deployment every 15 minutes.
 
 **Consequence:** D-05 still holds in substance: only ingestion code calls Jolpica, always through `fetchJson`; it now also runs outside Workers. GitHub may start scheduled runs a few minutes late and disables them after 60 days without activity in the repository. When Jolpica offers tokens, ingestion can move back into the Worker by setting `JOLPICA_IN_WORKER` to `"true"`.
+
+## D-41 · No stale-data banner on the web app
+
+**Context:** right after launch, while ingestion was still catching up on the last three rounds, every page showed "Data from 1 hours ago: we haven't been able to update it yet." The author does not want that banner on the site.
+
+**Decision:** the web app no longer shows a stale-data notice (TRA-32 withdrawn). The API is unchanged: it still flags late data with `X-Data-Stale`, caches it for 60 s at most so the next ingestion shows at once, and serves the last good copy if D1 fails (D-06). Missing data keeps its own states (TRA-31): an empty page says what is missing, and the home page says the season is loading while the database is empty.
+
+**Consequence:** it amends PRODUCT.md's first principle for stale data only. Late data is now visible in the logs and ingestion runs, not on the page.
 ---
 
 ## Sources (consulted on 5 November 2026)

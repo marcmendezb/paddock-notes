@@ -11,7 +11,6 @@ import { WeekendCalendar } from "@/components/weekend-calendar";
 import { CIRCUIT_GUIDES } from "@/content/circuit-guides";
 import { CIRCUIT_OUTLINES } from "@/content/circuit-outlines";
 import { RaceSubnav, type SubnavItem } from "@/components/race-subnav";
-import { StaleNotice } from "@/components/site-chrome";
 import { PitStopsTable } from "@/components/tables";
 import { PitTimeline, QualifyingTower, ResultsTower } from "@/components/race-timing";
 import { PositionsChart } from "@/components/race-recap";
@@ -158,7 +157,6 @@ export default async function RacePage({ params }: Params) {
       ) : null}
 
       <div className="container stack-xl">
-        {fetched.stale ? <StaleNotice lang={lang} updatedAt={fetched.updatedAt} /> : null}
 
         <div className="rv-summary">
           {p1 && p2 && p3 ? (

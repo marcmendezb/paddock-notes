@@ -196,7 +196,7 @@ Every tool reads data **precomputed** after each race from OpenF1 (D-08). No pag
 |---|---|---|---|---|
 | TRA-30 | Loading skeletons shaped like the content | 1 | S | Never a blank screen; only in components that load data on the client, not on whole pages (D-22) |
 | TRA-31 | A "no data yet" state with an expected date | 1 | M | For example, a race not yet run |
-| TRA-32 | A "stale data" state when ingestion is behind or the database does not answer | 1 | M | A notice with the data's age, from `X-Data-Stale` and `updated_at` (D-06) |
+| TRA-32 | A "stale data" state when ingestion is behind or the database does not answer | 1 | M | Withdrawn from the web app (D-41); the API keeps `X-Data-Stale` (D-06) |
 | TRA-33 | A "partial data" state | 2 | S | Says what is missing and why |
 | TRA-34 | Core content readable without JavaScript | 1 | S | Only interactive pieces need JS |
 

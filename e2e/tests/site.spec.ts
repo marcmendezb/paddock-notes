@@ -391,7 +391,7 @@ test("confirmation and unsubscribe require button click rather than bare link hi
   const token = "0".repeat(48);
   for (const path of [`/es/newsletter/confirm?token=${token}`, `/es/newsletter/unsubscribe?token=${token}`]) {
     await page.goto(path);
-    await expect(page.locator("form button[type=submit]")).toBeVisible();
+    await expect(page.locator("main form button[type=submit]")).toBeVisible();
   }
 });
 

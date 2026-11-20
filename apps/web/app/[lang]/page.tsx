@@ -17,7 +17,6 @@ import { LapStage } from "@/components/lap-stage";
 import { LocalTime } from "@/components/local-time";
 import { SessionList } from "@/components/session-list";
 import { WeekendCalendar } from "@/components/weekend-calendar";
-import { StaleNotice } from "@/components/site-chrome";
 import { api, type Fetched } from "@/lib/api";
 import { formatDate, formatDateTime, fullName, localeOf } from "@/lib/format";
 import { dict } from "@/lib/i18n";
@@ -115,11 +114,6 @@ export default async function HomePage({ params }: Params) {
 
       {last && last !== "error" ? (
         <>
-          {last.stale ? (
-            <div className="container">
-              <StaleNotice lang={lang} updatedAt={last.updatedAt} />
-            </div>
-          ) : null}
           <RaceReport
             lang={lang}
             race={last.data}

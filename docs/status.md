@@ -39,7 +39,8 @@
 | TRA-01, TRA-10 to TRA-14 | Done | Navigation, ES/EN/DE (D-29), redirect by country and language (D-36), formats, 404/500 in all three languages |
 | TRA-20 to TRA-25 | Done | axe WCAG 2.2 AA on desktop, mobile and dark mode on every PR. Documented exceptions to 2.2.2 (D-27, D-33) |
 | TRA-30 | Partial | Only in components that load data on the client (D-22) |
-| TRA-31, TRA-32, TRA-34 | Done | No-data and stale-data states; content without JavaScript |
+| TRA-31, TRA-34 | Done | No-data state (a loading state on the home page while the database is empty); content without JavaScript |
+| TRA-32 | Withdrawn | No stale-data banner on the web app, by the author's decision; the API still sends `X-Data-Stale` and caches stale data briefly (D-41) |
 | TRA-40, TRA-41 | Partial | Locally (mobile): 94 to 100 for performance and 100 for the rest, CLS 0, simulated LCP 2.5 to 2.7 s, but locally the HTML is served uncompressed (37 kB against about 6.5 kB with gzip). `lighthouserc.json` and the CI job exist; measuring against the preview, which compresses, is still to do |
 | TRA-42 to TRA-47 | Done | Global limiter, versioned API with OpenAPI, inbound limit, health, CI |
 | TRA-50 to TRA-52 | Done | Disclaimer, attribution and licence; legal pages; no cookies |

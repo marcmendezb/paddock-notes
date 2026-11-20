@@ -891,7 +891,6 @@ const es = {
       `${points} ${points === 1 ? "punto" : "puntos"}${exact ? ` · ${exact} en su posición exacta` : ""}${pole ? " · acertó la pole" : ""}`,
   },
   breadcrumbs: "Migas de pan",
-  stale: (hours: number) => `Datos de hace ${hours} horas: todavía no hemos podido actualizarlos.`,
   error: {
     title: "Algo ha fallado por nuestra parte.",
     body: "Ya lo estamos registrando; prueba de nuevo en un momento.",
@@ -1780,7 +1779,6 @@ const en: Dictionary = {
       `${points} ${points === 1 ? "point" : "points"}${exact ? ` · ${exact} in the exact position` : ""}${pole ? " · got pole right" : ""}`,
   },
   breadcrumbs: "Breadcrumbs",
-  stale: (hours) => `Data from ${hours} hours ago: we haven't been able to update it yet.`,
   error: {
     title: "Something went wrong on our side.",
     body: "It's been logged; try again in a moment.",
@@ -2667,7 +2665,6 @@ const de: Dictionary = {
       `${points} ${points === 1 ? "Punkt" : "Punkte"}${exact ? ` · ${exact} auf der exakten Position` : ""}${pole ? " · Pole richtig" : ""}`,
   },
   breadcrumbs: "Brotkrümelnavigation",
-  stale: (hours) => `Daten von vor ${hours} Stunden: Wir konnten sie noch nicht aktualisieren.`,
   error: {
     title: "Bei uns ist etwas schiefgelaufen.",
     body: "Der Fehler wurde protokolliert; versuch es gleich noch einmal.",
